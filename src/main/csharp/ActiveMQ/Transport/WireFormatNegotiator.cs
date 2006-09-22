@@ -22,49 +22,31 @@ namespace ActiveMQ.Transport
 {
 	
     /// <summary>
-    /// A Transport which gaurds access to the next transport using a mutex.
+    /// A Transport which negotiates the wire format
     /// </summary>
-    public class MutexTransport : TransportFilter
+    public class WireFormatNegotiator : TransportFilter
     {
+        public const int OPENWIRE_VERSION = 2;
 
-        private readonly object transmissionLock = new object();
 
-        public MutexTransport(ITransport next) : base(next) {
+        public WireFormatNegotiator(ITransport next) : base(next) {
         }
-
         
-        public override void Oneway(Command command)
-        {
-            lock (transmissionLock)
-            {
-                this.next.Oneway(command);
-            }
-        }
+        public override void Start() {
+            base.Start();
 
-        public override FutureResponse AsyncRequest(Command command)
-        {
-            lock (transmissionLock)
-            {
-                return base.AsyncRequest(command);
-            }
-        }
 
-        public override Response Request(Command command)
-        {
-            lock (transmissionLock)
-            {
-                return base.Request(command);
-            }
-        }
+            // now lets start the protocol negotiation
+            WireFormatInfo info = new WireFormatInfo();
+            info.StackTraceEnabled=false;
+            info.TightEncodingEnabled=false;
+            info.TcpNoDelayEnabled=false;
+            info.CacheEnabled=false;
+            info.SizePrefixDisabled=false;
+            info.Version = OPENWIRE_VERSION;
 
-        public override void Dispose()
-        {
-            lock (transmissionLock)
-            {
-                base.Dispose();
-            }
+            Oneway(info);
         }
-
     }
 }
 

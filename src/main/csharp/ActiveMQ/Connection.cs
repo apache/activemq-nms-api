@@ -160,8 +160,8 @@ namespace ActiveMQ
             if (response is ExceptionResponse)
             {
                 ExceptionResponse exceptionResponse = (ExceptionResponse) response;
-                // TODO include stack trace
-                throw new NMSException("Request failed: " + exceptionResponse);
+                BrokerError brokerError = exceptionResponse.Exception;
+                throw new BrokerException(brokerError);
             }
             return response;
         }

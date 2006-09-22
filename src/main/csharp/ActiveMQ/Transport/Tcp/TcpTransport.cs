@@ -28,10 +28,10 @@ using System.Threading;
 namespace ActiveMQ.Transport.Tcp
 {
 	
-	/// <summary>
-	/// An implementation of ITransport that uses sockets to communicate with the broker
-	/// </summary>
-	public class TcpTransport : ITransport
+    /// <summary>
+    /// An implementation of ITransport that uses sockets to communicate with the broker
+    /// </summary>
+    public class TcpTransport : ITransport
     {
         private Socket socket;
         private OpenWireFormat wireformat = new OpenWireFormat();
@@ -46,7 +46,7 @@ namespace ActiveMQ.Transport.Tcp
         
         public TcpTransport(Socket socket)
         {
-			this.socket = socket;
+            this.socket = socket;
         }
         
         /// <summary>
@@ -56,11 +56,11 @@ namespace ActiveMQ.Transport.Tcp
         {
             if (!started)
             {
-				if( commandHandler == null )
-					throw new InvalidOperationException ("command cannot be null when Start is called.");
-				if( exceptionHandler == null )
-					throw new InvalidOperationException ("exception cannot be null when Start is called.");
-				
+                if( commandHandler == null )
+                    throw new InvalidOperationException ("command cannot be null when Start is called.");
+                if( exceptionHandler == null )
+                    throw new InvalidOperationException ("exception cannot be null when Start is called.");
+
                 started = true;
                 
                 NetworkStream networkStream = new NetworkStream(socket);
@@ -70,23 +70,13 @@ namespace ActiveMQ.Transport.Tcp
                 // now lets create the background read thread
                 readThread = new Thread(new ThreadStart(ReadLoop));
                 readThread.Start();
-                
-                // lets send the wireformat we're using
-				WireFormatInfo info = new WireFormatInfo();
-				info.StackTraceEnabled=false;
-				info.TightEncodingEnabled=false;
-				info.TcpNoDelayEnabled=false;
-				info.CacheEnabled=false;
-				info.SizePrefixDisabled=false;
-				
-                Oneway(info);
             }
         }
         
-		public void Oneway(Command command)
+        public void Oneway(Command command)
         {
-			wireformat.Marshal(command, socketWriter);
-			socketWriter.Flush();
+            wireformat.Marshal(command, socketWriter);
+            socketWriter.Flush();
         }
         
         public FutureResponse AsyncRequest(Command command)
@@ -101,9 +91,9 @@ namespace ActiveMQ.Transport.Tcp
         
         public void Dispose()
         {
-			closed = true;
-			socket.Close();
-			readThread.Join();
+            closed = true;
+            socket.Close();
+            readThread.Join();
             socketWriter.Close();
             socketReader.Close();
         }
@@ -115,36 +105,36 @@ namespace ActiveMQ.Transport.Tcp
                 try
                 {
                     Command command = (Command) wireformat.Unmarshal(socketReader);
-					this.commandHandler(this, command);
+                    this.commandHandler(this, command);
                 }
-				catch (ObjectDisposedException)
+                catch (ObjectDisposedException)
                 {
                     break;
                 }
-				catch ( Exception e) {
-					if( e.GetBaseException() is ObjectDisposedException ) {
-						break;
-					}
-					if( !closed ) {
-						this.exceptionHandler(this,e);
-					}
-					break;
-				}
+                catch ( Exception e) {
+                    if( e.GetBaseException() is ObjectDisposedException ) {
+                        break;
+                    }
+                    if( !closed ) {
+                        this.exceptionHandler(this,e);
+                    }
+                    break;
+                }
             }
         }
                 
         // Implementation methods
                 
-		public CommandHandler Command {
+        public CommandHandler Command {
             get { return commandHandler; }
             set { this.commandHandler = value; }
         }
-		
+
         public  ExceptionHandler Exception {
             get { return exceptionHandler; }
             set { this.exceptionHandler = value; }
         }
-		
+
     }
 }
 

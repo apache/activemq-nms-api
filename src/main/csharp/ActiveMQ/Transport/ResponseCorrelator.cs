@@ -24,46 +24,46 @@ using ActiveMQ.Transport;
 namespace ActiveMQ.Transport
 {
 	
-	/// <summary>
-	/// A Transport which gaurds access to the next transport using a mutex.
-	/// </summary>
-	public class ResponseCorrelator : TransportFilter
+    /// <summary>
+    /// A Transport which gaurds access to the next transport using a mutex.
+    /// </summary>
+    public class ResponseCorrelator : TransportFilter
     {
 
         private readonly IDictionary requestMap = Hashtable.Synchronized(new Hashtable());
         private readonly Object mutex = new Object();
         private short nextCommandId;
-		
-		public ResponseCorrelator(ITransport next) : base(next) {
-		}
 
-		short GetNextCommandId() {
-			lock(mutex) {
-				return ++nextCommandId;
-			}
-		}
-		
-		public override void Oneway(Command command)
-		{
-			command.CommandId = GetNextCommandId();
-			command.ResponseRequired = false;
-			next.Oneway(command);
-		}
-		
-		public override FutureResponse AsyncRequest(Command command)
-		{
-			command.CommandId = GetNextCommandId();
-			command.ResponseRequired = true;
-			FutureResponse future = new FutureResponse();
-			requestMap[command.CommandId] = future;
-			next.Oneway(command);
-			return future;
+        public ResponseCorrelator(ITransport next) : base(next) {
+        }
 
-		}
-		
-		public override Response Request(Command command)
-		{
-			FutureResponse future = AsyncRequest(command);
+        short GetNextCommandId() {
+            lock(mutex) {
+                return ++nextCommandId;
+            }
+        }
+
+        public override void Oneway(Command command)
+        {
+            command.CommandId = GetNextCommandId();
+            command.ResponseRequired = false;
+            next.Oneway(command);
+        }
+
+        public override FutureResponse AsyncRequest(Command command)
+        {
+            command.CommandId = GetNextCommandId();
+            command.ResponseRequired = true;
+            FutureResponse future = new FutureResponse();
+            requestMap[command.CommandId] = future;
+            next.Oneway(command);
+            return future;
+
+        }
+
+        public override Response Request(Command command)
+        {
+            FutureResponse future = AsyncRequest(command);
             Response response = future.Response;
             if (response is ExceptionResponse)
             {
@@ -72,33 +72,41 @@ namespace ActiveMQ.Transport
                 throw new BrokerException(brokerError);
             }
             return response;
-		}
-		
-		protected override void OnCommand(ITransport sender, Command command)
-		{
-			if( command is Response ) {
-				
-				Response response = (Response) command;
-				FutureResponse future = (FutureResponse) requestMap[response.CorrelationId];
-				if (future != null)
-				{
-					if (response is ExceptionResponse)
-					{
-						ExceptionResponse er = (ExceptionResponse) response;
-						BrokerError brokerError = er.Exception;
-						this.exceptionHandler(this, new BrokerException(brokerError));
-					}
-					future.Response = response;
-				}
-				else
-				{
-					Console.WriteLine("ERROR: Unknown response ID: " + response.CommandId + " for response: " + response);
-				}
-			} else {
-				this.commandHandler(sender, command);
-			}
-		}
-		
+        }
+
+        protected override void OnCommand(ITransport sender, Command command)
+        {
+            if( command is Response ) {
+
+                Response response = (Response) command;
+                FutureResponse future = (FutureResponse) requestMap[response.CorrelationId];
+                if (future != null)
+                {
+                    if (response is ExceptionResponse)
+                    {
+                        ExceptionResponse er = (ExceptionResponse) response;
+                        BrokerError brokerError = er.Exception;
+                        BrokerException exception = new BrokerException(brokerError);
+                        this.exceptionHandler(this, exception);
+                    }
+                    future.Response = response;
+                }
+                else
+                {
+                    if (command is ShutdownInfo)
+                    {
+                        // lets shutdown
+                        this.commandHandler(sender, command);
+                    }
+                    else {
+                        Console.WriteLine("ERROR: Unknown response ID: " + response.CommandId + " for response: " + response);
+                    }
+                }
+            } else {
+                this.commandHandler(sender, command);
+            }
+        }
+
     }
 }
 

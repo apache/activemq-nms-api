@@ -18,6 +18,8 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using ActiveMQ.Commands;
+using ActiveMQ.OpenWire;
 using ActiveMQ.Transport;
 
 namespace ActiveMQ.Transport.Tcp {
@@ -47,6 +49,8 @@ namespace ActiveMQ.Transport.Tcp {
             }
             rc = new ResponseCorrelator(rc);
             rc = new MutexTransport(rc);
+            rc = new WireFormatNegotiator(rc);
+
             return rc;
         }
 
