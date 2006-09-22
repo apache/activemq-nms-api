@@ -32,7 +32,7 @@ namespace ActiveMQ
         private long consumerCounter;
         private long producerCounter;
         private int prefetchSize = 1000;
-        private IDictionary consumers = new Hashtable();
+        private IDictionary consumers = Hashtable.Synchronized(new Hashtable());
         private TransactionContext transactionContext;
         
         public Session(Connection connection, SessionInfo info, AcknowledgementMode acknowledgementMode)
@@ -218,7 +218,7 @@ namespace ActiveMQ
             transactionContext.Rollback();
             
             // lets ensure all the consumers redeliver any rolled back messages
-            foreach (MessageConsumer consumer in consumers.Values)
+            foreach (MessageConsumer consumer in GetConsumers())
             {
                 consumer.RedeliverRolledBackMessages();
             }
@@ -282,13 +282,25 @@ namespace ActiveMQ
             {
                 // lets ensure that only 1 thread dispatches messages in a consumer at once
                 
-                foreach (MessageConsumer consumer in consumers.Values)
+                foreach (MessageConsumer consumer in GetConsumers())
                 {
                     consumer.DispatchAsyncMessages();
                 }
             }
         }
-        
+
+
+        /// <summary>
+        /// Returns a copy of the current consumers in a thread safe way to avoid concurrency
+        /// problems if the consumers are changed in another thread
+        /// </summary>
+        protected ICollection GetConsumers()
+        {
+            lock (consumers.SyncRoot)
+            {
+                return new ArrayList(consumers.Values);
+            }
+        }
         
         protected virtual ConsumerInfo CreateConsumerInfo(IDestination destination, string selector)
         {
