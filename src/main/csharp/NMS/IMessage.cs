@@ -16,10 +16,10 @@
  */
 namespace NMS
 {
-	/// <summary>
-	/// Represents a message either to be sent to a message broker or received from a message broker
-	/// </summary>
-	public interface IMessage
+    /// <summary>
+    /// Represents a message either to be sent to a message broker or received from a message broker
+    /// </summary>
+    public interface IMessage
     {
         
         /// <summary>
@@ -32,7 +32,7 @@ namespace NMS
         /// Provides access to the message properties (headers)
         /// </summary>
         IPrimitiveMap Properties
-		{
+        {
             get;
         }
         

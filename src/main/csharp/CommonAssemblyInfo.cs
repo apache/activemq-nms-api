@@ -22,6 +22,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyrightAttribute("Copyright (C) 2005-2006 Apache Software Foundation")]
 [assembly: AssemblyTrademarkAttribute("")]
 [assembly: AssemblyCultureAttribute("")]
-[assembly: AssemblyVersionAttribute("4.0.2456.0")]
+[assembly: AssemblyVersionAttribute("4.0.2460.0")]
 [assembly: AssemblyInformationalVersionAttribute("4.0")]
 

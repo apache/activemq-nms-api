@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.Collections;
+
 namespace NMS
 {
 	
-	/// <summary>
-	/// Represents a Map of primitive types where the keys are all string instances
-	/// and the values are strings or numbers.
-	/// </summary>
-	public interface IPrimitiveMap
+    /// <summary>
+    /// Represents a Map of primitive types where the keys are all string instances
+    /// and the values are strings or numbers.
+    /// </summary>
+    public interface IPrimitiveMap
     {
         
         void Clear();
@@ -35,12 +37,12 @@ namespace NMS
             get;
         }
         
-        System.Collections.ICollection Keys
+        ICollection Keys
         {
             get;
         }
         
-        System.Collections.ICollection Values
+        ICollection Values
         {
             get;
         }
@@ -77,6 +79,12 @@ namespace NMS
         
         double GetDouble(string key);
         void SetDouble(string key, double value);
+
+        IList GetList(string key);
+        void SetList(string key, IList list);
+
+        IDictionary GetDictionary(string key);
+        void SetDictionary(string key, IDictionary dictionary);
         
     }
 }

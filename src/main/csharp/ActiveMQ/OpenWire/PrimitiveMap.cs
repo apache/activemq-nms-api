@@ -26,7 +26,7 @@ namespace ActiveMQ.OpenWire
     /// </summary>
     public class PrimitiveMap : IPrimitiveMap
     {
-		public const byte NULL                    = 0;
+        public const byte NULL                    = 0;
         public const byte BOOLEAN_TYPE            = 1;
         public const byte BYTE_TYPE               = 2;
         public const byte CHAR_TYPE               = 3;
@@ -37,7 +37,10 @@ namespace ActiveMQ.OpenWire
         public const byte FLOAT_TYPE              = 8;
         public const byte STRING_TYPE             = 9;
         public const byte BYTE_ARRAY_TYPE         = 10;
-		
+        public const byte MAP_TYPE                = 11;
+        public const byte LIST_TYPE               = 12;
+        public const byte BIG_STRING_TYPE         = 13;
+
         private IDictionary dictionary = new Hashtable();
         
         public void Clear()
@@ -195,9 +198,37 @@ namespace ActiveMQ.OpenWire
         {
             SetValue(key, value);
         }
-        
-        
-        
+
+        public IList GetList(String key)
+        {
+            Object value = GetValue(key);
+            if (value != null && !(value is IList))
+            {
+                throw new NMSException("Property: " + key + " is not an IList but is: " + value);
+            }
+            return (IList) value;
+        }
+
+        public void SetList(String key, IList value)
+        {
+            SetValue(key, value);
+        }
+
+        public IDictionary GetDictionary(String key)
+        {
+            Object value = GetValue(key);
+            if (value != null && !(value is IDictionary))
+            {
+                throw new NMSException("Property: " + key + " is not an IDictionary but is: " + value);
+            }
+            return (IDictionary) value;
+        }
+
+        public void SetDictionary(String key, IDictionary value)
+        {
+            SetValue(key, value);
+        }
+
         
         protected virtual void SetValue(String key, Object value)
         {
@@ -220,7 +251,7 @@ namespace ActiveMQ.OpenWire
         
         protected virtual void CheckValidType(Object value)
         {
-            if (value != null)
+            if (value != null && !(value is IList) && !(value is IDictionary))
             {
                 Type type = value.GetType();
                 if (! type.IsPrimitive && !type.IsValueType && !type.IsAssignableFrom(typeof(string)))
@@ -229,33 +260,33 @@ namespace ActiveMQ.OpenWire
                 }
             }
         }
-		
-		/// <summary>
-		/// Method ToString
-		/// </summary>
-		/// <returns>A string</returns>
-		public override String ToString()
-		{
-			String s="{";
-			bool first=true;
-			foreach (DictionaryEntry entry in dictionary)
-			{
-				if( !first ) {
-					s+=", ";
-				}
-				first=false;
-				String name = (String) entry.Key;
-				Object value = entry.Value;
-				s+=name+"="+value;
-			}
-			s += "}";
-			return s;
-		}
-		
-		
-		
-		
-		/// <summary>
+
+        /// <summary>
+        /// Method ToString
+        /// </summary>
+        /// <returns>A string</returns>
+        public override String ToString()
+        {
+            String s="{";
+            bool first=true;
+            foreach (DictionaryEntry entry in dictionary)
+            {
+                if( !first ) {
+                    s+=", ";
+                }
+                first=false;
+                String name = (String) entry.Key;
+                Object value = entry.Value;
+                s+=name+"="+value;
+            }
+            s += "}";
+            return s;
+        }
+
+
+
+
+        /// <summary>
         /// Unmarshalls the map from the given data or if the data is null just
         /// return an empty map
         /// </summary>
@@ -270,8 +301,8 @@ namespace ActiveMQ.OpenWire
         {
             return MarshalPrimitiveMap(dictionary);
         }
-		
-		
+
+
         /// <summary>
         /// Marshals the primitive type map to a byte array
         /// </summary>
@@ -343,7 +374,27 @@ namespace ActiveMQ.OpenWire
             }
             
         }
-        
+
+        public static void MarshalPrimitiveList(IList list, BinaryWriter dataOut)
+        {
+            dataOut.Write((int) list.Count);
+            foreach (Object element in list)
+            {
+                MarshalPrimitive(dataOut, element);
+            }
+        }
+
+        public static IList UnmarshalPrimitiveList(BinaryReader dataIn)
+        {
+            int size = dataIn.ReadInt32();
+            IList answer = new ArrayList(size);
+            while (size-- > 0) {
+                answer.Add(UnmarshalPrimitive(dataIn));
+            }
+            return answer;
+        }
+
+
         public static void MarshalPrimitive(BinaryWriter dataOut, Object value)
         {
             if (value == null)
@@ -399,8 +450,28 @@ namespace ActiveMQ.OpenWire
             }
             else if (value is string)
             {
-                dataOut.Write(STRING_TYPE);
-                dataOut.Write((string) value);
+                string s = (string) value;
+                // is the string big??
+                if (s.Length > 8191)
+                {
+                    dataOut.Write(BIG_STRING_TYPE);
+                    dataOut.Write(s);
+                }
+                else
+                {
+                    dataOut.Write(STRING_TYPE);
+                    dataOut.Write(s);
+                }
+            }
+            else if (value is IDictionary)
+            {
+                dataOut.Write(MAP_TYPE);
+                MarshalPrimitiveMap((IDictionary) value, dataOut);
+            }
+            else if (value is IList)
+            {
+                dataOut.Write(LIST_TYPE);
+                MarshalPrimitiveList((IList) value, dataOut);
             }
             else
             {
@@ -411,7 +482,8 @@ namespace ActiveMQ.OpenWire
         public static Object UnmarshalPrimitive(BinaryReader dataIn)
         {
             Object value=null;
-            switch (dataIn.ReadByte())
+            byte type = dataIn.ReadByte();
+            switch (type)
             {
                 case BYTE_TYPE:
                     value = dataIn.ReadByte();
@@ -446,10 +518,23 @@ namespace ActiveMQ.OpenWire
                 case STRING_TYPE:
                     value = dataIn.ReadString();
                     break;
+                case BIG_STRING_TYPE:
+                    value = dataIn.ReadString();
+                    break;
+                case MAP_TYPE:
+                    value = UnmarshalPrimitiveMap(dataIn);
+                    break;
+
+                case LIST_TYPE:
+                    value = UnmarshalPrimitiveList(dataIn);
+                    break;
+
+                default:
+                    throw new Exception("Unsupported data type: " + type);
             }
             return value;
         }
-		
+
         
     }
 }
