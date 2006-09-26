@@ -45,13 +45,13 @@ namespace ActiveMQ
         
         public event MessageListener Listener
         {
-                add {
-                        listener += value;
-                        FireAsyncDispatchOfMessages();
-                }
-                remove {
-                        listener -= value;
-                }
+              add {
+                  listener += value;
+                  FireAsyncDispatchOfMessages();
+              }
+              remove {
+                  listener -= value;
+              }
         }
         
         
@@ -102,8 +102,8 @@ namespace ActiveMQ
 
         protected void FireAsyncDispatchOfMessages() 
         {
-                // lets dispatch to the thread pool for this connection for messages to be processed
-                ThreadPool.QueueUserWorkItem(new WaitCallback(session.DispatchAsyncMessages));
+              // lets dispatch to the thread pool for this connection for messages to be processed
+              ThreadPool.QueueUserWorkItem(new WaitCallback(session.DispatchAsyncMessages));
         }
         
         public IMessage Receive()
@@ -146,10 +146,9 @@ namespace ActiveMQ
                    message = AutoAcknowledge(message);
                    listener(message);
                 }
-                else
-                {
-                    break;
-                }
+
+                // lets now break to give the acknowledgement a chance to be processed
+                break;
             }
         }
         

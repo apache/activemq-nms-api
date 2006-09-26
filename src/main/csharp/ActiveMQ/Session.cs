@@ -142,22 +142,22 @@ namespace ActiveMQ
 
         protected void CreateTemporaryDestination(ActiveMQDestination tempDestination)
         {
-			DestinationInfo command = new DestinationInfo();
-			command.ConnectionId = connection.ConnectionId;
-			command.OperationType = 0; // 0 is add
-			command.Destination = tempDestination;
-			
-			connection.SyncRequest(command);
+            DestinationInfo command = new DestinationInfo();
+            command.ConnectionId = connection.ConnectionId;
+            command.OperationType = 0; // 0 is add
+            command.Destination = tempDestination;
+
+            connection.SyncRequest(command);
         }
         
         protected void DestroyTemporaryDestination(ActiveMQDestination tempDestination)
         {
-			DestinationInfo command = new DestinationInfo();
-			command.ConnectionId = connection.ConnectionId;
-			command.OperationType = 1; // 1 is remove
-			command.Destination = tempDestination;
-			
-			connection.SyncRequest(command);
+            DestinationInfo command = new DestinationInfo();
+            command.ConnectionId = connection.ConnectionId;
+            command.OperationType = 1; // 1 is remove
+            command.Destination = tempDestination;
+
+            connection.SyncRequest(command);
         }
         
         
