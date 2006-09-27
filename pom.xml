@@ -43,13 +43,34 @@
 
     <plugins>
 
+      <!-- Used to generate the openwire commands and marshallers -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <configuration>
+          <tasks>
+            <taskdef name="generate" classname="org.apache.activemq.openwire.tool.CSharpGeneratorTask"/>
+            <generate version="2" source="../activemq-trunk/activemq-core" target="${basedir}"/>
+          </tasks>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-openwire-generator</artifactId>
+            <version>4.1-incubator-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
       <!-- Manages the lifecycle of a dotnet project -->
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-csharp-lifecycle-plugin</artifactId>
         <version>1.0.RC6-SNAPSHOT</version>
         <extensions>true</extensions>
       </plugin>
+      -->
 
       <!-- Used to customize the dotnet compiler options -->
       <plugin>
@@ -119,16 +140,13 @@
       </plugin>
 
       <!-- For Running NUNIT tests -->
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-nunit-plugin</artifactId>
         <version>1.0.RC6-SNAPSHOT</version>
-        <!-- configuration>
-          <configFile>src/main/resources/App.config</configFile>
-        </configuration -->
       </plugin>
 
-      <!-- For VS.NET project generation -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-vstudio-plugin</artifactId>
@@ -142,6 +160,7 @@
           </includes>
         </configuration>
       </plugin>
+      -->
 
     </plugins>
   </build>
@@ -156,7 +175,7 @@
       <scope>system</scope>
       <systemPath>${dotnet.home}/System.dll</systemPath>
     </dependency -->
-
+    <!--
     <dependency>
       <groupId>nunit</groupId>
       <artifactId>nunit-console</artifactId>
@@ -164,6 +183,7 @@
       <type>dotnet-exe</type>
       <scope>test</scope>
     </dependency>
+    -->
   </dependencies>
 
 </project>
