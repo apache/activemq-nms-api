@@ -1,0 +1,67 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0706C6A6-7586-4622-ADDB-B901D05E9ED8}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ActiveMQ</RootNamespace>
+    <AssemblyName>activemq-dotnet-test</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <StartupObject>ActiveMQ.TestMain</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\test\csharp\ActiveMQ\Commands\CommandTest.cs" />
+    <Compile Include="src\test\csharp\ActiveMQ\OpenWire\BooleanStreamTest.cs" />
+    <Compile Include="src\test\csharp\ActiveMQ\OpenWire\EndianTest.cs" />
+    <Compile Include="src\test\csharp\ActiveMQ\OpenWire\PrimitiveMapTest.cs" />
+    <Compile Include="src\test\csharp\ActiveMQ\TestMain.cs" />
+    <Compile Include="src\test\csharp\MSMQ\MSMQTest.cs" />
+    <Compile Include="src\test\csharp\MSMQ\ConsumerTest.cs" />
+    <Compile Include="src\test\csharp\NMS\AsyncConsumeTest.cs" />
+    <Compile Include="src\test\csharp\NMS\BadConsumeTest.cs" />
+    <Compile Include="src\test\csharp\NMS\BytesMessageTest.cs" />
+    <Compile Include="src\test\csharp\NMS\ConsumerTest.cs" />
+    <Compile Include="src\test\csharp\NMS\DurableTest.cs" />
+    <Compile Include="src\test\csharp\NMS\JMSPropertyTest.cs" />
+    <Compile Include="src\test\csharp\NMS\JMSTestSupport.cs" />
+    <Compile Include="src\test\csharp\NMS\MapMessageTest.cs" />
+    <Compile Include="src\test\csharp\NMS\MessageTest.cs" />
+    <Compile Include="src\test\csharp\NMS\TemporaryQueueTest.cs" />
+    <Compile Include="src\test\csharp\NMS\TextMessage.cs" />
+    <Compile Include="src\test\csharp\NMS\TransactionTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="vs2005-activemq.csproj">
+      <Project>{08321F42-4B3D-4815-B592-95962BAC3B9F}</Project>
+      <Name>vs2005-activemq</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\test\csharp\ActiveMQ\OpenWire\V1\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

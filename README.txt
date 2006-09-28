@@ -1,28 +1,52 @@
-==============================================================
+=======================================================================
 Welcome to:
  * NMS API : The .NET Messaging Service API
  * NMS Client for Apache ActiveMQ
  * NMS Client for MSMQ
-==============================================================
+=======================================================================
 
 For more information see http://incubator.apache.org/activemq/nms.html
 
-==============================================================
+=======================================================================
 Building With Visual Stuido 2005
-==============================================================
+=======================================================================
 
-Open the vs2005.sln Solution File.  Build using "Build"->"Build Solution" menu option.
+Open the vs2005.sln Solution File.  Build using "Build"->"Build Solution" 
+menu option.
 
-The resulting DLLs will be in bin\Debug or the bin\Release directories depending on you settings under
-"Build"->"Configuration Manager"
+The resulting DLLs will be in bin\Debug or the bin\Release directories 
+depending on you settings under "Build"->"Configuration Manager"
 
-If you have the Resharper plugin installed in Visual Studio, you can run all the Unit Tests by using
-the "ReSharper"->"Unit Testing"->"Run All Tests from Solution" menu option.  Please note that you must
-run an Apache ActiveMQ Broker before kicking off the unit tests.
+If you have the Resharper plugin installed in Visual Studio, you can run 
+all the Unit Tests by using the "ReSharper"->"Unit Testing"->"Run All 
+Tests from Solution" menu option.  Please note that you must run an 
+Apache ActiveMQ Broker before kicking off the unit tests.
 
-==============================================================
+=======================================================================
+Building With SharpDevelop 2.1
+=======================================================================
+
+SharpDevelop is an open source IDE that you can download from:
+http://www.sharpdevelop.net/OpenSource/SD/Default.aspx
+
+Open the sharpdevelop.sln Solution File.  Build using the 
+"Build"->"Build Solution" menu option.
+
+The resulting DLLs will be in bin\Debug or the bin\Release directories 
+depending on you settings under "Build"->"Set Configuration"
+
+To run the Unit Tests, you must first start an Apache ActiveMQ Broker 
+and then use the "View"->"Tools"->"Unit Tests" menu option.  On the
+newly displayed Unit Tests view, click the "Run tests" button.
+
+Note: Seems like the nunit integration in SharpDevelop still needs a 
+little work because on a WindowsXP x64 system, running the tests caused 
+some Unexpected Exception errors.
+
+
+=======================================================================
 Building With NAnt
-==============================================================
+=======================================================================
 To build the code using NAnt type
 
   nant
