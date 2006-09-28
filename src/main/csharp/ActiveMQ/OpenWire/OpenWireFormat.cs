@@ -38,6 +38,8 @@ namespace ActiveMQ.OpenWire
         public OpenWireFormat()
         {
             dataMarshallers = new BaseDataStreamMarshaller[256];
+            // TODO: We need to dynamically load the marshaller factory based
+            // on the openwire version.
             MarshallerFactory factory = new MarshallerFactory();
             factory.configure(this);
         }

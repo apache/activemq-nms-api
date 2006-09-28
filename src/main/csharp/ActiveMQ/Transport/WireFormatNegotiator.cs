@@ -26,8 +26,6 @@ namespace ActiveMQ.Transport
     /// </summary>
     public class WireFormatNegotiator : TransportFilter
     {
-        public const int OPENWIRE_VERSION = 2;
-
 
         public WireFormatNegotiator(ITransport next) : base(next) {
         }
@@ -43,7 +41,7 @@ namespace ActiveMQ.Transport
             info.TcpNoDelayEnabled=false;
             info.CacheEnabled=false;
             info.SizePrefixDisabled=false;
-            info.Version = OPENWIRE_VERSION;
+            info.Version = 1;
 
             Oneway(info);
         }

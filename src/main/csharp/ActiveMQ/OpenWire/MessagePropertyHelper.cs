@@ -29,7 +29,7 @@ namespace ActiveMQ.OpenWire
         
         public MessagePropertyHelper()
         {
-            // TODO find all of the JMS properties via introspection
+            // TODO find all of the NMS properties via introspection
         }
         
         

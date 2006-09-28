@@ -202,8 +202,6 @@ namespace ActiveMQ.Commands
         
         /**
          * @param destination
-         * @return @throws JMSException
-         * @throws javax.jms.JMSException
          */
         public static ActiveMQDestination Transform(IDestination destination)
         {
@@ -408,7 +406,7 @@ namespace ActiveMQ.Commands
         /**
          * Returns true if this destination represents a collection of
          * destinations; allowing a set of destinations to be published to or subscribed
-         * from in one JMS operation.
+         * from in one NMS operation.
          * <p/>
          * If this destination is a composite then you can call {@link #getChildDestinations()}
          * to return the list of child destinations.

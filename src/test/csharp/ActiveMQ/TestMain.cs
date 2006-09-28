@@ -48,7 +48,7 @@ namespace ActiveMQ
                     // lets send a message
                     ITextMessage request = session.CreateTextMessage("Hello World!");
                     request.NMSCorrelationID = "abc";
-                    request.Properties["JMSXGroupID"] = "cheese";
+                    request.Properties["NMSXGroupID"] = "cheese";
                     request.Properties["myHeader"] = "James";
                     
                     producer.Send(request);

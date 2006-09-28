@@ -80,12 +80,7 @@ namespace ActiveMQ.Commands
             get { return Destination; }
             set { this.Destination = ActiveMQDestination.Transform(value); }
         }
-        
-        
-        // IMessage interface
-        
-        // JMS headers
-        
+                               
         /// <summary>
         /// The correlation ID used to correlate messages with conversations or long running business processes
         /// </summary>
@@ -207,12 +202,12 @@ namespace ActiveMQ.Commands
         }
         
         
-        // JMS Extension headers
+        // NMS Extension headers
         
         /// <summary>
         /// Returns the number of times this message has been redelivered to other consumers without being acknowledged successfully.
         /// </summary>
-        public int JMSXDeliveryCount
+        public int NMSXDeliveryCount
         {
             get {
                 return RedeliveryCounter + 1;
@@ -223,7 +218,7 @@ namespace ActiveMQ.Commands
         /// <summary>
         /// The Message Group ID used to group messages together to the same consumer for the same group ID value
         /// </summary>
-        public string JMSXGroupID
+        public string NMSXGroupID
         {
             get {
                 return GroupID;
@@ -235,7 +230,7 @@ namespace ActiveMQ.Commands
         /// <summary>
         /// The Message Group Sequence counter to indicate the position in a group
         /// </summary>
-        public int JMSXGroupSeq
+        public int NMSXGroupSeq
         {
             get {
                 return GroupSequence;
@@ -248,7 +243,7 @@ namespace ActiveMQ.Commands
         /// <summary>
         /// Returns the ID of the producers transaction
         /// </summary>
-        public string JMSXProducerTXID
+        public string NMSXProducerTXID
         {
             get {
                 TransactionId txnId = OriginalTransactionId;

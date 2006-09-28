@@ -1,0 +1,64 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A5FCA129-991B-4CB2-987A-B25E43B0F5EC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MSMQ</RootNamespace>
+    <AssemblyName>msmq</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <StartupObject>
+    </StartupObject>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>activemq-dotnet.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\main\csharp\MSMQ\BaseMessage.cs" />
+    <Compile Include="src\main\csharp\MSMQ\BytesMessage.cs" />
+    <Compile Include="src\main\csharp\MSMQ\Connection.cs" />
+    <Compile Include="src\main\csharp\MSMQ\ConnectionFactory.cs" />
+    <Compile Include="src\main\csharp\MSMQ\Destination.cs" />
+    <Compile Include="src\main\csharp\MSMQ\MapMessage.cs" />
+    <Compile Include="src\main\csharp\MSMQ\MessageConsumer.cs" />
+    <Compile Include="src\main\csharp\MSMQ\MessageProducer.cs" />
+    <Compile Include="src\main\csharp\MSMQ\ObjectMessage.cs" />
+    <Compile Include="src\main\csharp\MSMQ\PrimitiveMap.cs" />
+    <Compile Include="src\main\csharp\MSMQ\Queue.cs" />
+    <Compile Include="src\main\csharp\MSMQ\Session.cs" />
+    <Compile Include="src\main\csharp\MSMQ\StreamMessage.cs" />
+    <Compile Include="src\main\csharp\MSMQ\TextMessage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="vs2005-nms.csproj">
+      <Project>{300C1716-0674-4D01-8F5D-151E59A504FE}</Project>
+      <Name>vs2005-nms</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="activemq-dotnet.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

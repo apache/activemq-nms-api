@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+
 namespace NMS
 {
 	/// <summary>
@@ -21,10 +23,17 @@ namespace NMS
 	/// </summary>
 	public class NMSException : System.Exception
 	{
-		public NMSException(string message) : base(message)
+	    
+		public NMSException(string message) 
+		    : base(message)
 		{
 		}
-	}
+	    
+        public NMSException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+    }
 }
 
 
