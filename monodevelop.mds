@@ -1,0 +1,28 @@
+<Combine name="monodevelop" fileversion="2.0">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="CombineConfiguration">
+      <Entry build="True" name="monodevelop-nms" configuration="Debug" />
+      <Entry build="True" name="monodevelop-nms-test" configuration="Debug" />
+      <Entry build="True" name="monodevelop-activemq" configuration="Debug" />
+      <Entry build="True" name="monodevelop-activemq-test" configuration="Debug" />
+    </Configuration>
+    <Configuration name="Release" ctype="CombineConfiguration">
+      <Entry build="True" name="monodevelop-nms" configuration="Debug" />
+      <Entry build="True" name="monodevelop-nms-test" configuration="Debug" />
+      <Entry build="True" name="monodevelop-activemq" configuration="Debug" />
+      <Entry build="True" name="monodevelop-activemq-test" configuration="Debug" />
+    </Configuration>
+  </Configurations>
+  <StartMode startupentry="monodevelop-activemq-test" single="True">
+    <Execute type="None" entry="monodevelop-nms" />
+    <Execute type="None" entry="monodevelop-nms-test" />
+    <Execute type="None" entry="monodevelop-activemq" />
+    <Execute type="None" entry="monodevelop-activemq-test" />
+  </StartMode>
+  <Entries>
+    <Entry filename="./monodevelop-nms.mdp" />
+    <Entry filename="./monodevelop-nms-test.mdp" />
+    <Entry filename="./monodevelop-activemq.mdp" />
+    <Entry filename="./monodevelop-activemq-test.mdp" />
+  </Entries>
+</Combine>

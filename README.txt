@@ -43,6 +43,18 @@ Note: Seems like the nunit integration in SharpDevelop still needs a
 little work because on a WindowsXP x64 system, running the tests caused 
 some Unexpected Exception errors.
 
+=======================================================================
+Building With monodevelop 
+=======================================================================
+
+monodevelop is an open source IDE that you can download from:
+http://www.monodevelop.com/
+
+Open the monodevelop.mds Solution File.  Build using the 
+"Run"->"Build Solution" menu option.
+
+The resulting DLLs will be in bin\Debug or the bin\Release directories 
+depending on the configuration you have selected in the Build bar.
 
 =======================================================================
 Building With NAnt
