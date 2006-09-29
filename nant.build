@@ -170,8 +170,8 @@
   <target name="build-nms-test" depends="init,build-nms" description="Build the nms-test library">
     <echo message="Building the nms-test library" />
 
-    <attrib file="src/test/csharp/NMS/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/test/csharp/NMS/CommonAssemblyInfo.cs')}" />
-    <asminfo output="src/test/csharp/NMS/CommonAssemblyInfo.cs" language="CSharp">
+    <attrib file="src/test/csharp/NMS/Test/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/test/csharp/NMS/Test/CommonAssemblyInfo.cs')}" />
+    <asminfo output="src/test/csharp/NMS/Test/CommonAssemblyInfo.cs" language="CSharp">
       <imports>
         <import namespace="System" />
         <import namespace="System.Reflection" />
@@ -199,7 +199,7 @@
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
-        <include name="src/test/csharp/NMS/**.cs" />
+	      <include name="src/test/csharp/NMS/Test/**.cs" />
       </sources>
       <references failonempty="true">
         <include name="System.dll" asis="true"/>

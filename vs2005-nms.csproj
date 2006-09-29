@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\main\csharp\NMS\CommonAssemblyInfo.cs" />
     <Compile Include="src\main\csharp\NMS\IBytesMessage.cs" />
     <Compile Include="src\main\csharp\NMS\IConnection.cs" />
     <Compile Include="src\main\csharp\NMS\IConnectionFactory.cs" />

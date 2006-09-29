@@ -243,6 +243,7 @@
     <Compile Include="src\main\csharp\ActiveMQ\Commands\Xid.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\main\csharp\ActiveMQ\CommonAssemblyInfo.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\Connection.cs">
       <SubType>Code</SubType>
     </Compile>

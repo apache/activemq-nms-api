@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="src\main\csharp\MSMQ\BaseMessage.cs" />
     <Compile Include="src\main\csharp\MSMQ\BytesMessage.cs" />
+    <Compile Include="src\main\csharp\MSMQ\CommonAssemblyInfo.cs" />
     <Compile Include="src\main\csharp\MSMQ\Connection.cs" />
     <Compile Include="src\main\csharp\MSMQ\ConnectionFactory.cs" />
     <Compile Include="src\main\csharp\MSMQ\Destination.cs" />
