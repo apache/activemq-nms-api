@@ -235,6 +235,7 @@
     <File name="./src/main/csharp/ActiveMQ/Commands/TransactionInfo.cs" subtype="Code" buildaction="Compile" />
     <File name="./src/main/csharp/ActiveMQ/Commands/WireFormatInfo.cs" subtype="Code" buildaction="Compile" />
     <File name="./src/main/csharp/ActiveMQ/Commands/XATransactionId.cs" subtype="Code" buildaction="Compile" />
+    <File name="./src/main/csharp/ActiveMQ/CommonAssemblyInfo.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
     <ProjectReference type="Project" localcopy="True" refto="monodevelop-nms" />

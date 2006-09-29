@@ -31,6 +31,7 @@
     <File name="./src/test/csharp/ActiveMQ/OpenWire/EndianTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./src/test/csharp/ActiveMQ/OpenWire/PrimitiveMapTest.cs" subtype="Code" buildaction="Compile" />
     <File name="./src/test/csharp/ActiveMQ/Commands/CommandTest.cs" subtype="Code" buildaction="Compile" />
+    <File name="./src/test/csharp/ActiveMQ/CommonAssemblyInfo.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
     <ProjectReference type="Project" localcopy="True" refto="monodevelop-nms" />
