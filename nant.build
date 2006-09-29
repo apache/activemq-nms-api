@@ -29,6 +29,9 @@
   <property name="project.version.full"  value="${project.version + if(project.release.type == 'release', '', '-' + project.release.type)}" dynamic="true" />
 
   <property name="basedir"               value="${project::get-base-directory()}" />
+  <property name="build.dir"             value="${basedir}/build" />
+  <property name="doc.dir"               value="${build.dir}/doc" />
+
   <property name="lib.dir"               value="${path::combine(basedir, 'lib')}" dynamic="true" />
   <property name="lib.family.dir"        value="${path::combine(lib.dir, framework::get-family(framework::get-target-framework()))}" dynamic="true" />
   <property name="lib.framework.dir"     value="${path::combine(lib.family.dir, version::to-string(framework::get-version(framework::get-target-framework())))}" dynamic="true" />
@@ -103,7 +106,6 @@
     <call target="${project.config}"/>
     <call target="set-framework-configuration"/>
 
-    <property name="build.dir" value="${basedir}/build" />
     <property name="build.bin.dir" value="${basedir}/build/${project.config}/bin" />
 
     <echo message="Initializing ${build.bin.dir}" />
@@ -412,17 +414,56 @@
   </target>
 
   <target name="doc" depends="build-activemq">
+
+    <mkdir dir="${doc.dir}/nms"/>
     <ndoc failonerror="false">
       <assemblies basedir="${build.bin.dir}">
         <include name="nms.dll" />
-        <include name="activemq.dll" />
       </assemblies>
       <summaries basedir="${basedir}/src/main/ndoc">
         <include name="NamespaceSummary.xml" />
       </summaries>
       <documenters>
         <documenter name="MSDN">
-          <property name="OutputDirectory" value="${build.bin.dir}" />
+		<property name="OutputDirectory" value="${doc.dir}/nms" />
+          <property name="HtmlHelpName" value="NMS" />
+          <property name="HtmlHelpCompilerFilename" value="hhc.exe" />
+          <property name="IncludeFavorites" value="False" />
+          <property name="Title" value="The Apache NMS Class Library (.Net Messaging Library)" />
+          <property name="SplitTOCs" value="False" />
+          <property name="DefaulTOC" value="" />
+          <!--
+            <property name="ShowVisualBasic" value="True" />
+            <property name="ShowMissingSummaries" value="True" />
+            <property name="ShowMissingRemarks" value="True" />
+            <property name="ShowMissingParams" value="True" />
+            <property name="ShowMissingReturns" value="True" />
+            <property name="ShowMissingValues" value="True" />
+          -->
+          <property name="DocumentInternals" value="False" />
+          <property name="DocumentProtected" value="True" />
+          <property name="DocumentPrivates" value="False" />
+          <property name="DocumentEmptyNamespaces" value="False" />
+          <property name="IncludeAssemblyVersion" value="False" />
+          <property name="CopyrightText" value="" />
+          <property name="CopyrightHref" value="" />
+        </documenter>
+      </documenters>
+    </ndoc>
+
+    <mkdir dir="${doc.dir}/all"/>
+    <ndoc failonerror="false">
+      <assemblies basedir="${build.bin.dir}">
+        <include name="nms.dll" />
+        <include name="activemq.dll" />
+        <include name="msmq.dll" if="${platform::is-win32()}"/>
+      </assemblies>
+      <summaries basedir="${basedir}/src/main/ndoc">
+        <include name="NamespaceSummary.xml" />
+      </summaries>
+      <documenters>
+        <documenter name="MSDN">
+          <property name="OutputDirectory" value="${doc.dir}/all" />
           <property name="HtmlHelpName" value="NMS" />
           <property name="HtmlHelpCompilerFilename" value="hhc.exe" />
           <property name="IncludeFavorites" value="False" />
