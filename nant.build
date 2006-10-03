@@ -125,6 +125,10 @@
 
     <echo message="Building the nms library" />
 
+    <echo>Creating build dir ${build.bin.dir}</echo>
+    <mkdir dir="${build.bin.dir}"/>
+    
+
     <attrib file="src/main/csharp/NMS/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/main/csharp/NMS/CommonAssemblyInfo.cs')}" />
     <asminfo output="src/main/csharp/NMS/CommonAssemblyInfo.cs" language="CSharp">
       <imports>
@@ -148,7 +152,6 @@
       </attributes>
     </asminfo>
 
-    
     <csc target="library" define="${current.build.defines}" warnaserror="false" debug="${build.debug}"
       output="${build.bin.dir}/nms.dll" doc="${build.bin.dir}/nms.xml">
       <nowarn>
@@ -411,6 +414,7 @@
 
   <target name="clean" depends="init" description="Deletes build">
     <delete dir="build" if="${directory::exists('build')}" />
+    <mkdir dir="build"/>
   </target>
 
   <target name="doc" depends="build-activemq">

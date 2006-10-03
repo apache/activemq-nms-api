@@ -16,6 +16,8 @@
  */
 using NMS;
 using System;
+using System.Collections.Specialized;
+
 namespace ActiveMQ.Commands
 {
     
@@ -73,7 +75,8 @@ namespace ActiveMQ.Commands
         private const String COMPOSITE_SEPARATOR = ",";
         
         private String physicalName = "";
-        
+		private StringDictionary options = null;
+      
         // Cached transient data
         private bool exclusive;
         private bool ordered;
@@ -95,11 +98,32 @@ namespace ActiveMQ.Commands
          */
         protected ActiveMQDestination(String name)
         {
-            this.physicalName = name;
+			setPhysicalName(name);
             this.advisory = name != null && name.StartsWith(ADVISORY_PREFIX);
         }
-        
-        
+
+		/// <summary>
+		/// Dictionary of name/value pairs representing option values specified
+		/// in the URI used to create this Destination.  A null value is returned
+		/// if no options were specified.
+		/// </summary>
+		internal StringDictionary Options
+		{
+			get { return this.options; }
+		}
+
+		private void setPhysicalName(string name)
+		{
+			this.physicalName = name;
+
+			int p = name.IndexOf('?');
+			if (p >= 0)
+			{
+				String optstring = physicalName.Substring(p + 1);
+				this.physicalName = name.Substring(0, p);
+				options = Util.URISupport.ParseQuery(optstring);
+			}
+		}
         
         /**
          * @return Returns the advisory.

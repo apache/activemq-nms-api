@@ -26,25 +26,20 @@ namespace ActiveMQ.Transport.Tcp {
     public class TcpTransportFactory : ITransportFactory {
         private bool useLogging = false;
 
-        public bool UseLogging {
+        public bool UseLogging 
+		{
             get { return useLogging; } 
             set { useLogging = value; } 
         }
 
-        public ITransport CreateTransport(Uri location) {
-
+        public ITransport CreateTransport(Uri location) 
+		{
             // Console.WriteLine("Opening socket to: " + host + " on port: " + port);
             Socket socket = Connect(location.Host, location.Port);
             ITransport rc = new TcpTransport(socket);
-            
-            // TODO use URI query string to configure properties on this object
-            
-            // TODO - dirty hack - replace with better URI query parsing later
-            if (location.Query.IndexOf("logging=true") >= 0) {
-                UseLogging = true;
-            }
-            
-            if (UseLogging) {
+
+			// At present the URI is parsed for options by the ConnectionFactory
+			if (UseLogging) {
                 rc = new LoggingTransport(rc);
             }
             rc = new ResponseCorrelator(rc);

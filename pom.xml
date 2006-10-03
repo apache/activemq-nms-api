@@ -16,23 +16,35 @@
     limitations under the License.
 -->
 <project>
+  <!--
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
     <version>4.1-incubator-SNAPSHOT</version>
   </parent>
+  -->
+  <groupId>org.apache.activemq</groupId>
+  <version>4.1-incubator-SNAPSHOT</version>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>activemq-dotnet</artifactId>
   <packaging>dotnet-library</packaging>
 
+
   <repositories>
     <repository>
-      <id>maven-csharp</id>
-      <name>maven-csharp</name>
-      <url>http://maven-csharp.javaforge.com/repo</url>
+      <id>project-repo</id>
+      <name>project repo</name>
+      <url>file:${basedir}/maven-repo</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
   </repositories>
+
 
   <build>
 
@@ -44,6 +56,7 @@
     <plugins>
 
       <!-- Used to generate the openwire commands and marshallers -->
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -61,16 +74,15 @@
           </dependency>
         </dependencies>
       </plugin>
+      -->
 
       <!-- Manages the lifecycle of a dotnet project -->
-      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-csharp-lifecycle-plugin</artifactId>
-        <version>1.0.RC6-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
         <extensions>true</extensions>
       </plugin>
-      -->
 
       <!-- Used to customize the dotnet compiler options -->
       <plugin>
@@ -140,17 +152,17 @@
       </plugin>
 
       <!-- For Running NUNIT tests -->
-      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-nunit-plugin</artifactId>
-        <version>1.0.RC6-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
+
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-vstudio-plugin</artifactId>
-        <version>1.0.RC6-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
         <configuration>
           <frameworkHome>${dotnet.home}</frameworkHome>
           <includes>
@@ -160,7 +172,6 @@
           </includes>
         </configuration>
       </plugin>
-      -->
 
     </plugins>
   </build>
@@ -175,16 +186,42 @@
       <scope>system</scope>
       <systemPath>${dotnet.home}/System.dll</systemPath>
     </dependency -->
-    <!--
+
+    <dependency>
+      <groupId>nunit</groupId>
+      <artifactId>nunit-framework</artifactId>
+      <version>2.2</version>
+      <type>dotnet-library</type>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>nunit</groupId>
       <artifactId>nunit-console</artifactId>
       <version>2.2</version>
       <type>dotnet-exe</type>
+      <scope>system</scope>
+      <systemPath>${dotnet.home}/nunit-console.exe</systemPath>
+    </dependency>
+
+    <!--
+    <dependency>
+      <groupId>nunit</groupId>
+      <artifactId>nunit-console</artifactId>
+      <version>2.2.8</version>
+      <type>dotnet-exe</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>nunit</groupId>
+      <artifactId>nunit-console-runner</artifactId>
+      <version>2.2.8</version>
+      <type>dotnet-library</type>
       <scope>test</scope>
     </dependency>
     -->
   </dependencies>
+
 
   <properties>
     <activemq-core-dir>../activemq-trunk/activemq-core</activemq-core-dir>

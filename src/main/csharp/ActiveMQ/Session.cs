@@ -317,7 +317,14 @@ namespace ActiveMQ
             answer.Selector = selector;
             answer.PrefetchSize = prefetchSize;
             
-            // TODO configure other features on the consumer
+            // If the destination contained a URI query, then use it to set public properties
+            // on the ConsumerInfo
+            ActiveMQDestination amqDestination = destination as ActiveMQDestination;
+            if (amqDestination != null && amqDestination.Options != null)
+            {
+            	Util.URISupport.SetProperties(answer, amqDestination.Options, "consumer.");
+            }
+            
             return answer;
         }
         
@@ -333,6 +340,17 @@ namespace ActiveMQ
             }
             answer.ProducerId = id;
             answer.Destination = ActiveMQDestination.Transform(destination);
+
+            answer.Destination = ActiveMQDestination.Transform(destination);
+
+            // If the destination contained a URI query, then use it to set public 
+            // properties on the ProducerInfo
+            ActiveMQDestination amqDestination = destination as ActiveMQDestination;
+            if (amqDestination != null && amqDestination.Options != null)
+            {
+            	Util.URISupport.SetProperties(answer, amqDestination.Options, "producer.");
+            }
+
             return answer;
         }
         

@@ -17,6 +17,7 @@
 using ActiveMQ.Commands;
 using ActiveMQ.Transport;
 using ActiveMQ.Transport.Tcp;
+using ActiveMQ.Util;
 using NMS;
 using System;
 
@@ -49,10 +50,22 @@ namespace ActiveMQ
         public IConnection CreateConnection(string userName, string password)
         {
             ConnectionInfo info = CreateConnectionInfo(userName, password);
-            ITransport transport = new TcpTransportFactory().CreateTransport(brokerUri);
+
+            // Extract query parameters from broker Uri
+            System.Collections.Specialized.StringDictionary map = URISupport.ParseQuery(brokerUri.Query);
+
+            TcpTransportFactory tcpTransportFactory = new TcpTransportFactory();
+            // Set properties on connection using parameters prefixed with "transport."
+            URISupport.SetProperties(tcpTransportFactory, map, "transport.");
+
+			ITransport transport = tcpTransportFactory.CreateTransport(brokerUri);
+
             Connection connection = new Connection(transport, info);
-            connection.ClientId = info.ClientId;
-            return connection;
+			connection.ClientId = info.ClientId;
+			// Set properties on connection using parameters prefixed with "jms."
+			URISupport.SetProperties(connection, map, "jms.");
+
+			return connection;
         }
         
         // Properties

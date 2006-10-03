@@ -691,6 +691,10 @@
     <Compile Include="src\main\csharp\ActiveMQ\Transport\WireFormatNegotiator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\main\csharp\ActiveMQ\Util\URISupport.cs">
+      <SubType>Code</SubType>
+    </Compile>
+
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vs2005-nms.csproj">
