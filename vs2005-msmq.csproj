@@ -41,7 +41,9 @@
     <Compile Include="src\main\csharp\MSMQ\CommonAssemblyInfo.cs" />
     <Compile Include="src\main\csharp\MSMQ\Connection.cs" />
     <Compile Include="src\main\csharp\MSMQ\ConnectionFactory.cs" />
+    <Compile Include="src\main\csharp\MSMQ\DefaultMessageConverter.cs" />
     <Compile Include="src\main\csharp\MSMQ\Destination.cs" />
+    <Compile Include="src\main\csharp\MSMQ\IMessageConverter.cs" />
     <Compile Include="src\main\csharp\MSMQ\MapMessage.cs" />
     <Compile Include="src\main\csharp\MSMQ\MessageConsumer.cs" />
     <Compile Include="src\main\csharp\MSMQ\MessageProducer.cs" />

@@ -30,17 +30,19 @@ namespace MSMQ
 
         private long messageCounter;
         private bool persistent;
-        private long timeToLive;
+        private TimeSpan timeToLive;
         private int priority;
         private bool disableMessageID;
         private bool disableMessageTimestamp;
         
         private MessageQueue messageQueue;
+        private IMessageConverter messageConverter;
 
         public MessageProducer(Session session, Destination destination)
         {
             this.session = session;
             this.destination = destination;
+            MessageConverter = session.MessageConverter;
             if (destination != null)
             {
                 messageQueue = openMessageQueue(destination);
@@ -109,23 +111,13 @@ namespace MSMQ
                 }
 
                 // Convert the Mesasge into a MSMQ message
-                Message msg = new Message();                
-                if ( message.NMSReplyTo!=null )
-                {
-                    responseQueue = new MessageQueue(((Destination)message.NMSReplyTo).Path);
-                }
-                if ( timeToLive!=null )
-                {
-                    msg.TimeToBeReceived = TimeSpan.FromMilliseconds(timeToLive);
-                }
-                if ( message.NMSCorrelationID!=null )
-                {
-                    msg.CorrelationId = message.NMSCorrelationID;
-                }
-                msg.Recoverable = persistent;
-                msg.Priority = MessagePriority.Normal;
-                msg.ResponseQueue = responseQueue;
-
+                message.NMSPersistent = persistent;
+                message.NMSExpiration = TimeToLive;
+                message.NMSPriority = (byte)priority;
+                
+                // message.NMSTimestamp = new DateTime().Date.;
+                Message msg = messageConverter.convertToMSMQMessage(message);
+                // TODO: message.NMSMessageId = 
                 // Now Send the message
                 if( mq.Transactional )
                 {
@@ -185,7 +177,7 @@ namespace MSMQ
             set { persistent = value; }
         }
 
-        public long TimeToLive
+        public TimeSpan TimeToLive
         {
             get { return timeToLive; }
             set { timeToLive = value; }
@@ -208,5 +200,12 @@ namespace MSMQ
             get { return disableMessageTimestamp; }
             set { disableMessageTimestamp = value; }
         }
+
+        public IMessageConverter MessageConverter
+        {
+            get { return messageConverter; }
+            set { messageConverter = value; }
+        }
+
     }
 }

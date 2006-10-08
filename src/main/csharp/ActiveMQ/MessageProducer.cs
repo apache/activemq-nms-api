@@ -16,6 +16,7 @@
  */
 using ActiveMQ.Commands;
 using NMS;
+using System;
 
 namespace ActiveMQ
 {
@@ -30,7 +31,7 @@ namespace ActiveMQ
         private long messageCounter;
         
         bool persistent;
-        long timeToLive;
+        TimeSpan timeToLive;
         int priority;
         bool disableMessageID;
         bool disableMessageTimestamp;
@@ -78,8 +79,8 @@ namespace ActiveMQ
             get { return persistent; }
             set { this.persistent = value; }
         }
-        
-        public long TimeToLive
+
+        public TimeSpan TimeToLive
         {
             get { return timeToLive; }
             set { this.timeToLive = value; }

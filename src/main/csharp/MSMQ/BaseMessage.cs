@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using NMS;
-
+using System;
 
 namespace MSMQ
 {
@@ -26,7 +26,7 @@ namespace MSMQ
         private PrimitiveMap properties;
         private Destination destination;
         private string correlationId;
-        private long expiration;
+        private TimeSpan expiration;
         private string messageId;
         private bool persistent;
         private byte priority;
@@ -34,7 +34,7 @@ namespace MSMQ
         private string type;
         private event AcknowledgeHandler Acknowledger;
         private byte[] content;
-        private long timestamp;
+        private DateTime timestamp;
 
         public byte[] Content
         {
@@ -95,7 +95,7 @@ namespace MSMQ
         /// <summary>
         /// The time in milliseconds that this message should expire in
         /// </summary>
-        public long NMSExpiration
+        public TimeSpan NMSExpiration
         {
             get {
                 return expiration;
@@ -169,7 +169,7 @@ namespace MSMQ
         /// <summary>
         /// The timestamp the broker added to the message
         /// </summary>
-        public long NMSTimestamp
+        public DateTime NMSTimestamp
         {
             get {
                 return timestamp;

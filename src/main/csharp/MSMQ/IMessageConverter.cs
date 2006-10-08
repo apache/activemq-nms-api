@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
+using System.Messaging;
 using NMS;
-
 
 namespace MSMQ
 {
-	public class BytesMessage : BaseMessage, IBytesMessage
+    public interface IMessageConverter
     {
+        Message convertToMSMQMessage(IMessage message);
+        IMessage convertFromMSMQMessage(Message message);
     }
 }
-

@@ -28,12 +28,14 @@ namespace MSMQ
         private Connection connection;
         private AcknowledgementMode acknowledgementMode;
         private MessageQueueTransaction messageQueueTransaction;
+        private IMessageConverter messageConverter;
 
         public Session(Connection connection, AcknowledgementMode acknowledgementMode)
         {
             this.connection = connection;
-            this.acknowledgementMode = acknowledgementMode;            
-            if( this.acknowledgementMode == AcknowledgementMode.Transactional )
+            this.acknowledgementMode = acknowledgementMode;
+            MessageConverter = connection.MessageConverter;
+            if (this.acknowledgementMode == AcknowledgementMode.Transactional)
             {
                 MessageQueueTransaction = new MessageQueueTransaction();
             }
@@ -166,6 +168,12 @@ namespace MSMQ
                 return messageQueueTransaction;
             }
             set { messageQueueTransaction = value; }
+        }
+
+        public IMessageConverter MessageConverter
+        {
+            get { return messageConverter; }
+            set { messageConverter = value; }
         }
 
     }

@@ -19,32 +19,34 @@ using NMS;
 namespace MSMQ
 {
     /// <summary>
-    /// Represents a connection with a message broker
+    /// Represents a NMS connection MSMQ.  Since the underlying MSMQ APIs are actually 
+    /// connectionless, NMS connection in the MSMQ case are not expensive operations.
     /// </summary>
+    /// 
     public class Connection : IConnection
     {
         
         private AcknowledgementMode acknowledgementMode = AcknowledgementMode.AutoAcknowledge;
-        
+        private IMessageConverter messageConverter = new DefaultMessageConverter();
+
         private bool connected;
         private bool closed;
         private string clientId;
-
-
 
         /// <summary>
         /// Starts message delivery for this connection.
         /// </summary>
         public void Start()
         {
+            CheckConnected();
         }
-        
-        
+                
         /// <summary>
         /// Stop message delivery for this connection.
         /// </summary>
         public void Stop()
         {
+            CheckConnected();
         }
         
         /// <summary>
@@ -60,6 +62,7 @@ namespace MSMQ
         /// </summary>
         public ISession CreateSession(AcknowledgementMode mode)
         {
+            CheckConnected();
             return new Session(this, mode);
         }
         
@@ -73,7 +76,13 @@ namespace MSMQ
             get { return acknowledgementMode; }
             set { acknowledgementMode = value; }
         }
-        
+
+        public IMessageConverter MessageConverter
+        {
+            get { return messageConverter; }
+            set { messageConverter = value; }
+        }
+
         public string ClientId
         {
             get { return clientId; }

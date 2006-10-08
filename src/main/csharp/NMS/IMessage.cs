@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+
 namespace NMS
 {
     /// <summary>
@@ -54,9 +56,10 @@ namespace NMS
         }
         
         /// <summary>
-        /// The time in milliseconds that this message should expire in
+        /// The amount of time that this message is valid for.  null If this
+        /// message does not expire.
         /// </summary>
-        long NMSExpiration
+        TimeSpan NMSExpiration
         {
             get;
             set;
@@ -108,9 +111,9 @@ namespace NMS
         
         
         /// <summary>
-        /// The timestamp the broker added to the message
+        /// The timestamp of when the message was pubished.
         /// </summary>
-        long NMSTimestamp
+        DateTime NMSTimestamp
         {
             get;
         }

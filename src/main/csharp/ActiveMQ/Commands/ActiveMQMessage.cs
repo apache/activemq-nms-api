@@ -16,7 +16,7 @@
  */
 using ActiveMQ.OpenWire;
 using NMS;
-
+using System;
 
 namespace ActiveMQ.Commands
 {
@@ -27,6 +27,8 @@ namespace ActiveMQ.Commands
 {
 	public class ActiveMQMessage : Message, IMessage, MarshallAware
     {
+        private DateTime UNIX_TIME_BASE = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+
         public const byte ID_ActiveMQMessage = 23;
         
         protected static MessagePropertyHelper propertyHelper = new MessagePropertyHelper();
@@ -107,13 +109,13 @@ namespace ActiveMQ.Commands
         /// <summary>
         /// The time in milliseconds that this message should expire in
         /// </summary>
-        public long NMSExpiration
+        public TimeSpan NMSExpiration
         {
             get {
-                return Expiration;
+                return TimeSpan.FromMilliseconds(Expiration);
             }
             set {
-                Expiration = value;
+                Expiration = value.Milliseconds;
             }
         }
         
@@ -181,10 +183,11 @@ namespace ActiveMQ.Commands
         /// <summary>
         /// The timestamp the broker added to the message
         /// </summary>
-        public long NMSTimestamp
+        public DateTime NMSTimestamp
         {
             get {
-                return Timestamp;
+                DateTime rc = UNIX_TIME_BASE.AddMilliseconds(Timestamp);
+                return rc.ToLocalTime();
             }
         }
         

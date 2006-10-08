@@ -20,16 +20,21 @@ using System;
 namespace MSMQ
 {
     /// <summary>
-    /// Represents a connection with a message broker
+    /// A Factory that can estbalish NMS connections to MSMQ
     /// </summary>
     public class ConnectionFactory : IConnectionFactory
-    {        
-                
+    {   
+        //
+        // Creates a connection to MSMQ
+        //
         public IConnection CreateConnection()
         {
             return new Connection();
         }
         
+        //
+        // Creates a connection to MSQM
+        //
         public IConnection CreateConnection(string userName, string password)
         {
             return new Connection();
