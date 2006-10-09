@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.IO;
+using System.Threading;
 using ActiveMQ.Commands;
+using ActiveMQ.OpenWire;
 using ActiveMQ.Transport;
 using System;
+using ActiveMQ.Util;
 
 namespace ActiveMQ.Transport
 {
@@ -26,24 +30,76 @@ namespace ActiveMQ.Transport
     /// </summary>
     public class WireFormatNegotiator : TransportFilter
     {
+        private OpenWireFormat wireFormat;
+        private TimeSpan negotiateTimeout=new TimeSpan(0,0,15);
+    
+        private AtomicBoolean firstStart=new AtomicBoolean(true);
+        private CountDownLatch readyCountDownLatch = new CountDownLatch(1);
+        private CountDownLatch wireInfoSentDownLatch = new CountDownLatch(1);
 
-        public WireFormatNegotiator(ITransport next) : base(next) {
+        public WireFormatNegotiator(ITransport next, OpenWireFormat wireFormat)
+            : base(next)
+        {
+            this.wireFormat = wireFormat;
         }
         
         public override void Start() {
             base.Start();
+            if (firstStart.compareAndSet(true, false))
+            {
+                try
+                {
+                    next.Oneway(wireFormat.PreferedWireFormatInfo);
+                }
+                finally
+                {
+                    wireInfoSentDownLatch.countDown();
+                }
+            }
+        }
+        
+        public override void Dispose() {
+        	base.Dispose();
+            readyCountDownLatch.countDown();
+        }
 
+        public override void Oneway(Command command)
+        {
+            if (!readyCountDownLatch.await(negotiateTimeout))
+                throw new IOException("Wire format negociation timeout: peer did not send his wire format.");
+            next.Oneway(command);
+        }
 
-            // now lets start the protocol negotiation
-            WireFormatInfo info = new WireFormatInfo();
-            info.StackTraceEnabled=false;
-            info.TightEncodingEnabled=false;
-            info.TcpNoDelayEnabled=false;
-            info.CacheEnabled=false;
-            info.SizePrefixDisabled=false;
-            info.Version = 1;
+        protected override void OnCommand(ITransport sender, Command command)
+        {
+            if ( command.GetDataStructureType() == WireFormatInfo.ID_WireFormatInfo )
+            {
+                WireFormatInfo info = (WireFormatInfo)command;
+                try
+                {
+                    if (!info.Valid)
+                    {
+                        throw new IOException("Remote wire format magic is invalid");
+                    }
+                    wireInfoSentDownLatch.await(negotiateTimeout);
+                    wireFormat.renegotiateWireFormat(info);
+                }
+                catch (Exception e)
+                {
+                    OnException(this, e);
+                } 
+                finally
+                {
+                    readyCountDownLatch.countDown();
+                }
+            }
+            this.commandHandler(sender, command);
+        }
 
-            Oneway(info);
+        protected override void OnException(ITransport sender, Exception command)
+        {
+            readyCountDownLatch.countDown();
+            this.exceptionHandler(sender, command);
         }
     }
 }

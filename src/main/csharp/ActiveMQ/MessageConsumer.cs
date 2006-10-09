@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
 using ActiveMQ.Commands;
 using NMS;
 using System.Threading;
@@ -144,7 +145,13 @@ namespace ActiveMQ
                 {
                    //here we add the code that if do acknowledge action.
                    message = AutoAcknowledge(message);
-                   listener(message);
+                   try
+                   {
+                       listener(message);
+                   } catch(Exception e)
+                   {
+                       // TODO: what do do if the listener errors out?
+                   }
                 }
 
                 // lets now break to give the acknowledgement a chance to be processed

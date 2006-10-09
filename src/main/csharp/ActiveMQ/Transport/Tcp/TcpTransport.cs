@@ -75,7 +75,7 @@ namespace ActiveMQ.Transport.Tcp
         
         public void Oneway(Command command)
         {
-            wireformat.Marshal(command, socketWriter);
+            Wireformat.Marshal(command, socketWriter);
             socketWriter.Flush();
         }
         
@@ -104,7 +104,7 @@ namespace ActiveMQ.Transport.Tcp
             {
                 try
                 {
-                    Command command = (Command) wireformat.Unmarshal(socketReader);
+                    Command command = (Command) Wireformat.Unmarshal(socketReader);
                     this.commandHandler(this, command);
                 }
                 catch (ObjectDisposedException)
@@ -135,6 +135,11 @@ namespace ActiveMQ.Transport.Tcp
             set { this.exceptionHandler = value; }
         }
 
+        public OpenWireFormat Wireformat
+        {
+            get { return wireformat; }
+            set { wireformat = value; }
+        }
     }
 }
 

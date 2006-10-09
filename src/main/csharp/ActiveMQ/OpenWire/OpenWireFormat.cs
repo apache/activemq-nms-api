@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.Reflection;
 using ActiveMQ.Commands;
 using ActiveMQ.OpenWire.V1;
 using System;
@@ -30,18 +31,25 @@ namespace ActiveMQ.OpenWire
         private BaseDataStreamMarshaller[] dataMarshallers;
         private const byte NULL_TYPE = 0;
 		
-		private int version=1;
+		private int version;
 		private bool stackTraceEnabled=false;
 		private bool tightEncodingEnabled=false;
 		private bool sizePrefixDisabled=false;
-		
+        private int minimumVersion=1;
+
+        private WireFormatInfo preferedWireFormatInfo = new WireFormatInfo();
+        
         public OpenWireFormat()
         {
+            PreferedWireFormatInfo.StackTraceEnabled = false;
+            PreferedWireFormatInfo.TightEncodingEnabled = false;
+            PreferedWireFormatInfo.TcpNoDelayEnabled = false;
+            PreferedWireFormatInfo.CacheEnabled = false;
+            PreferedWireFormatInfo.SizePrefixDisabled = false;
+            PreferedWireFormatInfo.Version = 2;
+            
             dataMarshallers = new BaseDataStreamMarshaller[256];
-            // TODO: We need to dynamically load the marshaller factory based
-            // on the openwire version.
-            MarshallerFactory factory = new MarshallerFactory();
-            factory.configure(this);
+            Version = 1;
         }
                 
         public bool StackTraceEnabled {
@@ -50,7 +58,14 @@ namespace ActiveMQ.OpenWire
         }
         public int Version {
             get { return version; }
-			set { version = value; }
+			set {
+
+                Assembly dll = Assembly.GetExecutingAssembly();
+                Type type = dll.GetType("ActiveMQ.OpenWire.V"+value+".MarshallerFactory", false);
+                IMarshallerFactory factory = (IMarshallerFactory) Activator.CreateInstance(type);			    
+                factory.configure(this);			    
+			    version = value; 			
+			}
         }
         public bool SizePrefixDisabled {
             get { return sizePrefixDisabled; }
@@ -59,6 +74,20 @@ namespace ActiveMQ.OpenWire
         public bool TightEncodingEnabled {
             get { return tightEncodingEnabled; }
 			set { tightEncodingEnabled = value; }
+        }
+
+        public WireFormatInfo PreferedWireFormatInfo
+        {
+            get { return preferedWireFormatInfo; }
+            set { preferedWireFormatInfo = value; }
+        }
+
+        public void clearMarshallers()
+        {
+            for (int i=0; i < dataMarshallers.Length; i++ )
+            {
+                dataMarshallers[i] = null;
+            }
         }
         
         public void addMarshaller(BaseDataStreamMarshaller marshaller)
@@ -276,6 +305,21 @@ namespace ActiveMQ.OpenWire
                 return null;
             }
         }
-        
+
+        public void renegotiateWireFormat(WireFormatInfo info)
+        {
+            if (info.Version < minimumVersion)
+            {
+                throw new IOException("Remote wire format (" + info.Version +") is lower the minimum version required (" + minimumVersion + ")");
+            }
+
+            this.Version = Math.Min( PreferedWireFormatInfo.Version, info.Version);
+            this.stackTraceEnabled = info.StackTraceEnabled && PreferedWireFormatInfo.StackTraceEnabled;
+//            this.tcpNoDelayEnabled = info.TcpNoDelayEnabled && PreferedWireFormatInfo.TcpNoDelayEnabled;
+//            this.cacheEnabled = info.CacheEnabled && PreferedWireFormatInfo.CacheEnabled;
+            this.tightEncodingEnabled = info.TightEncodingEnabled && PreferedWireFormatInfo.TightEncodingEnabled;
+            this.sizePrefixDisabled = info.SizePrefixDisabled && PreferedWireFormatInfo.SizePrefixDisabled;
+            
+        }
     }
 }

@@ -9,7 +9,7 @@
     <RootNamespace>ActiveMQ</RootNamespace>
     <AssemblyName>activemq</AssemblyName>
     <WarningLevel>4</WarningLevel>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>activemq-dotnet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -277,6 +277,7 @@
     <Compile Include="src\main\csharp\ActiveMQ\OpenWire\BooleanStream.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\main\csharp\ActiveMQ\OpenWire\IMarshallerFactory.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\OpenWire\EndianSupport.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -691,10 +692,11 @@
     <Compile Include="src\main\csharp\ActiveMQ\Transport\WireFormatNegotiator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\main\csharp\ActiveMQ\Util\AtomicBoolean.cs" />
+    <Compile Include="src\main\csharp\ActiveMQ\Util\CountDownLatch.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\Util\URISupport.cs">
       <SubType>Code</SubType>
     </Compile>
-
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vs2005-nms.csproj">

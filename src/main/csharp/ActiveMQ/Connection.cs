@@ -39,8 +39,9 @@ namespace ActiveMQ
         private long sessionCounter;
         private long temporaryDestinationCounter;
         private long localTransactionCounter;
-        
-        
+        private bool closing;
+
+
         public Connection(ITransport transport, ConnectionInfo info)
         {
             this.transport = transport;
@@ -93,6 +94,7 @@ namespace ActiveMQ
                 session.Dispose();
             }
             */
+            closing = true;
             DisposeOf(ConnectionId);
             sessions.Clear();
 			transport.Oneway(new ShutdownInfo());
@@ -269,6 +271,14 @@ namespace ActiveMQ
             else if (command is BrokerInfo)
             {
                 this.brokerInfo = (BrokerInfo) command;
+            }
+            else if (command is ShutdownInfo)
+            {
+                ShutdownInfo info = (ShutdownInfo)command;
+                if( !closing && !closed )
+                {
+                    OnException(transport, new NMSException("Broker closed this connection."));
+                }
             }
             else
             {

@@ -15,6 +15,7 @@
 * limitations under the License.
 */
 
+using System;
 using ActiveMQ.OpenWire;
 using NMS;
 
@@ -65,6 +66,23 @@ namespace ActiveMQ.Commands
             set { this.magic = value; }
         }
 
+        public bool Valid
+        {
+            get
+            {
+                if ( magic == null )
+                    return false;
+                if (magic.Length != MAGIC.Length)
+                    return false;
+                for (int i = 0; i < magic.Length; i++ )
+                {
+                    if( magic[i]!=MAGIC[i] )
+                        return false;
+                }
+                return true;
+            }
+        }
+        
         public int Version
         {
             get { return version; }

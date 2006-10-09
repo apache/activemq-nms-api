@@ -196,7 +196,7 @@ namespace NMS.Test
 
         protected virtual string CreateDestinationName()
         {
-            return "Test.DotNet." + GetType().Name;
+            return "Test.DotNet." + GetType().Name + "." + DateTime.Now.Ticks;
         }
         
         protected virtual IMessage CreateMessage()

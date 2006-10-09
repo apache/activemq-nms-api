@@ -36,15 +36,17 @@ namespace ActiveMQ.Transport.Tcp {
 		{
             // Console.WriteLine("Opening socket to: " + host + " on port: " + port);
             Socket socket = Connect(location.Host, location.Port);
-            ITransport rc = new TcpTransport(socket);
+            TcpTransport tcpTransport = new TcpTransport(socket);
+            ITransport rc = tcpTransport;
 
-			// At present the URI is parsed for options by the ConnectionFactory
+            rc = new WireFormatNegotiator(rc, tcpTransport.Wireformat);
+            
+            // At present the URI is parsed for options by the ConnectionFactory
 			if (UseLogging) {
                 rc = new LoggingTransport(rc);
             }
             rc = new ResponseCorrelator(rc);
             rc = new MutexTransport(rc);
-            rc = new WireFormatNegotiator(rc);
 
             return rc;
         }

@@ -34,11 +34,11 @@ namespace ActiveMQ.OpenWire.V1
 	/// <summary>
 	/// Used to create marshallers for a specific version of the wire protocol
 	/// </summary>
-    public class MarshallerFactory
+    public class MarshallerFactory : IMarshallerFactory
     {
         public void configure(OpenWireFormat format) 
         {
-
+            format.clearMarshallers();
             format.addMarshaller(new LocalTransactionIdMarshaller());
             format.addMarshaller(new PartialCommandMarshaller());
             format.addMarshaller(new IntegerResponseMarshaller());
