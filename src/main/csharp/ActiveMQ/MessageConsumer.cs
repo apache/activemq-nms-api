@@ -196,7 +196,7 @@ namespace ActiveMQ
         {
             MessageAck ack = CreateMessageAck(message);
             //Console.WriteLine("Sending Ack: " + ack);
-            session.Connection.SyncRequest(ack);
+            session.Connection.OneWay(ack);
         }
         
         
