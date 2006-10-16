@@ -256,7 +256,7 @@ namespace ActiveMQ
                 MessageConsumer consumer = (MessageConsumer) consumers[consumerId];
                 if (consumer == null)
                 {
-                    Console.WriteLine("ERROR: No such consumer active: " + consumerId);
+					Tracer.Error("No such consumer active: " + consumerId);
                 }
                 else
                 {
@@ -282,14 +282,14 @@ namespace ActiveMQ
             }
             else
             {
-                Console.WriteLine("ERROR: Unknown command: " + command);
+                Tracer.Error("Unknown command: " + command);
             }
         }
 		
-		protected void OnException(ITransport sender, Exception exception) {
-			Console.WriteLine("ERROR: Transport Exception: " + exception);
+		protected void OnException(ITransport sender, Exception exception)
+		{
+			Tracer.ErrorFormat("Transport Exception: {0}" + exception.ToString());
 		}
-		
         
         protected SessionInfo CreateSessionInfo(AcknowledgementMode acknowledgementMode)
         {

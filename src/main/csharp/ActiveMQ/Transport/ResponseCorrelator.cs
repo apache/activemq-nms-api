@@ -99,7 +99,7 @@ namespace ActiveMQ.Transport
                         this.commandHandler(sender, command);
                     }
                     else {
-                        Console.WriteLine("ERROR: Unknown response ID: " + response.CommandId + " for response: " + response);
+                        Tracer.Error("Unknown response ID: " + response.CommandId + " for response: " + response);
                     }
                 }
             } else {

@@ -55,7 +55,7 @@ namespace ActiveMQ.Commands
                 Content = body.Marshal();
             }
             
-            Console.WriteLine("BeforeMarshalling, content is: " + Content);
+            //Console.WriteLine("BeforeMarshalling, content is: " + Content);
 			
             base.BeforeMarshall(wireFormat);
         }

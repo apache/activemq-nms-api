@@ -69,7 +69,7 @@ namespace ActiveMQ.Transport
                     }
                     catch (Exception e)
 					{
-                        Console.WriteLine("Caught while waiting on monitor: " + e);
+                        Tracer.Error("Caught while waiting on monitor: " + e);
                     }
                 }
                 return response;

@@ -30,18 +30,18 @@ namespace ActiveMQ.Transport
 		}
 		
 		protected override void OnCommand(ITransport sender, Command command) {
-			System.Diagnostics.Trace.WriteLine("RECEIVED: " + command);
+			Tracer.Info("RECEIVED: " + command);
 			this.commandHandler(sender, command);
 		}
 		
 		protected override void OnException(ITransport sender, Exception error) {
-			System.Diagnostics.Trace.WriteLine("RECEIVED Exception: " + error);
+			Tracer.Error("RECEIVED Exception: " + error);
 			this.exceptionHandler(sender, error);
 		}
 		
 		public override void Oneway(Command command)
 		{
-			System.Diagnostics.Trace.WriteLine("SENDING: " + command);
+			Tracer.Info("SENDING: " + command);
 			this.next.Oneway(command);
 		}
 				

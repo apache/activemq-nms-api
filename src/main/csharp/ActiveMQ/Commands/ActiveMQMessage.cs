@@ -27,7 +27,9 @@ namespace ActiveMQ.Commands
 {
 	public class ActiveMQMessage : Message, IMessage, MarshallAware
     {
-        private DateTime UNIX_TIME_BASE = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        // TODO doesn't work on Mono
+        private DateTime UNIX_TIME_BASE = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+        //private DateTime UNIX_TIME_BASE = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
         public const byte ID_ActiveMQMessage = 23;
         
