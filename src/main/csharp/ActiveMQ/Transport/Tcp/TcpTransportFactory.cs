@@ -23,46 +23,50 @@ using ActiveMQ.OpenWire;
 using ActiveMQ.Transport;
 
 namespace ActiveMQ.Transport.Tcp {
-    public class TcpTransportFactory : ITransportFactory {
-        private bool useLogging = false;
+        public class TcpTransportFactory : ITransportFactory
+        {
+                private bool useLogging = false;
 
-        public bool UseLogging 
-		{
-            get { return useLogging; } 
-            set { useLogging = value; } 
-        }
-
-        public ITransport CreateTransport(Uri location) 
-		{
-            // Console.WriteLine("Opening socket to: " + host + " on port: " + port);
-            Socket socket = Connect(location.Host, location.Port);
-            TcpTransport tcpTransport = new TcpTransport(socket);
-            ITransport rc = tcpTransport;
-
-            rc = new WireFormatNegotiator(rc, tcpTransport.Wireformat);
-            
-            // At present the URI is parsed for options by the ConnectionFactory
-			if (UseLogging) {
-                rc = new LoggingTransport(rc);
-            }
-            rc = new ResponseCorrelator(rc);
-            rc = new MutexTransport(rc);
-
-            return rc;
-        }
-
-        protected Socket Connect(string host, int port) {
-            // Looping through the AddressList allows different type of connections to be tried
-            // (IPv4, IPv6 and whatever else may be available).
-            IPHostEntry hostEntry = Dns.Resolve(host);
-            foreach (IPAddress address in hostEntry.AddressList) {
-                Socket socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                socket.Connect(new IPEndPoint(address, port));
-                if (socket.Connected) {
-                    return socket;
+                public bool UseLogging {
+                        get { return useLogging; } 
+                        set { useLogging = value; } 
                 }
-            }
-            throw new SocketException();
+
+                public ITransport CreateTransport(Uri location)
+                {
+                        // Console.WriteLine("Opening socket to: " + host + " on port: " + port);
+                        Socket socket = Connect(location.Host, location.Port);
+                        TcpTransport tcpTransport = new TcpTransport(socket);
+                        ITransport rc = tcpTransport;
+
+                        // At present the URI is parsed for options by the ConnectionFactory
+                        if (UseLogging)
+                        {
+                                rc = new LoggingTransport(rc);
+                        }
+
+                        rc = new WireFormatNegotiator(rc, tcpTransport.Wireformat);
+                        rc = new ResponseCorrelator(rc);
+                        rc = new MutexTransport(rc);
+
+                        return rc;
+                }
+
+                protected Socket Connect(string host, int port)
+                {
+                        // Looping through the AddressList allows different type of connections to be tried
+                        // (IPv4, IPv6 and whatever else may be available).
+                        IPHostEntry hostEntry = Dns.Resolve(host);
+                        foreach (IPAddress address in hostEntry.AddressList)
+                        {
+                                Socket socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                                socket.Connect(new IPEndPoint(address, port));
+                                if (socket.Connected)
+                                {
+                                        return socket;
+                                }
+                        }
+                        throw new SocketException();
+                }
         }
-    }
 }
