@@ -49,14 +49,24 @@ namespace ActiveMQ
         
         public void Send(IDestination destination, IMessage message)
         {
-            MessageId id = new MessageId();
-            id.ProducerId = info.ProducerId;
-            lock (this)
-            {
-                id.ProducerSequenceId = ++messageCounter;
-            }
-            ActiveMQMessage activeMessage = (ActiveMQMessage) message;
-            activeMessage.MessageId = id;
+			ActiveMQMessage activeMessage = (ActiveMQMessage)message;
+
+			if (!disableMessageID)
+			{
+				MessageId id = new MessageId();
+				id.ProducerId = info.ProducerId;
+				lock (this)
+				{
+					id.ProducerSequenceId = ++messageCounter;
+				}
+				activeMessage.MessageId = id;
+			}
+
+			if (!disableMessageTimestamp)
+			{
+				activeMessage.Timestamp = ActiveMQ.Util.DateUtils.ToJavaTime(DateTime.UtcNow);
+			}
+
             activeMessage.ProducerId = info.ProducerId;
             activeMessage.Destination = ActiveMQDestination.Transform(destination);
             
