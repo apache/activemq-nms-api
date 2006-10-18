@@ -104,7 +104,7 @@ namespace ActiveMQ.Commands
         public IDestination NMSDestination
         {
             get {
-                return OriginalDestination;
+                return Destination;
             }
         }
         
