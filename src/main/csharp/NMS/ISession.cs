@@ -116,34 +116,5 @@ namespace NMS {
                 /// </summary>
                 void Rollback();
 
-
-
-
-                /// <summary>
-                /// Sets the prefetch size, the maximum number of messages a broker will dispatch to consumers
-                /// until acknowledgements are received.
-                /// </summary>
-                int PrefetchSize { get; set; } 
-
-                /// <summary>
-                /// Enables or disables whether asynchronous dispatch should be used by the broker
-                /// </summary>
-                bool DispatchAsync { get; set; } 
-
-                /// <summary>
-                /// Enables or disables exclusive consumers when using queues. An exclusive consumer means
-                /// only one instance of a consumer is allowed to process messages on a queue to preserve order
-                /// </summary>
-                bool Exclusive { get; set; } 
-
-                /// <summary>
-                /// Enables or disables retroactive mode for consumers; i.e. do they go back in time or not?
-                /// </summary>
-                bool Retroactive { get; set; } 
-
-                /// <summary>
-                /// Sets the default consumer priority for consumers
-                /// </summary>
-                byte Priority { get; set; } 
         }
 }
