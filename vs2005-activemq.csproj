@@ -696,6 +696,7 @@
     </Compile>
     <Compile Include="src\main\csharp\ActiveMQ\Util\AtomicBoolean.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\Util\CountDownLatch.cs" />
+    <Compile Include="src\main\csharp\ActiveMQ\Util\DateUtils.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\Util\URISupport.cs">
       <SubType>Code</SubType>
     </Compile>
