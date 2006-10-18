@@ -51,18 +51,14 @@ namespace ActiveMQ
         {
             ConnectionInfo info = CreateConnectionInfo(userName, password);
 
-            // Extract query parameters from broker Uri
-            System.Collections.Specialized.StringDictionary map = URISupport.ParseQuery(brokerUri.Query);
-
             TcpTransportFactory tcpTransportFactory = new TcpTransportFactory();
-            // Set properties on connection using parameters prefixed with "transport."
-            URISupport.SetProperties(tcpTransportFactory, map, "transport.");
-
 			ITransport transport = tcpTransportFactory.CreateTransport(brokerUri);
 
             Connection connection = new Connection(transport, info);
 			connection.ClientId = info.ClientId;
+
 			// Set properties on connection using parameters prefixed with "jms."
+			System.Collections.Specialized.StringDictionary map = URISupport.ParseQuery(brokerUri.Query);
 			URISupport.SetProperties(connection, map, "jms.");
 
 			return connection;

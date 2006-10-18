@@ -73,7 +73,7 @@ namespace ActiveMQ.Util
 			Type type = target.GetType();
 			foreach(string key in map.Keys)
 			{
-				if(key.StartsWith(prefix))
+				if(key.ToLower().StartsWith(prefix.ToLower()))
 				{
 					string bareKey = key.Substring(prefix.Length);
 					System.Reflection.PropertyInfo prop = type.GetProperty(bareKey, System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.IgnoreCase);

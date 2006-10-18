@@ -21,6 +21,7 @@ using System.Net.Sockets;
 using ActiveMQ.Commands;
 using ActiveMQ.OpenWire;
 using ActiveMQ.Transport;
+using ActiveMQ.Util;
 
 namespace ActiveMQ.Transport.Tcp {
         public class TcpTransportFactory : ITransportFactory
@@ -34,16 +35,24 @@ namespace ActiveMQ.Transport.Tcp {
 
                 public ITransport CreateTransport(Uri location)
                 {
+                        // Extract query parameters from broker Uri
+                        System.Collections.Specialized.StringDictionary map = URISupport.ParseQuery(location.Query);
+
+                        // Set transport. properties on this (the factory)
+                        URISupport.SetProperties(this, map, "transport.");
+
                         // Console.WriteLine("Opening socket to: " + host + " on port: " + port);
                         Socket socket = Connect(location.Host, location.Port);
                         TcpTransport tcpTransport = new TcpTransport(socket);
                         ITransport rc = tcpTransport;
 
-                        // At present the URI is parsed for options by the ConnectionFactory
                         if (UseLogging)
                         {
                                 rc = new LoggingTransport(rc);
                         }
+
+                        // Set wireformat. properties on the wireformat owned by the tcpTransport
+                        URISupport.SetProperties(tcpTransport.Wireformat.PreferedWireFormatInfo, map, "wireFormat.");
 
                         rc = new WireFormatNegotiator(rc, tcpTransport.Wireformat);
                         rc = new ResponseCorrelator(rc);

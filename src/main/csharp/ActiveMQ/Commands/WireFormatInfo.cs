@@ -49,7 +49,7 @@ namespace ActiveMQ.Commands
             return GetType().Name + "["
                 + " Magic=" + Magic
                 + " Version=" + Version
-                + " MarshalledProperties=" + MarshalledProperties
+                + " MarshalledProperties=" + Properties.ToString()
                 + " ]";
 
         }
