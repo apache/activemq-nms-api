@@ -286,10 +286,10 @@ namespace ActiveMQ
             }
         }
 		
-		protected void OnException(ITransport sender, Exception exception)
-		{
-			Tracer.ErrorFormat("Transport Exception: {0}" + exception.ToString());
-		}
+        protected void OnException(ITransport sender, Exception exception)
+	{
+                Tracer.ErrorFormat("Transport Exception: {0}", exception.ToString());
+	}
         
         protected SessionInfo CreateSessionInfo(AcknowledgementMode acknowledgementMode)
         {
