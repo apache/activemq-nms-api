@@ -32,6 +32,11 @@ namespace ActiveMQ
         private long consumerCounter;
         private long producerCounter;
         private int prefetchSize = 1000;
+        private int maximumPendingMessageLimit;
+        private byte priority;
+        private bool dispatchAsync;
+        private bool exclusive;
+        private bool retroactive;
         private IDictionary consumers = Hashtable.Synchronized(new Hashtable());
         private TransactionContext transactionContext;
         
@@ -43,6 +48,41 @@ namespace ActiveMQ
             transactionContext = new TransactionContext(this);
         }
         
+        public int PrefetchSize
+        {
+            get { return prefetchSize; }
+            set { this.prefetchSize = value; }            
+        }
+
+        public int MaximumPendingMessageLimit
+        {
+            get { return maximumPendingMessageLimit; }
+            set { this.maximumPendingMessageLimit = value; }            
+        }
+
+        public bool DispatchAsync
+        {
+            get { return dispatchAsync; }
+            set { this.dispatchAsync = value; }            
+        }
+
+        public bool Exclusive
+        {
+            get { return exclusive; }
+            set { this.exclusive = value; }            
+        }
+
+        public bool Retroactive
+        {
+            get { return retroactive; }
+            set { this.retroactive = value; }            
+        }
+
+        public byte Priority
+        {
+            get { return priority; }
+            set { this.priority = value; }            
+        }
         
         public void Dispose()
         {
@@ -316,6 +356,10 @@ namespace ActiveMQ
             answer.Destination = ActiveMQDestination.Transform(destination);
             answer.Selector = selector;
             answer.PrefetchSize = prefetchSize;
+            answer.Priority = priority;
+            answer.Exclusive = exclusive;
+            answer.DispatchAsync = dispatchAsync;
+            answer.Retroactive = retroactive;
             
             // If the destination contained a URI query, then use it to set public properties
             // on the ConsumerInfo

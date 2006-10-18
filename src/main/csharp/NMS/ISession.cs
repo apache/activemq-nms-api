@@ -14,110 +14,136 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace NMS
-{
-	/// <summary>
-	/// Represents a single unit of work on an IConnection.
-	/// So the ISession can be used to perform transactional receive and sends
-	/// </summary>
-	public interface ISession : System.IDisposable
-    {
-        
+namespace NMS {
         /// <summary>
-        /// Creates a producer of messages
+        /// Represents a single unit of work on an IConnection.
+        /// So the ISession can be used to perform transactional receive and sends
         /// </summary>
-        IMessageProducer CreateProducer();
-        
-        /// <summary>
-        /// Creates a producer of messages on a given destination
-        /// </summary>
-        IMessageProducer CreateProducer(IDestination destination);
-        
-        /// <summary>
-        /// Creates a consumer of messages on a given destination
-        /// </summary>
-        IMessageConsumer CreateConsumer(IDestination destination);
-        
-        /// <summary>
-        /// Creates a consumer of messages on a given destination with a selector
-        /// </summary>
-        IMessageConsumer CreateConsumer(IDestination destination, string selector);
-        
-        /// <summary>
-        /// Creates a named durable consumer of messages on a given destination with a selector
-        /// </summary>
-        IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
-		
-        /// <summary>
-        /// Returns the queue for the given name
-        /// </summary>
-        IQueue GetQueue(string name);
-        
-        /// <summary>
-        /// Returns the topic for the given name
-        /// </summary>
-        ITopic GetTopic(string name);
-        
-        
-        /// <summary>
-        /// Creates a temporary queue
-        /// </summary>
-        ITemporaryQueue CreateTemporaryQueue();
-		
-        /// <summary>
-        /// Creates a temporary topic
-        /// </summary>
-        ITemporaryTopic CreateTemporaryTopic();
-		
-        
-        // Factory methods to create messages
-        
-        /// <summary>
-        /// Creates a new message with an empty body
-        /// </summary>
-        IMessage CreateMessage();
-        
-        /// <summary>
-        /// Creates a new text message with an empty body
-        /// </summary>
-        ITextMessage CreateTextMessage();
-        
-        /// <summary>
-        /// Creates a new text message with the given body
-        /// </summary>
-        ITextMessage CreateTextMessage(string text);
-        
-        /// <summary>
-        /// Creates a new Map message which contains primitive key and value pairs
-        /// </summary>
-        IMapMessage CreateMapMessage();
-        
-        /// <summary>
-        /// Creates a new binary message
-        /// </summary>
-        IBytesMessage CreateBytesMessage();
-        
-        /// <summary>
-        /// Creates a new binary message with the given body
-        /// </summary>
-        IBytesMessage CreateBytesMessage(byte[] body);
-		
-		
-        // Transaction methods
-        
-        /// <summary>
-        /// If this is a transactional session then commit all message
-        /// send and acknowledgements for producers and consumers in this session
-        /// </summary>
-        void Commit();
-        
-        /// <summary>
-        /// If this is a transactional session then rollback all message
-        /// send and acknowledgements for producers and consumers in this session
-        /// </summary>
-        void Rollback();
-        
-    }
+        public interface ISession : System.IDisposable
+        {
+
+                /// <summary>
+                /// Creates a producer of messages
+                /// </summary>
+                IMessageProducer CreateProducer();
+
+                /// <summary>
+                /// Creates a producer of messages on a given destination
+                /// </summary>
+                IMessageProducer CreateProducer(IDestination destination);
+
+                /// <summary>
+                /// Creates a consumer of messages on a given destination
+                /// </summary>
+                IMessageConsumer CreateConsumer(IDestination destination);
+
+                /// <summary>
+                /// Creates a consumer of messages on a given destination with a selector
+                /// </summary>
+                IMessageConsumer CreateConsumer(IDestination destination, string selector);
+
+                /// <summary>
+                /// Creates a named durable consumer of messages on a given destination with a selector
+                /// </summary>
+                IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
+
+                /// <summary>
+                /// Returns the queue for the given name
+                /// </summary>
+                IQueue GetQueue(string name);
+
+                /// <summary>
+                /// Returns the topic for the given name
+                /// </summary>
+                ITopic GetTopic(string name);
+
+
+                /// <summary>
+                /// Creates a temporary queue
+                /// </summary>
+                ITemporaryQueue CreateTemporaryQueue();
+
+                /// <summary>
+                /// Creates a temporary topic
+                /// </summary>
+                ITemporaryTopic CreateTemporaryTopic();
+
+
+                // Factory methods to create messages
+
+                /// <summary>
+                /// Creates a new message with an empty body
+                /// </summary>
+                IMessage CreateMessage();
+
+                /// <summary>
+                /// Creates a new text message with an empty body
+                /// </summary>
+                ITextMessage CreateTextMessage();
+
+                /// <summary>
+                /// Creates a new text message with the given body
+                /// </summary>
+                ITextMessage CreateTextMessage(string text);
+
+                /// <summary>
+                /// Creates a new Map message which contains primitive key and value pairs
+                /// </summary>
+                IMapMessage CreateMapMessage();
+
+                /// <summary>
+                /// Creates a new binary message
+                /// </summary>
+                IBytesMessage CreateBytesMessage();
+
+                /// <summary>
+                /// Creates a new binary message with the given body
+                /// </summary>
+                IBytesMessage CreateBytesMessage(byte[] body);
+
+
+                // Transaction methods
+
+                /// <summary>
+                /// If this is a transactional session then commit all message
+                /// send and acknowledgements for producers and consumers in this session
+                /// </summary>
+                void Commit();
+
+                /// <summary>
+                /// If this is a transactional session then rollback all message
+                /// send and acknowledgements for producers and consumers in this session
+                /// </summary>
+                void Rollback();
+
+
+
+
+                /// <summary>
+                /// Sets the prefetch size, the maximum number of messages a broker will dispatch to consumers
+                /// until acknowledgements are received.
+                /// </summary>
+                int PrefetchSize { get; set; } 
+
+                /// <summary>
+                /// Enables or disables whether asynchronous dispatch should be used by the broker
+                /// </summary>
+                bool DispatchAsync { get; set; } 
+
+                /// <summary>
+                /// Enables or disables exclusive consumers when using queues. An exclusive consumer means
+                /// only one instance of a consumer is allowed to process messages on a queue to preserve order
+                /// </summary>
+                bool Exclusive { get; set; } 
+
+                /// <summary>
+                /// Enables or disables retroactive mode for consumers; i.e. do they go back in time or not?
+                /// </summary>
+                bool Retroactive { get; set; } 
+
+                /// <summary>
+                /// Sets the default consumer priority for consumers
+                /// </summary>
+                byte Priority { get; set; } 
+        }
 }
-
-
