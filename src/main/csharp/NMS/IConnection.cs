@@ -14,78 +14,84 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace NMS
-{
-	/// <summary>
-	/// The mode used to acknowledge messages after they are consumed
-	/// </summary>
-	public enum AcknowledgementMode
-    {
-		/**
-		 * With this acknowledgment mode, the session automatically
-		 * acknowledges a client's receipt of a message either when
-		 * the session has successfully returned from a call to receive
-		 * or when the message listener the session has called to
-		 * process the message successfully returns.
-		 */
-        AutoAcknowledge,
-        
-		/**
-		 * With this acknowledgment mode, the session automatically
-		 * acknowledges a client's receipt of a message either when
-		 * the session has successfully returned from a call to receive
-		 * or when the message listener the session has called to
-		 * process the message successfully returns.  Acknowlegements
-		 * may be delayed in this mode to increase performance at
-		 * the cost of the message being redelivered this client fails.
-		 */
-		DupsOkAcknowledge,
-		
-		/**
-		 * With this acknowledgment mode, the client acknowledges a
-		 * consumed message by calling the message's acknowledge method.
-		 */
-		ClientAcknowledge,
-		
-		/**
-		 * Messages will be consumed when the transaction commits.
-		 */
-		Transactional
-    }
-	
-	/// <summary>
-	/// Represents a connection with a message broker
-	/// </summary>
-	public interface IConnection : System.IDisposable, IStartable, IStoppable
-    {
-        
+using System;
+
+namespace NMS {
         /// <summary>
-        /// Creates a new session to work on this connection
+        /// The mode used to acknowledge messages after they are consumed
         /// </summary>
-        ISession CreateSession();
-        
+        public enum AcknowledgementMode
+        {
+                /**
+                 * With this acknowledgment mode, the session automatically
+                 * acknowledges a client's receipt of a message either when
+                 * the session has successfully returned from a call to receive
+                 * or when the message listener the session has called to
+                 * process the message successfully returns.
+                 */
+                AutoAcknowledge,
+
+                /**
+                 * With this acknowledgment mode, the session automatically
+                 * acknowledges a client's receipt of a message either when
+                 * the session has successfully returned from a call to receive
+                 * or when the message listener the session has called to
+                 * process the message successfully returns.  Acknowlegements
+                 * may be delayed in this mode to increase performance at
+                 * the cost of the message being redelivered this client fails.
+                 */
+                DupsOkAcknowledge,
+
+                /**
+                 * With this acknowledgment mode, the client acknowledges a
+                 * consumed message by calling the message's acknowledge method.
+                 */
+                ClientAcknowledge,
+
+                /**
+                 * Messages will be consumed when the transaction commits.
+                 */
+                Transactional
+        }
+
         /// <summary>
-        /// Creates a new session to work on this connection
+        /// A delegate that can receive transport level exceptions.
         /// </summary>
-        ISession CreateSession(AcknowledgementMode acknowledgementMode);
-        
-        
-        // Properties
-        
-        AcknowledgementMode AcknowledgementMode
+        public delegate void ExceptionListener(Exception exception);
+
+
+        /// <summary>
+        /// Represents a connection with a message broker
+        /// </summary>
+        public interface IConnection : System.IDisposable, IStartable, IStoppable
         {
-            get;
-            set;
+
+                /// <summary>
+                /// Creates a new session to work on this connection
+                /// </summary>
+                ISession CreateSession();
+
+                /// <summary>
+                /// Creates a new session to work on this connection
+                /// </summary>
+                ISession CreateSession(AcknowledgementMode acknowledgementMode);
+
+
+                /// <summary>
+                /// The default acknowledgement mode
+                /// </summary>
+                AcknowledgementMode AcknowledgementMode { get; set; } 
+
+                /// <summary>
+                /// Sets the unique clienet ID for this connection before Start() or returns the
+                /// unique client ID after the connection has started
+                /// </summary>
+                string ClientId { get; set; } 
+
+
+                /// <summary>
+                /// An asynchronous listener which can be notified if an error occurs
+                /// </summary>
+                event ExceptionListener ExceptionListener;
         }
-        
-        string ClientId
-        {
-            get;
-            set;
-        }
-        
-        
-    }
 }
-
-

@@ -40,8 +40,7 @@ namespace ActiveMQ
         private long temporaryDestinationCounter;
         private long localTransactionCounter;
         private bool closing;
-
-
+        
         public Connection(ITransport transport, ConnectionInfo info)
         {
             this.transport = transport;
@@ -50,6 +49,8 @@ namespace ActiveMQ
 			this.transport.Exception = new ExceptionHandler(OnException);
             this.transport.Start();
         }
+        
+        public event ExceptionListener ExceptionListener;
         
         /// <summary>
         /// Starts message delivery for this connection.
@@ -109,8 +110,7 @@ namespace ActiveMQ
             get { return transport; }
             set { this.transport = value; }
         }
-        
-        
+
         public AcknowledgementMode AcknowledgementMode
         {
             get { return acknowledgementMode; }
@@ -289,6 +289,7 @@ namespace ActiveMQ
         protected void OnException(ITransport sender, Exception exception)
 	{
                 Tracer.ErrorFormat("Transport Exception: {0}", exception.ToString());
+                ExceptionListener(exception);
 	}
         
         protected SessionInfo CreateSessionInfo(AcknowledgementMode acknowledgementMode)
