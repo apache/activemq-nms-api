@@ -63,9 +63,10 @@ namespace ActiveMQ.Transport.Tcp
 
                 started = true;
                 
-                NetworkStream networkStream = new NetworkStream(socket);
-                socketWriter = new OpenWireBinaryWriter(networkStream);
-                socketReader = new OpenWireBinaryReader(networkStream);
+                // As reported in AMQ-988 it appears that NetworkStream is not thread safe
+                // so lets use an instance for each of the 2 streams
+                socketWriter = new OpenWireBinaryWriter(new NetworkStream(socket));
+                socketReader = new OpenWireBinaryReader(new NetworkStream(socket));
                 
                 // now lets create the background read thread
                 readThread = new Thread(new ThreadStart(ReadLoop));
