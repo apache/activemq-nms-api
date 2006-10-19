@@ -56,7 +56,6 @@
     <plugins>
 
       <!-- Used to generate the openwire commands and marshallers -->
-      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -74,9 +73,8 @@
           </dependency>
         </dependencies>
       </plugin>
-      -->
 
-      <!-- Manages the lifecycle of a dotnet project -->
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-csharp-lifecycle-plugin</artifactId>
@@ -84,7 +82,6 @@
         <extensions>true</extensions>
       </plugin>
 
-      <!-- Used to customize the dotnet compiler options -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.0</version>
@@ -96,7 +93,6 @@
 
           <compilerArguments>
             <doc>true</doc>
-            <!--  example of ignoring warnings -->
             <nowarn>1591</nowarn>
           </compilerArguments>
 
@@ -105,11 +101,8 @@
           </includes>
 
         </configuration>
-
-        <!--  executions need to be specified for the dotnet plugin (is slightly ugly, hopefully can get rid of in future -->
         <executions>
 
-          <!--  this configuration is required to tell the compiler what is different about the main compile as apposed to the test compile -->
           <execution>
             <id>compile</id>
             <phase>compile</phase>
@@ -119,12 +112,10 @@
             <configuration>
               <compilerArguments>
                 <target>library</target>
-                <!--  mainClass>MyNamespace.MyStaticMainClass</mainClass -->
               </compilerArguments>
             </configuration>
           </execution>
 
-          <!--  this configuration is required to tell the compiler what is different about the main compile as apposed to the test compile -->
           <execution>
             <id>testCompile</id>
             <phase>test-compile</phase>
@@ -133,9 +124,7 @@
             </goals>
             <configuration>
               <compilerArguments>
-                <!--  the library element is required for test compile -->
                 <target>library</target>
-                <!--  the isTest element is required for the test compile -->
                 <out>unit-tests.dll</out>
               </compilerArguments>
             </configuration>
@@ -151,7 +140,6 @@
         </dependencies>
       </plugin>
 
-      <!-- For Running NUNIT tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-nunit-plugin</artifactId>
@@ -172,6 +160,7 @@
           </includes>
         </configuration>
       </plugin>
+      -->
 
     </plugins>
   </build>
@@ -186,7 +175,7 @@
       <scope>system</scope>
       <systemPath>${dotnet.home}/System.dll</systemPath>
     </dependency -->
-
+    <!--
     <dependency>
       <groupId>nunit</groupId>
       <artifactId>nunit-framework</artifactId>
@@ -203,6 +192,7 @@
       <scope>system</scope>
       <systemPath>${dotnet.home}/nunit-console.exe</systemPath>
     </dependency>
+      -->
 
     <!--
     <dependency>
