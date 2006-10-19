@@ -55,8 +55,8 @@ namespace ActiveMQ.Transport.Tcp {
                         URISupport.SetProperties(tcpTransport.Wireformat.PreferedWireFormatInfo, map, "wireFormat.");
 
                         rc = new WireFormatNegotiator(rc, tcpTransport.Wireformat);
-                        rc = new ResponseCorrelator(rc);
                         rc = new MutexTransport(rc);
+                        rc = new ResponseCorrelator(rc);
 
                         return rc;
                 }

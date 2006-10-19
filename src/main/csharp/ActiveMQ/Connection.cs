@@ -285,12 +285,13 @@ namespace ActiveMQ
                 Tracer.Error("Unknown command: " + command);
             }
         }
-		
+
         protected void OnException(ITransport sender, Exception exception)
-	{
-                Tracer.ErrorFormat("Transport Exception: {0}", exception.ToString());
+        {
+            Tracer.ErrorFormat("Transport Exception: {0}", exception.ToString());
+            if (ExceptionListener != null)
                 ExceptionListener(exception);
-	}
+        }
         
         protected SessionInfo CreateSessionInfo(AcknowledgementMode acknowledgementMode)
         {

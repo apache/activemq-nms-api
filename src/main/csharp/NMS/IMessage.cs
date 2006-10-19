@@ -111,7 +111,8 @@ namespace NMS
         
         
         /// <summary>
-        /// The timestamp of when the message was pubished.
+        /// The timestamp of when the message was pubished in UTC time.  If the publisher disables setting 
+        /// the timestamp on the message, the time will be set to the start of the UNIX epoc (1970-01-01 00:00:00).
         /// </summary>
         DateTime NMSTimestamp
         {

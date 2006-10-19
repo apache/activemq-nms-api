@@ -24,11 +24,21 @@ namespace ActiveMQ.Util
 		/// The difference between the Windows epoch (1601-01-01 00:00:00)
 		/// and the Unix epoch (1970-01-01 00:00:00) in milliseconds.
 		/// </summary>
-		const long EPOCH_DIFF = 11644473600000L;
-          
-		public static long ToJavaTime(DateTime dateTime)
+		public static readonly long EPOCH_DIFF = 11644473600000L;
+
+        /// <summary>
+        /// The start of the UNIX epoch
+        /// </summary>
+        public static readonly DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+
+	    public static long ToJavaTime(DateTime dateTime)
 		{
 			return dateTime.ToFileTime() + EPOCH_DIFF;
 		}
+
+        public static DateTime ToDateTime(long dateTime)
+        {
+            return UNIX_EPOCH.AddMilliseconds(dateTime);
+        }
 	}
 }

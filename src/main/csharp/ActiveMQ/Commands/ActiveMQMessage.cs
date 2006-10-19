@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using ActiveMQ.OpenWire;
+using ActiveMQ.Util;
 using NMS;
 using System;
 
@@ -27,10 +28,6 @@ namespace ActiveMQ.Commands
 {
 	public class ActiveMQMessage : Message, IMessage, MarshallAware
     {
-        // TODO doesn't work on Mono
-        private DateTime UNIX_TIME_BASE = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-        //private DateTime UNIX_TIME_BASE = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-
         public const byte ID_ActiveMQMessage = 23;
         
         protected static MessagePropertyHelper propertyHelper = new MessagePropertyHelper();
@@ -188,8 +185,7 @@ namespace ActiveMQ.Commands
         public DateTime NMSTimestamp
         {
             get {
-                DateTime rc = UNIX_TIME_BASE.AddMilliseconds(Timestamp);
-                return rc.ToLocalTime();
+                return DateUtils.ToDateTime(Timestamp);
             }
         }
         

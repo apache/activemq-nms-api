@@ -94,7 +94,9 @@ namespace MSMQ
                 clientId = value;
             }
         }
-                
+
+        public event ExceptionListener ExceptionListener;
+
         protected void CheckConnected()
         {
             if (closed)
