@@ -60,6 +60,7 @@ namespace ActiveMQ.Commands
         long arrival;
         string userID;
         bool recievedByDFBridge;
+        bool droppable;
 
 		public override string ToString() {
             return GetType().Name + "["
@@ -88,6 +89,7 @@ namespace ActiveMQ.Commands
                 + " Arrival=" + Arrival
                 + " UserID=" + UserID
                 + " RecievedByDFBridge=" + RecievedByDFBridge
+                + " Droppable=" + Droppable
                 + " ]";
 
 		}
@@ -247,6 +249,12 @@ namespace ActiveMQ.Commands
         {
             get { return recievedByDFBridge; }
             set { this.recievedByDFBridge = value; }            
+        }
+
+        public bool Droppable
+        {
+            get { return droppable; }
+            set { this.droppable = value; }            
         }
 
     }

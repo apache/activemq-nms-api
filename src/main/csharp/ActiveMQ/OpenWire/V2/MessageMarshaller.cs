@@ -81,6 +81,7 @@ namespace ActiveMQ.OpenWire.V2
         info.Arrival = TightUnmarshalLong(wireFormat, dataIn, bs);
         info.UserID = TightUnmarshalString(dataIn, bs);
         info.RecievedByDFBridge = bs.ReadBoolean();
+        info.Droppable = bs.ReadBoolean();
 
     }
 
@@ -115,6 +116,7 @@ namespace ActiveMQ.OpenWire.V2
         rc += TightMarshalLong1(wireFormat, info.Arrival, bs);
         rc += TightMarshalString1(info.UserID, bs);
         bs.WriteBoolean(info.RecievedByDFBridge);
+        bs.WriteBoolean(info.Droppable);
 
         return rc + 9;
     }
@@ -156,6 +158,7 @@ namespace ActiveMQ.OpenWire.V2
         TightMarshalObjectArray2(wireFormat, info.BrokerPath, dataOut, bs);
         TightMarshalLong2(wireFormat, info.Arrival, dataOut, bs);
         TightMarshalString2(info.UserID, dataOut, bs);
+        bs.ReadBoolean();
         bs.ReadBoolean();
 
     }
@@ -204,6 +207,7 @@ namespace ActiveMQ.OpenWire.V2
         info.Arrival = LooseUnmarshalLong(wireFormat, dataIn);
         info.UserID = LooseUnmarshalString(dataIn);
         info.RecievedByDFBridge = dataIn.ReadBoolean();
+        info.Droppable = dataIn.ReadBoolean();
 
     }
 
@@ -248,6 +252,7 @@ namespace ActiveMQ.OpenWire.V2
         LooseMarshalLong(wireFormat, info.Arrival, dataOut);
         LooseMarshalString(info.UserID, dataOut);
         dataOut.Write(info.RecievedByDFBridge);
+        dataOut.Write(info.Droppable);
 
     }
   }
