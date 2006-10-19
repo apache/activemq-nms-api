@@ -38,12 +38,18 @@ namespace ActiveMQ.Commands
         bool close;
         ConsumerId consumerId;
         int prefetch;
+        bool flush;
+        bool start;
+        bool stop;
 
 		public override string ToString() {
             return GetType().Name + "["
                 + " Close=" + Close
                 + " ConsumerId=" + ConsumerId
                 + " Prefetch=" + Prefetch
+                + " Flush=" + Flush
+                + " Start=" + Start
+                + " Stop=" + Stop
                 + " ]";
 
 		}
@@ -71,6 +77,24 @@ namespace ActiveMQ.Commands
         {
             get { return prefetch; }
             set { this.prefetch = value; }            
+        }
+
+        public bool Flush
+        {
+            get { return flush; }
+            set { this.flush = value; }            
+        }
+
+        public bool Start
+        {
+            get { return start; }
+            set { this.start = value; }            
+        }
+
+        public bool Stop
+        {
+            get { return stop; }
+            set { this.stop = value; }            
         }
 
     }

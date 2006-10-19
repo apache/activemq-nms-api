@@ -42,6 +42,8 @@ namespace ActiveMQ.Commands
         bool slaveBroker;
         bool masterBroker;
         bool faultTolerantConfiguration;
+        bool duplexConnection;
+        bool networkConnection;
 
 		public override string ToString() {
             return GetType().Name + "["
@@ -52,6 +54,8 @@ namespace ActiveMQ.Commands
                 + " SlaveBroker=" + SlaveBroker
                 + " MasterBroker=" + MasterBroker
                 + " FaultTolerantConfiguration=" + FaultTolerantConfiguration
+                + " DuplexConnection=" + DuplexConnection
+                + " NetworkConnection=" + NetworkConnection
                 + " ]";
 
 		}
@@ -103,6 +107,18 @@ namespace ActiveMQ.Commands
         {
             get { return faultTolerantConfiguration; }
             set { this.faultTolerantConfiguration = value; }            
+        }
+
+        public bool DuplexConnection
+        {
+            get { return duplexConnection; }
+            set { this.duplexConnection = value; }            
+        }
+
+        public bool NetworkConnection
+        {
+            get { return networkConnection; }
+            set { this.networkConnection = value; }            
         }
 
     }

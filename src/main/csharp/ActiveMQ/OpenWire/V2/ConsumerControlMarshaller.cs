@@ -59,6 +59,9 @@ namespace ActiveMQ.OpenWire.V2
         info.Close = bs.ReadBoolean();
         info.ConsumerId = (ConsumerId) TightUnmarshalNestedObject(wireFormat, dataIn, bs);
         info.Prefetch = dataIn.ReadInt32();
+        info.Flush = bs.ReadBoolean();
+        info.Start = bs.ReadBoolean();
+        info.Stop = bs.ReadBoolean();
 
     }
 
@@ -71,6 +74,9 @@ namespace ActiveMQ.OpenWire.V2
         int rc = base.TightMarshal1(wireFormat, info, bs);
         bs.WriteBoolean(info.Close);
         rc += TightMarshalNestedObject1(wireFormat, (DataStructure)info.ConsumerId, bs);
+        bs.WriteBoolean(info.Flush);
+        bs.WriteBoolean(info.Start);
+        bs.WriteBoolean(info.Stop);
 
         return rc + 4;
     }
@@ -85,6 +91,9 @@ namespace ActiveMQ.OpenWire.V2
         bs.ReadBoolean();
         TightMarshalNestedObject2(wireFormat, (DataStructure)info.ConsumerId, dataOut, bs);
         dataOut.Write(info.Prefetch);
+        bs.ReadBoolean();
+        bs.ReadBoolean();
+        bs.ReadBoolean();
 
     }
 
@@ -99,6 +108,9 @@ namespace ActiveMQ.OpenWire.V2
         info.Close = dataIn.ReadBoolean();
         info.ConsumerId = (ConsumerId) LooseUnmarshalNestedObject(wireFormat, dataIn);
         info.Prefetch = dataIn.ReadInt32();
+        info.Flush = dataIn.ReadBoolean();
+        info.Start = dataIn.ReadBoolean();
+        info.Stop = dataIn.ReadBoolean();
 
     }
 
@@ -113,6 +125,9 @@ namespace ActiveMQ.OpenWire.V2
         dataOut.Write(info.Close);
         LooseMarshalNestedObject(wireFormat, (DataStructure)info.ConsumerId, dataOut);
         dataOut.Write(info.Prefetch);
+        dataOut.Write(info.Flush);
+        dataOut.Write(info.Start);
+        dataOut.Write(info.Stop);
 
     }
   }

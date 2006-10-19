@@ -74,6 +74,8 @@ namespace ActiveMQ.OpenWire.V2
         info.SlaveBroker = bs.ReadBoolean();
         info.MasterBroker = bs.ReadBoolean();
         info.FaultTolerantConfiguration = bs.ReadBoolean();
+        info.DuplexConnection = bs.ReadBoolean();
+        info.NetworkConnection = bs.ReadBoolean();
 
     }
 
@@ -91,6 +93,8 @@ namespace ActiveMQ.OpenWire.V2
         bs.WriteBoolean(info.SlaveBroker);
         bs.WriteBoolean(info.MasterBroker);
         bs.WriteBoolean(info.FaultTolerantConfiguration);
+        bs.WriteBoolean(info.DuplexConnection);
+        bs.WriteBoolean(info.NetworkConnection);
 
         return rc + 0;
     }
@@ -106,6 +110,8 @@ namespace ActiveMQ.OpenWire.V2
         TightMarshalString2(info.BrokerURL, dataOut, bs);
         TightMarshalObjectArray2(wireFormat, info.PeerBrokerInfos, dataOut, bs);
         TightMarshalString2(info.BrokerName, dataOut, bs);
+        bs.ReadBoolean();
+        bs.ReadBoolean();
         bs.ReadBoolean();
         bs.ReadBoolean();
         bs.ReadBoolean();
@@ -138,6 +144,8 @@ namespace ActiveMQ.OpenWire.V2
         info.SlaveBroker = dataIn.ReadBoolean();
         info.MasterBroker = dataIn.ReadBoolean();
         info.FaultTolerantConfiguration = dataIn.ReadBoolean();
+        info.DuplexConnection = dataIn.ReadBoolean();
+        info.NetworkConnection = dataIn.ReadBoolean();
 
     }
 
@@ -156,6 +164,8 @@ namespace ActiveMQ.OpenWire.V2
         dataOut.Write(info.SlaveBroker);
         dataOut.Write(info.MasterBroker);
         dataOut.Write(info.FaultTolerantConfiguration);
+        dataOut.Write(info.DuplexConnection);
+        dataOut.Write(info.NetworkConnection);
 
     }
   }
