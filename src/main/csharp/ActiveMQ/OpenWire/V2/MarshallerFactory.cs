@@ -34,10 +34,11 @@ namespace ActiveMQ.OpenWire.V2
 	/// <summary>
 	/// Used to create marshallers for a specific version of the wire protocol
 	/// </summary>
-    public class MarshallerFactory
+    public class MarshallerFactory : IMarshallerFactory
     {
         public void configure(OpenWireFormat format) 
         {
+            format.clearMarshallers();
             format.addMarshaller(new ActiveMQBytesMessageMarshaller());
             format.addMarshaller(new ActiveMQMapMessageMarshaller());
             format.addMarshaller(new ActiveMQMessageMarshaller());
