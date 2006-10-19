@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vs2005-msmq-test", "vs2005-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vs2005-activemq-test", "vs2005-activemq-test.csproj", "{EB943C69-2C9B-45E7-B95B-FB916E7057ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vs2005-nms-cf20", "vs2005-nms-cf20.csproj", "{9C67B162-803E-4765-8A1C-041871E6928C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vs2005-activemq-cf20", "vs2005-activemq-cf20.csproj", "{B166EC33-6048-4231-BCCA-6C5AE55139A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +47,14 @@ Global
 		{EB943C69-2C9B-45E7-B95B-FB916E7057ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB943C69-2C9B-45E7-B95B-FB916E7057ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB943C69-2C9B-45E7-B95B-FB916E7057ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C67B162-803E-4765-8A1C-041871E6928C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C67B162-803E-4765-8A1C-041871E6928C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C67B162-803E-4765-8A1C-041871E6928C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C67B162-803E-4765-8A1C-041871E6928C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B166EC33-6048-4231-BCCA-6C5AE55139A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B166EC33-6048-4231-BCCA-6C5AE55139A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B166EC33-6048-4231-BCCA-6C5AE55139A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B166EC33-6048-4231-BCCA-6C5AE55139A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

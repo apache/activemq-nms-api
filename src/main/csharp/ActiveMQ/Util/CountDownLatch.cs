@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 using System;
-using System.Text;
 using System.Threading;
 
 namespace ActiveMQ.Util
 {
     class CountDownLatch
     {
+        readonly ManualResetEvent mutex = new ManualResetEvent(false);
         int remaining;
+        
         public CountDownLatch(int i)
         {
             remaining=i;
@@ -30,29 +31,38 @@ namespace ActiveMQ.Util
 
         public void countDown()
         {
-            lock(this)
+            lock (mutex)
             {
-                if( remaining > 0 ) {
+                if( remaining > 0 )
+                {
                     remaining--;
-                    Monitor.PulseAll(this);
+                    if( remaining == 0 )
+                    {
+                        mutex.Set();
+                    }
                 }
             }
         }
 
-        public bool await(TimeSpan timeout)
+        public int Remaining
         {
-            lock (this)
-            {
-                if (remaining > 0)
+            get { 
+                lock(mutex)
                 {
-                    Monitor.Wait(this, timeout);
-                    if (remaining > 0)
-                    {
-                        return false;
-                    }
-                }
+                    return remaining;
+                }            
             }
-            return true;
         }
+        
+        public bool await(int timeout)
+        {
+            return mutex.WaitOne(timeout, false);
+        }
+
+        public WaitHandle AsyncWaitHandle
+        {
+            get { return mutex; }
+        }
+        
     }
 }

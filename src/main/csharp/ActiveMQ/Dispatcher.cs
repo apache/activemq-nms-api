@@ -31,6 +31,7 @@ namespace ActiveMQ
         Queue queue = new Queue();
         Object semaphore = new Object();
         ArrayList messagesToRedeliver = new ArrayList();
+        readonly AutoResetEvent resetEvent = new AutoResetEvent(false);
 		
         /// <summary>
         /// Whem we start a transaction we must redeliver any rolled back messages
@@ -52,7 +53,8 @@ namespace ActiveMQ
                     replacement.Enqueue(element);
                 }
                 queue = replacement;
-                Monitor.PulseAll(semaphore);
+                if (queue.Count > 0)
+                    resetEvent.Set();
             }
         }
         
@@ -75,7 +77,7 @@ namespace ActiveMQ
             lock (semaphore)
             {
                 queue.Enqueue(message);
-                Monitor.PulseAll(semaphore);
+                resetEvent.Set();
             }
         }
         
@@ -84,33 +86,36 @@ namespace ActiveMQ
         /// </summary>
         public IMessage DequeueNoWait()
         {
+            IMessage rc = null;
             lock (semaphore)
             {
                 if (queue.Count > 0)
                 {
-                    return (IMessage) queue.Dequeue();
-                }
+                    rc = (IMessage) queue.Dequeue();
+                    if (queue.Count > 0)
+                    {
+                        resetEvent.Set();
+                    }
+                } 
             }
-            return null;
+            return rc;
         }
-        
+
         /// <summary>
         /// Method Dequeue
         /// </summary>
         public IMessage Dequeue(TimeSpan timeout)
         {
-            lock (semaphore)
+            IMessage rc = DequeueNoWait();
+            while (rc == null)
             {
-                if (queue.Count == 0)
+                if( !resetEvent.WaitOne((int)timeout.TotalMilliseconds, false) )
                 {
-                    Monitor.Wait(semaphore, timeout);
+                    break;
                 }
-                if (queue.Count > 0)
-                {
-                    return (IMessage) queue.Dequeue();
-                }
+                rc = DequeueNoWait();
             }
-            return null;
+            return rc;
         }
         
         /// <summary>
@@ -118,10 +123,16 @@ namespace ActiveMQ
         /// </summary>
         public IMessage Dequeue()
         {
-            lock (semaphore)
+            IMessage rc = DequeueNoWait();
+            while (rc == null)
             {
-                return (IMessage) queue.Dequeue();
+                if (!resetEvent.WaitOne(-1, false))
+                {
+                    break;
+                }
+                rc = DequeueNoWait();
             }
+            return rc;
         }
         
     }

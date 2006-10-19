@@ -17,6 +17,7 @@
 using ActiveMQ.Commands;
 using System;
 using System.Threading;
+using ActiveMQ.Util;
 
 namespace ActiveMQ.Transport
 {
@@ -24,35 +25,18 @@ namespace ActiveMQ.Transport
 	/// <summary>
 	/// Handles asynchronous responses
 	/// </summary>
-	public class FutureResponse : IAsyncResult
+	public class FutureResponse 
     {
-        
+	    
+        private static int maxWait = -1;
+
+        private readonly CountDownLatch latch = new CountDownLatch(1);
         private Response response;
-        private Mutex asyncWaitHandle = new Mutex();
-        private Object semaphore = new Object();
-        private int maxWait = 3000;
-        private bool isCompleted;
         
         public WaitHandle AsyncWaitHandle
         {
-            get { return asyncWaitHandle; }
-        }
-        
-        public object AsyncState
-        {
-            get { return response; }
-            set { Response = (Response) value; }
-        }
-        
-        public bool IsCompleted
-        {
-            get { return isCompleted; }
-        }
-        
-        public bool CompletedSynchronously
-        {
-            get { return false; }
-        }
+            get { return latch.AsyncWaitHandle; }
+        }        
         
         public Response Response
         {
@@ -62,25 +46,25 @@ namespace ActiveMQ.Transport
                 {
                     try
 					{
-						lock (semaphore)
-						{
-							Monitor.Wait(semaphore, maxWait);
-						}
+                        latch.await(maxWait);
                     }
                     catch (Exception e)
 					{
                         Tracer.Error("Caught while waiting on monitor: " + e);
                     }
                 }
-                return response;
+                lock (latch)
+                {
+                    return response;
+                }
             }
+            
             set {
-                lock (semaphore)
+                lock (latch)
                 {
                     response = value;
-                    isCompleted = true;
-                    Monitor.PulseAll(semaphore);
                 }
+                latch.countDown();
             }
         }
     }

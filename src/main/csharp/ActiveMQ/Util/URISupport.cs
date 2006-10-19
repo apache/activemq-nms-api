@@ -16,6 +16,7 @@
  */
 using System;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Text;
 
 namespace ActiveMQ.Util
@@ -79,7 +80,7 @@ namespace ActiveMQ.Util
 					System.Reflection.PropertyInfo prop = type.GetProperty(bareKey, System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.IgnoreCase);
 					if (prop != null)
 					{
-						prop.SetValue(target, Convert.ChangeType(map[key], prop.PropertyType), null);
+                        prop.SetValue(target, Convert.ChangeType(map[key], prop.PropertyType, CultureInfo.InvariantCulture), null);
 					}
 					else
 					{ 

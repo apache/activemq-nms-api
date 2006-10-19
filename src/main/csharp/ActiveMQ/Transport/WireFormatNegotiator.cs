@@ -31,7 +31,7 @@ namespace ActiveMQ.Transport
     public class WireFormatNegotiator : TransportFilter
     {
         private OpenWireFormat wireFormat;
-        private TimeSpan negotiateTimeout=new TimeSpan(0,0,15);
+        private int negotiateTimeout=15000;
     
         private AtomicBoolean firstStart=new AtomicBoolean(true);
         private CountDownLatch readyCountDownLatch = new CountDownLatch(1);
