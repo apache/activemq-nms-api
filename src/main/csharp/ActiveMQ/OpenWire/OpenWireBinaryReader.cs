@@ -146,10 +146,17 @@ namespace ActiveMQ.OpenWire
                 StringBuilder str = new StringBuilder(utflen);
                 
                 byte[] bytearr = new byte[utflen];
+                int bytesRead = 0;
+                while (bytesRead < utflen)
+                {
+                    int rc = Read(bytearr, bytesRead, utflen-bytesRead);
+                    if (rc == 0)
+                        throw new IOException("premature end of stream");
+                    bytesRead += rc;
+                }
+
                 int c, char2, char3;
                 int count = 0;
-                
-                Read(bytearr, 0, utflen);
                 
                 while (count < utflen)
                 {
