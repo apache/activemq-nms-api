@@ -23,6 +23,17 @@ namespace ActiveMQ.Util
     {
         bool value;
 
+		public bool Value
+		{
+			get
+			{
+				lock (this)
+				{
+					return value;
+				}
+			}
+		}
+
         public AtomicBoolean(bool b)
         {
             value = b;

@@ -93,5 +93,11 @@ namespace NMS {
                 /// An asynchronous listener which can be notified if an error occurs
                 /// </summary>
                 event ExceptionListener ExceptionListener;
+
+                /// <summary>
+                /// Closes the connection.
+                /// </summary>
+                void Close();
+
         }
 }

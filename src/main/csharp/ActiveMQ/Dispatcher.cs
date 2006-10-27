@@ -31,8 +31,23 @@ namespace ActiveMQ
         Queue queue = new Queue();
         Object semaphore = new Object();
         ArrayList messagesToRedeliver = new ArrayList();
-        readonly AutoResetEvent resetEvent = new AutoResetEvent(false);
-		
+        
+        // TODO can't use EventWaitHandle on MONO 1.0
+        AutoResetEvent messageReceivedEventHandle = new AutoResetEvent(false);
+        bool m_bAsyncDelivery = false;
+        bool m_bClosed = false;
+
+		public void SetAsyncDelivery(AutoResetEvent eventHandle)
+		{
+			lock (semaphore)
+			{
+				messageReceivedEventHandle = eventHandle;
+				m_bAsyncDelivery = true;
+				if (queue.Count > 0)
+					messageReceivedEventHandle.Set();
+			}
+		}
+
         /// <summary>
         /// Whem we start a transaction we must redeliver any rolled back messages
         /// </summary>
@@ -42,7 +57,7 @@ namespace ActiveMQ
             {
                 Queue replacement = new Queue(queue.Count + messagesToRedeliver.Count);
                 foreach (ActiveMQMessage element in messagesToRedeliver)
-				{
+                {
                     replacement.Enqueue(element);
                 }
                 messagesToRedeliver.Clear();
@@ -54,7 +69,7 @@ namespace ActiveMQ
                 }
                 queue = replacement;
                 if (queue.Count > 0)
-                    resetEvent.Set();
+                    messageReceivedEventHandle.Set();
             }
         }
         
@@ -77,7 +92,7 @@ namespace ActiveMQ
             lock (semaphore)
             {
                 queue.Enqueue(message);
-                resetEvent.Set();
+                messageReceivedEventHandle.Set();
             }
         }
         
@@ -89,13 +104,9 @@ namespace ActiveMQ
             IMessage rc = null;
             lock (semaphore)
             {
-                if (queue.Count > 0)
+                if (!m_bClosed && queue.Count > 0)
                 {
                     rc = (IMessage) queue.Dequeue();
-                    if (queue.Count > 0)
-                    {
-                        resetEvent.Set();
-                    }
                 } 
             }
             return rc;
@@ -106,14 +117,25 @@ namespace ActiveMQ
         /// </summary>
         public IMessage Dequeue(TimeSpan timeout)
         {
-            IMessage rc = DequeueNoWait();
-            while (rc == null)
+            IMessage rc;
+			bool bClosed = false;
+			lock (semaphore)
+			{
+				bClosed = m_bClosed;
+				rc = DequeueNoWait();
+			}
+
+            while (!bClosed && rc == null)
             {
-                if( !resetEvent.WaitOne((int)timeout.TotalMilliseconds, false) )
+                if( !messageReceivedEventHandle.WaitOne((int)timeout.TotalMilliseconds, false) )
                 {
                     break;
                 }
-                rc = DequeueNoWait();
+				lock (semaphore)
+				{
+					rc = DequeueNoWait();
+					bClosed = m_bClosed;
+				}
             }
             return rc;
         }
@@ -123,18 +145,17 @@ namespace ActiveMQ
         /// </summary>
         public IMessage Dequeue()
         {
-            IMessage rc = DequeueNoWait();
-            while (rc == null)
-            {
-                if (!resetEvent.WaitOne(-1, false))
-                {
-                    break;
-                }
-                rc = DequeueNoWait();
-            }
-            return rc;
+			return Dequeue(TimeSpan.MaxValue);
         }
-        
-    }
-}
 
+		internal void Close()
+		{
+			lock (semaphore)
+			{
+				m_bClosed = true;
+				if(m_bAsyncDelivery)
+					messageReceivedEventHandle.Set();
+			}
+		}
+	}
+}

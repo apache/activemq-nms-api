@@ -38,7 +38,7 @@ namespace ActiveMQ
         private Session session;
         private ConsumerInfo info;
         private AcknowledgementMode acknowledgementMode;
-        private bool closed;
+        private bool closed = false;
         private Dispatcher dispatcher = new Dispatcher();
         private int maximumRedeliveryCount = 10;
         private int redeliveryTimeout = 500;
@@ -48,21 +48,26 @@ namespace ActiveMQ
         {
               add {
                   listener += value;
-                  FireAsyncDispatchOfMessages();
+                  session.StartAsyncDelivery(dispatcher);
               }
               remove {
                   listener -= value;
               }
         }
         
-        
-        public MessageConsumer(Session session, ConsumerInfo info, AcknowledgementMode acknowledgementMode)
+        // Constructor internal to prevent clients from creating an instance.
+        internal MessageConsumer(Session session, ConsumerInfo info, AcknowledgementMode acknowledgementMode)
         {
             this.session = session;
             this.info = info;
             this.acknowledgementMode = acknowledgementMode;
         }
         
+        internal Dispatcher Dispatcher
+        {
+            get { return this.dispatcher; }
+        }
+
         public ConsumerId ConsumerId
         {
             get {
@@ -95,19 +100,8 @@ namespace ActiveMQ
         public void Dispatch(ActiveMQMessage message)
         {
             dispatcher.Enqueue(message);
-            
-            if (listener != null)
-            {
-                FireAsyncDispatchOfMessages();
-            }
         }
 
-        protected void FireAsyncDispatchOfMessages() 
-        {
-              // lets dispatch to the thread pool for this connection for messages to be processed
-              ThreadPool.QueueUserWorkItem(new WaitCallback(session.DispatchAsyncMessages));
-        }
-        
         public IMessage Receive()
         {
             CheckClosed();
@@ -126,37 +120,27 @@ namespace ActiveMQ
             return AutoAcknowledge(dispatcher.DequeueNoWait());
         }
         
-        
-        
         public void Dispose()
         {
             session.DisposeOf(info.ConsumerId);
-            closed = true;
+            Close();
         }
         
         /// <summary>
         /// Dispatch any pending messages to the asynchronous listener
         /// </summary>
-        public void DispatchAsyncMessages()
+        internal void DispatchAsyncMessages()
         {
             while (listener != null)
             {
                 IMessage message = dispatcher.DequeueNoWait();
-                if (message != null)
-                {
-                   //here we add the code that if do acknowledge action.
-                   message = AutoAcknowledge(message);
-                   try
-                   {
-                       listener(message);
-                   } catch(Exception e)
-                   {
-                       // TODO: what do do if the listener errors out?
-                   }
-                }
-
-                // lets now break to give the acknowledgement a chance to be processed
-                break;
+                if (message == null)
+                    break;
+                    
+                //here we add the code that if do acknowledge action.
+                message = AutoAcknowledge(message);
+                // invoke listener. Exceptions caught by the dispatcher thread
+                listener(message); 
             }
         }
         
@@ -239,16 +223,27 @@ namespace ActiveMQ
             else
             {
                 dispatcher.Redeliver(message);
-                
-                if (listener != null)
-                {
-                    // lets re-dispatch the message at some point in the future
-                    Thread.Sleep(RedeliveryTimeout);
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(session.DispatchAsyncMessages));
-                }
             }
         }
-    }
+
+		public void Close()
+		{
+			lock(this)
+			{
+				if(closed)
+					return;
+			}
+
+			// wake up any pending dequeue() call on the dispatcher
+			dispatcher.Close();
+
+			lock (this)
+			{
+				closed = true;
+			}
+		}
+	}
+
     
     // TODO maybe there's a cleaner way of creating stateful delegates to make this code neater
     class MessageConsumerSynchronization : ISynchronization

@@ -101,6 +101,11 @@ namespace NMS {
                 /// </summary>
                 IBytesMessage CreateBytesMessage(byte[] body);
 
+                /// <summary>
+                /// Closes the session.  There is no need to close the producers and consumers
+                /// of a closed session.
+                /// </summary>
+                void Close();
 
                 // Transaction methods
 
@@ -115,6 +120,5 @@ namespace NMS {
                 /// send and acknowledgements for producers and consumers in this session
                 /// </summary>
                 void Rollback();
-
         }
 }

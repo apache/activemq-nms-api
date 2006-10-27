@@ -38,13 +38,21 @@ namespace ActiveMQ {
                 private bool retroactive;
                 private IDictionary consumers = Hashtable.Synchronized(new Hashtable());
                 private TransactionContext transactionContext;
-
+                private DispatchingThread dispatchingThread;
+                
                 public Session(Connection connection, SessionInfo info, AcknowledgementMode acknowledgementMode)
                 {
                         this.connection = connection;
                         this.info = info;
                         this.acknowledgementMode = acknowledgementMode;
                         transactionContext = new TransactionContext(this);
+                        dispatchingThread = new DispatchingThread(new DispatchingThread.DispatchFunction(DispatchAsyncMessages));
+                        dispatchingThread.ExceptionListener += new DispatchingThread.ExceptionHandler(dispatchingThread_ExceptionListener);
+                }
+
+                void dispatchingThread_ExceptionListener(Exception exception)
+                {
+                        connection.OnSessionException(this, exception);
                 }
 
 
@@ -317,6 +325,12 @@ namespace ActiveMQ {
                         connection.SyncRequest(command);
                 }
 
+                public void Close()
+                {
+                        // To do: what about session id?
+                        StopAsyncDelivery();
+                }
+                
                 /// <summary>
                 /// Ensures that a transaction is started
                 /// </summary>
@@ -335,18 +349,17 @@ namespace ActiveMQ {
                         connection.DisposeOf(objectId);
                 }
 
-                public void DispatchAsyncMessages(object state)
+                /// <summary>
+                /// Private method called by the dispatcher thread in order to perform
+                /// asynchronous delivery of queued (inbound) messages.
+                /// </summary>
+                private void DispatchAsyncMessages()
                 {
                         // lets iterate through each consumer created by this session
                         // ensuring that they have all pending messages dispatched
-                        lock (this)
+                        foreach (MessageConsumer consumer in GetConsumers())
                         {
-                                // lets ensure that only 1 thread dispatches messages in a consumer at once
-
-                                foreach (MessageConsumer consumer in GetConsumers())
-                                {
-                                        consumer.DispatchAsyncMessages();
-                                }
+                                consumer.DispatchAsyncMessages();
                         }
                 }
 
@@ -425,5 +438,17 @@ namespace ActiveMQ {
                 protected void Configure(ActiveMQMessage message)
                 {
                 }
+
+				internal void StopAsyncDelivery()
+				{
+					dispatchingThread.Stop();
+				}
+
+				internal void StartAsyncDelivery(Dispatcher dispatcher)
+				{
+					if(dispatcher != null)
+						dispatcher.SetAsyncDelivery(dispatchingThread.EventHandle);
+					dispatchingThread.Start();
+				}
         }
 }

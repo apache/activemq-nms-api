@@ -40,6 +40,7 @@ namespace ActiveMQ
         private long temporaryDestinationCounter;
         private long localTransactionCounter;
         private bool closing;
+        private Util.AtomicBoolean started = new ActiveMQ.Util.AtomicBoolean(true);
         
         public Connection(ITransport transport, ConnectionInfo info)
         {
@@ -51,21 +52,44 @@ namespace ActiveMQ
         }
         
         public event ExceptionListener ExceptionListener;
-        
-        /// <summary>
-        /// Starts message delivery for this connection.
-        /// </summary>
-        public void Start()
-        {
-        }
-        
-        
-        /// <summary>
-        /// Stop message delivery for this connection.
-        /// </summary>
-        public void Stop()
-        {
-        }
+
+
+		public bool IsStarted
+		{
+			get { return started.Value; }
+		}
+
+		/// <summary>
+		/// Starts asynchronous message delivery of incoming messages for this connection. 
+		/// Synchronous delivery is unaffected.
+		/// </summary>
+		public void Start()
+		{
+			CheckConnected();
+			if (started.compareAndSet(false, true)) 
+			{
+				foreach(Session session in sessions)
+				{
+					session.StartAsyncDelivery(null);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Temporarily stop asynchronous delivery of inbound messages for this connection.
+		/// The sending of outbound messages is unaffected.
+		/// </summary>
+		public void Stop()
+		{
+			CheckConnected();
+			if (started.compareAndSet(true, false)) 
+			{
+				foreach(Session session in sessions)
+				{
+					session.StopAsyncDelivery();
+				}
+			}
+		}
         
         /// <summary>
         /// Creates a new session to work on this connection
@@ -86,21 +110,38 @@ namespace ActiveMQ
             sessions.Add(session);
             return session;
         }
-        
+
+		public void Close()
+		{
+			if (!closed)
+			{
+				closing = true;
+				foreach (Session session in sessions)
+				{
+					session.Close();
+				}
+				sessions.Clear();
+				try
+				{
+					DisposeOf(ConnectionId);
+					transport.Oneway(new ShutdownInfo());
+				}
+				catch(Exception ex)
+				{
+					Tracer.ErrorFormat("Error during connection close: {0}", ex);
+				}
+				transport.Dispose();
+				transport = null;
+				closed = true;
+			}
+		}
+
         public void Dispose()
         {
-            /*
-            foreach (Session session in sessions)
-            {
-                session.Dispose();
-            }
-            */
-            closing = true;
-            DisposeOf(ConnectionId);
-            sessions.Clear();
-			transport.Oneway(new ShutdownInfo());
-            transport.Dispose();
-            closed = true;
+			// For now we do not distinguish between Dispose() and Close().
+			// In theory Dispose should possibly be lighter-weight and perform a (faster)
+			// disorderly close.
+			Close();
         }
         
         // Properties
@@ -178,7 +219,7 @@ namespace ActiveMQ
         {
             RemoveInfo command = new RemoveInfo();
             command.ObjectId = objectId;
-            SyncRequest(command);
+            transport.Oneway(command);
         }
         
         
@@ -292,6 +333,13 @@ namespace ActiveMQ
             if (ExceptionListener != null)
                 ExceptionListener(exception);
         }
+
+		internal void OnSessionException(Session sender, Exception exception)
+		{
+			Tracer.ErrorFormat("Session Exception: {0}", exception.ToString());
+			if (ExceptionListener != null)
+				ExceptionListener(exception);
+		}
         
         protected SessionInfo CreateSessionInfo(AcknowledgementMode acknowledgementMode)
         {

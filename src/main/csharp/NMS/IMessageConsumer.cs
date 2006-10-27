@@ -46,6 +46,16 @@ namespace NMS
         /// An asynchronous listener which can be used to consume messages asynchronously
         /// </summary>
         event MessageListener Listener;
+
+        /// <summary>
+        /// Closes the message consumer. 
+        /// </summary>
+        /// <remarks>
+        /// Clients should close message consumers them when they are not needed.
+        /// This call blocks until a receive or message listener in progress has completed.
+        /// A blocked message consumer receive call returns null when this message consumer is closed.
+        /// </remarks>
+        void Close();
     }
 }
 
