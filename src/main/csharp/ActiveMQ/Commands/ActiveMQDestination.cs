@@ -99,7 +99,7 @@ namespace ActiveMQ.Commands
         protected ActiveMQDestination(String name)
         {
 			setPhysicalName(name);
-            this.advisory = name != null && name.StartsWith(ADVISORY_PREFIX);
+            //this.advisory = name != null && name.StartsWith(ADVISORY_PREFIX);
         }
 
 		/// <summary>
@@ -390,7 +390,9 @@ namespace ActiveMQ.Commands
         public String PhysicalName
         {
             get { return this.physicalName; }
-            set { this.physicalName = value; }
+            set { this.physicalName = value; 
+                  this.advisory = value != null && value.StartsWith(ADVISORY_PREFIX);
+                }
         }
         
         /**
