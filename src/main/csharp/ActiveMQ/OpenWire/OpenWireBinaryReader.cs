@@ -224,8 +224,12 @@ namespace ActiveMQ.OpenWire
             // TODO: implement a better exception
             return new IOException("Data format error!");
         }
-		
-		
+
+        public override double ReadDouble()
+        {
+            return EndianSupport.SwitchEndian(base.ReadDouble());
+        }
+
 	}
 }
 

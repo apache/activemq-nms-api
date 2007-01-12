@@ -93,7 +93,28 @@ namespace ActiveMQ.OpenWire
 				(((ulong)( (byte)(x >> 48) )) << 8  ) |
 				(((ulong)( (byte)(x >> 56) )) );
         }
-		
-	}
+
+        public static double SwitchEndian(double x)
+        {
+            MemoryStream ms = new MemoryStream();
+            BinaryWriter bw = new BinaryWriter(ms);
+            bw.Write(x);
+            bw.Flush();
+            ms = new MemoryStream(SwitchEndian(ms.ToArray()));
+            BinaryReader br = new BinaryReader(ms);
+            return br.ReadDouble();           
+        }
+
+        public static byte[] SwitchEndian(byte[] x)
+        {
+            byte[] rc = new byte[x.Length];
+            int j = x.Length-1;
+            for(int i=0; i < x.Length; i++ ) {
+                rc[i] = x[j];
+                j--;
+            }
+            return rc;
+        }
+    }
 }
 
