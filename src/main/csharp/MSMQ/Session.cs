@@ -176,5 +176,10 @@ namespace MSMQ
             set { messageConverter = value; }
         }
 
+        public void Close()
+        {
+            Dispose();
+        }
+
     }
 }

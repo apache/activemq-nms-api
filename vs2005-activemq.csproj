@@ -262,6 +262,7 @@
     <Compile Include="src\main\csharp\ActiveMQ\Dispatcher.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\main\csharp\ActiveMQ\DispatchingThread.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\ISynchronization.cs">
       <SubType>Code</SubType>
     </Compile>

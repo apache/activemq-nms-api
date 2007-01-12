@@ -55,5 +55,11 @@ namespace MSMQ
         {
             throw new NotImplementedException();
         }
+
+        public void Close()
+        {
+            Dispose();
+        }
+
     }
 }

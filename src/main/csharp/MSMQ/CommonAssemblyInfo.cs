@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfigurationAttribute("SNAPSHOT")]
 [assembly: AssemblyCompanyAttribute("http://incubator.apache.org/activemq/")]
 [assembly: AssemblyProductAttribute("Apache ActiveMQ")]
-[assembly: AssemblyCopyrightAttribute("Copyright (C) 2005-2006 Apache Software Foundation")]
+[assembly: AssemblyCopyrightAttribute("Copyright (C) 2005-2007 Apache Software Foundation")]
 [assembly: AssemblyTrademarkAttribute("")]
 [assembly: AssemblyCultureAttribute("")]
 [assembly: AssemblyVersionAttribute("4.0")]

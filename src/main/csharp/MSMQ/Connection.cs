@@ -110,6 +110,12 @@ namespace MSMQ
                 // TODO: establish a connection
             }
         }
+
+        public void Close()
+        {
+            Dispose();
+        }
+
         	        
     }
 }
