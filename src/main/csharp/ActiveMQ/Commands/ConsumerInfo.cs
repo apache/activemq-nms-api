@@ -42,7 +42,7 @@ namespace ActiveMQ.Commands
         int maximumPendingMessageLimit;
         bool dispatchAsync;
         string selector;
-        string subcriptionName;
+        string subscriptionName;
         bool noLocal;
         bool exclusive;
         bool retroactive;
@@ -62,7 +62,7 @@ namespace ActiveMQ.Commands
                 + " MaximumPendingMessageLimit=" + MaximumPendingMessageLimit
                 + " DispatchAsync=" + DispatchAsync
                 + " Selector=" + Selector
-                + " SubcriptionName=" + SubcriptionName
+                + " SubscriptionName=" + SubscriptionName
                 + " NoLocal=" + NoLocal
                 + " Exclusive=" + Exclusive
                 + " Retroactive=" + Retroactive
@@ -125,10 +125,10 @@ namespace ActiveMQ.Commands
             set { this.selector = value; }            
         }
 
-        public string SubcriptionName
+        public string SubscriptionName
         {
-            get { return subcriptionName; }
-            set { this.subcriptionName = value; }            
+            get { return subscriptionName; }
+            set { this.subscriptionName = value; }            
         }
 
         public bool NoLocal

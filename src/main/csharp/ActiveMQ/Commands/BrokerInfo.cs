@@ -44,6 +44,7 @@ namespace ActiveMQ.Commands
         bool faultTolerantConfiguration;
         bool duplexConnection;
         bool networkConnection;
+        long connectionId;
 
 		public override string ToString() {
             return GetType().Name + "["
@@ -56,6 +57,7 @@ namespace ActiveMQ.Commands
                 + " FaultTolerantConfiguration=" + FaultTolerantConfiguration
                 + " DuplexConnection=" + DuplexConnection
                 + " NetworkConnection=" + NetworkConnection
+                + " ConnectionId=" + ConnectionId
                 + " ]";
 
 		}
@@ -119,6 +121,12 @@ namespace ActiveMQ.Commands
         {
             get { return networkConnection; }
             set { this.networkConnection = value; }            
+        }
+
+        public long ConnectionId
+        {
+            get { return connectionId; }
+            set { this.connectionId = value; }            
         }
 
     }

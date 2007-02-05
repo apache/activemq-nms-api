@@ -38,12 +38,14 @@ namespace ActiveMQ.Commands
         ProducerId producerId;
         ActiveMQDestination destination;
         BrokerId[] brokerPath;
+        bool dispatchAsync;
 
 		public override string ToString() {
             return GetType().Name + "["
                 + " ProducerId=" + ProducerId
                 + " Destination=" + Destination
                 + " BrokerPath=" + BrokerPath
+                + " DispatchAsync=" + DispatchAsync
                 + " ]";
 
 		}
@@ -71,6 +73,12 @@ namespace ActiveMQ.Commands
         {
             get { return brokerPath; }
             set { this.brokerPath = value; }            
+        }
+
+        public bool DispatchAsync
+        {
+            get { return dispatchAsync; }
+            set { this.dispatchAsync = value; }            
         }
 
     }

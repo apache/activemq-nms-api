@@ -70,6 +70,7 @@ namespace ActiveMQ.OpenWire.V2
         else {
             info.BrokerPath = null;
         }
+        info.DispatchAsync = bs.ReadBoolean();
 
     }
 
@@ -83,6 +84,7 @@ namespace ActiveMQ.OpenWire.V2
         rc += TightMarshalCachedObject1(wireFormat, (DataStructure)info.ProducerId, bs);
         rc += TightMarshalCachedObject1(wireFormat, (DataStructure)info.Destination, bs);
         rc += TightMarshalObjectArray1(wireFormat, info.BrokerPath, bs);
+        bs.WriteBoolean(info.DispatchAsync);
 
         return rc + 0;
     }
@@ -97,6 +99,7 @@ namespace ActiveMQ.OpenWire.V2
         TightMarshalCachedObject2(wireFormat, (DataStructure)info.ProducerId, dataOut, bs);
         TightMarshalCachedObject2(wireFormat, (DataStructure)info.Destination, dataOut, bs);
         TightMarshalObjectArray2(wireFormat, info.BrokerPath, dataOut, bs);
+        bs.ReadBoolean();
 
     }
 
@@ -122,6 +125,7 @@ namespace ActiveMQ.OpenWire.V2
         else {
             info.BrokerPath = null;
         }
+        info.DispatchAsync = dataIn.ReadBoolean();
 
     }
 
@@ -136,6 +140,7 @@ namespace ActiveMQ.OpenWire.V2
         LooseMarshalCachedObject(wireFormat, (DataStructure)info.ProducerId, dataOut);
         LooseMarshalCachedObject(wireFormat, (DataStructure)info.Destination, dataOut);
         LooseMarshalObjectArray(wireFormat, info.BrokerPath, dataOut);
+        dataOut.Write(info.DispatchAsync);
 
     }
   }

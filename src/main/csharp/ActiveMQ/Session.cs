@@ -164,7 +164,7 @@ namespace ActiveMQ {
                 {
                         ConsumerInfo command = CreateConsumerInfo(destination, selector);
                         ConsumerId consumerId = command.ConsumerId;
-                        command.SubcriptionName = name;
+                        command.SubscriptionName = name;
                         command.NoLocal = noLocal;
 
                         try

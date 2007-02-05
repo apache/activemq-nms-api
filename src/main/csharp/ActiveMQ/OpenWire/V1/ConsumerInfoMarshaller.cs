@@ -63,7 +63,7 @@ namespace ActiveMQ.OpenWire.V1
         info.MaximumPendingMessageLimit = dataIn.ReadInt32();
         info.DispatchAsync = bs.ReadBoolean();
         info.Selector = TightUnmarshalString(dataIn, bs);
-        info.SubcriptionName = TightUnmarshalString(dataIn, bs);
+        info.SubscriptionName = TightUnmarshalString(dataIn, bs);
         info.NoLocal = bs.ReadBoolean();
         info.Exclusive = bs.ReadBoolean();
         info.Retroactive = bs.ReadBoolean();
@@ -99,7 +99,7 @@ namespace ActiveMQ.OpenWire.V1
         rc += TightMarshalCachedObject1(wireFormat, (DataStructure)info.Destination, bs);
         bs.WriteBoolean(info.DispatchAsync);
         rc += TightMarshalString1(info.Selector, bs);
-        rc += TightMarshalString1(info.SubcriptionName, bs);
+        rc += TightMarshalString1(info.SubscriptionName, bs);
         bs.WriteBoolean(info.NoLocal);
         bs.WriteBoolean(info.Exclusive);
         bs.WriteBoolean(info.Retroactive);
@@ -126,7 +126,7 @@ namespace ActiveMQ.OpenWire.V1
         dataOut.Write(info.MaximumPendingMessageLimit);
         bs.ReadBoolean();
         TightMarshalString2(info.Selector, dataOut, bs);
-        TightMarshalString2(info.SubcriptionName, dataOut, bs);
+        TightMarshalString2(info.SubscriptionName, dataOut, bs);
         bs.ReadBoolean();
         bs.ReadBoolean();
         bs.ReadBoolean();
@@ -154,7 +154,7 @@ namespace ActiveMQ.OpenWire.V1
         info.MaximumPendingMessageLimit = dataIn.ReadInt32();
         info.DispatchAsync = dataIn.ReadBoolean();
         info.Selector = LooseUnmarshalString(dataIn);
-        info.SubcriptionName = LooseUnmarshalString(dataIn);
+        info.SubscriptionName = LooseUnmarshalString(dataIn);
         info.NoLocal = dataIn.ReadBoolean();
         info.Exclusive = dataIn.ReadBoolean();
         info.Retroactive = dataIn.ReadBoolean();
@@ -193,7 +193,7 @@ namespace ActiveMQ.OpenWire.V1
         dataOut.Write(info.MaximumPendingMessageLimit);
         dataOut.Write(info.DispatchAsync);
         LooseMarshalString(info.Selector, dataOut);
-        LooseMarshalString(info.SubcriptionName, dataOut);
+        LooseMarshalString(info.SubscriptionName, dataOut);
         dataOut.Write(info.NoLocal);
         dataOut.Write(info.Exclusive);
         dataOut.Write(info.Retroactive);

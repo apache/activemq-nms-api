@@ -76,6 +76,7 @@ namespace ActiveMQ.OpenWire.V2
         info.FaultTolerantConfiguration = bs.ReadBoolean();
         info.DuplexConnection = bs.ReadBoolean();
         info.NetworkConnection = bs.ReadBoolean();
+        info.ConnectionId = TightUnmarshalLong(wireFormat, dataIn, bs);
 
     }
 
@@ -95,6 +96,7 @@ namespace ActiveMQ.OpenWire.V2
         bs.WriteBoolean(info.FaultTolerantConfiguration);
         bs.WriteBoolean(info.DuplexConnection);
         bs.WriteBoolean(info.NetworkConnection);
+        rc += TightMarshalLong1(wireFormat, info.ConnectionId, bs);
 
         return rc + 0;
     }
@@ -115,6 +117,7 @@ namespace ActiveMQ.OpenWire.V2
         bs.ReadBoolean();
         bs.ReadBoolean();
         bs.ReadBoolean();
+        TightMarshalLong2(wireFormat, info.ConnectionId, dataOut, bs);
 
     }
 
@@ -146,6 +149,7 @@ namespace ActiveMQ.OpenWire.V2
         info.FaultTolerantConfiguration = dataIn.ReadBoolean();
         info.DuplexConnection = dataIn.ReadBoolean();
         info.NetworkConnection = dataIn.ReadBoolean();
+        info.ConnectionId = LooseUnmarshalLong(wireFormat, dataIn);
 
     }
 
@@ -166,6 +170,7 @@ namespace ActiveMQ.OpenWire.V2
         dataOut.Write(info.FaultTolerantConfiguration);
         dataOut.Write(info.DuplexConnection);
         dataOut.Write(info.NetworkConnection);
+        LooseMarshalLong(wireFormat, info.ConnectionId, dataOut);
 
     }
   }
