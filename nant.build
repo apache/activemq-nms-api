@@ -142,7 +142,7 @@
         <attribute type="AssemblyTitleAttribute"         value="Apache NMS Class Library" />
         <attribute type="AssemblyDescriptionAttribute"   value="NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers" />
         <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://incubator.apache.org/activemq/" />
+        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
         <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
         <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
         <attribute type="AssemblyTrademarkAttribute"     value="" />
@@ -188,7 +188,7 @@
         <attribute type="AssemblyTitleAttribute"         value="Apache NMS Class Library Tests" />
         <attribute type="AssemblyDescriptionAttribute"   value="NMS (.Net Messaging Library) Unit Tests"/>
         <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://incubator.apache.org/activemq/" />
+        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
         <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
         <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
         <attribute type="AssemblyTrademarkAttribute"     value="" />
@@ -231,7 +231,7 @@
         <attribute type="AssemblyTitleAttribute"         value="Apache NMS for ActiveMQ" />
         <attribute type="AssemblyDescriptionAttribute"   value="An NMS (.Net Messaging Library) interface to Apache ActiveMQ"/>
         <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://incubator.apache.org/activemq/" />
+        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
         <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
         <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
         <attribute type="AssemblyTrademarkAttribute"     value="" />
@@ -248,6 +248,7 @@
       </nowarn>
       <sources failonempty="true">
         <include name="src/main/csharp/ActiveMQ/**.cs" />
+        <include name="src/main/csharp/Stomp/**.cs" />
       </sources>
       <references failonempty="true">
         <include name="System.dll" asis="true"/>
@@ -273,7 +274,7 @@
         <attribute type="AssemblyTitleAttribute"         value="Apache ActiveMQ .NET Tests" />
         <attribute type="AssemblyDescriptionAttribute"   value="Unit Tests for the NMS (.Net Messaging Library) to Apache ActiveMQ"/>
         <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://incubator.apache.org/activemq/" />
+        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
         <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
         <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
         <attribute type="AssemblyTrademarkAttribute"     value="" />
@@ -290,6 +291,51 @@
       </nowarn>
       <sources failonempty="true">
         <include name="src/test/csharp/ActiveMQ/**.cs" />
+      </sources>
+      <references failonempty="true">
+        <include name="System.dll" asis="true"/>
+        <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
+        <include name="${build.bin.dir}/nms.dll"/>
+        <include name="${build.bin.dir}/nms-test.dll"/>
+        <include name="${build.bin.dir}/activemq.dll"/>
+      </references>
+    </csc>
+  </target>
+
+  <!-- Compile the stomp-test module -->
+  <target name="build-stomp-test" depends="init,build-nms,build-nms-test,build-activemq" description="Build the stomp-test library">
+    <echo message="Building the stomp-test library" />
+
+    <attrib file="src/test/csharp/Stomp/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/test/csharp/Stomp/CommonAssemblyInfo.cs')}" />
+    <asminfo output="src/test/csharp/Stomp/CommonAssemblyInfo.cs" language="CSharp">
+      <imports>
+        <import namespace="System" />
+        <import namespace="System.Reflection" />
+        <import namespace="System.Runtime.InteropServices" />
+      </imports>
+      <attributes>
+        <attribute type="ComVisibleAttribute"            value="false" />
+        <attribute type="CLSCompliantAttribute"          value="true" />
+        <attribute type="AssemblyTitleAttribute"         value="Stomp .NET Tests" />
+        <attribute type="AssemblyDescriptionAttribute"   value="Unit Tests for the NMS (.Net Messaging Library) using the STOMP protocol"/>
+        <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
+        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
+        <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
+        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
+        <attribute type="AssemblyTrademarkAttribute"     value="" />
+        <attribute type="AssemblyCultureAttribute"       value="" />
+        <attribute type="AssemblyVersionAttribute"       value="${project.version}" />
+        <attribute type="AssemblyInformationalVersionAttribute" value="${project.version}" />
+      </attributes>
+    </asminfo>
+
+    <csc target="library" define="${current.build.defines}" warnaserror="false" debug="${build.debug}"
+      output="${build.bin.dir}/stomp-test.dll" doc="${build.bin.dir}/stomp-test.xml">
+      <nowarn>
+        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
+      </nowarn>
+      <sources failonempty="true">
+        <include name="src/test/csharp/Stomp/**.cs" />
       </sources>
       <references failonempty="true">
         <include name="System.dll" asis="true"/>
@@ -318,7 +364,7 @@
         <attribute type="AssemblyTitleAttribute"         value="Apache NMS for MSMQ" />
         <attribute type="AssemblyDescriptionAttribute"   value="An NMS (.Net Messaging Library) to MSMQ"/>
         <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://incubator.apache.org/activemq/" />
+        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
         <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
         <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
         <attribute type="AssemblyTrademarkAttribute"     value="" />
@@ -361,7 +407,7 @@
         <attribute type="AssemblyTitleAttribute"         value="Apache NMS for MSMQ Tests" />
         <attribute type="AssemblyDescriptionAttribute"   value="Unit Tests for the NMS (.Net Messaging Library) to MSMQ"/>
         <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://incubator.apache.org/activemq/" />
+        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
         <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
         <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
         <attribute type="AssemblyTrademarkAttribute"     value="" />
@@ -405,6 +451,13 @@
     <nunit2>
       <formatter type="Plain" />
       <test assemblyname="${build.bin.dir}/activemq-test.dll" testname="${test}"></test>
+    </nunit2>
+  </target>
+
+  <target name="test-stomp" depends="build-stomp-test" description="Runs all the NUnit test cases">
+    <nunit2>
+      <formatter type="Plain" />
+      <test assemblyname="${build.bin.dir}/stomp-test.dll"></test>
     </nunit2>
   </target>
 

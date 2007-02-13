@@ -24,7 +24,7 @@ using System.IO;
 namespace ActiveMQ.OpenWire
 {
     /// <summary>
-    /// Represents the wire format
+    /// Implements the <a href="http://activemq.apache.org/openwire.html">OpenWire</a> protocol.
     /// </summary>
     public class OpenWireFormat : IWireFormat
     {

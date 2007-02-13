@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitleAttribute("Apache NMS Class Library")]
 [assembly: AssemblyDescriptionAttribute("NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers")]
 [assembly: AssemblyConfigurationAttribute("SNAPSHOT")]
-[assembly: AssemblyCompanyAttribute("http://incubator.apache.org/activemq/")]
+[assembly: AssemblyCompanyAttribute("http://activemq.apache.org/")]
 [assembly: AssemblyProductAttribute("Apache ActiveMQ")]
 [assembly: AssemblyCopyrightAttribute("Copyright (C) 2005-2007 Apache Software Foundation")]
 [assembly: AssemblyTrademarkAttribute("")]

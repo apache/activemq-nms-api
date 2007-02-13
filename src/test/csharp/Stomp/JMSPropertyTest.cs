@@ -14,22 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ;
 using NMS;
 using NUnit.Framework;
+using Stomp;
 using System;
 
-namespace ActiveMQ
+namespace Stomp
 {
-	[TestFixture]
-    public class ConsumerTest : NMS.Test.ConsumerTest
+    [ TestFixture ]
+    public class NMSPropertyTest : NMS.Test.NMSPropertyTest
     {
-        private String brokerURI = "tcp://localhost:61616";
-
         protected override IConnectionFactory CreateConnectionFactory()
         {
-            return new ConnectionFactory(new Uri(brokerURI));
-        }	    				
+            return new ConnectionFactory();
+        }
     }
 }
 

@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitleAttribute("Apache NMS for MSMQ Tests")]
 [assembly: AssemblyDescriptionAttribute("Unit Tests for the NMS (.Net Messaging Library) to MSMQ")]
 [assembly: AssemblyConfigurationAttribute("SNAPSHOT")]
-[assembly: AssemblyCompanyAttribute("http://incubator.apache.org/activemq/")]
+[assembly: AssemblyCompanyAttribute("http://activemq.apache.org/")]
 [assembly: AssemblyProductAttribute("Apache ActiveMQ")]
 [assembly: AssemblyCopyrightAttribute("Copyright (C) 2005-2007 Apache Software Foundation")]
 [assembly: AssemblyTrademarkAttribute("")]

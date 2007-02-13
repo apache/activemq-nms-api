@@ -5,7 +5,7 @@ Welcome to:
  * NMS Client for MSMQ
 =======================================================================
 
-For more information see http://incubator.apache.org/activemq/nms.html
+For more information see http://activemq.apache.org/nms.html
 
 =======================================================================
 Building With Visual Stuido 2005

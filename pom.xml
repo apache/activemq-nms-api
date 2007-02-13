@@ -20,11 +20,11 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>4.1-incubator-SNAPSHOT</version>
+    <version>4.2-SNAPSHOT</version>
   </parent>
   -->
   <groupId>org.apache.activemq</groupId>
-  <version>4.1-incubator-SNAPSHOT</version>
+  <version>4.2-SNAPSHOT</version>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>activemq-dotnet</artifactId>

@@ -82,12 +82,22 @@ namespace ActiveMQ.Transport.Tcp {
 				protected IWireFormat CreateWireFormat(Uri location, System.Collections.Specialized.StringDictionary map)
 				{
 					// TODO detect STOMP etc
-					
-					OpenWireFormat answer = new OpenWireFormat();
+					if ("stomp".Equals(location.Scheme)) 
+					{
+						IWireFormat answer = new StompWireFormat();
 
-                    // Set wireformat. properties on the wireformat owned by the tcpTransport
-                    URISupport.SetProperties(answer.PreferedWireFormatInfo, map, "wireFormat.");
-					return answer;
+	                    // Set wireformat. properties on the wireformat owned by the tcpTransport
+	                    URISupport.SetProperties(answer, map, "wireFormat.");
+						return answer;
+					}
+					else 
+					{
+						OpenWireFormat answer = new OpenWireFormat();
+
+	                    // Set wireformat. properties on the wireformat owned by the tcpTransport
+	                    URISupport.SetProperties(answer.PreferedWireFormatInfo, map, "wireFormat.");
+						return answer;
+					}
 				}
         }
 }

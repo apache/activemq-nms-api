@@ -268,7 +268,11 @@ namespace ActiveMQ.Commands
         public static ActiveMQDestination CreateDestination(int type, String pyhsicalName)
         {
             ActiveMQDestination result = null;
-            if (type == ACTIVEMQ_TOPIC)
+			if (pyhsicalName == null)
+			{
+				return null;
+			}
+            else if (type == ACTIVEMQ_TOPIC)
             {
                 result = new ActiveMQTopic(pyhsicalName);
             }

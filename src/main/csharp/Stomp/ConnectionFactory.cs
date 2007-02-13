@@ -16,22 +16,19 @@
  */
 using ActiveMQ;
 using NMS;
-using NUnit.Framework;
 using System;
 
-namespace ActiveMQ
+namespace Stomp
 {
-	[TestFixture]
-    public class ConsumerTest : NMS.Test.ConsumerTest
+    /// <summary>
+    /// Represents a connection with a message broker using the 
+	/// <a href="http://stomp.codehaus.org/">STOMP</a> protocol.
+    /// </summary>
+    public class ConnectionFactory : ActiveMQ.ConnectionFactory
     {
-        private String brokerURI = "tcp://localhost:61616";
-
-        protected override IConnectionFactory CreateConnectionFactory()
+        public ConnectionFactory()
         {
-            return new ConnectionFactory(new Uri(brokerURI));
-        }	    				
+			BrokerUri = new Uri("stomp://localhost:61613");
+        }
     }
 }
-
-
-

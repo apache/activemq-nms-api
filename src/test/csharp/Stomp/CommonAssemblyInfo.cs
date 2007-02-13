@@ -14,8 +14,8 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisibleAttribute(false)]
 [assembly: CLSCompliantAttribute(true)]
-[assembly: AssemblyTitleAttribute("Apache ActiveMQ .NET Tests")]
-[assembly: AssemblyDescriptionAttribute("Unit Tests for the NMS (.Net Messaging Library) to Apache ActiveMQ")]
+[assembly: AssemblyTitleAttribute("Stomp .NET Tests")]
+[assembly: AssemblyDescriptionAttribute("Unit Tests for the NMS (.Net Messaging Library) using the STOMP protocol")]
 [assembly: AssemblyConfigurationAttribute("SNAPSHOT")]
 [assembly: AssemblyCompanyAttribute("http://activemq.apache.org/")]
 [assembly: AssemblyProductAttribute("Apache ActiveMQ")]
