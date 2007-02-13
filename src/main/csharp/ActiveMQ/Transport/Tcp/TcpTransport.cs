@@ -34,7 +34,7 @@ namespace ActiveMQ.Transport.Tcp
     public class TcpTransport : ITransport
     {
         private Socket socket;
-        private OpenWireFormat wireformat = new OpenWireFormat();
+        private IWireFormat wireformat = new OpenWireFormat();
         private BinaryReader socketReader;
         private BinaryWriter socketWriter;
         private Thread readThread;
@@ -44,9 +44,10 @@ namespace ActiveMQ.Transport.Tcp
         private CommandHandler commandHandler;
         private ExceptionHandler exceptionHandler;
         
-        public TcpTransport(Socket socket)
+        public TcpTransport(Socket socket, IWireFormat wireformat)
         {
             this.socket = socket;
+			this.wireformat = wireformat;
         }
         
         /// <summary>
@@ -164,7 +165,7 @@ namespace ActiveMQ.Transport.Tcp
             set { this.exceptionHandler = value; }
         }
 
-        public OpenWireFormat Wireformat
+        public IWireFormat Wireformat
         {
             get { return wireformat; }
             set { wireformat = value; }

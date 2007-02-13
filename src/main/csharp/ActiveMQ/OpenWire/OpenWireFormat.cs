@@ -17,6 +17,7 @@
 using System.Reflection;
 using ActiveMQ.Commands;
 using ActiveMQ.OpenWire.V1;
+using ActiveMQ.Transport;
 using System;
 using System.IO;
 
@@ -25,7 +26,7 @@ namespace ActiveMQ.OpenWire
     /// <summary>
     /// Represents the wire format
     /// </summary>
-    public class OpenWireFormat
+    public class OpenWireFormat : IWireFormat
     {
         
         private BaseDataStreamMarshaller[] dataMarshallers;

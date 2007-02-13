@@ -43,7 +43,8 @@ namespace ActiveMQ.Transport.Tcp {
 
                         // Console.WriteLine("Opening socket to: " + host + " on port: " + port);
                         Socket socket = Connect(location.Host, location.Port);
-                        TcpTransport tcpTransport = new TcpTransport(socket);
+						IWireFormat wireformat = CreateWireFormat(location, map);
+                        TcpTransport tcpTransport = new TcpTransport(socket, wireformat);
                         ITransport rc = tcpTransport;
 
                         if (UseLogging)
@@ -51,10 +52,10 @@ namespace ActiveMQ.Transport.Tcp {
                                 rc = new LoggingTransport(rc);
                         }
 
-                        // Set wireformat. properties on the wireformat owned by the tcpTransport
-                        URISupport.SetProperties(tcpTransport.Wireformat.PreferedWireFormatInfo, map, "wireFormat.");
-
-                        rc = new WireFormatNegotiator(rc, tcpTransport.Wireformat);
+						if (wireformat is OpenWireFormat)
+						{
+	                        rc = new WireFormatNegotiator(rc, (OpenWireFormat) wireformat);
+						}
                         rc = new MutexTransport(rc);
                         rc = new ResponseCorrelator(rc);
 
@@ -77,5 +78,16 @@ namespace ActiveMQ.Transport.Tcp {
                         }
                         throw new SocketException();
                 }
+
+				protected IWireFormat CreateWireFormat(Uri location, System.Collections.Specialized.StringDictionary map)
+				{
+					// TODO detect STOMP etc
+					
+					OpenWireFormat answer = new OpenWireFormat();
+
+                    // Set wireformat. properties on the wireformat owned by the tcpTransport
+                    URISupport.SetProperties(answer.PreferedWireFormatInfo, map, "wireFormat.");
+					return answer;
+				}
         }
 }
