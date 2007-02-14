@@ -39,7 +39,7 @@ namespace ActiveMQ.Commands
     {
         public const byte ID_ActiveMQObjectMessage = 26;
     			
-        private ISerializable body;
+        private object body;
 		private IFormatter formatter;
 
 
@@ -55,13 +55,13 @@ namespace ActiveMQ.Commands
 
         // Properties
 	    
-        public ISerializable Body
+        public object Body
         {
             get 
 			{
                 if (body == null)
                 {
-                    body = (ISerializable) Formatter.Deserialize(new MemoryStream(Content));
+                    body = Formatter.Deserialize(new MemoryStream(Content));
                 }
                 return body;
             }

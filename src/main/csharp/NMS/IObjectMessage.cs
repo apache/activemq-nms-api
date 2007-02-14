@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System.Runtime.Serialization;
-
 namespace NMS
 {
 	/// <summary>
@@ -23,7 +21,7 @@ namespace NMS
 	/// </summary>
 	public interface IObjectMessage : IMessage
     {
-        ISerializable Body
+        object Body
 		{
             get;
         }
