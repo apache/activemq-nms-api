@@ -691,6 +691,7 @@
     <Compile Include="src\main\csharp\ActiveMQ\Transport\ITransportFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\main\csharp\ActiveMQ\Transport\IWireFormat.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\Transport\LoggingTransport.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -700,6 +701,7 @@
     <Compile Include="src\main\csharp\ActiveMQ\Transport\ResponseCorrelator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\main\csharp\ActiveMQ\Transport\Stomp\StompWireFormat.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\Transport\Tcp\TcpTransport.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -44,6 +44,7 @@
     <Compile Include="src\main\csharp\NMS\IMessage.cs" />
     <Compile Include="src\main\csharp\NMS\IMessageConsumer.cs" />
     <Compile Include="src\main\csharp\NMS\IMessageProducer.cs" />
+    <Compile Include="src\main\csharp\NMS\IObjectMessage.cs" />
     <Compile Include="src\main\csharp\NMS\IPrimitiveMap.cs" />
     <Compile Include="src\main\csharp\NMS\IQueue.cs" />
     <Compile Include="src\main\csharp\NMS\ISession.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="src\main\csharp\NMS\ITextMessage.cs" />
     <Compile Include="src\main\csharp\NMS\ITopic.cs" />
     <Compile Include="src\main\csharp\NMS\NMSConnectionException.cs" />
+    <Compile Include="src\main\csharp\NMS\NMSConstants.cs" />
     <Compile Include="src\main\csharp\NMS\NMSException.cs" />
     <Compile Include="src\main\csharp\NMS\NMSSecurityException.cs" />
   </ItemGroup>

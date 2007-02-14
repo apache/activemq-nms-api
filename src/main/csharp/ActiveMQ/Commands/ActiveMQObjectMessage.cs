@@ -18,8 +18,11 @@
 using System;
 using System.Collections;
 using System.IO;
+
+#if !(PocketPC||NETCF||NETCF_2_0)
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+#endif
 
 using ActiveMQ.OpenWire;
 using ActiveMQ.Commands;
@@ -39,9 +42,10 @@ namespace ActiveMQ.Commands
     {
         public const byte ID_ActiveMQObjectMessage = 26;
     			
+#if !(PocketPC||NETCF||NETCF_2_0)
         private object body;
-		private IFormatter formatter;
-
+        private IFormatter formatter;
+#endif
 
 		public override string ToString() {
             return GetType().Name + "["
@@ -59,19 +63,28 @@ namespace ActiveMQ.Commands
         {
             get 
 			{
+#if !(PocketPC||NETCF||NETCF_2_0)
                 if (body == null)
                 {
                     body = Formatter.Deserialize(new MemoryStream(Content));
                 }
                 return body;
+#else
+                throw new NotImplementedException();
+#endif
             }
 
 			set 
 			{
+#if !(PocketPC||NETCF||NETCF_2_0)
 				body = value;
-			}
+#else
+                throw new NotImplementedException();
+#endif
+            }
         }
-        
+
+#if !(PocketPC||NETCF||NETCF_2_0)
         public override void BeforeMarshall(OpenWireFormat wireFormat)
         {
             if (body == null)
@@ -106,5 +119,6 @@ namespace ActiveMQ.Commands
 				formatter = value;
 			}
 		}
+#endif
     }
 }

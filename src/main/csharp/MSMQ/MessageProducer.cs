@@ -162,6 +162,11 @@ namespace MSMQ
             }
         }
 
+        public void Send(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Dispose()
         {
             if( messageQueue!=null )
@@ -181,6 +186,12 @@ namespace MSMQ
         {
             get { return timeToLive; }
             set { timeToLive = value; }
+        }
+
+        byte IMessageProducer.Priority
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
         }
 
         public int Priority

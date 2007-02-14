@@ -68,7 +68,12 @@ namespace MSMQ
         {
             return new MessageConsumer(this, acknowledgementMode);
         }
-        
+
+        public IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal)
+        {
+            throw new NotImplementedException();
+        }
+
         public IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal)
         {
             return null;
@@ -158,7 +163,12 @@ namespace MSMQ
         {
             get { return acknowledgementMode == AcknowledgementMode.Transactional; }
         }
-        
+
+        public AcknowledgementMode AcknowledgementMode
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public MessageQueueTransaction MessageQueueTransaction
         {
             get
