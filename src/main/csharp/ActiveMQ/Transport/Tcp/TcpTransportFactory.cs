@@ -66,7 +66,7 @@ namespace ActiveMQ.Transport.Tcp {
                 {
                         // Looping through the AddressList allows different type of connections to be tried
                         // (IPv4, IPv6 and whatever else may be available).
-                        IPHostEntry hostEntry = Dns.Resolve(host);
+                        IPHostEntry hostEntry = Dns.GetHostByName(host);
                         foreach (IPAddress address in hostEntry.AddressList)
                         {
                                 Socket socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);

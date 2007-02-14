@@ -81,8 +81,17 @@ namespace ActiveMQ.OpenWire
 			string line;
 			while((line = socketReader.ReadLine()) != "") 
 			{
-				string[] split = line.Split(new char[] {':'}, 2);
-				headers[split[0]] = split[1];
+				int idx = line.IndexOf(':');
+				if (idx > 0) 
+				{
+					string key = line.Substring(0, idx);
+					string value = line.Substring(idx + 1);
+					headers[key] = value;
+				}
+				else 
+				{
+					// lets ignore this bad header!
+				}
 			}
 
 			byte[] content = null;
