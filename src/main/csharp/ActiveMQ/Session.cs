@@ -276,6 +276,13 @@ namespace ActiveMQ {
                         return answer;
                 }
 
+                public IObjectMessage CreateObjectMessage(object body)
+                {
+                        ActiveMQObjectMessage answer = new ActiveMQObjectMessage();
+                        answer.Body = body;
+                        return answer;
+                }
+
                 public void Commit()
                 {
                         if (!Transacted)

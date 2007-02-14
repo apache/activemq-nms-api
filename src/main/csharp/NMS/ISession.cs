@@ -97,6 +97,11 @@ namespace NMS {
                 IMapMessage CreateMapMessage();
 
                 /// <summary>
+                /// Creates a new Object message containing the given .NET object as the body
+                /// </summary>
+                IObjectMessage CreateObjectMessage(object body);
+
+                /// <summary>
                 /// Creates a new binary message
                 /// </summary>
                 IBytesMessage CreateBytesMessage();
