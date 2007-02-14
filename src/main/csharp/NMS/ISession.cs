@@ -43,6 +43,11 @@ namespace NMS {
                 IMessageConsumer CreateConsumer(IDestination destination, string selector);
 
                 /// <summary>
+                /// Creates a consumer of messages on a given destination with a selector
+                /// </summary>
+                IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal);
+
+                /// <summary>
                 /// Creates a named durable consumer of messages on a given destination with a selector
                 /// </summary>
                 IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
@@ -120,5 +125,15 @@ namespace NMS {
                 /// send and acknowledgements for producers and consumers in this session
                 /// </summary>
                 void Rollback();
+
+				// Attributes
+				
+				bool Transacted {
+                        get;
+                }
+
+                AcknowledgementMode AcknowledgementMode {
+                        get;
+                }
         }
 }

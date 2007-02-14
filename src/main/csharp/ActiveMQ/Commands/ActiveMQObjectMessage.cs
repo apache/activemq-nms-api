@@ -17,9 +17,13 @@
 
 using System;
 using System.Collections;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using ActiveMQ.OpenWire;
 using ActiveMQ.Commands;
+using NMS;
 
 namespace ActiveMQ.Commands
 {
@@ -31,25 +35,76 @@ namespace ActiveMQ.Commands
     //         if you need to make a change, please see the Groovy scripts in the
     //         activemq-core module
     //
-    public class ActiveMQObjectMessage : ActiveMQMessage
+    public class ActiveMQObjectMessage : ActiveMQMessage, IObjectMessage
     {
         public const byte ID_ActiveMQObjectMessage = 26;
     			
+        private ISerializable body;
+		private IFormatter formatter;
+
 
 		public override string ToString() {
             return GetType().Name + "["
                 + " ]";
-
 		}
 	
-
-
         public override byte GetDataStructureType() {
             return ID_ActiveMQObjectMessage;
         }
 
 
         // Properties
+	    
+        public ISerializable Body
+        {
+            get 
+			{
+                if (body == null)
+                {
+                    body = (ISerializable) Formatter.Deserialize(new MemoryStream(Content));
+                }
+                return body;
+            }
 
+			set 
+			{
+				body = value;
+			}
+        }
+        
+        public override void BeforeMarshall(OpenWireFormat wireFormat)
+        {
+            if (body == null)
+            {
+                Content = null;
+            }
+            else
+            {
+				MemoryStream stream = new MemoryStream();
+				Formatter.Serialize(stream, body);
+                Content = stream.ToArray();
+            }
+            
+            //Console.WriteLine("BeforeMarshalling, content is: " + Content);
+			
+            base.BeforeMarshall(wireFormat);
+        }
+
+		public IFormatter Formatter
+		{
+			get
+			{
+				if (formatter == null)
+				{
+					formatter = new BinaryFormatter();
+				}
+				return formatter;
+			}
+			
+			set 
+			{
+				formatter = value;
+			}
+		}
     }
 }

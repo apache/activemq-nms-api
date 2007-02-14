@@ -153,7 +153,7 @@
     </asminfo>
 
     <csc target="library" define="${current.build.defines}" warnaserror="false" debug="${build.debug}"
-      output="${build.bin.dir}/nms.dll" doc="${build.bin.dir}/nms.xml">
+      output="${build.bin.dir}/NMS.dll" doc="${build.bin.dir}/NMS.xml">
       <nowarn>
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
@@ -199,7 +199,7 @@
     </asminfo>
 
     <csc target="library" define="${current.build.defines}" warnaserror="false" debug="${build.debug}"
-      output="${build.bin.dir}/nms-test.dll" doc="${build.bin.dir}/nms-test.xml">
+      output="${build.bin.dir}/NMS-test.dll" doc="${build.bin.dir}/NMS-test.xml">
       <nowarn>
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
@@ -209,7 +209,7 @@
       <references failonempty="true">
         <include name="System.dll" asis="true"/>
         <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/nms.dll"/>
+        <include name="${build.bin.dir}/NMS.dll"/>
       </references>
     </csc>
   </target>
@@ -242,7 +242,7 @@
     </asminfo>
 
     <csc target="library" define="${current.build.defines}" warnaserror="false" debug="${build.debug}"
-      output="${build.bin.dir}/activemq.dll" doc="${build.bin.dir}/activemq.xml">
+      output="${build.bin.dir}/ActiveMQ.dll" doc="${build.bin.dir}/ActiveMQ.xml">
       <nowarn>
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
@@ -252,7 +252,7 @@
       </sources>
       <references failonempty="true">
         <include name="System.dll" asis="true"/>
-        <include name="${build.bin.dir}/nms.dll"/>
+        <include name="${build.bin.dir}/NMS.dll"/>
       </references>
     </csc>
   </target>
@@ -285,7 +285,7 @@
     </asminfo>
 
     <csc target="library" define="${current.build.defines}" warnaserror="false" debug="${build.debug}"
-      output="${build.bin.dir}/activemq-test.dll" doc="${build.bin.dir}/activemq-test.xml">
+      output="${build.bin.dir}/ActiveMQ-test.dll" doc="${build.bin.dir}/ActiveMQ-test.xml">
       <nowarn>
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
@@ -295,9 +295,9 @@
       <references failonempty="true">
         <include name="System.dll" asis="true"/>
         <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/nms.dll"/>
-        <include name="${build.bin.dir}/nms-test.dll"/>
-        <include name="${build.bin.dir}/activemq.dll"/>
+        <include name="${build.bin.dir}/NMS.dll"/>
+        <include name="${build.bin.dir}/NMS-test.dll"/>
+        <include name="${build.bin.dir}/ActiveMQ.dll"/>
       </references>
     </csc>
   </target>
@@ -340,9 +340,9 @@
       <references failonempty="true">
         <include name="System.dll" asis="true"/>
         <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/nms.dll"/>
-        <include name="${build.bin.dir}/nms-test.dll"/>
-        <include name="${build.bin.dir}/activemq.dll"/>
+        <include name="${build.bin.dir}/NMS.dll"/>
+        <include name="${build.bin.dir}/NMS-test.dll"/>
+        <include name="${build.bin.dir}/ActiveMQ.dll"/>
       </references>
     </csc>
   </target>
@@ -385,7 +385,7 @@
       <references failonempty="true">
         <include name="System.dll" asis="true"/>
         <include name="${lib.framework.dir}/System.Messaging.dll" />
-        <include name="${build.bin.dir}/nms.dll"/>
+        <include name="${build.bin.dir}/NMS.dll"/>
       </references>
     </csc>
   </target>
@@ -429,8 +429,8 @@
         <include name="System.dll" asis="true"/>
         <include name="${lib.framework.dir}/System.Messaging.dll" />
         <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/nms.dll"/>
-        <include name="${build.bin.dir}/nms-test.dll"/>
+        <include name="${build.bin.dir}/NMS.dll"/>
+        <include name="${build.bin.dir}/NMS-test.dll"/>
         <include name="${build.bin.dir}/msmq.dll"/>
       </references>
     </csc>
@@ -443,14 +443,14 @@
   <target name="test" depends="build-activemq-test" description="Runs all the NUnit test cases">
     <nunit2>
       <formatter type="Plain" />
-      <test assemblyname="${build.bin.dir}/activemq-test.dll"></test>
+      <test assemblyname="${build.bin.dir}/ActiveMQ-test.dll"></test>
     </nunit2>
   </target>
 
   <target name="test-case" depends="build-activemq-test" description="Run a specific NUnit test case using the 'test' variable">
     <nunit2>
       <formatter type="Plain" />
-      <test assemblyname="${build.bin.dir}/activemq-test.dll" testname="${test}"></test>
+      <test assemblyname="${build.bin.dir}/ActiveMQ-test.dll" testname="${test}"></test>
     </nunit2>
   </target>
 
@@ -475,7 +475,7 @@
     <mkdir dir="${doc.dir}/nms"/>
     <ndoc failonerror="false">
       <assemblies basedir="${build.bin.dir}">
-        <include name="nms.dll" />
+        <include name="NMS.dll" />
       </assemblies>
       <summaries basedir="${basedir}/src/main/ndoc">
         <include name="NamespaceSummary.xml" />
@@ -511,8 +511,8 @@
     <mkdir dir="${doc.dir}/all"/>
     <ndoc failonerror="false">
       <assemblies basedir="${build.bin.dir}">
-        <include name="nms.dll" />
-        <include name="activemq.dll" />
+        <include name="NMS.dll" />
+        <include name="ActiveMQ.dll" />
         <include name="msmq.dll" if="${platform::is-win32()}"/>
       </assemblies>
       <summaries basedir="${basedir}/src/main/ndoc">

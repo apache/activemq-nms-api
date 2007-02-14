@@ -30,11 +30,11 @@ namespace ActiveMQ
         private ProducerInfo info;
         private long messageCounter;
         
-        bool persistent;
-        TimeSpan timeToLive;
-        int priority;
-        bool disableMessageID;
-        bool disableMessageTimestamp;
+        private bool persistent = NMSConstants.defaultPersistence;
+        private TimeSpan timeToLive;
+        private byte priority = NMSConstants.defaultPriority;
+        private bool disableMessageID = false;
+        private bool disableMessageTimestamp = false;
         
         public MessageProducer(Session session, ProducerInfo info)
         {
@@ -48,6 +48,11 @@ namespace ActiveMQ
         }
         
         public void Send(IDestination destination, IMessage message)
+        {
+			Send(destination, message, Persistent, Priority, TimeToLive);
+		}
+		
+        public void Send(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
         {
 			ActiveMQMessage activeMessage = (ActiveMQMessage)message;
 
@@ -76,7 +81,7 @@ namespace ActiveMQ
                 activeMessage.TransactionId = session.TransactionContext.TransactionId;
             }
             
-            session.DoSend(destination, message);
+            session.DoSend(destination, message, persistent, priority, timeToLive);
         }
         
         public void Dispose()
@@ -95,7 +100,8 @@ namespace ActiveMQ
             get { return timeToLive; }
             set { this.timeToLive = value; }
         }
-        public int Priority
+
+        public byte Priority
         {
             get { return priority; }
             set { this.priority = value; }

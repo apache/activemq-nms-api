@@ -135,7 +135,14 @@ namespace ActiveMQ {
 
                 public IMessageConsumer CreateConsumer(IDestination destination, string selector)
                 {
+	                return CreateConsumer(destination, null, false);
+				}
+				
+                public IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal)
+                {
                         ConsumerInfo command = CreateConsumerInfo(destination, selector);
+                        command.NoLocal = noLocal;
+
                         ConsumerId consumerId = command.ConsumerId;
 
                         try
@@ -309,6 +316,10 @@ namespace ActiveMQ {
                         get { return info.SessionId; } 
                 }
 
+                public AcknowledgementMode AcknowledgementMode {
+                        get { return acknowledgementMode; } 
+                }
+
                 public bool Transacted {
                         get { return acknowledgementMode == AcknowledgementMode.Transactional; } 
                 }
@@ -318,10 +329,14 @@ namespace ActiveMQ {
                 }
 
                 // Implementation methods
-                public void DoSend(IDestination destination, IMessage message)
+                public void DoSend(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
                 {
                         ActiveMQMessage command = ActiveMQMessage.Transform(message);
-                        // TODO complete packet
+						command.Persistent = persistent;
+						command.Priority = priority;
+						
+                        // TODO add time to live
+
                         connection.SyncRequest(command);
                 }
 
