@@ -7,7 +7,7 @@
     <ProjectGuid>{08321F42-4B3D-4815-B592-95962BAC3B9F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>ActiveMQ</RootNamespace>
-    <AssemblyName>activemq</AssemblyName>
+    <AssemblyName>ActiveMQ</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>activemq-dotnet.snk</AssemblyOriginatorKeyFile>

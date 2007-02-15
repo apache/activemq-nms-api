@@ -7,7 +7,7 @@
     <ProjectGuid>{EB943C69-2C9B-45E7-B95B-FB916E7057ED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>ActiveMQ</RootNamespace>
-    <AssemblyName>activemq-test</AssemblyName>
+    <AssemblyName>ActiveMQ-test</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <StartupObject>
     </StartupObject>

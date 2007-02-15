@@ -7,7 +7,7 @@
     <ProjectGuid>{2F3ABCF5-EE87-43B1-9DE7-0548FD6A4E52}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>NMS.Test</RootNamespace>
-    <AssemblyName>nms-test</AssemblyName>
+    <AssemblyName>NMS-test</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <StartupObject>
     </StartupObject>

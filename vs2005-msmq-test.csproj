@@ -7,7 +7,7 @@
     <ProjectGuid>{2F31ED5C-44A2-464A-BD55-2B5B010654E8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>MSMQ</RootNamespace>
-    <AssemblyName>msmq-test</AssemblyName>
+    <AssemblyName>MSMQ-test</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <StartupObject>
     </StartupObject>
