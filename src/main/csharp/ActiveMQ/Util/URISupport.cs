@@ -28,7 +28,7 @@ namespace ActiveMQ.Util
 	internal class URISupport
 	{
 		/// <summary>
-		/// Parse a URI query string of the form ?x=y&z=0
+		/// Parse a URI query string of the form ?x=y&amp;z=0
 		/// into a map of name/value pairs.
 		/// </summary>
 		/// <param name="query">The query string to parse. This string should not contain

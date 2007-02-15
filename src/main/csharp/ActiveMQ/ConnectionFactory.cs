@@ -42,6 +42,11 @@ namespace ActiveMQ
 			this.brokerUri=brokerUri;
         }
         
+        public ConnectionFactory(string brokerUri)
+        {
+			this.brokerUri=new Uri(brokerUri);
+        }
+        
         public IConnection CreateConnection()
         {
             return CreateConnection(userName, password);

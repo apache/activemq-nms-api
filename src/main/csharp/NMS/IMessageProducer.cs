@@ -31,6 +31,11 @@ namespace NMS
         void Send(IMessage message);
 		
         /// <summary>
+        /// Sends the message to the default destination with the explicit QoS configuration
+        /// </summary>
+        void Send(IMessage message, bool persistent, byte priority, TimeSpan timeToLive);
+
+        /// <summary>
         /// Sends the message to the given destination
         /// </summary>
         void Send(IDestination destination, IMessage message);

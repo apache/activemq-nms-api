@@ -315,7 +315,7 @@ namespace ActiveMQ
             }
             else if (command is ShutdownInfo)
             {
-                ShutdownInfo info = (ShutdownInfo)command;
+                //ShutdownInfo info = (ShutdownInfo)command;
                 if( !closing && !closed )
                 {
                     OnException(transport, new NMSException("Broker closed this connection."));

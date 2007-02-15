@@ -52,6 +52,11 @@ namespace ActiveMQ
 			Send(destination, message, Persistent, Priority, TimeToLive);
 		}
 		
+        public void Send(IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
+        {
+			Send(info.Destination, message, persistent, priority, timeToLive);
+		}
+		
         public void Send(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
         {
 			ActiveMQMessage activeMessage = (ActiveMQMessage)message;

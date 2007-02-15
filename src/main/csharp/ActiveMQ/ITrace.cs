@@ -20,7 +20,7 @@ using System.Text;
 namespace ActiveMQ
 {
 	/// <summary>
-	/// The ITrace interface is used internally by ActiveMW DotNet to log messages.
+	/// The ITrace interface is used internally by ActiveMQ to log messages.
 	/// The client aplication may provide an implementation of ITrace if it wishes to
 	/// route messages to a specific destination.
 	/// </summary>
@@ -29,6 +29,7 @@ namespace ActiveMQ
 	/// Use the <see cref="Tracer"/> class to register an instance of ITrace as the
 	/// active trace destination.
 	/// </para>
+	/// </remarks>
 	public interface ITrace
 	{
 		void Debug(string message);
