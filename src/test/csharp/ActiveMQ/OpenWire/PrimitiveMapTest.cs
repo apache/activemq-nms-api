@@ -116,9 +116,22 @@ namespace ActiveMQ.OpenWire
 
             IList list = map.GetList("m");
             Assert.AreEqual(2, list.Count, "list size");
+			Assert.IsTrue(list.Contains("Item1"));
+			Assert.IsTrue(list.Contains("Item2"));
 
             IDictionary dictionary = map.GetDictionary("n");
-            Assert.AreEqual(3, dictionary.Count, "dictionary size");
+            Assert.AreEqual(5, dictionary.Count, "dictionary size");
+
+			IDictionary childMap = (IDictionary) dictionary["childMap"];
+			Console.WriteLine("Found childMap: " + childMap);
+			
+			Assert.IsNotNull(childMap);
+			Assert.AreEqual("childMap", childMap["name"], "childMap[name]");
+			
+			IList childList = (IList) dictionary["childList"];
+			Console.WriteLine("Found childList: " + childList);
+			Assert.IsNotNull(childList);
+			Assert.IsTrue(childList.Contains("childListElement1"));
         }
 
 
@@ -136,6 +149,14 @@ namespace ActiveMQ.OpenWire
             answer.Add("Name", "James");
             answer.Add("Location", "London");
             answer.Add("Company", "LogicBlaze");
+
+			Hashtable childMap = new Hashtable();
+			childMap.Add("name", "childMap");
+			answer.Add("childMap", childMap);
+			
+			ArrayList childList = new ArrayList();
+			childList.Add("childListElement1");
+			answer.Add("childList", childList);
             return answer;
         }
 
