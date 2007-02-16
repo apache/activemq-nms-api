@@ -26,6 +26,8 @@ namespace Stomp
     {
         protected override IConnectionFactory CreateConnectionFactory()
         {
+			Console.WriteLine("##### using the NMS STOMP client!");
+			
             return new ConnectionFactory();
         }
     }

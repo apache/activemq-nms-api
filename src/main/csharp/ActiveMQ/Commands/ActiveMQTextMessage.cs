@@ -74,6 +74,8 @@ namespace ActiveMQ.Commands
                 byte[] data = null;
                 if (text != null)
                 {
+					// TODO lets make the evaluation of the Content lazy!
+					
 					// TODO assume that the text is ASCII
 					
                     byte[] sizePrefix = System.BitConverter.GetBytes(text.Length);

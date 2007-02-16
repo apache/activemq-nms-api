@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using ActiveMQ.Commands;
+using System.Text;
 using NMS;
 
 namespace ActiveMQ
@@ -25,11 +26,30 @@ namespace ActiveMQ
 	/// </summary>
 	public class BrokerException : NMSException
     {
-        
         private BrokerError brokerError;
         
+		/// <summary>
+		/// Generates a nice textual stack trace
+		/// </summary>
+		public static string StackTraceDump(StackTraceElement[] elements)
+		{
+			StringBuilder builder = new StringBuilder();
+			if (elements != null) 
+			{
+				foreach (StackTraceElement e in elements) 
+				{
+					builder.Append("\n " + e.ClassName + "." + e.MethodName + "(" + e.FileName + ":" + e.LineNumber + ")");
+				}
+			}
+			return builder.ToString();
+		}
+		
+        public BrokerException() : base("Broker failed with missing exception log")
+        {
+        }
+        
         public BrokerException(BrokerError brokerError) : base(
-            brokerError.ExceptionClass + " : " + brokerError.Message)
+            brokerError.ExceptionClass + " : " + brokerError.Message + "\n" + StackTraceDump(brokerError.StackTraceElements))
         {
             this.brokerError = brokerError;
         }

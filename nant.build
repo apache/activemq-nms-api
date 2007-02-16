@@ -117,7 +117,7 @@
   <!-- ============================================================================================ -->
 
   <target name="build" 
-          depends="build-nms,build-nms-test,build-activemq,build-activemq-test,build-msmq,build-msmq-test" 
+          depends="build-nms,build-nms-test,build-activemq,build-activemq-test,build-stomp-test,build-msmq,build-msmq-test" 
           description="Build everything"/>
 
   <!-- Compile the nms module -->

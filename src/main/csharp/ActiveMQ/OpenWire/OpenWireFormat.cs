@@ -39,6 +39,7 @@ namespace ActiveMQ.OpenWire
         private int minimumVersion=1;
 
         private WireFormatInfo preferedWireFormatInfo = new WireFormatInfo();
+		private ITransport transport;
         
         public OpenWireFormat()
         {
@@ -52,7 +53,12 @@ namespace ActiveMQ.OpenWire
             dataMarshallers = new BaseDataStreamMarshaller[256];
             Version = 1;
         }
-                
+
+        public ITransport Transport {
+			get { return transport; }
+			set { transport = value; }
+		}
+				
         public bool StackTraceEnabled {
             get { return stackTraceEnabled; }
 			set { stackTraceEnabled = value; }

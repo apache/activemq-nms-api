@@ -21,6 +21,7 @@ using System.Net.Sockets;
 using ActiveMQ.Commands;
 using ActiveMQ.OpenWire;
 using ActiveMQ.Transport;
+using ActiveMQ.Transport.Stomp;
 using ActiveMQ.Util;
 
 namespace ActiveMQ.Transport.Tcp {
@@ -45,6 +46,7 @@ namespace ActiveMQ.Transport.Tcp {
                         Socket socket = Connect(location.Host, location.Port);
 						IWireFormat wireformat = CreateWireFormat(location, map);
                         TcpTransport tcpTransport = new TcpTransport(socket, wireformat);
+						wireformat.Transport = tcpTransport;
                         ITransport rc = tcpTransport;
 
                         if (UseLogging)
@@ -66,7 +68,7 @@ namespace ActiveMQ.Transport.Tcp {
                 {
                         // Looping through the AddressList allows different type of connections to be tried
                         // (IPv4, IPv6 and whatever else may be available).
-                        IPHostEntry hostEntry = Dns.GetHostEntry(host);
+                        IPHostEntry hostEntry = Dns.GetHostByName(host);
                         foreach (IPAddress address in hostEntry.AddressList)
                         {
                                 Socket socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);

@@ -24,33 +24,48 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-namespace ActiveMQ.OpenWire
+namespace ActiveMQ.Transport.Stomp
 {
     /// <summary>
     /// Implements the <a href="http://stomp.codehaus.org/">STOMP</a> protocol.
     /// </summary>
     public class StompWireFormat : IWireFormat
     {
-		protected const String NEWLINE = "\n";
-		protected const String SEPARATOR = ":";
-		protected const char NULL = (char) 0;
-		protected Encoding encoding = new UTF8Encoding();
+		private Encoding encoding = new UTF8Encoding();
+		private ITransport transport;
 		
 		public StompWireFormat()
 		{
+		}
+		
+		public ITransport Transport {
+			get { return transport; }
+			set { transport = value; }
 		}
 		
         public int Version {
             get { return 1; }
         }
 
-        public void Marshal(Object o, BinaryWriter ds)
+        public void Marshal(Object o, BinaryWriter binaryWriter)
         {
+			Console.WriteLine("About to marshall command: " + o);
+			//Console.Out.Flush();
+			StompFrameStream ds = new StompFrameStream(binaryWriter, encoding);
+			
 			if (o is ConnectionInfo) 
 			{
 				WriteConnectionInfo((ConnectionInfo) o, ds);
 			}
-			else if (o is ActiveMQMessage)
+/*			else if (o is SessionInfo) 
+			{
+				SessionInfo info = (SessionInfo) o;
+				if (info.ResponseRequired) 
+				{
+					Console.WriteLine("Response required from Session!!");
+				}
+			}
+*/			else if (o is ActiveMQMessage)
 			{
 				WriteMessage((ActiveMQMessage) o, ds);
 			}
@@ -61,6 +76,16 @@ namespace ActiveMQ.OpenWire
 			else if (o is MessageAck)
 			{
 				WriteMessageAck((MessageAck) o, ds);
+			}
+			else if (o is Command) 
+			{
+				Command command = o as Command;
+				if (command.ResponseRequired) 
+				{
+					Response response = new Response();
+					response.CorrelationId = command.CommandId; 
+					SendCommand(response);
+				}
 			}
 			else 
 			{
@@ -77,6 +102,8 @@ namespace ActiveMQ.OpenWire
 			}
 			while (command == "");
 			
+			Console.WriteLine(">> command: " + command);
+			
 			IDictionary headers = new Hashtable();
 			string line;
 			while((line = socketReader.ReadLine()) != "") 
@@ -87,12 +114,15 @@ namespace ActiveMQ.OpenWire
 					string key = line.Substring(0, idx);
 					string value = line.Substring(idx + 1);
 					headers[key] = value;
+					
+					Console.WriteLine(">> header: " + key + " = " + value);
 				}
 				else 
 				{
 					// lets ignore this bad header!
 				}
 			}
+			Console.Out.Flush();
 
 			byte[] content = null;
 			string length = ToString(headers["content-length"]);
@@ -112,15 +142,25 @@ namespace ActiveMQ.OpenWire
 				string text = body.ToString().TrimEnd('\r', '\n');
 				content = encoding.GetBytes(text);
 			}
-			return CreateCommand(command, headers, content);
+			Console.WriteLine(">>>>> read content: " + content.Length);
+			Console.Out.Flush();
+			
+			Object answer = CreateCommand(command, headers, content);
+			Console.WriteLine(">>>>> received: " + answer);
+			Console.Out.Flush();
+			return answer;
         }
 
 		protected Object CreateCommand(string command, IDictionary headers, byte[] content) 
 		{
-			if (command == "RECEIPT")
+			if (command == "RECEIPT" || command == "CONNECTED")
 			{
 				Response answer = new Response();
-				answer.CorrelationId = Int32.Parse(ToString(headers["receipt-id"]));
+				string text = RemoveHeader(headers, "receipt-id");
+				if (text != null) 
+				{
+					answer.CorrelationId = Int32.Parse(text);
+				}
 				return answer; 
 			}
 			else if (command == "MESSAGE")
@@ -130,9 +170,15 @@ namespace ActiveMQ.OpenWire
 			else if (command == "ERROR")
 			{
 				ExceptionResponse answer = new ExceptionResponse();
+				string text = RemoveHeader(headers, "receipt-id");
+				if (text != null) 
+				{
+					answer.CorrelationId = Int32.Parse(text);
+				}
+				
 				BrokerError error = new BrokerError();
-				error.Message = ToString(headers["message"]);
-				error.ExceptionClass = ToString(headers["exceptionClass"]); // TODO is this the right header?
+				error.Message = RemoveHeader(headers, "message");
+				error.ExceptionClass = RemoveHeader(headers, "exceptionClass"); // TODO is this the right header?
 				answer.Exception = error;
 				return answer; 
 			}
@@ -143,136 +189,168 @@ namespace ActiveMQ.OpenWire
 			}
 		}
 		
-		protected ActiveMQMessage ReadMessage(string command, IDictionary headers, byte[] content) 
+		protected Command ReadMessage(string command, IDictionary headers, byte[] content) 
 		{
 			ActiveMQMessage message = null;
 			if (headers.Contains("content-length"))
 			{
 				message = new ActiveMQBytesMessage();
+				message.Content = content;
 			}
 			else 
 			{
-				message = new ActiveMQTextMessage();
+				message = new ActiveMQTextMessage(encoding.GetString(content));
 			}
-			message.Content = content;
+
+			Console.WriteLine("Content is: " + content.Length + " byte(s)");
+			
+			if (message is ActiveMQTextMessage)
+			{
+				ActiveMQTextMessage textMessage = message as ActiveMQTextMessage;
+				Console.WriteLine("Text is: " + textMessage.Text);
+			}
 			
 			// TODO now lets set the various headers
-			message.Type = ToString(headers["type"]);
-			message.Destination = ActiveMQDestination.CreateDestination(ActiveMQDestination.ACTIVEMQ_QUEUE, ToString(headers["destination"]));
-			message.ReplyTo = ActiveMQDestination.CreateDestination(ActiveMQDestination.ACTIVEMQ_QUEUE, ToString(headers["reply-to"]));
 			
-			// lets remove all the standard headers as unfortunately there's no Remove method which returns the removed value
-			string[] standardHeaders = { "type", "destination", "reply-to", "receipt-id" };
-			foreach (string header in standardHeaders) 
-			{
-				headers.Remove(header);
-			}
+			message.Type = RemoveHeader(headers, "type");
+			message.Destination = StompHelper.ToDestination(RemoveHeader(headers, "destination"));
+			message.ReplyTo = StompHelper.ToDestination(RemoveHeader(headers, "reply-to"));
+			message.TargetConsumerId = StompHelper.ToConsumerId(RemoveHeader(headers, "subscription"));
+			message.CorrelationId = ToString(headers["correlation-id"]);
+			message.MessageId = StompHelper.ToMessageId(RemoveHeader(headers, "message-id"));
+			
+			string header = RemoveHeader(headers, "priority");
+			if (header != null) message.Priority = Byte.Parse(header);
+			
+			header = RemoveHeader(headers, "timestamp");
+			if (header != null) message.Timestamp = Int64.Parse(header);
+
+			header = RemoveHeader(headers, "expires");
+			if (header != null) message.Expiration = Int64.Parse(header);
+			
+			header = RemoveHeader(headers, "timestamp");
+			if (header != null) message.Timestamp = Int64.Parse(header);
 			
 			// now lets add the generic headers
 			foreach (string key in headers.Keys)
 			{
 				message.Properties[key] = headers[key];
 			}
-			return message;
+			MessageDispatch dispatch = new MessageDispatch();
+			dispatch.Message = message;
+			dispatch.ConsumerId = message.TargetConsumerId;
+			dispatch.Destination = message.Destination;
+			return dispatch;
 		}
 		
-		protected void WriteConnectionInfo(ConnectionInfo command, BinaryWriter ds)
+		
+		
+		
+		protected void WriteConnectionInfo(ConnectionInfo command, StompFrameStream ss)
 		{
-			WriteCommand(ds, "CONNECT");
-			WriteHeader(ds, "client-id", command.ClientId);
-			WriteHeader(ds, "login", command.UserName);
-			WriteHeader(ds, "passcode", command.Password);
-			WriteCommonHeaders(ds, command);
-			WriteFrameEnd(ds);
+			// lets force a receipt
+			command.ResponseRequired = true;
+			
+			ss.WriteCommand(command, "CONNECT");
+			ss.WriteHeader("client-id", command.ClientId);
+			ss.WriteHeader("login", command.UserName);
+			ss.WriteHeader("passcode", command.Password);
+			ss.Flush();
 		}
 
-		protected void WriteConsumerInfo(ConsumerInfo command, BinaryWriter ds)
+		protected void WriteConsumerInfo(ConsumerInfo command, StompFrameStream ss)
 		{
-			WriteCommand(ds, "SUBSCRIBE");
-			WriteHeader(ds, "destination", command.Destination);
-			WriteHeader(ds, "selector", command.Selector);
-			WriteHeader(ds, "id", command.ConsumerId);
-			WriteHeader(ds, "durable-subscriber-name", command.SubscriptionName);
-			WriteHeader(ds, "no-local", command.NoLocal);
-			WriteHeader(ds, "ack", "client");
-			
+			ss.WriteCommand(command, "SUBSCRIBE");
+			ss.WriteHeader("destination", StompHelper.ToStomp(command.Destination));
+			ss.WriteHeader("selector", command.Selector);
+			ss.WriteHeader("id", StompHelper.ToStomp(command.ConsumerId));
+			ss.WriteHeader("durable-subscriber-name", command.SubscriptionName);
+			ss.WriteHeader("no-local", command.NoLocal);
+			ss.WriteHeader("ack", "client");
+
 			// ActiveMQ extensions to STOMP
-			WriteHeader(ds, "activemq.dispatchAsync", command.DispatchAsync);
-			WriteHeader(ds, "activemq.exclusive", command.Exclusive);
-			WriteHeader(ds, "activemq.maximumPendingMessageLimit", command.MaximumPendingMessageLimit);
-			WriteHeader(ds, "activemq.prefetchSize", command.PrefetchSize);
-			WriteHeader(ds, "activemq.priority ", command.Priority);
-			WriteHeader(ds, "activemq.retroactive", command.Retroactive);
+			ss.WriteHeader("activemq.dispatchAsync", command.DispatchAsync);
+			ss.WriteHeader("activemq.exclusive", command.Exclusive);
+			ss.WriteHeader("activemq.maximumPendingMessageLimit", command.MaximumPendingMessageLimit);
+			ss.WriteHeader("activemq.prefetchSize", command.PrefetchSize);
+			ss.WriteHeader("activemq.priority ", command.Priority);
+			ss.WriteHeader("activemq.retroactive", command.Retroactive);
 			
-			WriteCommonHeaders(ds, command);
-			WriteFrameEnd(ds);
+			ss.Flush();
 		}
 
-		protected void WriteMessage(ActiveMQMessage command, BinaryWriter ds)
+		protected void WriteMessage(ActiveMQMessage command, StompFrameStream ss)
 		{
-			WriteCommand(ds, "SEND");
-			WriteHeader(ds, "correlation-id", command.CorrelationId);
-			WriteHeader(ds, "reply-to", command.ReplyTo);
-			WriteHeader(ds, "expires", command.Expiration);
-			WriteHeader(ds, "priority", command.Priority);
-			WriteHeader(ds, "type", command.Type);
-			WriteHeader(ds, "transaction", command.TransactionId);
+			ss.WriteCommand(command, "SEND");
+			ss.WriteHeader("destination", StompHelper.ToStomp(command.Destination));
+			ss.WriteHeader("reply-to", StompHelper.ToStomp(command.ReplyTo));
+			ss.WriteHeader("correlation-id", command.CorrelationId);
+			ss.WriteHeader("expires", command.Expiration);
+			ss.WriteHeader("priority", command.Priority);
+			ss.WriteHeader("type", command.Type);
+			ss.WriteHeader("transaction", command.TransactionId);
 			
-			if (!(command is ActiveMQTextMessage)) 
+			// lets force the content to be marshalled
+			
+			command.BeforeMarshall(null);
+			if (command is ActiveMQTextMessage) 
 			{
-				WriteHeader(ds, "content-length", command.Content.Length);
+				ActiveMQTextMessage textMessage = command as ActiveMQTextMessage;
+				ss.Content = encoding.GetBytes(textMessage.Text);
+				
+				Console.WriteLine("============ the text is : " + textMessage.Text + " which is: " + ss.Content.Length + " bytes for: " + command);
+			}
+			else 
+			{
+				ss.Content = command.Content;
+				ss.ContentLength = command.Content.Length;
 			}
 	
-			// TODO write content
-			
 			IPrimitiveMap map = command.Properties;
 			foreach (string key in map.Keys)
 			{
-				WriteHeader(ds, key, map[key]);
+				ss.WriteHeader(key, map[key]);
 			}
-			WriteCommonHeaders(ds, command);
-			ds.Write(NEWLINE);
-			ds.Write(command.Content);
-			ds.Write(NULL);
+			ss.Flush();
 		}
 		
-		protected void WriteMessageAck(MessageAck command, BinaryWriter ds)
+		protected void WriteMessageAck(MessageAck command, StompFrameStream ss)
 		{
-			WriteCommand(ds, "ACK");
+			ss.WriteCommand(command, "ACK");
 			
 			// TODO handle bulk ACKs?
-			WriteHeader(ds, "message-id", command.FirstMessageId);
-			WriteHeader(ds, "transaction", command.TransactionId);
-			
-			WriteCommonHeaders(ds, command);
-			WriteFrameEnd(ds);
+			ss.WriteHeader("message-id", command.FirstMessageId);
+			ss.WriteHeader("transaction", command.TransactionId);
+
+			ss.Flush();
 		}
 		
-		protected void WriteCommand(BinaryWriter ds, String command)
+		protected void SendCommand(Command command)
 		{
-			ds.Write(command + NEWLINE);
-		}
-		
-		protected void WriteFrameEnd(BinaryWriter ds)
-		{
-			ds.Write(NEWLINE);
-			ds.Write(NULL);
-		}
-		
-		protected void WriteHeader(BinaryWriter ds, String name, Object value)
-		{
-			if (value != null) {
-				ds.Write(name + SEPARATOR + value + NEWLINE);
-			}
-		}
-		
-		protected void WriteCommonHeaders(BinaryWriter ds, Command command) 
-		{
-			if (command.ResponseRequired)
+			if (transport == null)
 			{
-				WriteHeader(ds, "receipt", command.CommandId);
+				Console.WriteLine("No transport configured so cannot return command: " + command);
+			}
+			else 
+			{
+				transport.Command(transport, command);
 			}
 		}
+		
+		protected string RemoveHeader(IDictionary headers, string name)
+		{
+			object value = headers[name];
+			if (value == null) 
+			{
+				return null;
+			}
+			else 
+			{
+				headers.Remove(name);
+				return value.ToString();
+			}
+		}
+		
 		
 		protected string ToString(object value) 
 		{

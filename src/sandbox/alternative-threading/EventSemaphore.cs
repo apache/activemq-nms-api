@@ -15,28 +15,39 @@
  * limitations under the License.
  */
 using System;
-using System.IO;
+using System.Threading;
 
-namespace ActiveMQ.Transport
+namespace ActiveMQ.Util
 {
-	/// <summary>
-	/// Represents the marshalling of commands to and from an IO stream
-	/// </summary>
-	public interface IWireFormat
+    class EventSemaphore
     {
-		/// <summary>
-		/// Marshalls the given command object onto the stream
-		/// </summary>
-	    void Marshal(Object o, BinaryWriter ds);
+        //readonly ManualResetEvent mutex = new ManualResetEvent(false);
 
-		/// <summary>
-		/// Unmarshalls the next command object from the stream
-		/// </summary>
-        Object Unmarshal(BinaryReader dis);
+		public void PulseAll() 
+		{
+            lock(this)
+            {
+                Monitor.PulseAll(this);
+                //mutex.Set();
+            }	
+        }
 
-		ITransport Transport {
-			get; set;
-		}
+        public void Wait()
+        {
+            lock (this)
+            {
+                    Monitor.Wait(this);
+            }
+            //return mutex.WaitOne(timeout, false);
+        }
+
+        public void Wait(TimeSpan timeout)
+        {
+            lock (this)
+            {
+                    Monitor.Wait(this, timeout, false);
+            }
+            //return mutex.WaitOne(timeout, false);
+        }
     }
 }
-
