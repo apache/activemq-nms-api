@@ -38,6 +38,7 @@ namespace NMS.Test
 
         protected int receiveTimeout = 1000;
         protected string clientId;
+        protected bool persistent = true;
         protected DestinationType destinationType = DestinationType.Queue;
         protected AcknowledgementMode acknowledgementMode = AcknowledgementMode.ClientAcknowledge;
 
@@ -146,6 +147,7 @@ namespace NMS.Test
 
                 IMessageConsumer consumer = session.CreateConsumer(Destination);
                 IMessageProducer producer = session.CreateProducer(Destination);
+				producer.Persistent = persistent;
 
                 IMessage request = CreateMessage();
                 producer.Send(request);

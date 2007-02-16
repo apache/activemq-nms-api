@@ -43,14 +43,14 @@ namespace ActiveMQ.Transport.Stomp
 				text = text.Substring("/topic/".Length);
 				type = ActiveMQDestination.ACTIVEMQ_TOPIC;
 			}
-			else if (text.StartsWith("/temptopic/"))
+			else if (text.StartsWith("/temp-topic/"))
 			{
-				text = text.Substring("/temptopic/".Length);
+				text = text.Substring("/temp-topic/".Length);
 				type = ActiveMQDestination.ACTIVEMQ_TEMPORARY_TOPIC;
 			}
-			else if (text.StartsWith("/tempqueue/"))
+			else if (text.StartsWith("/temp-queue/"))
 			{
-				text = text.Substring("/tempqueue/".Length);
+				text = text.Substring("/temp-queue/".Length);
 				type = ActiveMQDestination.ACTIVEMQ_TEMPORARY_QUEUE;
 			}
 			return ActiveMQDestination.CreateDestination(type, text);
@@ -64,16 +64,16 @@ namespace ActiveMQ.Transport.Stomp
 			}
 			else 
 			{
-				switch (destination.GetDestinationType())
+				switch (destination.DestinationType)
 				{
-					case ActiveMQDestination.ACTIVEMQ_TOPIC:
+					case DestinationType.Topic:
 						return "/topic/" + destination.PhysicalName;
 					
-					case ActiveMQDestination.ACTIVEMQ_TEMPORARY_TOPIC:
-						return "/temptopic/" + destination.PhysicalName;
+					case DestinationType.TemporaryTopic:
+						return "/temp-topic/" + destination.PhysicalName;
 					
-					case ActiveMQDestination.ACTIVEMQ_TEMPORARY_QUEUE:
-						return "/tempqueue/" + destination.PhysicalName;
+					case DestinationType.TemporaryQueue:
+						return "/temp-queue/" + destination.PhysicalName;
 					
 					default:
 						return "/queue/" + destination.PhysicalName;
@@ -157,6 +157,18 @@ namespace ActiveMQ.Transport.Stomp
 			}
 			answer.ProducerId = ToProducerId(text);
 			return answer;
+		}
+		
+		public static bool ToBool(string text, bool defaultValue)
+		{
+			if (text == null)
+			{
+				return defaultValue;
+			}
+			else 
+			{
+				return "true" == text || "TRUE" == text;
+			}
 		}
     }
 }

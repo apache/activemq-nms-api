@@ -69,6 +69,20 @@ namespace Stomp
 		}
 
 		// TODO destination stuff
+		
+		[ Test ]
+		public void DestinationMarshallingWorks()
+		{
+			Assert.AreEqual("/queue/FOO.BAR", StompHelper.ToStomp(new ActiveMQQueue("FOO.BAR")), "queue");
+			Assert.AreEqual("/topic/FOO.BAR", StompHelper.ToStomp(new ActiveMQTopic("FOO.BAR")), "topic");
+			Assert.AreEqual("/temp-queue/FOO.BAR", StompHelper.ToStomp(new ActiveMQTempQueue("FOO.BAR")), "temporary queue");
+			Assert.AreEqual("/temp-topic/FOO.BAR", StompHelper.ToStomp(new ActiveMQTempTopic("FOO.BAR")), "temporary topic");
+			
+			Assert.AreEqual(new ActiveMQQueue("FOO.BAR"), StompHelper.ToDestination("/queue/FOO.BAR"), "queue from Stomp");
+			Assert.AreEqual(new ActiveMQTopic("FOO.BAR"), StompHelper.ToDestination("/topic/FOO.BAR"), "topic from Stomp");
+			Assert.AreEqual(new ActiveMQTempQueue("FOO.BAR"), StompHelper.ToDestination("/temp-queue/FOO.BAR"), "temporary queue from Stomp");
+			Assert.AreEqual(new ActiveMQTempTopic("FOO.BAR"), StompHelper.ToDestination("/temp-topic/FOO.BAR"), "temporary topic from Stomp");
+		}
     }
 }
 

@@ -25,14 +25,13 @@ namespace NMS.Test
     abstract public class NMSPropertyTest : NMSTestSupport
     {
         // standard NMS properties
-        string expectedText = "Hey this works!";
-        string correlationID = "abc";
-        ITemporaryQueue replyTo;
-        bool persistent = true;
-        byte priority = 5;
-        String type = "FooType";
-        String groupID = "MyGroup";
-        int groupSeq = 1;
+        protected string expectedText = "Hey this works!";
+        protected string correlationID = "abc";
+        protected ITemporaryQueue replyTo;
+        protected byte priority = 5;
+        protected String type = "FooType";
+        protected String groupID = "MyGroup";
+        protected int groupSeq = 1;
         
         // custom properties
         string customText = "Cheese";

@@ -57,15 +57,7 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				WriteConnectionInfo((ConnectionInfo) o, ds);
 			}
-/*			else if (o is SessionInfo) 
-			{
-				SessionInfo info = (SessionInfo) o;
-				if (info.ResponseRequired) 
-				{
-					Console.WriteLine("Response required from Session!!");
-				}
-			}
-*/			else if (o is ActiveMQMessage)
+			else if (o is ActiveMQMessage)
 			{
 				WriteMessage((ActiveMQMessage) o, ds);
 			}
@@ -122,8 +114,6 @@ namespace ActiveMQ.Transport.Stomp
 					// lets ignore this bad header!
 				}
 			}
-			Console.Out.Flush();
-
 			byte[] content = null;
 			string length = ToString(headers["content-length"]);
 			if (length != null) 
@@ -142,9 +132,6 @@ namespace ActiveMQ.Transport.Stomp
 				string text = body.ToString().TrimEnd('\r', '\n');
 				content = encoding.GetBytes(text);
 			}
-			Console.WriteLine(">>>>> read content: " + content.Length);
-			Console.Out.Flush();
-			
 			Object answer = CreateCommand(command, headers, content);
 			Console.WriteLine(">>>>> received: " + answer);
 			Console.Out.Flush();
@@ -163,10 +150,6 @@ namespace ActiveMQ.Transport.Stomp
 				}
 				return answer; 
 			}
-			else if (command == "MESSAGE")
-			{
-				return ReadMessage(command, headers, content);
-			}
 			else if (command == "ERROR")
 			{
 				ExceptionResponse answer = new ExceptionResponse();
@@ -181,6 +164,10 @@ namespace ActiveMQ.Transport.Stomp
 				error.ExceptionClass = RemoveHeader(headers, "exceptionClass"); // TODO is this the right header?
 				answer.Exception = error;
 				return answer; 
+			}
+			else if (command == "MESSAGE")
+			{
+				return ReadMessage(command, headers, content);
 			}
 			else
 			{
@@ -202,12 +189,9 @@ namespace ActiveMQ.Transport.Stomp
 				message = new ActiveMQTextMessage(encoding.GetString(content));
 			}
 
-			Console.WriteLine("Content is: " + content.Length + " byte(s)");
-			
 			if (message is ActiveMQTextMessage)
 			{
 				ActiveMQTextMessage textMessage = message as ActiveMQTextMessage;
-				Console.WriteLine("Text is: " + textMessage.Text);
 			}
 			
 			// TODO now lets set the various headers
@@ -218,6 +202,7 @@ namespace ActiveMQ.Transport.Stomp
 			message.TargetConsumerId = StompHelper.ToConsumerId(RemoveHeader(headers, "subscription"));
 			message.CorrelationId = ToString(headers["correlation-id"]);
 			message.MessageId = StompHelper.ToMessageId(RemoveHeader(headers, "message-id"));
+			message.Persistent = StompHelper.ToBool(RemoveHeader(headers, "persistent"), true);
 			
 			string header = RemoveHeader(headers, "priority");
 			if (header != null) message.Priority = Byte.Parse(header);
@@ -230,6 +215,7 @@ namespace ActiveMQ.Transport.Stomp
 			
 			header = RemoveHeader(headers, "timestamp");
 			if (header != null) message.Timestamp = Int64.Parse(header);
+
 			
 			// now lets add the generic headers
 			foreach (string key in headers.Keys)
@@ -289,6 +275,7 @@ namespace ActiveMQ.Transport.Stomp
 			ss.WriteHeader("priority", command.Priority);
 			ss.WriteHeader("type", command.Type);
 			ss.WriteHeader("transaction", command.TransactionId);
+			ss.WriteHeader("persistent", command.Persistent);
 			
 			// lets force the content to be marshalled
 			
@@ -297,8 +284,6 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				ActiveMQTextMessage textMessage = command as ActiveMQTextMessage;
 				ss.Content = encoding.GetBytes(textMessage.Text);
-				
-				Console.WriteLine("============ the text is : " + textMessage.Text + " which is: " + ss.Content.Length + " bytes for: " + command);
 			}
 			else 
 			{

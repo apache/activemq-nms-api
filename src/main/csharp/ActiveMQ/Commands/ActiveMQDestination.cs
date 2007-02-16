@@ -485,7 +485,19 @@ namespace ActiveMQ.Commands
         
         public override String ToString()
         {
-            return this.physicalName;
+			switch (DestinationType) {
+				case DestinationType.Topic:
+					return "topic://" + PhysicalName;
+				
+				case DestinationType.TemporaryTopic:
+					return "temp-topic://" + PhysicalName;
+				
+				case DestinationType.TemporaryQueue:
+					return "temp-queue://" + PhysicalName;
+				
+				default:
+					return "queue://" + PhysicalName;
+			}
         }
         
         /**
