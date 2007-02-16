@@ -65,11 +65,16 @@ namespace ActiveMQ.Transport
         {
             FutureResponse future = AsyncRequest(command);
             Response response = future.Response;
-            if (response is ExceptionResponse)
+            if (response != null && response is ExceptionResponse)
             {
                 ExceptionResponse er = (ExceptionResponse) response;
                 BrokerError brokerError = er.Exception;
-                throw new BrokerException(brokerError);
+				if (brokerError == null) {
+	                throw new BrokerException();
+				}
+				else {
+	                throw new BrokerException(brokerError);
+				}
             }
             return response;
         }
