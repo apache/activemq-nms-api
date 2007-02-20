@@ -41,7 +41,6 @@ namespace ActiveMQ.Commands
             set { this.commandId = value; }
         }
         
-        
         public override int GetHashCode()
         {
             return (CommandId * 37) + GetDataStructureType();

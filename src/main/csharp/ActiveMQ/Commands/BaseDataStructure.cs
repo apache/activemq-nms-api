@@ -39,6 +39,10 @@ namespace ActiveMQ.Commands
             set { this.responseRequired = value; }
         }
         
+        public virtual bool IsResponse {
+			get { return false; }
+		}
+		
         public virtual bool IsMarshallAware()
         {
             return false;

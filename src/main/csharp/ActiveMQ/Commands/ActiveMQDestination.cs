@@ -102,6 +102,32 @@ namespace ActiveMQ.Commands
             //this.advisory = name != null && name.StartsWith(ADVISORY_PREFIX);
         }
 
+
+		public bool IsTopic
+		{
+			get
+			{
+				return IsTopic;
+			}
+		}
+		
+		public bool IsQueue
+		{
+			get
+			{
+				return IsQueue;
+			}
+		}
+		
+		public bool IsTemporary
+		{
+			get
+			{
+				return GetDestinationType() == ACTIVEMQ_TEMPORARY_QUEUE
+					|| GetDestinationType() == ACTIVEMQ_TEMPORARY_TOPIC;
+			}
+		}
+
 		/// <summary>
 		/// Dictionary of name/value pairs representing option values specified
 		/// in the URI used to create this Destination.  A null value is returned
@@ -311,7 +337,7 @@ namespace ActiveMQ.Commands
         public static String GetClientId(ActiveMQDestination destination)
         {
             String answer = null;
-            if (destination != null && destination.IsTemporary())
+            if (destination != null && destination.IsTemporary)
             {
                 String name = destination.PhysicalName;
                 int start = name.IndexOf(TEMP_PREFIX);
@@ -365,16 +391,16 @@ namespace ActiveMQ.Commands
             }
             if (answer == 0)
             {
-                if (IsTopic())
+                if (IsTopic)
                 {
-                    if (that.IsQueue())
+                    if (that.IsQueue)
                     {
                         return 1;
                     }
                 }
                 else
                 {
-                    if (that.IsTopic())
+                    if (that.IsTopic)
                     {
                         return -1;
                     }
@@ -394,43 +420,9 @@ namespace ActiveMQ.Commands
         public String PhysicalName
         {
             get { return this.physicalName; }
-            set { this.physicalName = value; 
+            set { this.physicalName = value;
                   this.advisory = value != null && value.StartsWith(ADVISORY_PREFIX);
                 }
-        }
-        
-        /**
-         * Returns true if a temporary Destination
-         *
-         * @return true/false
-         */
-        
-        public bool IsTemporary()
-        {
-            return GetDestinationType() == ACTIVEMQ_TEMPORARY_TOPIC
-                || GetDestinationType() == ACTIVEMQ_TEMPORARY_QUEUE;
-        }
-        
-        /**
-         * Returns true if a Topic Destination
-         *
-         * @return true/false
-         */
-        
-        public bool IsTopic()
-        {
-            return GetDestinationType() == ACTIVEMQ_TOPIC
-                || GetDestinationType() == ACTIVEMQ_TEMPORARY_TOPIC;
-        }
-        
-        /**
-         * Returns true if a Queue Destination
-         *
-         * @return true/false
-         */
-        public bool IsQueue()
-        {
-            return !IsTopic();
         }
         
         /**
@@ -443,9 +435,12 @@ namespace ActiveMQ.Commands
          *
          * @return true if this destination represents a collection of child destinations.
          */
-        public bool IsComposite()
+        public bool IsComposite
         {
-            return physicalName.IndexOf(COMPOSITE_SEPARATOR) > 0;
+			get
+			{
+	            return physicalName.IndexOf(COMPOSITE_SEPARATOR) > 0;
+			}
         }
         
         /*
@@ -511,7 +506,7 @@ namespace ActiveMQ.Commands
             {
                 answer = physicalName.GetHashCode();
             }
-            if (IsTopic())
+            if (IsTopic)
             {
                 answer ^= 0xfabfab;
             }

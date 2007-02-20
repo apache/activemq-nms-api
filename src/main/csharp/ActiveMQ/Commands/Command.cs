@@ -35,6 +35,11 @@ namespace ActiveMQ.Commands
             get;
             set;
         }
+		
+		bool IsResponse {
+			get;
+		}
+		
     }
 }
 

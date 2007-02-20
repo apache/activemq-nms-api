@@ -23,7 +23,7 @@ namespace NMS
 	/// </summary>
 	public class InvalidDestinationException : NMSException
 	{
-		public InvalidDestinationException(string message) 
+		public InvalidDestinationException(string message)
 		    : base(message)
 		{
 		}

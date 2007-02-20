@@ -32,6 +32,13 @@ namespace ActiveMQ.Util
 					return value;
 				}
 			}
+			set
+			{
+				lock (this)
+				{
+					this.value = value;
+				}
+			}
 		}
 
         public AtomicBoolean(bool b)
@@ -39,7 +46,7 @@ namespace ActiveMQ.Util
             value = b;
         }
 
-        public bool compareAndSet(bool expected, bool newValue)
+        public bool CompareAndSet(bool expected, bool newValue)
         {
             lock(this)
             {
@@ -48,7 +55,7 @@ namespace ActiveMQ.Util
                     value = newValue;
                     return true;
                 }
-                return false;                
+                return false;
             }
         }
     }

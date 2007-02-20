@@ -66,7 +66,7 @@ namespace ActiveMQ
 		public void Start()
 		{
 			CheckConnected();
-			if (started.compareAndSet(false, true)) 
+			if (started.CompareAndSet(false, true)) 
 			{
 				foreach(Session session in sessions)
 				{
@@ -82,7 +82,7 @@ namespace ActiveMQ
 		public void Stop()
 		{
 			CheckConnected();
-			if (started.compareAndSet(true, false)) 
+			if (started.CompareAndSet(true, false)) 
 			{
 				foreach(Session session in sessions)
 				{

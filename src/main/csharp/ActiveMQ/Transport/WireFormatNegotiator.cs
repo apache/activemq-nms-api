@@ -45,7 +45,7 @@ namespace ActiveMQ.Transport
         
         public override void Start() {
             base.Start();
-            if (firstStart.compareAndSet(true, false))
+            if (firstStart.CompareAndSet(true, false))
             {
                 try
                 {

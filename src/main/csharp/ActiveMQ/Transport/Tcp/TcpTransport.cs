@@ -93,7 +93,7 @@ namespace ActiveMQ.Transport.Tcp
 
         public void Close()
         {
-            if (closed.compareAndSet(false, true))
+            if (closed.CompareAndSet(false, true))
             {
                 socket.Close();
                 if (System.Threading.Thread.CurrentThread != readThread)

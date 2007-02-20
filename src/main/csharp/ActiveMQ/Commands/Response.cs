@@ -54,8 +54,13 @@ namespace ActiveMQ.Commands
         public int CorrelationId
         {
             get { return correlationId; }
-            set { this.correlationId = value; }            
+            set { this.correlationId = value; }
         }
-
+		
+        public override bool IsResponse {
+			get { return true; }
+		}
+		
+		
     }
 }

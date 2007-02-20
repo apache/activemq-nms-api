@@ -34,9 +34,13 @@ namespace NMS
 	public interface IDestination
 	{
 		
-		DestinationType DestinationType {
-			get;
-		}
+		DestinationType DestinationType { get; }
+		
+		bool IsTopic { get; }
+		
+		bool IsQueue { get; }
+		
+		bool IsTemporary { get; }
 	}
 	
 }
