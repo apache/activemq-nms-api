@@ -25,7 +25,6 @@ namespace ActiveMQ
     /// </summary>
     public class MessageProducer : IMessageProducer
     {
-        
         private Session session;
         private ProducerInfo info;
         private long messageCounter;
@@ -124,5 +123,39 @@ namespace ActiveMQ
             set { this.disableMessageTimestamp = value; }
         }
         
+		public IMessage CreateMessage()
+		{
+			return session.CreateMessage();
+		}
+		
+		public ITextMessage CreateTextMessage()
+		{
+			return session.CreateTextMessage();
+		}
+		
+		public ITextMessage CreateTextMessage(String text)
+		{
+			return session.CreateTextMessage(text);
+		}
+		
+		public IMapMessage CreateMapMessage()
+		{
+			return session.CreateMapMessage();
+		}
+		
+		public IObjectMessage CreateObjectMessage(Object body)
+		{
+			return session.CreateObjectMessage(body);
+		}
+		
+		public IBytesMessage CreateBytesMessage()
+		{
+			return session.CreateBytesMessage();
+		}
+		
+		public IBytesMessage CreateBytesMessage(byte[] body)
+		{
+			return session.CreateBytesMessage(body);
+		}
     }
 }
