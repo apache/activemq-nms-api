@@ -353,7 +353,7 @@
   
   <!-- Compile the msmq module -->
   <target name="build-msmq" depends="init,build-nms" description="Build the msmq library">
-	  <echo message="Building the msmq library" />
+	<echo message="Building the msmq library using ${lib.framework.dir}/System.Messaging.dll" />
 
     <attrib file="src/main/csharp/MSMQ/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/main/csharp/MSMQ/CommonAssemblyInfo.cs')}" />
     <asminfo output="src/main/csharp/MSMQ/CommonAssemblyInfo.cs" language="CSharp">
@@ -389,7 +389,10 @@
       </sources>
       <references failonempty="true">
         <include name="System.dll" asis="true"/>
+		<!-- TODO was using the following - I wonder if it now breaks on windows?
         <include name="${lib.framework.dir}/System.Messaging.dll" />
+		-->
+        <include name="System.Messaging.dll" />
         <include name="${build.bin.dir}/NMS.dll"/>
       </references>
     </csc>
@@ -432,7 +435,10 @@
       </sources>
       <references failonempty="true">
         <include name="System.dll" asis="true"/>
+		<!-- TODO was using the following - I wonder if it now breaks on windows?
         <include name="${lib.framework.dir}/System.Messaging.dll" />
+		-->
+        <include name="System.Messaging.dll" />
         <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
         <include name="${build.bin.dir}/NMS.dll"/>
         <include name="${build.bin.dir}/NMS-test.dll"/>
