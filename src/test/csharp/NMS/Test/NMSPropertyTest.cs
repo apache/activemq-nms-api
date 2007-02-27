@@ -41,6 +41,8 @@ namespace NMS.Test
         int custom4 = 0x12345678;
         long custom5 = 0x1234567812345678;
         char custom6 = 'J';
+		float custom7 = 2.1F;
+		double custom8 = 2.3;
         
         [SetUp]
         override public void SetUp()
@@ -82,6 +84,8 @@ namespace NMS.Test
             message.Properties["custom4"] = custom4;
             message.Properties["custom5"] = custom5;
             message.Properties["custom6"] = custom6;
+            message.Properties["custom7"] = custom7;
+            message.Properties["custom8"] = custom8;
             
             return message;
         }
@@ -111,20 +115,27 @@ namespace NMS.Test
             Assert.AreEqual(custom2, message.Properties["custom2"], "custom2");
             Assert.AreEqual(custom3, message.Properties["custom3"], "custom3");
             Assert.AreEqual(custom4, message.Properties["custom4"], "custom4");
-            // TODO
+			
             Assert.AreEqual(custom5, message.Properties["custom5"], "custom5");
             Object value6 = message.Properties["custom6"];
             Object expected6 = custom6;
             Console.WriteLine("actual type is: " + value6.GetType() + " value: " + value6);
             Console.WriteLine("expected type is: " + expected6.GetType() + " value: " + expected6);
             Assert.AreEqual(custom6, value6, "custom6 which is of type: " + value6.GetType());
-            
+
+            Assert.AreEqual(custom6, message.Properties["custom6"], "custom6");
+            Assert.AreEqual(custom7, message.Properties["custom7"], "custom7");
+			Assert.AreEqual(custom8, message.Properties["custom8"], "custom8");
+			
+			// compare generic headers
             Assert.AreEqual(custom1, message.Properties.GetBool("custom1"), "custom1");
             Assert.AreEqual(custom2, message.Properties.GetByte("custom2"), "custom2");
             Assert.AreEqual(custom3, message.Properties.GetShort("custom3"), "custom3");
             Assert.AreEqual(custom4, message.Properties.GetInt("custom4"), "custom4");
             Assert.AreEqual(custom5, message.Properties.GetLong("custom5"), "custom5");
-            //Assert.AreEqual(custom6, message.Properties.GetChar("custom6"), "custom6");
+            Assert.AreEqual(custom6, message.Properties.GetChar("custom6"), "custom6");
+            Assert.AreEqual(custom7, message.Properties.GetFloat("custom7"), "custom7");
+			Assert.AreEqual(custom8, message.Properties.GetDouble("custom8"), "custom8");
             
             // lets now look at some standard NMS headers
             Console.WriteLine("NMSExpiration: " + message.NMSExpiration);

@@ -24,7 +24,7 @@ namespace NMS.Test
 {
 	[ TestFixture ]
     abstract public class MapMessageTest : NMSTestSupport
-    {	    
+    {
         bool a = true;
         byte b = 123;
         char c = 'c';
@@ -37,6 +37,8 @@ namespace NMS.Test
         short j = -0x1234;
         int k = -0x12345678;
         long l = -0x1234567812345678;
+		float m = 2.1F;
+		double n = 2.3;
         
 		[SetUp]
         override public void SetUp()
@@ -72,6 +74,8 @@ namespace NMS.Test
             message.Body["j"] = j;
             message.Body["k"] = k;
             message.Body["l"] = l;
+            message.Body["m"] = m;
+            message.Body["n"] = n;
             
             return message;
         }
@@ -99,7 +103,9 @@ namespace NMS.Test
             Assert.AreEqual(j, mapMessage.Body["j"], "generic map entry: j");
             Assert.AreEqual(k, mapMessage.Body["k"], "generic map entry: k");
             Assert.AreEqual(l, mapMessage.Body["l"], "generic map entry: l");
-            
+            Assert.AreEqual(m, mapMessage.Body["m"], "generic map entry: m");
+            Assert.AreEqual(n, mapMessage.Body["n"], "generic map entry: n");
+			
             // use type safe APIs
             Assert.AreEqual(a, mapMessage.Body.GetBool("a"), "map entry: a");
             Assert.AreEqual(b, mapMessage.Body.GetByte("b"), "map entry: b");
@@ -113,6 +119,8 @@ namespace NMS.Test
             Assert.AreEqual(j, mapMessage.Body.GetShort("j"), "map entry: j");
             Assert.AreEqual(k, mapMessage.Body.GetInt("k"), "map entry: k");
             Assert.AreEqual(l, mapMessage.Body.GetLong("l"), "map entry: l");
+            Assert.AreEqual(m, mapMessage.Body.GetFloat("m"), "map entry: m");
+            Assert.AreEqual(n, mapMessage.Body.GetDouble("n"), "map entry: n");
 			
         }
         
