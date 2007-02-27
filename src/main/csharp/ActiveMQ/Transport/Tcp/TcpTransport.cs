@@ -117,7 +117,7 @@ namespace ActiveMQ.Transport.Tcp
             // Exception Handling
             // ------------------
             // If an Exception occurs during the reading/marshalling, then the connection
-            // is effectively broken because psoition cannot be re-established to the next
+            // is effectively broken because position cannot be re-established to the next
             // message.  This is reported to the app via the exceptionHandler and the socket
             // is closed to prevent further communication attempts.
             //
@@ -133,7 +133,7 @@ namespace ActiveMQ.Transport.Tcp
                 }
                 catch(Exception ex)
                 {
-                    if( !closed.Value ) 
+                    if( !closed.Value )
                     {
                         this.exceptionHandler(this, ex);
                         // Close the socket as there's little that can be done with this transport now.
@@ -144,9 +144,12 @@ namespace ActiveMQ.Transport.Tcp
 
                 try
                 {
-                    this.commandHandler(this, command);
+					if (command != null)
+					{
+						this.commandHandler(this, command);
+					}
                 }
-                catch ( Exception e) 
+                catch ( Exception e)
                 {
                     this.exceptionHandler(this, e);
                 }
