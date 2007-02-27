@@ -116,8 +116,8 @@
   <!--      T H E      M A I N      B U I L D      T A R G E T S                                    -->
   <!-- ============================================================================================ -->
 
-  <target name="build" 
-          depends="build-nms,build-nms-test,build-activemq,build-activemq-test,build-stomp-test,build-msmq,build-msmq-test" 
+  <target name="build"
+          depends="build-nms,build-nms-test,build-activemq,build-activemq-test,build-stomp-test,build-msmq-on-windows,build-msmq-test"
           description="Build everything"/>
 
   <!-- Compile the nms module -->
@@ -347,9 +347,13 @@
     </csc>
   </target>
 
+  <target name="build-msmq-on-windows" depends="init,build-nms" description="Build the msmq library" if="${platform::is-win32()}">
+	<call target="build-msmq" />
+  </target>
+  
   <!-- Compile the msmq module -->
-  <target name="build-msmq" depends="init,build-nms" description="Build the msmq library" if="${platform::is-win32()}">
-    <echo message="Building the msmq library" />
+  <target name="build-msmq" depends="init,build-nms" description="Build the msmq library">
+	  <echo message="Building the msmq library" />
 
     <attrib file="src/main/csharp/MSMQ/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/main/csharp/MSMQ/CommonAssemblyInfo.cs')}" />
     <asminfo output="src/main/csharp/MSMQ/CommonAssemblyInfo.cs" language="CSharp">
@@ -391,7 +395,7 @@
   </target>
 
   <!-- Compile the msmq-test module -->
-  <target name="build-msmq-test" depends="init,build-nms,build-nms-test,build-msmq" description="Build the msmq-test library" if="${platform::is-win32()}">
+  <target name="build-msmq-test" depends="init,build-nms,build-nms-test,build-msmq-on-windows" description="Build the msmq-test library" if="${platform::is-win32()}">
     <echo message="Building the msmq-test library" />
 
     <attrib file="src/test/csharp/MSMQ/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/test/csharp/MSMQ/CommonAssemblyInfo.cs')}" />
