@@ -218,18 +218,23 @@ namespace ActiveMQ.OpenWire
                 return null;
             }
         }
-		
-		private static Exception CreateDataFormatException()
-        {
-            // TODO: implement a better exception
-            return new IOException("Data format error!");
-        }
 
+		
+        public override float ReadSingle()
+        {
+            return EndianSupport.SwitchEndian(base.ReadSingle());
+        }
+		
         public override double ReadDouble()
         {
             return EndianSupport.SwitchEndian(base.ReadDouble());
         }
-
+		
+		protected static Exception CreateDataFormatException()
+        {
+            // TODO: implement a better exception
+            return new IOException("Data format error!");
+        }
 	}
 }
 

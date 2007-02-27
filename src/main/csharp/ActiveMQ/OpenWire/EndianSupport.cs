@@ -102,8 +102,21 @@ namespace ActiveMQ.OpenWire
             bw.Flush();
             ms = new MemoryStream(SwitchEndian(ms.ToArray()));
             BinaryReader br = new BinaryReader(ms);
-            return br.ReadDouble();           
+            return br.ReadDouble();
         }
+
+		
+        public static float SwitchEndian(float x)
+        {
+            MemoryStream ms = new MemoryStream();
+            BinaryWriter bw = new BinaryWriter(ms);
+            bw.Write(x);
+            bw.Flush();
+            ms = new MemoryStream(SwitchEndian(ms.ToArray()));
+            BinaryReader br = new BinaryReader(ms);
+            return br.ReadSingle();
+        }
+		
 
         public static byte[] SwitchEndian(byte[] x)
         {

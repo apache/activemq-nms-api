@@ -194,11 +194,20 @@ namespace ActiveMQ.OpenWire
         /// Method Write
         /// </summary>
         /// <param name="value">A  double</param>
+        public override void Write(float value)
+        {
+            base.Write(EndianSupport.SwitchEndian(value));
+        }
+		
+        /// <summary>
+        /// Method Write
+        /// </summary>
+        /// <param name="value">A  double</param>
         public override void Write(double value)
         {
             base.Write(EndianSupport.SwitchEndian(value));
         }
 		
-    }	
+    }
 }
 
