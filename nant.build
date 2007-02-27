@@ -361,6 +361,7 @@
         <import namespace="System" />
         <import namespace="System.Reflection" />
         <import namespace="System.Runtime.InteropServices" />
+        <import namespace="System.Messaging" />
       </imports>
       <attributes>
         <attribute type="ComVisibleAttribute"            value="false" />
