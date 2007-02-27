@@ -23,11 +23,9 @@ namespace ActiveMQ
     [TestFixture]
     public class DurableTest : NMS.Test.DurableTest
     {
-        private String brokerURI = "tcp://localhost:61616";
-
         protected override IConnectionFactory CreateConnectionFactory()
         {
-            return new ConnectionFactory(new Uri(brokerURI));
+            return new ConnectionFactory();
         }
     }
 }

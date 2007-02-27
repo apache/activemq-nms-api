@@ -28,13 +28,20 @@ namespace ActiveMQ
     /// </summary>
     public class ConnectionFactory : IConnectionFactory
     {
-        private Uri brokerUri = new Uri("tcp://localhost:61616");
+        private Uri brokerUri;
         private string userName;
         private string password;
         private string clientId;
         
+		public static string GetDefaultBrokerUrl()
+		{
+			// TODO look in system properties / environment variables
+			return "tcp://localhost:61616";
+		}
+		
         public ConnectionFactory()
         {
+			this.brokerUri = new Uri(GetDefaultBrokerUrl());
         }
         
         public ConnectionFactory(Uri brokerUri)

@@ -23,13 +23,11 @@ using System;
 namespace ActiveMQ
 {
 	[TestFixture]
-    public class TransactionTest : NMS.Test.TransactionTest 
+    public class TransactionTest : NMS.Test.TransactionTest
     {
-
-        private String brokerURI = "tcp://localhost:61616";
         protected override IConnectionFactory CreateConnectionFactory()
         {
-            return new ConnectionFactory(new Uri(brokerURI));
+            return new ConnectionFactory();
         }
 		
     }

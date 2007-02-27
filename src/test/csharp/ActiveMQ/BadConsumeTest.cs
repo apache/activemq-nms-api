@@ -24,10 +24,9 @@ namespace ActiveMQ
 	[TestFixture]
     public class BadConsumeTest : NMS.Test.BadConsumeTest
     {
-        private String brokerURI = "tcp://localhost:61616";
         protected override IConnectionFactory CreateConnectionFactory()
         {
-            return new ConnectionFactory(new Uri(brokerURI));
+            return new ConnectionFactory();
         }
     }
 }
