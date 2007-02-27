@@ -24,10 +24,12 @@ namespace MSMQ
 	/// Summary description for Queue.
 	/// </summary>
 	public class Queue : Destination, IQueue
-    {        
+    {
+		
         public Queue() : base()
         {
         }
+		
         public Queue(String name) : base(name)
         {
         }
@@ -49,6 +51,8 @@ namespace MSMQ
         {
             return new Queue(name);
         }
+
+        
     }
 }
 

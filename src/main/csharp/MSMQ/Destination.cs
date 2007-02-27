@@ -50,44 +50,34 @@ namespace MSMQ
             set { this.path = value; }
         }
         
-        /**
-         * Returns true if a temporary Destination
-         *
-         * @return true/false
-         */
-        
-        public bool IsTemporary()
-        {
-            return DestinationType == DestinationType.TemporaryQueue
-                || DestinationType == DestinationType.TemporaryTopic;
-        }
-        
-        /**
-         * Returns true if a Topic Destination
-         *
-         * @return true/false
-         */
-        
-        public bool IsTopic()
-        {
-            return DestinationType == DestinationType.Topic
-                   || DestinationType == DestinationType.TemporaryTopic;
-        }
-        
-        /**
-         * Returns true if a Queue Destination
-         *
-         * @return true/false
-         */
-        public bool IsQueue()
-        {
-            return !IsTopic();
-        }
-        
+		
+		public bool IsTopic
+		{
+			get {
+				return DestinationType == DestinationType.Topic
+					|| DestinationType == DestinationType.TemporaryTopic;
+			}
+		}
+		
+		public bool IsQueue
+		{
+			get {
+				return !IsTopic;
+			}
+		}
+		
+		
+		public bool IsTemporary
+		{
+			get {
+				return DestinationType == DestinationType.TemporaryQueue
+					|| DestinationType == DestinationType.TemporaryTopic;
+			}
+		}
         
         /**
          * @return string representation of this instance
-         */        
+         */
         public override String ToString()
         {
             return this.path;
@@ -104,7 +94,7 @@ namespace MSMQ
             {
                 answer = path.GetHashCode();
             }
-            if (IsTopic())
+            if (IsTopic)
             {
                 answer ^= 0xfabfab;
             }

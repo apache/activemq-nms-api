@@ -134,7 +134,14 @@ namespace MSMQ
             answer.Content = body;
             return answer;
         }
-        
+		
+		public IObjectMessage CreateObjectMessage(Object body)
+		{
+			ObjectMessage answer = new ObjectMessage();
+			answer.Body = body;
+			return answer;
+		}
+		
         public void Commit()
         {
             if (! Transacted )
@@ -150,10 +157,10 @@ namespace MSMQ
             {
                 throw new InvalidOperationException("You cannot perform a Commit() on a non-transacted session. Acknowlegement mode is: " + acknowledgementMode);
             }
-            messageQueueTransaction.Abort();            
+            messageQueueTransaction.Abort();
         }
         
-        // Properties        
+        // Properties
         public Connection Connection
         {
             get { return connection; }
@@ -173,7 +180,7 @@ namespace MSMQ
         {
             get
             {
-                if( messageQueueTransaction.Status != MessageQueueTransactionStatus.Pending ) 
+                if( messageQueueTransaction.Status != MessageQueueTransactionStatus.Pending )
                     messageQueueTransaction.Begin();
                 return messageQueueTransaction;
             }

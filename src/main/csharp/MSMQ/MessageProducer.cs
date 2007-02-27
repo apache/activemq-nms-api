@@ -25,13 +25,14 @@ namespace MSMQ
     /// </summary>
     public class MessageProducer : IMessageProducer
     {
+		
         private readonly Session session;
         private Destination destination;
 
-        private long messageCounter;
+        //private long messageCounter;
         private bool persistent;
         private TimeSpan timeToLive;
-        private int priority;
+        private byte priority;
         private bool disableMessageID;
         private bool disableMessageTimestamp;
         
@@ -67,25 +68,35 @@ namespace MSMQ
                     {
                         throw new NMSSecurityException("Do not have write access to: " + dest);
                     }
-                }                
-            } 
-            catch( Exception e ) 
+                }
+            }
+            catch( Exception e )
             {
                 if( rc!=null )
                 {
                     rc.Dispose();
                 }
                 throw new NMSException(e.Message+": "+dest, e);
-            }            
+            }
             return rc;
         }
 
         public void Send(IMessage message)
         {
-            Send(destination, message);
+            Send(Destination, message);
         }
 
-        public void Send(IDestination dest, IMessage imessage)
+		public void Send(IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
+		{
+			Send(Destination, message, persistent, priority, timeToLive);
+		}
+
+        public void Send(IDestination destination, IMessage message)
+        {
+			Send(destination, message, Persistent, Priority, TimeToLive);
+        }
+		
+        public void Send(IDestination destination, IMessage imessage, bool persistent, byte priority, TimeSpan timeToLive)
         {
             BaseMessage message = (BaseMessage) imessage;
             MessageQueue mq=null;
@@ -96,28 +107,28 @@ namespace MSMQ
                 // Locate the MSMQ Queue we will be sending to
                 if (messageQueue != null)
                 {
-                    if( dest.Equals(destination) )
+                    if( destination.Equals(this.destination) )
                     {
                         mq = messageQueue;
-                    } 
+                    }
                     else
                     {
-                        throw new NMSException("This producer can only be used to send to: "+destination);
+                        throw new NMSException("This producer can only be used to send to: " + destination);
                     }
                 }
                 else
                 {
-                    mq = openMessageQueue((Destination)dest);
+                    mq = openMessageQueue((Destination) destination);
                 }
-
+				
                 // Convert the Mesasge into a MSMQ message
                 message.NMSPersistent = persistent;
-                message.NMSExpiration = TimeToLive;
-                message.NMSPriority = (byte)priority;
+                message.NMSExpiration = timeToLive;
+                message.NMSPriority = priority;
                 
                 // message.NMSTimestamp = new DateTime().Date.;
                 Message msg = messageConverter.convertToMSMQMessage(message);
-                // TODO: message.NMSMessageId = 
+                // TODO: message.NMSMessageId =
                 // Now Send the message
                 if( mq.Transactional )
                 {
@@ -161,20 +172,53 @@ namespace MSMQ
                 }
             }
         }
-
-        public void Send(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
-        {
-            throw new NotImplementedException();
-        }
-
+		
+		
+		
         public void Dispose()
         {
             if( messageQueue!=null )
             {
                 messageQueue.Dispose();
-                messageQueue = null;                    
+                messageQueue = null;
             }
         }
+		
+		
+		public IMessage CreateMessage()
+		{
+			return session.CreateMessage();
+		}
+		
+		public ITextMessage CreateTextMessage()
+		{
+			return session.CreateTextMessage();
+		}
+		
+		public ITextMessage CreateTextMessage(String text)
+		{
+			return session.CreateTextMessage(text);
+		}
+		
+		public IMapMessage CreateMapMessage()
+		{
+			return session.CreateMapMessage();
+		}
+		
+		public IObjectMessage CreateObjectMessage(Object body)
+		{
+			return session.CreateObjectMessage(body);
+		}
+		
+		public IBytesMessage CreateBytesMessage()
+		{
+			return session.CreateBytesMessage();
+		}
+		
+		public IBytesMessage CreateBytesMessage(byte[] body)
+		{
+			return session.CreateBytesMessage(body);
+		}
 
         public bool Persistent
         {
@@ -194,7 +238,13 @@ namespace MSMQ
             set { throw new NotImplementedException(); }
         }
 
-        public int Priority
+		public IDestination Destination
+		{
+            get { return destination; }
+            set { destination = (Destination) value; }
+		}
+		
+        public byte Priority
         {
             get { return priority; }
             set { priority = value; }

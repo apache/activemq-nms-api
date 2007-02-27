@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Messaging;
 using NMS;
@@ -32,10 +31,10 @@ namespace MSMQ
             {
                 responseQueue = new MessageQueue(((Destination)message.NMSReplyTo).Path);
             }
-            if (message.NMSExpiration != null)
-            {
+            //if (message.NMSExpiration != null)
+            //{
                 msg.TimeToBeReceived = message.NMSExpiration;
-            }
+            //}
             if (message.NMSCorrelationID != null)
             {
                 msg.CorrelationId = message.NMSCorrelationID;
@@ -46,7 +45,7 @@ namespace MSMQ
 
             return msg;
         }
-        public IMessage convertFromMSMQMessage(Message message) 
+        public IMessage convertFromMSMQMessage(Message message)
         {
             return null;
         }

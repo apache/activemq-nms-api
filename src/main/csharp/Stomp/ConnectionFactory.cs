@@ -21,7 +21,7 @@ using System;
 namespace Stomp
 {
     /// <summary>
-    /// Represents a connection with a message broker using the 
+    /// Represents a connection with a message broker using the
 	/// <a href="http://stomp.codehaus.org/">STOMP</a> protocol.
     /// </summary>
     public class ConnectionFactory : ActiveMQ.ConnectionFactory
@@ -29,6 +29,14 @@ namespace Stomp
         public ConnectionFactory()
         {
 			BrokerUri = new Uri("stomp://localhost:61613");
+        }
+		
+		public ConnectionFactory(Uri brokerUri) : base(brokerUri)
+        {
+        }
+        
+        public ConnectionFactory(string brokerUri) : base(brokerUri)
+        {
         }
     }
 }
