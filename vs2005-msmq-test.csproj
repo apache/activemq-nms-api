@@ -7,7 +7,7 @@
     <ProjectGuid>{2F31ED5C-44A2-464A-BD55-2B5B010654E8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>MSMQ</RootNamespace>
-    <AssemblyName>MSMQ-test</AssemblyName>
+    <AssemblyName>NMS.MSMQ.Test</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <StartupObject>
     </StartupObject>
@@ -16,14 +16,14 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>build\net-2.0\debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>build\net-2.0\release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>

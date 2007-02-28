@@ -7,7 +7,7 @@
     <ProjectGuid>{08321F42-4B3D-4815-B592-95962BAC3B9F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>ActiveMQ</RootNamespace>
-    <AssemblyName>ActiveMQ</AssemblyName>
+    <AssemblyName>NMS.ActiveMQ</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>activemq-dotnet.snk</AssemblyOriginatorKeyFile>
@@ -16,14 +16,14 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>build\net-2.0\debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>build\net-2.0\release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
