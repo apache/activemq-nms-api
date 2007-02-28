@@ -102,7 +102,6 @@ namespace NMS.Test
             
             // compare standard NMS headers
             Assert.AreEqual(correlationID, message.NMSCorrelationID, "NMSCorrelationID");
-            Assert.AreEqual(replyTo, message.NMSReplyTo, "NMSReplyTo");
             Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent");
             Assert.AreEqual(priority, message.NMSPriority, "NMSPriority");
             Assert.AreEqual(type, message.NMSType, "NMSType");
@@ -111,7 +110,28 @@ namespace NMS.Test
             
             // compare custom headers
             Assert.AreEqual(customText, message.Properties["customText"], "customText");
-            Assert.AreEqual(custom1, message.Properties["custom1"], "custom1");
+			
+            AssertReplyToValid(message);
+			
+            AssertNonStringProperties(message);
+            
+            // lets now look at some standard NMS headers
+            Console.WriteLine("NMSExpiration: " + message.NMSExpiration);
+            Console.WriteLine("NMSMessageId: " + message.NMSMessageId);
+            Console.WriteLine("NMSRedelivered: " + message.NMSRedelivered);
+            Console.WriteLine("NMSTimestamp: " + message.NMSTimestamp);
+            Console.WriteLine("NMSXDeliveryCount: " + message.Properties["NMSXDeliveryCount"]);
+            Console.WriteLine("NMSXProducerTXID: " + message.Properties["NMSXProducerTXID"]);
+        }
+
+		protected virtual void AssertReplyToValid(IMessage message)
+		{
+			Assert.AreEqual(replyTo, message.NMSReplyTo, "NMSReplyTo");
+		}
+
+		protected virtual void AssertNonStringProperties(IMessage message)
+		{
+			Assert.AreEqual(custom1, message.Properties["custom1"], "custom1");
             Assert.AreEqual(custom2, message.Properties["custom2"], "custom2");
             Assert.AreEqual(custom3, message.Properties["custom3"], "custom3");
             Assert.AreEqual(custom4, message.Properties["custom4"], "custom4");
@@ -122,7 +142,7 @@ namespace NMS.Test
             Console.WriteLine("actual type is: " + value6.GetType() + " value: " + value6);
             Console.WriteLine("expected type is: " + expected6.GetType() + " value: " + expected6);
             Assert.AreEqual(custom6, value6, "custom6 which is of type: " + value6.GetType());
-
+			
             Assert.AreEqual(custom6, message.Properties["custom6"], "custom6");
             Assert.AreEqual(custom7, message.Properties["custom7"], "custom7");
 			Assert.AreEqual(custom8, message.Properties["custom8"], "custom8");
@@ -136,15 +156,7 @@ namespace NMS.Test
             Assert.AreEqual(custom6, message.Properties.GetChar("custom6"), "custom6");
             Assert.AreEqual(custom7, message.Properties.GetFloat("custom7"), "custom7");
 			Assert.AreEqual(custom8, message.Properties.GetDouble("custom8"), "custom8");
-            
-            // lets now look at some standard NMS headers
-            Console.WriteLine("NMSExpiration: " + message.NMSExpiration);
-            Console.WriteLine("NMSMessageId: " + message.NMSMessageId);
-            Console.WriteLine("NMSRedelivered: " + message.NMSRedelivered);
-            Console.WriteLine("NMSTimestamp: " + message.NMSTimestamp);
-            Console.WriteLine("NMSXDeliveryCount: " + message.Properties["NMSXDeliveryCount"]);
-            Console.WriteLine("NMSXProducerTXID: " + message.Properties["NMSXProducerTXID"]);
-        }
+		}
     }
 }
 

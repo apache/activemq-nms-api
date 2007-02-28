@@ -26,10 +26,22 @@ namespace Stomp
     {
         protected override IConnectionFactory CreateConnectionFactory()
         {
-			Console.WriteLine("##### using the NMS STOMP client!");
-			
             return new ConnectionFactory();
         }
+		
+		protected override void AssertNonStringProperties(IMessage message)
+		{
+			// lets disable typesafe property testing as right now Stomp does not support them
+		}
+		
+		
+		protected override void AssertReplyToValid(IMessage message)
+		{
+			// TODO completely support temporary destinations in STOMP
+			
+			Assert.IsNotNull(message.NMSReplyTo, "NMSReplyTo");
+			Assert.IsTrue(message.NMSReplyTo is ITemporaryQueue, "The reply to destination is not a TemporaryTopic!: " + message.NMSReplyTo);
+		}
     }
 }
 
