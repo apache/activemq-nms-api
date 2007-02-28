@@ -22,6 +22,8 @@ namespace MSMQ
 {
 	public class TextMessage : BaseMessage, ITextMessage
     {
+		public const int SIZE_OF_INT = 4; // sizeof(int) - though causes unsafe issues with net 1.1
+
         private String text;
         
         public TextMessage()
@@ -46,10 +48,10 @@ namespace MSMQ
                     if (data != null)
                     {
                         // TODO assume that the text is ASCII
-                        char[] chars = new char[data.Length-sizeof(int)];
+                        char[] chars = new char[data.Length - SIZE_OF_INT];
                         for (int i = 0; i < chars.Length; i++)
                         {
-                            chars[i] = (char) data[i+sizeof(int)];
+                            chars[i] = (char) data[i + SIZE_OF_INT];
                         }
                         text = new String(chars);
                     }
