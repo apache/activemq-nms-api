@@ -53,9 +53,7 @@
     <Compile Include="src\test\csharp\NMS\Test\DurableTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\JMSPropertyTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="src\test\csharp\NMS\Test\NMSPropertyTest.cs" />
     <Compile Include="src\test\csharp\NMS\Test\NMSTestSupport.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -38,11 +38,15 @@ namespace ActiveMQ
         
 		public static string GetDefaultBrokerUrl()
 		{
-			string answer = Environment.GetEnvironmentVariable(ENV_BROKER_URL);
+#if (PocketPC||NETCF||NETCF_2_0)
+            return DEFAULT_BROKER_URL;
+#else
+            string answer = Environment.GetEnvironmentVariable(ENV_BROKER_URL);
 			if (answer == null) {
 				answer = DEFAULT_BROKER_URL;
 			}
 			return answer;
+#endif
 		}
 		
         public ConnectionFactory()

@@ -684,6 +684,8 @@
     <Compile Include="src\main\csharp\ActiveMQ\Transport\ResponseCorrelator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\main\csharp\ActiveMQ\Transport\Stomp\StompFrameStream.cs" />
+    <Compile Include="src\main\csharp\ActiveMQ\Transport\Stomp\StompHelper.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\Transport\Stomp\StompWireFormat.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\Transport\Tcp\TcpTransport.cs">
       <SubType>Code</SubType>

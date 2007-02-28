@@ -44,6 +44,7 @@
     <Compile Include="src\main\csharp\NMS\IMessage.cs" />
     <Compile Include="src\main\csharp\NMS\IMessageConsumer.cs" />
     <Compile Include="src\main\csharp\NMS\IMessageProducer.cs" />
+    <Compile Include="src\main\csharp\NMS\InvalidDestinationException.cs" />
     <Compile Include="src\main\csharp\NMS\IObjectMessage.cs" />
     <Compile Include="src\main\csharp\NMS\IPrimitiveMap.cs" />
     <Compile Include="src\main\csharp\NMS\IQueue.cs" />

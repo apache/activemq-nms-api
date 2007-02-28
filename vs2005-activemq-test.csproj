@@ -45,8 +45,8 @@
     <Compile Include="src\test\csharp\ActiveMQ\CommonAssemblyInfo.cs" />
     <Compile Include="src\test\csharp\ActiveMQ\ConsumerTest.cs" />
     <Compile Include="src\test\csharp\ActiveMQ\DurableTest.cs" />
-    <Compile Include="src\test\csharp\ActiveMQ\JMSPropertyTest.cs" />
     <Compile Include="src\test\csharp\ActiveMQ\MapMessageTest.cs" />
+    <Compile Include="src\test\csharp\ActiveMQ\NMSPropertyTest.cs" />
     <Compile Include="src\test\csharp\ActiveMQ\OpenWire\BooleanStreamTest.cs">
       <SubType>Code</SubType>
     </Compile>

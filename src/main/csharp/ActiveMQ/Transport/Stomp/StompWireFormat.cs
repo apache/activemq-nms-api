@@ -186,7 +186,7 @@ namespace ActiveMQ.Transport.Stomp
 			}
 			else 
 			{
-				message = new ActiveMQTextMessage(encoding.GetString(content));
+				message = new ActiveMQTextMessage(encoding.GetString(content, 0, content.Length));
 			}
 
 			if (message is ActiveMQTextMessage)
