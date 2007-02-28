@@ -53,7 +53,7 @@ namespace ActiveMQ.Transport.Stomp
 			//Console.Out.Flush();
 			StompFrameStream ds = new StompFrameStream(binaryWriter, encoding);
 			
-			if (o is ConnectionInfo) 
+			if (o is ConnectionInfo)
 			{
 				WriteConnectionInfo((ConnectionInfo) o, ds);
 			}
@@ -69,17 +69,17 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				WriteMessageAck((MessageAck) o, ds);
 			}
-			else if (o is Command) 
+			else if (o is Command)
 			{
 				Command command = o as Command;
-				if (command.ResponseRequired) 
+				if (command.ResponseRequired)
 				{
 					Response response = new Response();
-					response.CorrelationId = command.CommandId; 
+					response.CorrelationId = command.CommandId;
 					SendCommand(response);
 				}
 			}
-			else 
+			else
 			{
 				Console.WriteLine("Ignored command: " + o);
 			}
@@ -98,10 +98,10 @@ namespace ActiveMQ.Transport.Stomp
 			
 			IDictionary headers = new Hashtable();
 			string line;
-			while((line = socketReader.ReadLine()) != "") 
+			while((line = socketReader.ReadLine()) != "")
 			{
 				int idx = line.IndexOf(':');
-				if (idx > 0) 
+				if (idx > 0)
 				{
 					string key = line.Substring(0, idx);
 					string value = line.Substring(idx + 1);
@@ -109,14 +109,14 @@ namespace ActiveMQ.Transport.Stomp
 					
 					Console.WriteLine(">> header: " + key + " = " + value);
 				}
-				else 
+				else
 				{
 					// lets ignore this bad header!
 				}
 			}
 			byte[] content = null;
 			string length = ToString(headers["content-length"]);
-			if (length != null) 
+			if (length != null)
 			{
 				int size = Int32.Parse(length);
 				content = dis.ReadBytes(size);
@@ -125,7 +125,7 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				StringBuilder body = new StringBuilder();
 				int nextChar;
-				while((nextChar = socketReader.Read()) != 0) 
+				while((nextChar = socketReader.Read()) != 0)
 				{
 					body.Append((char)nextChar);
 				}
@@ -138,23 +138,23 @@ namespace ActiveMQ.Transport.Stomp
 			return answer;
         }
 
-		protected Object CreateCommand(string command, IDictionary headers, byte[] content) 
+		protected Object CreateCommand(string command, IDictionary headers, byte[] content)
 		{
 			if (command == "RECEIPT" || command == "CONNECTED")
 			{
 				Response answer = new Response();
 				string text = RemoveHeader(headers, "receipt-id");
-				if (text != null) 
+				if (text != null)
 				{
 					answer.CorrelationId = Int32.Parse(text);
 				}
-				return answer; 
+				return answer;
 			}
 			else if (command == "ERROR")
 			{
 				ExceptionResponse answer = new ExceptionResponse();
 				string text = RemoveHeader(headers, "receipt-id");
-				if (text != null) 
+				if (text != null)
 				{
 					answer.CorrelationId = Int32.Parse(text);
 				}
@@ -163,7 +163,7 @@ namespace ActiveMQ.Transport.Stomp
 				error.Message = RemoveHeader(headers, "message");
 				error.ExceptionClass = RemoveHeader(headers, "exceptionClass"); // TODO is this the right header?
 				answer.Exception = error;
-				return answer; 
+				return answer;
 			}
 			else if (command == "MESSAGE")
 			{
@@ -176,7 +176,7 @@ namespace ActiveMQ.Transport.Stomp
 			}
 		}
 		
-		protected Command ReadMessage(string command, IDictionary headers, byte[] content) 
+		protected Command ReadMessage(string command, IDictionary headers, byte[] content)
 		{
 			ActiveMQMessage message = null;
 			if (headers.Contains("content-length"))
@@ -184,7 +184,7 @@ namespace ActiveMQ.Transport.Stomp
 				message = new ActiveMQBytesMessage();
 				message.Content = content;
 			}
-			else 
+			else
 			{
 				message = new ActiveMQTextMessage(encoding.GetString(content, 0, content.Length));
 			}
@@ -220,7 +220,16 @@ namespace ActiveMQ.Transport.Stomp
 			// now lets add the generic headers
 			foreach (string key in headers.Keys)
 			{
-				message.Properties[key] = headers[key];
+				Object value = headers[key];
+				if (value != null)
+				{
+					// lets coerce some standard header extensions
+					if (key == "NMSXGroupSeq")
+					{
+						value = Int32.Parse(value.ToString());
+					}
+				}
+				message.Properties[key] = value;
 			}
 			MessageDispatch dispatch = new MessageDispatch();
 			dispatch.Message = message;
@@ -280,12 +289,12 @@ namespace ActiveMQ.Transport.Stomp
 			// lets force the content to be marshalled
 			
 			command.BeforeMarshall(null);
-			if (command is ActiveMQTextMessage) 
+			if (command is ActiveMQTextMessage)
 			{
 				ActiveMQTextMessage textMessage = command as ActiveMQTextMessage;
 				ss.Content = encoding.GetBytes(textMessage.Text);
 			}
-			else 
+			else
 			{
 				ss.Content = command.Content;
 				ss.ContentLength = command.Content.Length;
@@ -316,7 +325,7 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				Console.WriteLine("No transport configured so cannot return command: " + command);
 			}
-			else 
+			else
 			{
 				transport.Command(transport, command);
 			}
@@ -325,11 +334,11 @@ namespace ActiveMQ.Transport.Stomp
 		protected string RemoveHeader(IDictionary headers, string name)
 		{
 			object value = headers[name];
-			if (value == null) 
+			if (value == null)
 			{
 				return null;
 			}
-			else 
+			else
 			{
 				headers.Remove(name);
 				return value.ToString();
@@ -337,13 +346,13 @@ namespace ActiveMQ.Transport.Stomp
 		}
 		
 		
-		protected string ToString(object value) 
+		protected string ToString(object value)
 		{
-			if (value != null) 
+			if (value != null)
 			{
 				return value.ToString();
 			}
-			else 
+			else
 			{
 				return null;
 			}

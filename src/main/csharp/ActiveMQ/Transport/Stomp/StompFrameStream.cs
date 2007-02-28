@@ -54,10 +54,10 @@ namespace ActiveMQ.Transport.Stomp
 			set { content = value; }
 		}
 		
-		public int ContentLength 
+		public int ContentLength
 		{
 			get { return contentLength; }
-			set 
+			set
 			{
 				contentLength = value;
 				WriteHeader("content-length", contentLength);
@@ -84,18 +84,28 @@ namespace ActiveMQ.Transport.Stomp
 			}
 		}
 		
+		public void WriteHeader(String name, bool value)
+		{
+			if (value) {
+				builder.Append(name);
+				builder.Append(SEPARATOR);
+				builder.Append("true");
+				builder.Append(NEWLINE);
+			}
+		}
+		
 		public void Flush()
 		{
 			builder.Append(NEWLINE);
 			ds.Write(encoding.GetBytes(builder.ToString()));
 			
-			if (content != null) 
+			if (content != null)
 			{
 				ds.Write(content);
 			}
 			
 			// if no content length then lets write a null
-			if (contentLength < 0) 
+			if (contentLength < 0)
 			{
 				ds.Write(NULL);
 			}
