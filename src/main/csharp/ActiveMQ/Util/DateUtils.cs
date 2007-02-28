@@ -30,10 +30,20 @@ namespace ActiveMQ.Util
         /// The start of the UNIX epoch
         /// </summary>
         public static readonly DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+		
+		/// <summary>
+		/// Method ToJavaTime
+		/// </summary>
+		/// <param name="timeToLive">A  TimeSpan</param>
+		/// <returns>A  long</retutns>
+		public static long ToJavaTime(TimeSpan timeToLive)
+		{
+			return ToJavaTime(new DateTime(timeToLive.Ticks));
+		}
 
 	    public static long ToJavaTime(DateTime dateTime)
 		{
-			return dateTime.ToFileTime() + EPOCH_DIFF;
+			return dateTime.ToFileTime() - EPOCH_DIFF;
 		}
 
         public static DateTime ToDateTime(long dateTime)
