@@ -31,10 +31,12 @@ namespace ActiveMQ.Transport.Stomp
     /// </summary>
     public class StompHelper
     {
-		public static ActiveMQDestination ToDestination(string text) 
+
+
+		public static ActiveMQDestination ToDestination(string text)
 		{
 			int type = ActiveMQDestination.ACTIVEMQ_QUEUE;
-			if (text.StartsWith("/queue/")) 
+			if (text.StartsWith("/queue/"))
 			{
 				text = text.Substring("/queue/".Length);
 			}
@@ -62,7 +64,7 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				return null;
 			}
-			else 
+			else
 			{
 				switch (destination.DestinationType)
 				{
@@ -158,6 +160,20 @@ namespace ActiveMQ.Transport.Stomp
 			answer.ProducerId = ToProducerId(text);
 			return answer;
 		}
+	
+		public static string ToStomp(TransactionId id)
+		{
+			if (id is LocalTransactionId)
+			{
+				return ToStomp(id as LocalTransactionId);
+			}
+			return id.ToString();
+		}
+		
+		public static string ToStomp(LocalTransactionId transactionId)
+		{
+			return transactionId.ConnectionId.Value + ":" + transactionId.Value;
+		}
 		
 		public static bool ToBool(string text, bool defaultValue)
 		{
@@ -165,7 +181,7 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				return defaultValue;
 			}
-			else 
+			else
 			{
 				return "true" == text || "TRUE" == text;
 			}

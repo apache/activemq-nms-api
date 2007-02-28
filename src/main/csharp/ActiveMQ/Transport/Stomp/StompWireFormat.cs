@@ -69,6 +69,18 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				WriteMessageAck((MessageAck) o, ds);
 			}
+			else if (o is TransactionInfo)
+			{
+				WriteTransactionInfo((TransactionInfo) o, ds);
+			}
+			else if (o is ShutdownInfo)
+			{
+				WriteShutdownInfo((ShutdownInfo) o, ds);
+			}
+			else if (o is RemoveInfo)
+			{
+				WriteRemoveInfo((RemoveInfo) o, ds);
+			}
 			else if (o is Command)
 			{
 				Command command = o as Command;
@@ -78,13 +90,15 @@ namespace ActiveMQ.Transport.Stomp
 					response.CorrelationId = command.CommandId;
 					SendCommand(response);
 				}
+				Console.WriteLine("#### Ignored command: " + o);
 			}
 			else
 			{
-				Console.WriteLine("Ignored command: " + o);
+				Console.WriteLine("#### Ignored command: " + o);
 			}
         }
-        
+
+
         public Object Unmarshal(BinaryReader dis)
         {
 			StreamReader socketReader = new StreamReader(dis.BaseStream);
@@ -138,7 +152,7 @@ namespace ActiveMQ.Transport.Stomp
 			return answer;
         }
 
-		protected Object CreateCommand(string command, IDictionary headers, byte[] content)
+		protected virtual Object CreateCommand(string command, IDictionary headers, byte[] content)
 		{
 			if (command == "RECEIPT" || command == "CONNECTED")
 			{
@@ -176,7 +190,7 @@ namespace ActiveMQ.Transport.Stomp
 			}
 		}
 		
-		protected Command ReadMessage(string command, IDictionary headers, byte[] content)
+		protected virtual Command ReadMessage(string command, IDictionary headers, byte[] content)
 		{
 			ActiveMQMessage message = null;
 			if (headers.Contains("content-length"))
@@ -241,7 +255,7 @@ namespace ActiveMQ.Transport.Stomp
 		
 		
 		
-		protected void WriteConnectionInfo(ConnectionInfo command, StompFrameStream ss)
+		protected virtual void WriteConnectionInfo(ConnectionInfo command, StompFrameStream ss)
 		{
 			// lets force a receipt
 			command.ResponseRequired = true;
@@ -252,8 +266,14 @@ namespace ActiveMQ.Transport.Stomp
 			ss.WriteHeader("passcode", command.Password);
 			ss.Flush();
 		}
+		
+		protected virtual void WriteShutdownInfo(ShutdownInfo command, StompFrameStream ss)
+		{
+			ss.WriteCommand(command, "DISCONNECT");
+			ss.Flush();
+		}
 
-		protected void WriteConsumerInfo(ConsumerInfo command, StompFrameStream ss)
+		protected virtual void WriteConsumerInfo(ConsumerInfo command, StompFrameStream ss)
 		{
 			ss.WriteCommand(command, "SUBSCRIBE");
 			ss.WriteHeader("destination", StompHelper.ToStomp(command.Destination));
@@ -274,7 +294,49 @@ namespace ActiveMQ.Transport.Stomp
 			ss.Flush();
 		}
 
-		protected void WriteMessage(ActiveMQMessage command, StompFrameStream ss)
+		protected virtual void WriteRemoveInfo(RemoveInfo command, StompFrameStream ss)
+		{
+			object id = command.ObjectId;
+			if (id is ConsumerId)
+			{
+				ConsumerId consumerId = id as ConsumerId;
+				ss.WriteCommand(command, "UNSUBSCRIBE");
+				ss.WriteHeader("id", StompHelper.ToStomp(consumerId));
+				
+				ss.Flush();
+			}
+		}
+		
+		
+		protected virtual void WriteTransactionInfo(TransactionInfo command, StompFrameStream ss)
+		{
+			TransactionId id = command.TransactionId;
+			if (id is LocalTransactionId)
+			{
+				string type = "BEGIN";
+				TransactionType transactionType = (TransactionType) command.Type;
+				switch (transactionType)
+				{
+					case TransactionType.CommitOnePhase:
+						command.ResponseRequired = true;
+						type = "COMMIT";
+						break;
+					case TransactionType.Rollback:
+						command.ResponseRequired = true;
+						type = "ABORT";
+						break;
+				}
+				Console.WriteLine(">>> For transaction type: " + transactionType + " we are using command type: " + type);
+				
+				ss.WriteCommand(command, type);
+				
+				ss.WriteHeader("transaction", StompHelper.ToStomp(id));
+				
+				ss.Flush();
+			}
+		}
+		
+		protected virtual void WriteMessage(ActiveMQMessage command, StompFrameStream ss)
 		{
 			ss.WriteCommand(command, "SEND");
 			ss.WriteHeader("destination", StompHelper.ToStomp(command.Destination));
@@ -283,7 +345,7 @@ namespace ActiveMQ.Transport.Stomp
 			ss.WriteHeader("expires", command.Expiration);
 			ss.WriteHeader("priority", command.Priority);
 			ss.WriteHeader("type", command.Type);
-			ss.WriteHeader("transaction", command.TransactionId);
+			ss.WriteHeader("transaction", StompHelper.ToStomp(command.TransactionId));
 			ss.WriteHeader("persistent", command.Persistent);
 			
 			// lets force the content to be marshalled
@@ -308,7 +370,7 @@ namespace ActiveMQ.Transport.Stomp
 			ss.Flush();
 		}
 		
-		protected void WriteMessageAck(MessageAck command, StompFrameStream ss)
+		protected virtual void WriteMessageAck(MessageAck command, StompFrameStream ss)
 		{
 			ss.WriteCommand(command, "ACK");
 			
@@ -319,7 +381,7 @@ namespace ActiveMQ.Transport.Stomp
 			ss.Flush();
 		}
 		
-		protected void SendCommand(Command command)
+		protected virtual void SendCommand(Command command)
 		{
 			if (transport == null)
 			{
@@ -331,7 +393,7 @@ namespace ActiveMQ.Transport.Stomp
 			}
 		}
 		
-		protected string RemoveHeader(IDictionary headers, string name)
+		protected virtual string RemoveHeader(IDictionary headers, string name)
 		{
 			object value = headers[name];
 			if (value == null)
@@ -346,7 +408,7 @@ namespace ActiveMQ.Transport.Stomp
 		}
 		
 		
-		protected string ToString(object value)
+		protected virtual string ToString(object value)
 		{
 			if (value != null)
 			{
