@@ -36,6 +36,7 @@ namespace ActiveMQ {
                 private bool dispatchAsync;
                 private bool exclusive;
                 private bool retroactive;
+				private bool asyncSend;
                 private IDictionary consumers = Hashtable.Synchronized(new Hashtable());
                 private TransactionContext transactionContext;
                 private DispatchingThread dispatchingThread;
@@ -45,6 +46,7 @@ namespace ActiveMQ {
                         this.connection = connection;
                         this.info = info;
                         this.acknowledgementMode = acknowledgementMode;
+						this.asyncSend = connection.AsyncSend;
                         transactionContext = new TransactionContext(this);
                         dispatchingThread = new DispatchingThread(new DispatchingThread.DispatchFunction(DispatchAsyncMessages));
                         dispatchingThread.ExceptionListener += new DispatchingThread.ExceptionHandler(dispatchingThread_ExceptionListener);
@@ -61,8 +63,8 @@ namespace ActiveMQ {
                 /// until acknowledgements are received.
                 /// </summary>
                 public int PrefetchSize {
-                        get { return prefetchSize; } 
-                        set { this.prefetchSize = value; } 
+                        get { return prefetchSize; }
+                        set { this.prefetchSize = value; }
                 }
 
                 /// <summary>
@@ -72,16 +74,16 @@ namespace ActiveMQ {
                 /// Must be > 0 to enable this feature
                 /// </summary>
                 public int MaximumPendingMessageLimit {
-                        get { return maximumPendingMessageLimit; } 
-                        set { this.maximumPendingMessageLimit = value; } 
+                        get { return maximumPendingMessageLimit; }
+                        set { this.maximumPendingMessageLimit = value; }
                 }
 
                 /// <summary>
                 /// Enables or disables whether asynchronous dispatch should be used by the broker
                 /// </summary>
                 public bool DispatchAsync {
-                        get { return dispatchAsync; } 
-                        set { this.dispatchAsync = value; } 
+                        get { return dispatchAsync; }
+                        set { this.dispatchAsync = value; }
                 }
 
                 /// <summary>
@@ -89,26 +91,35 @@ namespace ActiveMQ {
                 /// only one instance of a consumer is allowed to process messages on a queue to preserve order
                 /// </summary>
                 public bool Exclusive {
-                        get { return exclusive; } 
-                        set { this.exclusive = value; } 
+                        get { return exclusive; }
+                        set { this.exclusive = value; }
                 }
 
                 /// <summary>
                 /// Enables or disables retroactive mode for consumers; i.e. do they go back in time or not?
                 /// </summary>
                 public bool Retroactive {
-                        get { return retroactive; } 
-                        set { this.retroactive = value; } 
+                        get { return retroactive; }
+                        set { this.retroactive = value; }
                 }
 
                 /// <summary>
                 /// Sets the default consumer priority for consumers
                 /// </summary>
                 public byte Priority {
-                        get { return priority; } 
-                        set { this.priority = value; } 
+                        get { return priority; }
+                        set { this.priority = value; }
                 }
-
+		
+				/// <summary>
+				/// This property indicates whether or not async send is enabled.
+				/// </summary>
+				public bool AsyncSend
+				{
+					get { return asyncSend; }
+					set { asyncSend = value; }
+				}
+		
                 public void Dispose()
                 {
                         connection.DisposeOf(info.SessionId);
@@ -316,35 +327,36 @@ namespace ActiveMQ {
                 // Properties
 
                 public Connection Connection {
-                        get { return connection; } 
+                        get { return connection; }
                 }
 
                 public SessionId SessionId {
-                        get { return info.SessionId; } 
+                        get { return info.SessionId; }
                 }
 
                 public AcknowledgementMode AcknowledgementMode {
-                        get { return acknowledgementMode; } 
+                        get { return acknowledgementMode; }
                 }
 
                 public bool Transacted {
-                        get { return acknowledgementMode == AcknowledgementMode.Transactional; } 
+                        get { return acknowledgementMode == AcknowledgementMode.Transactional; }
                 }
 
                 public TransactionContext TransactionContext {
-                        get { return transactionContext; } 
+                        get { return transactionContext; }
                 }
 
                 // Implementation methods
-                public void DoSend(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
+				public void DoSend(ActiveMQMessage message)
                 {
-                        ActiveMQMessage command = ActiveMQMessage.Transform(message);
-						command.Persistent = persistent;
-						command.Priority = priority;
-						
-                        // TODO add time to live
-
-                        connection.SyncRequest(command);
+					if (AsyncSend)
+					{
+						connection.OneWay(message);
+					}
+					else
+					{
+						connection.SyncRequest(message);
+					}
                 }
 
                 public void Close()

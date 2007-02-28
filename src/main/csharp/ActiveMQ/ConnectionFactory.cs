@@ -28,6 +28,9 @@ namespace ActiveMQ
     /// </summary>
     public class ConnectionFactory : IConnectionFactory
     {
+		public const string DEFAULT_BROKER_URL = "tcp://localhost:61616";
+		public const string ENV_BROKER_URL = "ACTIVEMQ_BROKER_URL";
+		
         private Uri brokerUri;
         private string userName;
         private string password;
@@ -35,8 +38,11 @@ namespace ActiveMQ
         
 		public static string GetDefaultBrokerUrl()
 		{
-			// TODO look in system properties / environment variables
-			return "tcp://localhost:61616";
+			string answer = Environment.GetEnvironmentVariable(ENV_BROKER_URL);
+			if (answer == null) {
+				answer = DEFAULT_BROKER_URL;
+			}
+			return answer;
 		}
 		
         public ConnectionFactory()

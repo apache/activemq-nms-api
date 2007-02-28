@@ -34,6 +34,7 @@ namespace ActiveMQ
         private WireFormatInfo brokerWireFormatInfo; // from broker
         private IList sessions = new ArrayList();
         private IDictionary consumers = new Hashtable(); // TODO threadsafe
+        private bool asyncSend;
         private bool connected;
         private bool closed;
         private long sessionCounter;
@@ -59,14 +60,25 @@ namespace ActiveMQ
 			get { return started.Value; }
 		}
 
+		
 		/// <summary>
-		/// Starts asynchronous message delivery of incoming messages for this connection. 
+		/// This property indicates whether or not async send is enabled.
+		/// </summary>
+		public bool AsyncSend
+		{
+			get { return asyncSend; }
+			set { asyncSend = value; }
+		}
+		
+		
+		/// <summary>
+		/// Starts asynchronous message delivery of incoming messages for this connection.
 		/// Synchronous delivery is unaffected.
 		/// </summary>
 		public void Start()
 		{
 			CheckConnected();
-			if (started.CompareAndSet(false, true)) 
+			if (started.CompareAndSet(false, true))
 			{
 				foreach(Session session in sessions)
 				{
@@ -82,7 +94,7 @@ namespace ActiveMQ
 		public void Stop()
 		{
 			CheckConnected();
-			if (started.CompareAndSet(true, false)) 
+			if (started.CompareAndSet(true, false))
 			{
 				foreach(Session session in sessions)
 				{

@@ -31,6 +31,7 @@ namespace ActiveMQ
         
         private bool persistent = NMSConstants.defaultPersistence;
         private TimeSpan timeToLive;
+		private bool specifiedTimeToLive;
         private byte priority = NMSConstants.defaultPriority;
         private bool disableMessageID = false;
         private bool disableMessageTimestamp = false;
@@ -48,7 +49,7 @@ namespace ActiveMQ
         
         public void Send(IDestination destination, IMessage message)
         {
-			Send(destination, message, Persistent, Priority, TimeToLive);
+			Send(destination, message, Persistent, Priority, TimeToLive, specifiedTimeToLive);
 		}
 		
         public void Send(IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
@@ -57,6 +58,11 @@ namespace ActiveMQ
 		}
 		
         public void Send(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive)
+        {
+			Send(destination, message, persistent, priority, timeToLive, true);
+		}
+		
+        public void Send(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive, bool specifiedTimeToLive)
         {
 			ActiveMQMessage activeMessage = (ActiveMQMessage)message;
 
@@ -71,11 +77,17 @@ namespace ActiveMQ
 				activeMessage.MessageId = id;
 			}
 
-			if (!disableMessageTimestamp)
+			if (!disableMessageTimestamp && specifiedTimeToLive)
 			{
+				Console.WriteLine(">>> sending message with Timestamp: " + activeMessage.Timestamp + " and timeToLive:  " + timeToLive);
 				activeMessage.Timestamp = ActiveMQ.Util.DateUtils.ToJavaTime(DateTime.UtcNow);
 			}
-
+			
+			if (specifiedTimeToLive)
+			{
+				activeMessage.Expiration = ActiveMQ.Util.DateUtils.ToJavaTime(timeToLive);
+			}
+				
             activeMessage.ProducerId = info.ProducerId;
             activeMessage.Destination = ActiveMQDestination.Transform(destination);
             
@@ -84,8 +96,12 @@ namespace ActiveMQ
                 session.DoStartTransaction();
                 activeMessage.TransactionId = session.TransactionContext.TransactionId;
             }
-            
-            session.DoSend(destination, message, persistent, priority, timeToLive);
+			
+			activeMessage.Persistent = persistent;
+			activeMessage.Priority = priority;
+			activeMessage.Destination = ActiveMQDestination.Transform(destination);
+		    
+            session.DoSend(activeMessage);
         }
         
         public void Dispose()
