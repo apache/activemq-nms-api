@@ -240,7 +240,7 @@
 
   <target name="compile"
           depends="build-nms,build-nms-test,build-activemq,build-activemq-test,build-stomp-test,build-msmq-on-windows,build-msmq-test"
-	  description="Build everything"/>	  
+	  description="Build everything"/>
 
   <!-- Compile the nms module -->
   <target name="build-nms" depends="init" description="Build the NMS library">
@@ -269,11 +269,11 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library" 
+    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.dll" doc="${build.bin.dir}/NMS.xml">
       <nowarn>
-	<warning number="1591" /> <!-- do not report warnings for missing XML comments -->  
+	<warning number="1591" /> <!-- do not report warnings for missing XML comments -->
 	<warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
@@ -288,11 +288,11 @@
         <include name="System.dll" asis="true"/>
       </references>
     </csc>
-    <csc if="${not current.build.keysign}" target="library" 
+    <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.dll" doc="${build.bin.dir}/NMS.xml">
       <nowarn>
-	<warning number="1591" /> <!-- do not report warnings for missing XML comments -->  
+	<warning number="1591" /> <!-- do not report warnings for missing XML comments -->
 	<warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
@@ -338,7 +338,7 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library" 
+    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.Test.dll" doc="${build.bin.dir}/NMS.Test.xml">
       <nowarn>
@@ -358,7 +358,7 @@
         <include name="${build.bin.dir}/NMS.dll"/>
       </references>
     </csc>
-    <csc if="${not current.build.keysign}" target="library" 
+    <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.Test.dll" doc="${build.bin.dir}/NMS.Test.xml">
       <nowarn>
@@ -407,7 +407,7 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library" 
+    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.ActiveMQ.dll" doc="${build.bin.dir}/NMS.ActiveMQ.xml">
       <nowarn>
@@ -427,7 +427,7 @@
         <include name="${build.bin.dir}/NMS.dll"/>
       </references>
     </csc>
-    <csc if="${not current.build.keysign}" target="library" 
+    <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.ActiveMQ.dll" doc="${build.bin.dir}/NMS.ActiveMQ.xml">
       <nowarn>
@@ -476,7 +476,7 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library" 
+    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.ActiveMQ.Test.dll" doc="${build.bin.dir}/NMS.ActiveMQ.Test.xml">
       <nowarn>
@@ -498,7 +498,7 @@
         <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
       </references>
     </csc>
-    <csc if="${not current.build.keysign}" target="library" 
+    <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.ActiveMQ.Test.dll" doc="${build.bin.dir}/NMS.ActiveMQ.Test.xml">
       <nowarn>
@@ -549,11 +549,11 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library" 
+    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.Stomp.Test.dll" doc="${build.bin.dir}/NMS.Stomp.Test.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        
+	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
 	      <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
@@ -572,11 +572,11 @@
         <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
       </references>
     </csc>
-    <csc if="${not current.build.keysign}" target="library" 
+    <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.Stomp.Test.dll" doc="${build.bin.dir}/NMS.Stomp.Test.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        
+	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
 	      <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
@@ -629,11 +629,11 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library" 
+    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.MSMQ.dll" doc="${build.bin.dir}/NMS.MSMQ.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        
+	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
 	      <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
@@ -653,11 +653,11 @@
         <include name="${build.bin.dir}/NMS.dll"/>
       </references>
     </csc>
-    <csc if="${not current.build.keysign}" target="library" 
+    <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.MSMQ.dll" doc="${build.bin.dir}/NMS.MSMQ.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        
+	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
 	      <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
@@ -706,11 +706,11 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library" 
+    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.MSMQ.Test.dll" doc="${build.bin.dir}/NMS.MSMQ.Test.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        
+	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
 	      <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
@@ -733,11 +733,11 @@
         <include name="${build.bin.dir}/NMS.MSMQ.dll"/>
       </references>
     </csc>
-    <csc if="${not current.build.keysign}" target="library" 
+    <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.MSMQ.Test.dll" doc="${build.bin.dir}/NMS.MSMQ.Test.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        
+	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
 	      <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
@@ -791,7 +791,7 @@
   <!--      M I S C E L L A N E O U S    T A R G E T S                                              -->
   <!-- ============================================================================================ -->
 
-  <target name="clean" depends="init" description="Deletes build">
+  <target name="clean" description="Deletes build">
     <delete dir="build" if="${directory::exists('build')}" />
   </target>
 
