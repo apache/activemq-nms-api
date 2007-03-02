@@ -27,9 +27,11 @@ namespace NMS.Test
     [ TestFixture ]
     public abstract class NMSTestSupport
     {
+		protected static object destinationLock = new object();
+		protected static int destinationCounter;
 
         // enable/disable logging of message flows
-        protected bool logging = false;
+        protected bool logging = true;
 
         private IConnectionFactory factory;
         private IConnection connection;
@@ -50,6 +52,7 @@ namespace NMS.Test
         [TearDown]
         virtual public void TearDown()
         {
+			destination = null;
             Disconnect();
         }
 
@@ -97,23 +100,27 @@ namespace NMS.Test
 
         virtual protected void Connect()
         {
-            Console.WriteLine("Connectting...");
+            WriteLine("Connectting...");
             connection = CreateConnection();
             Assert.IsNotNull(connection, "no connection created");
             connection.Start();
-            Console.WriteLine("Connected.");
+            WriteLine("Connected.");
             Assert.IsNotNull(connection, "no connection created");
         }
 
         virtual protected void Disconnect()
         {
+			if (session != null)
+			{
+				session.Dispose();
+				session = null;
+			}
             if (connection != null)
             {
-                Console.WriteLine("Disconnecting...");
+                WriteLine("Disconnecting...");
                 connection.Dispose();
                 connection = null;
-                session=null;
-                Console.WriteLine("Disconnected.");
+                WriteLine("Disconnected.");
             }
         }
         
@@ -198,8 +205,13 @@ namespace NMS.Test
 
         protected virtual string CreateDestinationName()
         {
-            return "Test.DotNet." + GetType().Name + "." + DateTime.Now.Ticks;
+            return "Test.DotNet." + GetType().Name + "." + NextNumber.ToString();
         }
+		
+		public static int NextNumber
+		{
+			get { lock(destinationLock) { return ++destinationCounter; } }
+		}
         
         protected virtual IMessage CreateMessage()
         {
@@ -219,7 +231,7 @@ namespace NMS.Test
                 {
                     destination = CreateDestination();
                     Assert.IsNotNull(destination, "No destination available!");
-                    Console.WriteLine("Using destination: " + destination);
+                    WriteLine("Using destination: " + destination);
                 }
                 return destination;
             }
@@ -228,6 +240,14 @@ namespace NMS.Test
             }
         }
 
+		protected virtual void WriteLine(string text)
+		{
+			if (logging)
+			{
+				Console.WriteLine();
+				Console.WriteLine("#### : " + text);
+			}
+		}
     }
 }
 
