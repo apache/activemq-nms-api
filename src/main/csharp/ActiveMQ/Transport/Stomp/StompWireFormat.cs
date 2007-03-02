@@ -49,7 +49,7 @@ namespace ActiveMQ.Transport.Stomp
 
         public void Marshal(Object o, BinaryWriter binaryWriter)
         {
-			Console.WriteLine("About to marshall command: " + o);
+			Console.WriteLine(">>>> " + o);
 			//Console.Out.Flush();
 			StompFrameStream ds = new StompFrameStream(binaryWriter, encoding);
 			
@@ -90,11 +90,11 @@ namespace ActiveMQ.Transport.Stomp
 					response.CorrelationId = command.CommandId;
 					SendCommand(response);
 				}
-				Console.WriteLine("#### Ignored command: " + o);
+				Console.WriteLine("#### Ignored command: " + o.GetType());
 			}
 			else
 			{
-				Console.WriteLine("#### Ignored command: " + o);
+				Console.WriteLine("#### Ignored command: " + o.GetType());
 			}
         }
 
@@ -108,7 +108,7 @@ namespace ActiveMQ.Transport.Stomp
 			}
 			while (command == "");
 			
-			Console.WriteLine(">> command: " + command);
+			Console.WriteLine("<<<< command: " + command);
 			
 			IDictionary headers = new Hashtable();
 			string line;
@@ -121,7 +121,7 @@ namespace ActiveMQ.Transport.Stomp
 					string value = line.Substring(idx + 1);
 					headers[key] = value;
 					
-					Console.WriteLine(">> header: " + key + " = " + value);
+					Console.WriteLine("<<<< header: " + key + " = " + value);
 				}
 				else
 				{
@@ -147,7 +147,7 @@ namespace ActiveMQ.Transport.Stomp
 				content = encoding.GetBytes(text);
 			}
 			Object answer = CreateCommand(command, headers, content);
-			Console.WriteLine(">>>>> received: " + answer);
+			Console.WriteLine("<<<< received: " + answer);
 			Console.Out.Flush();
 			return answer;
         }
