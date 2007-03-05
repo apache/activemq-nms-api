@@ -119,10 +119,9 @@ namespace MSMQ
 
 		protected virtual void HandleAsyncException(Exception e)
 		{
-			ExceptionListener exceptionListener = session.Connection.ExceptionListener;
-			if (exceptionListener != null)
+			if (session.Connection.ExceptionListener != null)
 			{
-				exceptionListener(e);
+				session.Connection.ExceptionListener(e);
 			}
 			else
 			{
