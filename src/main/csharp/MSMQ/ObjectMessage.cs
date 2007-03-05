@@ -29,10 +29,19 @@ namespace MSMQ
 {
     public class ObjectMessage : BaseMessage, IObjectMessage
     {
-		#if !(PocketPC||NETCF||NETCF_2_0)
 		private object body;
+		#if !(PocketPC||NETCF||NETCF_2_0)
 		private IFormatter formatter;
 		#endif
+		
+		public ObjectMessage()
+		{
+		}
+		
+		public ObjectMessage(object body)
+		{
+			this.body = body;
+		}
 		
 		public object Body
 		{
@@ -42,10 +51,9 @@ namespace MSMQ
 				{
 					body = Formatter.Deserialize(new MemoryStream(Content));
 				}
-				return body;
 				#else
-                throw new NotImplementedException();
 				#endif
+				return body;
 			}
 			
 			set {
@@ -73,6 +81,7 @@ namespace MSMQ
 				formatter = value;
 			}
 		}
+	
 		#endif
 	}
 }

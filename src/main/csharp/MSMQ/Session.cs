@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System.Messaging;
 using NMS;
 using System;
+using System.Messaging;
 
 namespace MSMQ
 {
@@ -66,17 +66,22 @@ namespace MSMQ
         
         public IMessageConsumer CreateConsumer(IDestination destination, string selector)
         {
-            return new MessageConsumer(this, acknowledgementMode);
+            return CreateConsumer(destination, selector, false);
         }
 
         public IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal)
         {
-            throw new NotImplementedException();
+			if (selector != null)
+			{
+				throw new NotImplementedException("Selectors are not supported by MSQM");
+			}
+			MessageQueue queue = MessageConverter.ToMsmqDestination(destination);
+            return new MessageConsumer(this, acknowledgementMode, queue);
         }
 
         public IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal)
         {
-            return null;
+            throw new NotImplementedException("Durable Topic subscribers are not supported by MSMQ");
         }
         
         public IQueue GetQueue(string name)

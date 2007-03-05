@@ -24,7 +24,7 @@ namespace MSMQ
     public class BaseMessage : IMessage
     {
         private PrimitiveMap properties;
-        private Destination destination;
+        private IDestination destination;
         private string correlationId;
         private TimeSpan expiration;
         private string messageId;
@@ -90,6 +90,9 @@ namespace MSMQ
             get {
                 return destination;
             }
+            set {
+                destination = value;
+            }
         }
         
         /// <summary>
@@ -113,6 +116,9 @@ namespace MSMQ
             get {
                 return messageId;
             }
+			set {
+				messageId = value;
+			}
         }
         
         /// <summary>

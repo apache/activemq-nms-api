@@ -23,31 +23,75 @@ namespace MSMQ
 {
     public class DefaultMessageConverter : IMessageConverter
 	{
-        public Message convertToMSMQMessage(IMessage message)
+        public virtual Message ToMsmqMessage(IMessage message)
         {
-            Message msg = new Message();
+            Message answer = new Message();
             MessageQueue responseQueue=null;
             if (message.NMSReplyTo != null)
             {
-                responseQueue = new MessageQueue(((Destination)message.NMSReplyTo).Path);
+                IDestination destination = message.NMSReplyTo;
+				responseQueue = ToMsmqDestination(destination);
             }
             //if (message.NMSExpiration != null)
             //{
-                msg.TimeToBeReceived = message.NMSExpiration;
+                answer.TimeToBeReceived = message.NMSExpiration;
             //}
             if (message.NMSCorrelationID != null)
             {
-                msg.CorrelationId = message.NMSCorrelationID;
+                answer.CorrelationId = message.NMSCorrelationID;
             }
-            msg.Recoverable = message.NMSPersistent;
-            msg.Priority = MessagePriority.Normal;
-            msg.ResponseQueue = responseQueue;
-
-            return msg;
+            answer.Recoverable = message.NMSPersistent;
+            answer.Priority = MessagePriority.Normal;
+            answer.ResponseQueue = responseQueue;
+			answer.Label = message.NMSType;
+            return answer;
         }
-        public IMessage convertFromMSMQMessage(Message message)
+		
+        public virtual IMessage ToNmsMessage(Message message)
         {
-            return null;
+			BaseMessage answer = CreateNmsMessage(message);
+			answer.NMSMessageId = message.Id;
+			if (message.CorrelationId != null)
+			{
+				answer.NMSCorrelationID = message.CorrelationId;
+			}
+			answer.NMSDestination = ToNmsDestination(message.DestinationQueue);
+			answer.NMSType = message.Label;
+			answer.NMSReplyTo = ToNmsDestination(message.ResponseQueue);
+			answer.NMSExpiration = message.TimeToBeReceived;
+            return answer;
         }
+		
+		
+		public MessageQueue ToMsmqDestination(IDestination destination)
+		{
+			return new MessageQueue((destination as Destination).Path);
+		}
+
+		protected virtual IDestination ToNmsDestination(MessageQueue destinationQueue)
+		{
+			if (destinationQueue == null)
+			{
+				return null;
+			}
+			return new Queue(destinationQueue.Path);
+		}
+	
+		protected virtual BaseMessage CreateNmsMessage(Message message)
+		{
+			object body = message.Body;
+			if (body == null)
+			{
+				return new BaseMessage();
+			}
+			else if (body is string)
+			{
+				return new TextMessage(body as string);
+			}
+			else
+			{
+				return new ObjectMessage(body);
+			}
+		}
 	}
 }

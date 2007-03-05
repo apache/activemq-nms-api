@@ -127,7 +127,7 @@ namespace MSMQ
                 message.NMSPriority = priority;
                 
                 // message.NMSTimestamp = new DateTime().Date.;
-                Message msg = messageConverter.convertToMSMQMessage(message);
+                Message msg = messageConverter.ToMsmqMessage(message);
                 // TODO: message.NMSMessageId =
                 // Now Send the message
                 if( mq.Transactional )

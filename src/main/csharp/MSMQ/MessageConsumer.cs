@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
+using ActiveMQ;
+using ActiveMQ.Util;
 using NMS;
+using System;
+using System.Messaging;
 using System.Threading;
 
 namespace MSMQ
@@ -25,31 +28,49 @@ namespace MSMQ
     /// </summary>
     public class MessageConsumer : IMessageConsumer
     {
+		protected const TimeSpan zeroTimeout = new TimeSpan(0);
+		
         private readonly Session session;
         private readonly AcknowledgementMode acknowledgementMode;
-
-        public MessageConsumer(Session session, AcknowledgementMode acknowledgementMode)
+		private MessageQueue messageQueue;
+		private event MessageListener listener;
+		private AtomicBoolean asyncDelivery = new AtomicBoolean(false);
+		
+        public MessageConsumer(Session session, AcknowledgementMode acknowledgementMode, MessageQueue messageQueue)
         {
             this.session = session;
-            this.acknowledgementMode = acknowledgementMode;            
+            this.acknowledgementMode = acknowledgementMode;
+			this.messageQueue = messageQueue;
         }
-
+        
+        public event MessageListener Listener
+        {
+			add {
+				listener += value;
+				StartAsyncDelivery();
+			}
+			remove {
+				listener -= value;
+			}
+        }
+		
         public IMessage Receive()
         {
-            throw new NotImplementedException();
+			Message message = messageQueue.Receive();
+			return ToNmsMessage(message);
         }
 
         public IMessage Receive(TimeSpan timeout)
         {
-            throw new NotImplementedException();
+			Message message = messageQueue.Receive(timeout);
+			return ToNmsMessage(message);
         }
 
         public IMessage ReceiveNoWait()
         {
-            throw new NotImplementedException();
+			Message message = messageQueue.Receive(zeroTimeout);
+			return ToNmsMessage(message);
         }
-
-        public event MessageListener Listener;
 
         public void Dispose()
         {
@@ -58,8 +79,64 @@ namespace MSMQ
 
         public void Close()
         {
+			StopmAsyncDelivery();
             Dispose();
         }
+		
+		public void StopmAsyncDelivery()
+		{
+			asyncDelivery.Value = true;
+		}
 
+		protected virtual void StartAsyncDelivery()
+		{
+			if (asyncDelivery.CompareAndSet(false, true)) {
+				Thread thread = new Thread(DispatchLoop);
+				thread.Start();
+			}
+		}
+		
+		protected virtual void DispatchLoop()
+		{
+			Tracer.Info("Starting dispatcher thread consumer: " + this);
+			while (asyncDelivery.Value)
+			{
+				IMessage message = Receive();
+				if (message != null)
+				{
+					try
+					{
+						listener(message);
+					}
+					catch (Exception e)
+					{
+						HandleAsyncException(e);
+					}
+				}
+			}
+			Tracer.Info("Stopping dispatcher thread consumer: " + this);
+		}
+
+		protected virtual void HandleAsyncException(Exception e)
+		{
+			ExceptionListener exceptionListener = session.Connection.ExceptionListener;
+			if (exceptionListener != null)
+			{
+				exceptionListener(e);
+			}
+			else
+			{
+				Tracer.Error(e);
+			}
+		}
+		
+		protected virtual IMessage ToNmsMessage(Message message)
+		{
+			if (message == null)
+			{
+				return null;
+			}
+			return session.MessageConverter.ToNmsMessage(message);
+		}
     }
 }

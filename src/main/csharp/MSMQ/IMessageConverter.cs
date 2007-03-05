@@ -21,7 +21,15 @@ namespace MSMQ
 {
     public interface IMessageConverter
     {
-        Message convertToMSMQMessage(IMessage message);
-        IMessage convertFromMSMQMessage(Message message);
+		
+		/// <summary>
+	/// Method ToMSMQMessageQueue
+/// </summary>
+ /// <param name="destination">An IDestination</param>
+ /// <returns>A  MessageQueue</retutns>
+MessageQueue ToMsmqDestination(IDestination destination);
+
+        Message ToMsmqMessage(IMessage message);
+        IMessage ToNmsMessage(Message message);
     }
 }
