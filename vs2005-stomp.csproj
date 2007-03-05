@@ -4,13 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A5FCA129-991B-4CB2-987A-B25E43B0F5EC}</ProjectGuid>
+    <ProjectGuid>{629E243B-AE34-44F5-A7E3-1BA40668E55C}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>MSMQ</RootNamespace>
-    <AssemblyName>NMS.MSMQ</AssemblyName>
+    <RootNamespace>Stomp</RootNamespace>
+    <AssemblyName>NMS.Stomp</AssemblyName>
     <WarningLevel>4</WarningLevel>
-    <StartupObject>
-    </StartupObject>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>activemq-dotnet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -32,27 +30,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Messaging" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\main\csharp\MSMQ\BaseMessage.cs" />
-    <Compile Include="src\main\csharp\MSMQ\BytesMessage.cs" />
-    <Compile Include="src\main\csharp\MSMQ\CommonAssemblyInfo.cs" />
-    <Compile Include="src\main\csharp\MSMQ\Connection.cs" />
-    <Compile Include="src\main\csharp\MSMQ\ConnectionFactory.cs" />
-    <Compile Include="src\main\csharp\MSMQ\DefaultMessageConverter.cs" />
-    <Compile Include="src\main\csharp\MSMQ\Destination.cs" />
-    <Compile Include="src\main\csharp\MSMQ\IMessageConverter.cs" />
-    <Compile Include="src\main\csharp\MSMQ\MapMessage.cs" />
-    <Compile Include="src\main\csharp\MSMQ\MessageConsumer.cs" />
-    <Compile Include="src\main\csharp\MSMQ\MessageProducer.cs" />
-    <Compile Include="src\main\csharp\MSMQ\ObjectMessage.cs" />
-    <Compile Include="src\main\csharp\MSMQ\PrimitiveMap.cs" />
-    <Compile Include="src\main\csharp\MSMQ\Queue.cs" />
-    <Compile Include="src\main\csharp\MSMQ\Session.cs" />
-    <Compile Include="src\main\csharp\MSMQ\StreamMessage.cs" />
-    <Compile Include="src\main\csharp\MSMQ\TextMessage.cs" />
+    <None Include="activemq-dotnet.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vs2005-activemq.csproj">
@@ -65,7 +46,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="activemq-dotnet.snk" />
+    <Compile Include="src\main\csharp\Stomp\ConnectionFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>

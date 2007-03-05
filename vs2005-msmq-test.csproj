@@ -38,6 +38,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="vs2005-activemq.csproj">
+      <Project>{08321F42-4B3D-4815-B592-95962BAC3B9F}</Project>
+      <Name>vs2005-activemq</Name>
+    </ProjectReference>
     <ProjectReference Include="vs2005-msmq.csproj">
       <Project>{A5FCA129-991B-4CB2-987A-B25E43B0F5EC}</Project>
       <Name>vs2005-msmq</Name>

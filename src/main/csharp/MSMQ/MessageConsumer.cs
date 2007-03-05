@@ -28,7 +28,7 @@ namespace MSMQ
     /// </summary>
     public class MessageConsumer : IMessageConsumer
     {
-		protected const TimeSpan zeroTimeout = new TimeSpan(0);
+		protected TimeSpan zeroTimeout = new TimeSpan(0);
 		
         private readonly Session session;
         private readonly AcknowledgementMode acknowledgementMode;

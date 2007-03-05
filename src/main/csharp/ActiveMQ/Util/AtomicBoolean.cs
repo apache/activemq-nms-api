@@ -19,7 +19,7 @@ using System.Text;
 
 namespace ActiveMQ.Util
 {
-    class AtomicBoolean
+    public class AtomicBoolean
     {
         bool value;
 

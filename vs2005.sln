@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vs2005-nms-cf20", "vs2005-n
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vs2005-activemq-cf20", "vs2005-activemq-cf20.csproj", "{B166EC33-6048-4231-BCCA-6C5AE55139A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vs2005-stomp", "vs2005-stomp.csproj", "{629E243B-AE34-44F5-A7E3-1BA40668E55C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vs2005-stomp-test", "vs2005-stomp-test.csproj", "{F2F94D96-90F0-4724-A19F-086067556F39}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +59,14 @@ Global
 		{B166EC33-6048-4231-BCCA-6C5AE55139A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B166EC33-6048-4231-BCCA-6C5AE55139A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B166EC33-6048-4231-BCCA-6C5AE55139A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{629E243B-AE34-44F5-A7E3-1BA40668E55C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{629E243B-AE34-44F5-A7E3-1BA40668E55C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{629E243B-AE34-44F5-A7E3-1BA40668E55C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{629E243B-AE34-44F5-A7E3-1BA40668E55C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2F94D96-90F0-4724-A19F-086067556F39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2F94D96-90F0-4724-A19F-086067556F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2F94D96-90F0-4724-A19F-086067556F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2F94D96-90F0-4724-A19F-086067556F39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

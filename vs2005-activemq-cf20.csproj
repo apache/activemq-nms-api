@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>build\cf-2.0\debug\</OutputPath>
+    <OutputPath>build\netcf-2.0\debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;PocketPC, NETCF, NETCF_2_0</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
