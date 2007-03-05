@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using ActiveMQ;
 using NMS;
+using System;
 
 namespace MSMQ
 {
     /// <summary>
-    /// Represents a NMS connection MSMQ.  Since the underlying MSMQ APIs are actually 
+    /// Represents a NMS connection MSMQ.  Since the underlying MSMQ APIs are actually
     /// connectionless, NMS connection in the MSMQ case are not expensive operations.
     /// </summary>
-    /// 
+    ///
     public class Connection : IConnection
     {
         
@@ -116,6 +118,18 @@ namespace MSMQ
             Dispose();
         }
 
+		public void HandleException(Exception e)
+		{
+			if (ExceptionListener != null)
+			{
+				ExceptionListener(e);
+			}
+			else
+			{
+				Tracer.Error(e);
+			}
+			
+		}
         	        
     }
 }

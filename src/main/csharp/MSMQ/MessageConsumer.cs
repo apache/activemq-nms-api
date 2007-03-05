@@ -119,14 +119,7 @@ namespace MSMQ
 
 		protected virtual void HandleAsyncException(Exception e)
 		{
-			if (session.Connection.ExceptionListener != null)
-			{
-				session.Connection.ExceptionListener(e);
-			}
-			else
-			{
-				Tracer.Error(e);
-			}
+			session.Connection.HandleException(e);
 		}
 		
 		protected virtual IMessage ToNmsMessage(Message message)
