@@ -35,6 +35,10 @@ namespace ActiveMQ.Transport.Stomp
 
 		public static ActiveMQDestination ToDestination(string text)
 		{
+		    if( text == null )
+		    {
+                return null;
+		    }		    
 			int type = ActiveMQDestination.ACTIVEMQ_QUEUE;
 			if (text.StartsWith("/queue/"))
 			{

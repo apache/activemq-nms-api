@@ -91,20 +91,40 @@ namespace ActiveMQ.Transport.Stomp
 					SendCommand(response);
 				}
 				Console.WriteLine("#### Ignored command: " + o.GetType());
+                Console.Out.Flush();
 			}
 			else
 			{
 				Console.WriteLine("#### Ignored command: " + o.GetType());
+                Console.Out.Flush();
 			}
         }
 
 
+        internal String ReadLine(BinaryReader dis)
+        {
+            MemoryStream ms = new MemoryStream();
+            while (true)
+            {
+                int nextChar = dis.Read();
+                if (nextChar < 0)
+                {
+                    throw new IOException("Peer closed the stream.");
+                }
+                if( nextChar == 10 )
+                {
+                    break;
+                }
+                ms.WriteByte((byte)nextChar);
+            }
+            return encoding.GetString(ms.ToArray());
+        }
+        
         public Object Unmarshal(BinaryReader dis)
         {
-			StreamReader socketReader = new StreamReader(dis.BaseStream);
 			string command;
 			do {
-				command = socketReader.ReadLine();
+                command = ReadLine(dis);
 			}
 			while (command == "");
 			
@@ -112,7 +132,7 @@ namespace ActiveMQ.Transport.Stomp
 			
 			IDictionary headers = new Hashtable();
 			string line;
-			while((line = socketReader.ReadLine()) != "")
+            while ((line = ReadLine(dis)) != "")
 			{
 				int idx = line.IndexOf(':');
 				if (idx > 0)
@@ -137,14 +157,18 @@ namespace ActiveMQ.Transport.Stomp
 			}
 			else
 			{
-				StringBuilder body = new StringBuilder();
+                MemoryStream ms = new MemoryStream();
 				int nextChar;
-				while((nextChar = socketReader.Read()) != 0)
+				while((nextChar = dis.Read()) != 0)
 				{
-					body.Append((char)nextChar);
+				    if( nextChar < 0 )
+				    {
+				        // EOF ??
+				        break;
+				    }
+					ms.WriteByte((byte)nextChar);
 				}
-				string text = body.ToString().TrimEnd('\r', '\n');
-				content = encoding.GetBytes(text);
+                content = ms.ToArray();
 			}
 			Object answer = CreateCommand(command, headers, content);
 			Console.WriteLine("<<<< received: " + answer);
@@ -156,13 +180,21 @@ namespace ActiveMQ.Transport.Stomp
 		{
 			if (command == "RECEIPT" || command == "CONNECTED")
 			{
-				Response answer = new Response();
 				string text = RemoveHeader(headers, "receipt-id");
 				if (text != null)
 				{
+    				Response answer = new Response();
 					answer.CorrelationId = Int32.Parse(text);
+				    return answer;
+				} else if( command == "CONNECTED") {
+                    text = RemoveHeader(headers, "response-id");
+                    if (text != null)
+                    {
+                        Response answer = new Response();
+                        answer.CorrelationId = Int32.Parse(text);
+                        return answer;
+                    }
 				}
-				return answer;
 			}
 			else if (command == "ERROR")
 			{
@@ -183,11 +215,8 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				return ReadMessage(command, headers, content);
 			}
-			else
-			{
-				Console.WriteLine("Unknown command: " + command + " headers: " + headers);
-				return null;
-			}
+			Console.WriteLine("Unknown command: " + command + " headers: " + headers);
+			return null;
 		}
 		
 		protected virtual Command ReadMessage(string command, IDictionary headers, byte[] content)
@@ -264,6 +293,12 @@ namespace ActiveMQ.Transport.Stomp
 			ss.WriteHeader("client-id", command.ClientId);
 			ss.WriteHeader("login", command.UserName);
 			ss.WriteHeader("passcode", command.Password);
+		    
+		    if (command.ResponseRequired)
+			{
+                ss.WriteHeader("request-id", command.CommandId);
+			}
+
 			ss.Flush();
 		}
 		
