@@ -33,7 +33,8 @@ namespace ActiveMQ.Transport.Stomp
     {
 		private Encoding encoding = new UTF8Encoding();
 		private ITransport transport;
-		
+        private IDictionary consumers = Hashtable.Synchronized(new Hashtable());
+
 		public StompWireFormat()
 		{
 		}
@@ -312,20 +313,25 @@ namespace ActiveMQ.Transport.Stomp
 		{
 			ss.WriteCommand(command, "SUBSCRIBE");
 			ss.WriteHeader("destination", StompHelper.ToStomp(command.Destination));
-			ss.WriteHeader("selector", command.Selector);
 			ss.WriteHeader("id", StompHelper.ToStomp(command.ConsumerId));
-			ss.WriteHeader("durable-subscriber-name", command.SubscriptionName);
-			ss.WriteHeader("no-local", command.NoLocal);
+		    ss.WriteHeader("durable-subscriber-name", command.SubscriptionName);
+            ss.WriteHeader("selector", command.Selector);
+            if ( command.NoLocal )
+                ss.WriteHeader("no-local", command.NoLocal);
 			ss.WriteHeader("ack", "client");
 
 			// ActiveMQ extensions to STOMP
 			ss.WriteHeader("activemq.dispatchAsync", command.DispatchAsync);
-			ss.WriteHeader("activemq.exclusive", command.Exclusive);
+            if ( command.Exclusive )
+			    ss.WriteHeader("activemq.exclusive", command.Exclusive);
+		    
 			ss.WriteHeader("activemq.maximumPendingMessageLimit", command.MaximumPendingMessageLimit);
 			ss.WriteHeader("activemq.prefetchSize", command.PrefetchSize);
 			ss.WriteHeader("activemq.priority ", command.Priority);
-			ss.WriteHeader("activemq.retroactive", command.Retroactive);
-			
+            if ( command.Retroactive )
+			    ss.WriteHeader("activemq.retroactive", command.Retroactive);
+
+            consumers[command.ConsumerId] = command.ConsumerId;
 			ss.Flush();
 		}
 
@@ -336,10 +342,35 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				ConsumerId consumerId = id as ConsumerId;
 				ss.WriteCommand(command, "UNSUBSCRIBE");
-				ss.WriteHeader("id", StompHelper.ToStomp(consumerId));
-				
+				ss.WriteHeader("id", StompHelper.ToStomp(consumerId));				
 				ss.Flush();
-			}
+                consumers.Remove(consumerId);
+            }
+		    // When a session is removed, it needs to remove it's consumers too.
+            if (id is SessionId)
+            {
+                
+                // Find all the consumer that were part of the session.
+                SessionId sessionId = (SessionId) id;
+                ArrayList matches = new ArrayList();
+                foreach (DictionaryEntry entry in consumers)
+                {
+                    ConsumerId t = (ConsumerId) entry.Key;
+                    if( sessionId.ConnectionId==t.ConnectionId && sessionId.Value==t.SessionId )
+                    {
+                        matches.Add(t);
+                    }
+                }
+
+                // Un-subscribe them.
+                foreach (ConsumerId consumerId in matches)
+                {
+                    ss.WriteCommand(command, "UNSUBSCRIBE");
+                    ss.WriteHeader("id", StompHelper.ToStomp(consumerId));
+                    ss.Flush();
+                    consumers.Remove(consumerId);
+                }
+            }
 		}
 		
 		
@@ -375,12 +406,19 @@ namespace ActiveMQ.Transport.Stomp
 		{
 			ss.WriteCommand(command, "SEND");
 			ss.WriteHeader("destination", StompHelper.ToStomp(command.Destination));
-			ss.WriteHeader("reply-to", StompHelper.ToStomp(command.ReplyTo));
-			ss.WriteHeader("correlation-id", command.CorrelationId);
-			ss.WriteHeader("expires", command.Expiration);
-			ss.WriteHeader("priority", command.Priority);
-			ss.WriteHeader("type", command.Type);
-			ss.WriteHeader("transaction", StompHelper.ToStomp(command.TransactionId));
+            if (command.ReplyTo != null)
+			    ss.WriteHeader("reply-to", StompHelper.ToStomp(command.ReplyTo));
+            if (command.CorrelationId != null )
+                ss.WriteHeader("correlation-id", command.CorrelationId);
+            if (command.Expiration != 0)
+                ss.WriteHeader("expires", command.Expiration);
+            if (command.Priority != 4)
+			    ss.WriteHeader("priority", command.Priority);
+            if (command.Type != null)
+                ss.WriteHeader("type", command.Type);            
+		    if (command.TransactionId!=null)
+			    ss.WriteHeader("transaction", StompHelper.ToStomp(command.TransactionId));
+		    
 			ss.WriteHeader("persistent", command.Persistent);
 			
 			// lets force the content to be marshalled
@@ -410,8 +448,9 @@ namespace ActiveMQ.Transport.Stomp
 			ss.WriteCommand(command, "ACK");
 			
 			// TODO handle bulk ACKs?
-			ss.WriteHeader("message-id", command.FirstMessageId);
-			ss.WriteHeader("transaction", command.TransactionId);
+            ss.WriteHeader("message-id", StompHelper.ToStomp(command.FirstMessageId));
+			if( command.TransactionId!=null )
+                ss.WriteHeader("transaction", StompHelper.ToStomp(command.TransactionId));
 
 			ss.Flush();
 		}

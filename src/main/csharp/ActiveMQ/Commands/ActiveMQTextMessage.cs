@@ -40,9 +40,13 @@ namespace ActiveMQ.Commands
         // TODO generate Equals method
         // TODO generate GetHashCode method
         // TODO generate ToString method
-        
-        
-        public override byte GetDataStructureType()
+
+	    public override string ToString()
+	    {
+	        return base.ToString() + " Text="+Text;
+	    }
+
+	    public override byte GetDataStructureType()
         {
             return ID_ActiveMQTextMessage;
         }
