@@ -180,7 +180,7 @@
     <property name="snk.file"  value="${basedir}/activemq-dotnet.snk" />
     <if test="${not file::exists(snk.file)}">
       <if test="${build.noskip}">
-	<fail message="Release key file not found. You can generate a key file by running 'sn -k ${snk.file}'." />
+    <fail message="Release key file not found. You can generate a key file by running 'sn -k ${snk.file}'." />
       </if>
       <if test="${not(build.noskip)}">
         <echo message="Release key file not found. You can generate a key file by running 'sn -k ${snk.file}'." />
@@ -194,7 +194,7 @@
   </target>
 
   <target name="conditional-compile" depends="init" unless="${build.skip}"
-	  description="Conditionaly compiles all the modules if build framework and type are supported">
+      description="Conditionaly compiles all the modules if build framework and type are supported">
     <call target="compile" />
   </target>
 
@@ -212,8 +212,8 @@
     <if test="${framework::exists(current.build.framework)}">
        <!-- Make sure that the activemq-dotnet.snk exists for release builds -->
        <if test="${current.build.config.release}">
-	 <call target="release-init"/>
-	 <property name="build.skip" value="${build.skip.release}" />
+     <call target="release-init"/>
+     <property name="build.skip" value="${build.skip.release}" />
        </if>
        <if test="${not current.build.config.release}">
          <property name="build.skip" value="false" />
@@ -221,10 +221,10 @@
     </if>
     <if test="${not framework::exists(current.build.framework)}">
        <if test="${build.noskip}">
-	  <fail message="${current.build.framework.name} is not available." />
+      <fail message="${current.build.framework.name} is not available." />
        </if>
        <if test="${not(build.noskip)}">
-	  <echo message="${current.build.framework.name} is not available. Build skipped." />
+      <echo message="${current.build.framework.name} is not available. Build skipped." />
           <property name="build.skip" value="true"/>
        </if>
     </if>
@@ -240,7 +240,7 @@
 
   <target name="compile"
           depends="build-nms,build-nms-test,build-activemq,build-activemq-test,build-stomp-test,build-msmq-on-windows,build-msmq-test"
-	  description="Build everything"/>
+      description="Build everything"/>
 
   <!-- Compile the nms module -->
   <target name="build-nms" depends="init" description="Build the NMS library">
@@ -273,8 +273,8 @@
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.dll" doc="${build.bin.dir}/NMS.xml">
       <nowarn>
-	<warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-	<warning number="0618" /> <!-- do not report deprecation warnings -->
+    <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+    <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/main/csharp/NMS/*.cs" />
@@ -292,8 +292,8 @@
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.dll" doc="${build.bin.dir}/NMS.xml">
       <nowarn>
-	<warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-	<warning number="0618" /> <!-- do not report deprecation warnings -->
+    <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+    <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/main/csharp/NMS/*.cs" />
@@ -345,7 +345,7 @@
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
-	      <include name="src/test/csharp/NMS/Test/**.cs" />
+          <include name="src/test/csharp/NMS/Test/**.cs" />
       </sources>
       <resources failonempty="true">
         <include name="NOTICE.txt" />
@@ -365,7 +365,7 @@
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
-	      <include name="src/test/csharp/NMS/Test/**.cs" />
+          <include name="src/test/csharp/NMS/Test/**.cs" />
       </sources>
       <resources failonempty="true">
         <include name="NOTICE.txt" />
@@ -553,8 +553,8 @@
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.Stomp.Test.dll" doc="${build.bin.dir}/NMS.Stomp.Test.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-	      <warning number="0618" /> <!-- do not report deprecation warnings -->
+          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+          <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/test/csharp/Stomp/**.cs" />
@@ -576,8 +576,8 @@
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.Stomp.Test.dll" doc="${build.bin.dir}/NMS.Stomp.Test.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-	      <warning number="0618" /> <!-- do not report deprecation warnings -->
+          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+          <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/test/csharp/Stomp/**.cs" />
@@ -598,12 +598,12 @@
   </target>
 
   <target name="build-msmq-on-windows" depends="init,build-nms" description="Build the NMS.MSMQ library" if="${platform::is-win32() and framework::get-target-framework()!='netcf-2.0'}">
-	<call target="build-msmq" />
+    <call target="build-msmq" />
   </target>
   
   <!-- Compile the msmq module -->
   <target name="build-msmq" depends="init,build-nms" description="Build the NMS.MSMQ library">
-	<echo message="Building the NMS.MSMQ library using ${lib.framework.dir}/System.Messaging.dll" />
+    <echo message="Building the NMS.MSMQ library using ${lib.framework.dir}/System.Messaging.dll" />
 
     <attrib file="src/main/csharp/MSMQ/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/main/csharp/MSMQ/CommonAssemblyInfo.cs')}" />
     <asminfo output="src/main/csharp/MSMQ/CommonAssemblyInfo.cs" language="CSharp">
@@ -633,8 +633,8 @@
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.MSMQ.dll" doc="${build.bin.dir}/NMS.MSMQ.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-	      <warning number="0618" /> <!-- do not report deprecation warnings -->
+          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+          <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/main/csharp/MSMQ/**.cs" />
@@ -646,19 +646,20 @@
       <references failonempty="true">
         <include name="mscorlib.dll" asis="true"/>
         <include name="System.dll" asis="true"/>
-		<!-- TODO was using the following - I wonder if it now breaks on windows?
+        <!-- TODO was using the following - I wonder if it now breaks on windows?
         <include name="${lib.framework.dir}/System.Messaging.dll" />
-		-->
+        -->
         <include name="System.Messaging.dll" />
         <include name="${build.bin.dir}/NMS.dll"/>
+        <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
       </references>
     </csc>
     <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.MSMQ.dll" doc="${build.bin.dir}/NMS.MSMQ.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-	      <warning number="0618" /> <!-- do not report deprecation warnings -->
+          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+          <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/main/csharp/MSMQ/**.cs" />
@@ -670,11 +671,12 @@
       <references failonempty="true">
         <include name="mscorlib.dll" asis="true"/>
         <include name="System.dll" asis="true"/>
-		<!-- TODO was using the following - I wonder if it now breaks on windows?
+        <!-- TODO was using the following - I wonder if it now breaks on windows?
         <include name="${lib.framework.dir}/System.Messaging.dll" />
-		-->
+        -->
         <include name="System.Messaging.dll" />
         <include name="${build.bin.dir}/NMS.dll"/>
+        <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
       </references>
     </csc>
   </target>
@@ -710,8 +712,8 @@
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.MSMQ.Test.dll" doc="${build.bin.dir}/NMS.MSMQ.Test.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-	      <warning number="0618" /> <!-- do not report deprecation warnings -->
+          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+          <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/test/csharp/MSMQ/**.cs" />
@@ -723,9 +725,9 @@
       <references failonempty="true">
         <include name="mscorlib.dll" asis="true"/>
         <include name="System.dll" asis="true"/>
-		<!-- TODO was using the following - I wonder if it now breaks on windows?
+        <!-- TODO was using the following - I wonder if it now breaks on windows?
         <include name="${lib.framework.dir}/System.Messaging.dll" />
-		-->
+        -->
         <include name="System.Messaging.dll" />
         <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
         <include name="${build.bin.dir}/NMS.dll"/>
@@ -737,8 +739,8 @@
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
       output="${build.bin.dir}/NMS.MSMQ.Test.dll" doc="${build.bin.dir}/NMS.MSMQ.Test.xml">
       <nowarn>
-	      <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-	      <warning number="0618" /> <!-- do not report deprecation warnings -->
+          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+          <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/test/csharp/MSMQ/**.cs" />
@@ -750,9 +752,9 @@
       <references failonempty="true">
         <include name="mscorlib.dll" asis="true"/>
         <include name="System.dll" asis="true"/>
-		<!-- TODO was using the following - I wonder if it now breaks on windows?
+        <!-- TODO was using the following - I wonder if it now breaks on windows?
         <include name="${lib.framework.dir}/System.Messaging.dll" />
-		-->
+        -->
         <include name="System.Messaging.dll" />
         <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
         <include name="${build.bin.dir}/NMS.dll"/>
@@ -807,7 +809,7 @@
       </summaries>
       <documenters>
         <documenter name="MSDN">
-		<property name="OutputDirectory" value="${doc.dir}/nms" />
+        <property name="OutputDirectory" value="${doc.dir}/nms" />
           <property name="HtmlHelpName" value="NMS" />
           <property name="HtmlHelpCompilerFilename" value="hhc.exe" />
           <property name="IncludeFavorites" value="False" />
