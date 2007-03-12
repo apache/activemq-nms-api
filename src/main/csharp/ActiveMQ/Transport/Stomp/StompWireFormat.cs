@@ -118,7 +118,8 @@ namespace ActiveMQ.Transport.Stomp
                 }
                 ms.WriteByte((byte)nextChar);
             }
-            return encoding.GetString(ms.ToArray());
+            byte[] data = ms.ToArray();
+            return encoding.GetString(data, 0, data.Length);
         }
         
         public Object Unmarshal(BinaryReader dis)
