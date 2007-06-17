@@ -33,20 +33,20 @@ namespace ActiveMQ.Commands
     /// </summary>
     public class RemoveSubscriptionInfo : BaseCommand
     {
-        public const byte ID_RemoveSubscriptionInfo = 0;
-    			
+        public const byte ID_RemoveSubscriptionInfo = 9;
+
         ConnectionId connectionId;
         string subcriptionName;
         string clientId;
 
-		public override string ToString() {
+        public override string ToString() {
             return GetType().Name + "["
                 + " ConnectionId=" + ConnectionId
                 + " SubcriptionName=" + SubcriptionName
                 + " ClientId=" + ClientId
                 + " ]";
 
-		}
+        }
 
         public override byte GetDataStructureType() {
             return ID_RemoveSubscriptionInfo;
@@ -58,19 +58,19 @@ namespace ActiveMQ.Commands
         public ConnectionId ConnectionId
         {
             get { return connectionId; }
-            set { this.connectionId = value; }            
+            set { this.connectionId = value; }
         }
 
         public string SubcriptionName
         {
             get { return subcriptionName; }
-            set { this.subcriptionName = value; }            
+            set { this.subcriptionName = value; }
         }
 
         public string ClientId
         {
             get { return clientId; }
-            set { this.clientId = value; }            
+            set { this.clientId = value; }
         }
 
     }
