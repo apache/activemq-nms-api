@@ -27,6 +27,8 @@ namespace ActiveMQ.Commands
 		public const int SIZE_OF_INT = 4; // sizeof(int) - though causes unsafe issues with net 1.1
         
         private String text;
+
+        private static System.Text.UTF8Encoding encoder = new System.Text.UTF8Encoding();
         
         public ActiveMQTextMessage()
         {
@@ -63,13 +65,7 @@ namespace ActiveMQ.Commands
                     byte[] data = this.Content;
                     if (data != null)
                     {
-                        // TODO assume that the text is ASCII
-                        char[] chars = new char[data.Length - SIZE_OF_INT];
-                        for (int i = 0; i < chars.Length; i++)
-                        {
-                            chars[i] = (char) data[i + SIZE_OF_INT];
-                        }
-                        text = new String(chars);
+                        text = encoder.GetString(data, SIZE_OF_INT, data.Length - SIZE_OF_INT);
                     }
                 }
                 return text;
@@ -83,9 +79,9 @@ namespace ActiveMQ.Commands
 					// TODO lets make the evaluation of the Content lazy!
 					
 					// TODO assume that the text is ASCII
-					
-                    byte[] sizePrefix = System.BitConverter.GetBytes(text.Length);
-					data = new byte[text.Length + sizePrefix.Length];  //int at the front of it
+                    byte[] utf8bytes = encoder.GetBytes( this.text );
+                    byte[] sizePrefix = System.BitConverter.GetBytes(utf8bytes.Length);
+                    data = new byte[utf8bytes.Length + sizePrefix.Length];  //int at the front of it
 															
 					// add the size prefix
 					for (int j = 0; j < sizePrefix.Length; j++)
@@ -99,10 +95,9 @@ namespace ActiveMQ.Commands
                     }
 					
 					// Add the data.
-                    char[] chars = text.ToCharArray();
-					for (int i = 0; i < chars.Length; i++)
+                    for (int i = 0; i < utf8bytes.Length; i++)
                     {
-                        data[i + sizePrefix.Length] = (byte)chars[i];
+                        data[i + sizePrefix.Length] = (byte)utf8bytes[i];
                     }
 				}
 				this.Content = data;
