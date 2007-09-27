@@ -42,7 +42,7 @@ namespace ActiveMQ.Commands
         BrokerId[] brokerPath;
         bool brokerMasterConnector;
         bool manageable;
-        bool clientMaster;
+        bool clientMaster = true;
 
 		public override string ToString() {
             return GetType().Name + "["
