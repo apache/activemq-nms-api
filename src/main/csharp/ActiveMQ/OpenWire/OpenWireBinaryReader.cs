@@ -18,7 +18,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace ActiveMQ.OpenWire
+namespace Apache.ActiveMQ.OpenWire
 {
     /// <summary>
 	/// A BinaryWriter that switches the endian orientation of the read opperations so that they

@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
+using Apache.NMS;
 
-namespace ActiveMQ
+namespace Apache.ActiveMQ
 {
 	/// <summary>
         /// Exception thrown when a connection is used that it already closed

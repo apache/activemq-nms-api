@@ -16,7 +16,7 @@
  */
 using System;
 
-namespace NMS
+namespace Apache.NMS
 {
 	/// <summary>
 	/// An attempt is made to access an invalid destination

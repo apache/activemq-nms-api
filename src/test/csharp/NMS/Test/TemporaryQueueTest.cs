@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
+using Apache.NMS;
 using NUnit.Framework;
 using System;
 using System.Threading;
 
-namespace NMS.Test
+namespace Apache.NMS.Test
 {
     [ TestFixture ]
     abstract public class TemporaryQueueTest : NMSTestSupport {

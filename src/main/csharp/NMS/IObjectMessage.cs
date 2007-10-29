@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace NMS
+namespace Apache.NMS
 {
 	/// <summary>
 	/// Represents an Object message which contains a serializable .Net object.

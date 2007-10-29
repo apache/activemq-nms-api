@@ -16,7 +16,7 @@
  */
 using System;
 
-namespace NMS
+namespace Apache.NMS
 {
     /// <summary>
     /// Represents a message either to be sent to a message broker or received from a message broker
@@ -59,7 +59,7 @@ namespace NMS
         /// The amount of time that this message is valid for.  null If this
         /// message does not expire.
         /// </summary>
-        TimeSpan NMSExpiration
+        TimeSpan NMSTimeToLive
         {
             get;
             set;

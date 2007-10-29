@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Stomp;
-using NMS;
+using Apache.Stomp;
+using Apache.NMS;
 using NUnit.Framework;
 using System;
 
-namespace Stomp
+namespace Apache.Stomp
 {
 	[ TestFixture ]
     public class MapMessageTest : NMS.Test.MapMessageTest
@@ -31,8 +31,8 @@ namespace Stomp
 		
         protected override IConnectionFactory CreateConnectionFactory()
         {
-            return new ConnectionFactory();
-        }
+			return StompTestUtils.CreateStompConnectionFactory();
+		}
 		
         protected override void AssertValidMessage(IMessage message)
         {

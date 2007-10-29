@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.Commands;
-using NMS;
+using Apache.ActiveMQ.Commands;
+using Apache.NMS;
 using System;
 
-namespace ActiveMQ.Transport
+namespace Apache.ActiveMQ.Transport
 {
 	public delegate void CommandHandler(ITransport sender, Command command);
 	public delegate void ExceptionHandler(ITransport sender, Exception command);

@@ -25,11 +25,11 @@ using System;
 using System.Collections;
 using System.IO;
 
-using ActiveMQ.Commands;
-using ActiveMQ.OpenWire;
-using ActiveMQ.OpenWire.V2;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.OpenWire;
+using Apache.ActiveMQ.OpenWire.V2;
 
-namespace ActiveMQ.OpenWire.V2
+namespace Apache.ActiveMQ.OpenWire.V2
 {
   /// <summary>
   ///  Marshalling code for Open Wire Format for MessageDispatch

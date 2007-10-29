@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace NMS {
+namespace Apache.NMS {
         /// <summary>
         /// Represents a single unit of work on an IConnection.
         /// So the ISession can be used to perform transactional receive and sends

@@ -19,13 +19,11 @@ using System;
 using System.Collections;
 
 
-namespace NMS.Test
+namespace Apache.NMS.Test
 {
 	[TestFixture]
     abstract public class TransactionTest : NMSTestSupport
     {
-        private static int destinationCounter;
-        
         IMessageProducer producer;
         IMessageConsumer consumer;
         

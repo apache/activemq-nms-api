@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A5FCA129-991B-4CB2-987A-B25E43B0F5EC}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>MSMQ</RootNamespace>
+    <RootNamespace>Apache.MSMQ</RootNamespace>
     <AssemblyName>NMS.MSMQ</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <StartupObject>

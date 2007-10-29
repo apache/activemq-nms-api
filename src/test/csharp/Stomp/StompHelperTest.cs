@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
+using Apache.NMS;
 using NUnit.Framework;
-using ActiveMQ.Commands;
-using ActiveMQ.Transport.Stomp;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.Transport.Stomp;
 using System;
 
-namespace Stomp
+namespace Apache.Stomp
 {
     [ TestFixture ]
     public class StompHelperTest

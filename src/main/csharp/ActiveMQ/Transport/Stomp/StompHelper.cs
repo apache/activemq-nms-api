@@ -14,17 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System.Reflection;
-using ActiveMQ.Commands;
-using ActiveMQ.OpenWire.V1;
-using ActiveMQ.Transport;
-using NMS;
 using System;
-using System.Collections;
-using System.IO;
 using System.Text;
+using Apache.ActiveMQ.Commands;
+using Apache.NMS;
 
-namespace ActiveMQ.Transport.Stomp
+namespace Apache.ActiveMQ.Transport.Stomp
 {
     /// <summary>
     /// Some <a href="http://stomp.codehaus.org/">STOMP</a> protocol conversion helper methods.
@@ -101,12 +96,26 @@ namespace ActiveMQ.Transport.Stomp
 			ConsumerId answer = new ConsumerId();
 			int idx = text.LastIndexOf(':');
 			if (idx >= 0) {
-				answer.Value = Int32.Parse(text.Substring(idx + 1));
-				text = text.Substring(0, idx);
-				idx = text.LastIndexOf(':');
-				if (idx >= 0) {
-					answer.SessionId = Int32.Parse(text.Substring(idx + 1));
+				try
+				{
+					answer.Value = Int32.Parse(text.Substring(idx + 1));
 					text = text.Substring(0, idx);
+					idx = text.LastIndexOf(':');
+					if (idx >= 0) {
+						try
+						{
+							answer.SessionId = Int32.Parse(text.Substring(idx + 1));
+							text = text.Substring(0, idx);
+						}
+						catch(Exception ex)
+						{
+							Tracer.Debug(ex.Message);
+						}
+					}
+				}
+				catch(Exception ex)
+				{
+					Tracer.Debug(ex.Message);
 				}
 			}
 			answer.ConnectionId = text;
@@ -115,7 +124,22 @@ namespace ActiveMQ.Transport.Stomp
 		
 		public static string ToStomp(ProducerId id)
 		{
-			return id.ConnectionId + ":" + id.SessionId + ":" + id.Value;
+			StringBuilder producerBuilder = new StringBuilder();
+
+			producerBuilder.Append(id.ConnectionId);
+			if(0 != id.SessionId)
+			{
+				producerBuilder.Append(":");
+				producerBuilder.Append(id.SessionId);
+			}
+
+			if(0 != id.Value)
+			{
+				producerBuilder.Append(":");
+				producerBuilder.Append(id.Value);
+			}
+
+			return producerBuilder.ToString();
 		}
 		
 		public static ProducerId ToProducerId(string text)
@@ -127,12 +151,26 @@ namespace ActiveMQ.Transport.Stomp
 			ProducerId answer = new ProducerId();
 			int idx = text.LastIndexOf(':');
 			if (idx >= 0) {
-				answer.Value = Int32.Parse(text.Substring(idx + 1));
-				text = text.Substring(0, idx);
-				idx = text.LastIndexOf(':');
-				if (idx >= 0) {
-					answer.SessionId = Int32.Parse(text.Substring(idx + 1));
+				try
+				{
+					answer.Value = Int32.Parse(text.Substring(idx + 1));
 					text = text.Substring(0, idx);
+					idx = text.LastIndexOf(':');
+					if (idx >= 0) {
+						try
+						{
+							answer.SessionId = Int32.Parse(text.Substring(idx + 1));
+							text = text.Substring(0, idx);
+						}
+						catch(Exception ex)
+						{
+							Tracer.Debug(ex.Message);
+						}
+					}
+				}
+				catch(Exception ex)
+				{
+					Tracer.Debug(ex.Message);
 				}
 			}
 			answer.ConnectionId = text;
@@ -141,7 +179,22 @@ namespace ActiveMQ.Transport.Stomp
 		
 		public static string ToStomp(MessageId id)
 		{
-			return ToStomp(id.ProducerId) + ":" + id.BrokerSequenceId + ":" + id.ProducerSequenceId;
+			StringBuilder messageBuilder = new StringBuilder();
+
+			messageBuilder.Append(ToStomp(id.ProducerId));
+			if(0 != id.BrokerSequenceId)
+			{
+				messageBuilder.Append(":");
+				messageBuilder.Append(id.BrokerSequenceId);
+			}
+
+			if(0 != id.ProducerSequenceId)
+			{
+				messageBuilder.Append(":");
+				messageBuilder.Append(id.ProducerSequenceId);
+			}
+			
+			return messageBuilder.ToString();
 		}
 		
 		public static MessageId ToMessageId(string text)
@@ -153,12 +206,26 @@ namespace ActiveMQ.Transport.Stomp
 			MessageId answer = new MessageId();
 			int idx = text.LastIndexOf(':');
 			if (idx >= 0) {
-				answer.ProducerSequenceId = Int32.Parse(text.Substring(idx + 1));
-				text = text.Substring(0, idx);
-				idx = text.LastIndexOf(':');
-				if (idx >= 0) {
-					answer.BrokerSequenceId = Int32.Parse(text.Substring(idx + 1));
+				try
+				{
+					answer.ProducerSequenceId = Int32.Parse(text.Substring(idx + 1));
 					text = text.Substring(0, idx);
+					idx = text.LastIndexOf(':');
+					if (idx >= 0) {
+						try
+						{
+							answer.BrokerSequenceId = Int32.Parse(text.Substring(idx + 1));
+							text = text.Substring(0, idx);
+						}
+						catch(Exception ex)
+						{
+							Tracer.Debug(ex.Message);
+						}
+					}
+				}
+				catch(Exception ex)
+				{
+					Tracer.Debug(ex.Message);
 				}
 			}
 			answer.ProducerId = ToProducerId(text);

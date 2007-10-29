@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.Commands;
-using ActiveMQ.Transport;
-using NMS;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.Transport;
+using Apache.NMS;
 using System;
 using System.Collections;
 
-namespace ActiveMQ
+namespace Apache.ActiveMQ
 {
     /// <summary>
     /// Represents a connection with a message broker
@@ -42,6 +42,7 @@ namespace ActiveMQ
         private long localTransactionCounter;
         private bool closing;
         private Util.AtomicBoolean started = new ActiveMQ.Util.AtomicBoolean(true);
+    	private bool disposed = false;
         
         public Connection(ITransport transport, ConnectionInfo info)
         {
@@ -51,7 +52,12 @@ namespace ActiveMQ
 			this.transport.Exception = new ExceptionHandler(OnException);
             this.transport.Start();
         }
-        
+
+        ~Connection()
+        {
+        	Dispose(false);
+        }
+
         public event ExceptionListener ExceptionListener;
 
 
@@ -148,14 +154,39 @@ namespace ActiveMQ
 			}
 		}
 
-        public void Dispose()
-        {
-			// For now we do not distinguish between Dispose() and Close().
-			// In theory Dispose should possibly be lighter-weight and perform a (faster)
-			// disorderly close.
-			Close();
-        }
-        
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected void Dispose(bool disposing)
+		{
+			if(disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				// Dispose managed code here.
+			}
+
+			try
+			{
+				// For now we do not distinguish between Dispose() and Close().
+				// In theory Dispose should possibly be lighter-weight and perform a (faster)
+				// disorderly close.
+				Close();
+			}
+			catch
+			{
+				// Ignore network errors.
+			}
+
+			disposed = true;
+		}
+		
         // Properties
         
         public ITransport ITransport

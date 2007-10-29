@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
+using Apache.NMS;
 using System;
 using System.Messaging;
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
     /// <summary>
     /// MSQM provider of ISession

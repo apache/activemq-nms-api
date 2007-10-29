@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ;
-using NMS;
+using Apache.ActiveMQ;
+using Apache.NMS;
 using NUnit.Framework;
 using System;
 
-namespace ActiveMQ
+namespace Apache.ActiveMQ
 {
 	[ TestFixture ]
     public class TextMessage : NMS.Test.TextMessage

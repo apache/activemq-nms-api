@@ -14,23 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.Commands;
-using NMS;
+using Apache.NMS;
 using System;
 using System.Collections;
 using System.Threading;
 
-namespace ActiveMQ
+namespace Apache.ActiveMQ
 {
-	
 	/// <summary>
 	/// Handles the multi-threaded dispatching between the transport and the consumers
 	/// </summary>
 	public class Dispatcher
     {
         Queue queue = new Queue();
-        Object semaphore = new Object();
-        ArrayList messagesToRedeliver = new ArrayList();
+		readonly Object semaphore = new Object();
+		readonly ArrayList messagesToRedeliver = new ArrayList();
         
         // TODO can't use EventWaitHandle on MONO 1.0
         AutoResetEvent messageReceivedEventHandle = new AutoResetEvent(false);
@@ -44,7 +42,9 @@ namespace ActiveMQ
 				messageReceivedEventHandle = eventHandle;
 				m_bAsyncDelivery = true;
 				if (queue.Count > 0)
+				{
 					messageReceivedEventHandle.Set();
+				}
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace ActiveMQ
             lock (semaphore)
             {
                 Queue replacement = new Queue(queue.Count + messagesToRedeliver.Count);
-                foreach (ActiveMQMessage element in messagesToRedeliver)
+                foreach (IMessage element in messagesToRedeliver)
                 {
                     replacement.Enqueue(element);
                 }
@@ -64,19 +64,22 @@ namespace ActiveMQ
                 
                 while (queue.Count > 0)
                 {
-                    ActiveMQMessage element = (ActiveMQMessage) queue.Dequeue();
+                    IMessage element = (IMessage) queue.Dequeue();
                     replacement.Enqueue(element);
                 }
-                queue = replacement;
+
+				queue = replacement;
                 if (queue.Count > 0)
-                    messageReceivedEventHandle.Set();
+                {
+                	messageReceivedEventHandle.Set();
+                }
             }
         }
         
         /// <summary>
         /// Redeliver the given message, putting it at the head of the queue
         /// </summary>
-        public void Redeliver(ActiveMQMessage message)
+        public void Redeliver(IMessage message)
         {
             lock (semaphore)
 			{
@@ -87,7 +90,7 @@ namespace ActiveMQ
         /// <summary>
         /// Method Enqueue
         /// </summary>
-        public void Enqueue(ActiveMQMessage message)
+        public void Enqueue(IMessage message)
         {
             lock (semaphore)
             {
@@ -127,10 +130,11 @@ namespace ActiveMQ
 
             while (!bClosed && rc == null)
             {
-                if( !messageReceivedEventHandle.WaitOne((int)timeout.TotalMilliseconds, false) )
+                if( !messageReceivedEventHandle.WaitOne(timeout, false))
                 {
                     break;
                 }
+
 				lock (semaphore)
 				{
 					rc = DequeueNoWait();
@@ -145,16 +149,20 @@ namespace ActiveMQ
         /// </summary>
         public IMessage Dequeue()
         {
-			return Dequeue(TimeSpan.MaxValue);
+			TimeSpan indefiniteWait = TimeSpan.FromMilliseconds(Timeout.Infinite);
+			return Dequeue(indefiniteWait);
         }
 
-		internal void Close()
+		public void Close()
 		{
 			lock (semaphore)
 			{
 				m_bClosed = true;
+				queue.Clear();
 				if(m_bAsyncDelivery)
+				{
 					messageReceivedEventHandle.Set();
+				}
 			}
 		}
 	}

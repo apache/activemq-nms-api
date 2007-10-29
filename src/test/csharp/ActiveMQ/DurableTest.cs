@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 using System;
-using NMS;
+using Apache.NMS;
 using NUnit.Framework;
 
-namespace ActiveMQ
+namespace Apache.ActiveMQ
 {
     [TestFixture]
     public class DurableTest : NMS.Test.DurableTest

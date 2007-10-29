@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.Commands;
-using ActiveMQ.Transport;
-using ActiveMQ.Transport.Tcp;
-using ActiveMQ.Util;
-using NMS;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.Transport;
+using Apache.ActiveMQ.Transport.Tcp;
+using Apache.ActiveMQ.Util;
+using Apache.NMS;
 using System;
 
-namespace ActiveMQ
+namespace Apache.ActiveMQ
 {
     /// <summary>
     /// Represents a connection with a message broker
@@ -32,8 +32,8 @@ namespace ActiveMQ
 		public const string ENV_BROKER_URL = "ACTIVEMQ_BROKER_URL";
 		
         private Uri brokerUri;
-        private string userName;
-        private string password;
+        private string connectionUserName;
+        private string connectionPassword;
         private string clientId;
         
 		public static string GetDefaultBrokerUrl()
@@ -50,33 +50,44 @@ namespace ActiveMQ
 		}
 		
         public ConnectionFactory()
+			: this(GetDefaultBrokerUrl())
         {
-			this.brokerUri = new Uri(GetDefaultBrokerUrl());
         }
-        
-        public ConnectionFactory(Uri brokerUri)
-        {
-			this.brokerUri=brokerUri;
-        }
-        
-        public ConnectionFactory(string brokerUri)
-        {
-			this.brokerUri=new Uri(brokerUri);
-        }
-        
-        public IConnection CreateConnection()
-        {
-            return CreateConnection(userName, password);
-        }
-        
-        public IConnection CreateConnection(string userName, string password)
-        {
-            ConnectionInfo info = CreateConnectionInfo(userName, password);
 
-            TcpTransportFactory tcpTransportFactory = new TcpTransportFactory();
+		public ConnectionFactory(string brokerUri)
+			: this(brokerUri, CreateNewGuid())
+		{
+		}
+
+		public ConnectionFactory(string brokerUri, string clientID)
+			: this(new Uri(brokerUri), clientID)
+		{
+		}
+
+		public ConnectionFactory(Uri brokerUri)
+			: this(brokerUri, CreateNewGuid())
+		{
+		}
+
+		public ConnectionFactory(Uri brokerUri, string clientID)
+		{
+			this.brokerUri = brokerUri;
+			this.clientId = clientID;
+		}
+
+		public IConnection CreateConnection()
+        {
+            return CreateConnection(connectionUserName, connectionPassword);
+        }
+
+    	public IConnection CreateConnection(string userName, string password)
+        {
+			ConnectionInfo info = CreateConnectionInfo(userName, password);
+
+			ITransportFactory tcpTransportFactory = new TcpTransportFactory();
 			ITransport transport = tcpTransportFactory.CreateTransport(brokerUri);
 
-            Connection connection = new Connection(transport, info);
+			IConnection connection = new Connection(transport, info);
 			connection.ClientId = info.ClientId;
 
 			// Set properties on connection using parameters prefixed with "jms."
@@ -96,17 +107,17 @@ namespace ActiveMQ
                 
         public string UserName
         {
-            get { return userName; }
-            set { userName = value; }
+            get { return connectionUserName; }
+            set { connectionUserName = value; }
         }
         
         public string Password
         {
-            get { return password; }
-            set { password = value; }
+            get { return connectionPassword; }
+            set { connectionPassword = value; }
         }
-        
-        public string ClientId
+
+		public string ClientId
         {
             get { return clientId; }
             set { clientId = value; }
@@ -131,7 +142,7 @@ namespace ActiveMQ
             return answer;
         }
         
-        protected string CreateNewGuid()
+        protected static string CreateNewGuid()
         {
             return Guid.NewGuid().ToString();
         }

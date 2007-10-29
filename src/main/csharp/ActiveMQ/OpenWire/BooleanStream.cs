@@ -17,9 +17,9 @@
 using System;
 using System.IO;
 
-using ActiveMQ.OpenWire;
+using Apache.ActiveMQ.OpenWire;
 
-namespace ActiveMQ.OpenWire
+namespace Apache.ActiveMQ.OpenWire
 
 {
     /// <summary>

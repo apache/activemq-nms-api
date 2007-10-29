@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 using System;
-using NMS;
+using Apache.NMS;
 
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
 	public class BytesMessage : BaseMessage, IBytesMessage
     {

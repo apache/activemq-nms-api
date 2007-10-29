@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2F3ABCF5-EE87-43B1-9DE7-0548FD6A4E52}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>NMS.Test</RootNamespace>
+    <RootNamespace>Apache.NMS.Test</RootNamespace>
     <AssemblyName>NMS.Test</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <StartupObject>

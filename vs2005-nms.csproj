@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{300C1716-0674-4D01-8F5D-151E59A504FE}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>NMS</RootNamespace>
+    <RootNamespace>Apache.NMS</RootNamespace>
     <AssemblyName>NMS</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <StartupObject>
@@ -55,10 +55,13 @@
     <Compile Include="src\main\csharp\NMS\ITemporaryTopic.cs" />
     <Compile Include="src\main\csharp\NMS\ITextMessage.cs" />
     <Compile Include="src\main\csharp\NMS\ITopic.cs" />
+    <Compile Include="src\main\csharp\NMS\ITrace.cs" />
     <Compile Include="src\main\csharp\NMS\NMSConnectionException.cs" />
     <Compile Include="src\main\csharp\NMS\NMSConstants.cs" />
     <Compile Include="src\main\csharp\NMS\NMSException.cs" />
+    <Compile Include="src\main\csharp\NMS\NMSFactory.cs" />
     <Compile Include="src\main\csharp\NMS\NMSSecurityException.cs" />
+    <Compile Include="src\main\csharp\NMS\Tracer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="activemq-dotnet.snk" />

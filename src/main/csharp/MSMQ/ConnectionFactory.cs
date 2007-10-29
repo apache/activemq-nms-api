@@ -14,31 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
 using System;
+using Apache.NMS;
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
     /// <summary>
     /// A Factory that can estbalish NMS connections to MSMQ
     /// </summary>
     public class ConnectionFactory : IConnectionFactory
-    {   
-        //
-        // Creates a connection to MSMQ
-        //
-        public IConnection CreateConnection()
+    {
+		public ConnectionFactory()
+		{
+		}
+
+		public ConnectionFactory(Uri brokerUri, string clientID)
+		{
+		}
+
+    	/// <summary>
+		/// Creates a new connection to MSMQ.
+		/// </summary>
+		public IConnection CreateConnection()
         {
             return new Connection();
         }
-        
-        //
-        // Creates a connection to MSQM
-        //
-        public IConnection CreateConnection(string userName, string password)
+
+		/// <summary>
+		/// Creates a new connection to MSMQ.
+		/// </summary>
+		public IConnection CreateConnection(string userName, string password)
         {
             return new Connection();
         }
-                
-    }
+
+		/// <summary>
+		/// Creates a new connection to MSMQ.
+		/// </summary>
+		public IConnection CreateConnection(string userName, string password, bool useLogging)
+		{
+			return new Connection();
+		}
+	}
 }

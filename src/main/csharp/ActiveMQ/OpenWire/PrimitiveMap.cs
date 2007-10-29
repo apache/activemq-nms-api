@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
-using NMS;
+using Apache.NMS;
 using System;
 using System.Collections;
 using System.IO;
 
-namespace ActiveMQ.OpenWire
+namespace Apache.ActiveMQ.OpenWire
 {
     /// <summary>
     /// A default implementation of IPrimitiveMap
@@ -94,6 +94,10 @@ namespace ActiveMQ.OpenWire
         public string GetString(string key)
         {
             Object value = GetValue(key);
+			if( value == null )
+			{
+				return null;
+			}
             CheckValueType(value, typeof(string));
             return (string) value;
         }
@@ -485,6 +489,9 @@ namespace ActiveMQ.OpenWire
             byte type = dataIn.ReadByte();
             switch (type)
             {
+                case NULL:
+                    value = null;
+                    break;
                 case BYTE_TYPE:
                     value = dataIn.ReadByte();
                     break;

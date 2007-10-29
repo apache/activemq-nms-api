@@ -17,9 +17,9 @@
 using System;
 using System.Text;
 using System.Messaging;
-using NMS;
+using Apache.NMS;
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
     public class DefaultMessageConverter : IMessageConverter
 	{
@@ -34,7 +34,7 @@ namespace MSMQ
             }
             //if (message.NMSExpiration != null)
             //{
-                answer.TimeToBeReceived = message.NMSExpiration;
+                answer.TimeToBeReceived = message.NMSTimeToLive;
             //}
             if (message.NMSCorrelationID != null)
             {
@@ -58,7 +58,7 @@ namespace MSMQ
 			answer.NMSDestination = ToNmsDestination(message.DestinationQueue);
 			answer.NMSType = message.Label;
 			answer.NMSReplyTo = ToNmsDestination(message.ResponseQueue);
-			answer.NMSExpiration = message.TimeToBeReceived;
+			answer.NMSTimeToLive = message.TimeToBeReceived;
             return answer;
         }
 		

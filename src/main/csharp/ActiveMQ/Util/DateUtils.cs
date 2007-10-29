@@ -16,39 +16,49 @@
  */
 using System;
 
-namespace ActiveMQ.Util
+namespace Apache.ActiveMQ.Util
 {
-	internal class DateUtils
+	public class DateUtils
 	{
 		/// <summary>
-		/// The difference between the Windows epoch (1601-01-01 00:00:00)
-		/// and the Unix epoch (1970-01-01 00:00:00) in milliseconds.
+		/// The start of the Windows epoch
 		/// </summary>
-		public static readonly long EPOCH_DIFF = 11644473600000L;
-
-        /// <summary>
-        /// The start of the UNIX epoch
-        /// </summary>
-        public static readonly DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+		public static readonly DateTime windowsEpoch = new DateTime(1601, 1, 1, 0, 0, 0, 0);
+		/// <summary>
+		/// The start of the Java epoch
+		/// </summary>
+		public static readonly DateTime javaEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 		
 		/// <summary>
-		/// Method ToJavaTime
+		/// The difference between the Windows epoch and the Java epoch
+		/// in milliseconds.
 		/// </summary>
-		/// <param name="timeToLive">A  TimeSpan</param>
-		/// <returns>A  long</retutns>
-		public static long ToJavaTime(TimeSpan timeToLive)
+		public static readonly long epochDiff; /* = 1164447360000L; */
+
+		static DateUtils()
 		{
-			return ToJavaTime(new DateTime(timeToLive.Ticks));
+			epochDiff = (javaEpoch.ToFileTimeUtc() - windowsEpoch.ToFileTimeUtc())
+							/ TimeSpan.TicksPerMillisecond;
 		}
 
-	    public static long ToJavaTime(DateTime dateTime)
+		public static long ToJavaTime(DateTime dateTime)
 		{
-			return dateTime.ToFileTime() - EPOCH_DIFF;
+			return (dateTime.ToFileTime() / TimeSpan.TicksPerMillisecond) - epochDiff;
 		}
 
-        public static DateTime ToDateTime(long dateTime)
-        {
-            return UNIX_EPOCH.AddMilliseconds(dateTime);
-        }
+		public static DateTime ToDateTime(long javaTime)
+		{
+			return DateTime.FromFileTime((javaTime + epochDiff) * TimeSpan.TicksPerMillisecond);
+		}
+
+		public static long ToJavaTimeUtc(DateTime dateTime)
+		{
+			return (dateTime.ToFileTimeUtc() / TimeSpan.TicksPerMillisecond) - epochDiff;
+		}
+
+		public static DateTime ToDateTimeUtc(long javaTime)
+		{
+			return DateTime.FromFileTimeUtc((javaTime + epochDiff) * TimeSpan.TicksPerMillisecond);
+		}
 	}
 }

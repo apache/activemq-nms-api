@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace ActiveMQ
+namespace Apache.ActiveMQ
 {
 	public interface ISynchronization
     {

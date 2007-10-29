@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 using System.Reflection;
-using ActiveMQ.Commands;
-using ActiveMQ.OpenWire.V1;
-using ActiveMQ.Transport;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.OpenWire.V1;
+using Apache.ActiveMQ.Transport;
 using System;
 using System.IO;
+using Apache.NMS;
 
-namespace ActiveMQ.OpenWire
+namespace Apache.ActiveMQ.OpenWire
 {
     /// <summary>
     /// Implements the <a href="http://activemq.apache.org/openwire.html">OpenWire</a> protocol.
@@ -171,7 +172,7 @@ namespace ActiveMQ.OpenWire
                 BaseDataStreamMarshaller dsm = dataMarshallers[dataType & 0xFF];
                 if (dsm == null)
                     throw new IOException("Unknown data type: " + dataType);
-                //Console.WriteLine("Parsing type: " + dataType + " with: " + dsm);
+                Tracer.Debug("Parsing type: " + dataType + " with: " + dsm);
                 Object data = dsm.CreateObject();
 				
 				if(tightEncodingEnabled) {
@@ -214,7 +215,7 @@ namespace ActiveMQ.OpenWire
             BaseDataStreamMarshaller dsm = (BaseDataStreamMarshaller) dataMarshallers[type & 0xFF];
             if (dsm == null)
                 throw new IOException("Unknown data type: " + type);
-            //Console.WriteLine("Marshalling type: " + type + " with structure: " + o);
+            Tracer.Debug("Marshalling type: " + type + " with structure: " + o);
             return 1 + dsm.TightMarshal1(this, o, bs);
         }
         

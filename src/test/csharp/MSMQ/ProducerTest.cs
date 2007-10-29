@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
+using Apache.NMS;
 using NUnit.Framework;
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
 	[TestFixture]
     public class ProducerTest : NMS.Test.NMSTestSupport

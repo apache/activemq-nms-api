@@ -23,10 +23,10 @@
 using System;
 using System.Collections;
 
-using ActiveMQ.OpenWire;
-using ActiveMQ.Commands;
+using Apache.ActiveMQ.OpenWire;
+using Apache.ActiveMQ.Commands;
 
-namespace ActiveMQ.Commands
+namespace Apache.ActiveMQ.Commands
 {
     /// <summary>
     ///  The ActiveMQ ConsumerId Command

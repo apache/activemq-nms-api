@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
+using Apache.NMS;
 using NUnit.Framework;
 using System;
 
@@ -22,7 +22,7 @@ using System;
 /// useful base class for test cases
 /// </summary>
 
-namespace NMS.Test
+namespace Apache.NMS.Test
 {
     [ TestFixture ]
     public abstract class NMSTestSupport

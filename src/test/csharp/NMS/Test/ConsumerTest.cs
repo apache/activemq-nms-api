@@ -17,12 +17,11 @@
 using System;
 using NUnit.Framework;
 
-namespace NMS.Test
+namespace Apache.NMS.Test
 {
     [TestFixture]
     public abstract class ConsumerTest : NMSTestSupport
     {
-        public bool persistent;
         public int prefetch;
         public bool durableConsumer;
 

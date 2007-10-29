@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.OpenWire;
+using Apache.ActiveMQ.OpenWire;
 using NUnit.Framework;
 using System;
 using System.IO;
 
-namespace ActiveMQ.OpenWire
+namespace Apache.ActiveMQ.OpenWire
 {
     [TestFixture]
     public class EndianTest

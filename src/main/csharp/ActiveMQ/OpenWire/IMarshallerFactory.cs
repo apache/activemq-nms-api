@@ -16,9 +16,9 @@
  */
 using System;
 using System.Text;
-using ActiveMQ.OpenWire;
+using Apache.ActiveMQ.OpenWire;
 
-namespace ActiveMQ.OpenWire
+namespace Apache.ActiveMQ.OpenWire
 {
     interface IMarshallerFactory
     {

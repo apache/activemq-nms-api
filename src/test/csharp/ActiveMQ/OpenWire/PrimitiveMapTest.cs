@@ -18,9 +18,9 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.IO;
-using ActiveMQ.OpenWire;
+using Apache.ActiveMQ.OpenWire;
 
-namespace ActiveMQ.OpenWire
+namespace Apache.ActiveMQ.OpenWire
 {
     [TestFixture]
     public class PrimitiveMapTest

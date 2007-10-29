@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ;
-using NMS;
+using Apache.NMS;
 using System;
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
     /// <summary>
     /// Represents a NMS connection MSMQ.  Since the underlying MSMQ APIs are actually

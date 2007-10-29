@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ;
-using ActiveMQ.Util;
-using NMS;
+using Apache.ActiveMQ;
+using Apache.ActiveMQ.Util;
+using Apache.NMS;
 using System;
 using System.Messaging;
 using System.Threading;
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
     /// <summary>
     /// An object capable of receiving messages from some destination

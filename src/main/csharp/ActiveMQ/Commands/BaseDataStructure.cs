@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.Commands;
+using Apache.ActiveMQ.Commands;
 using System;
-using ActiveMQ.OpenWire;
+using Apache.ActiveMQ.OpenWire;
 
-namespace ActiveMQ.Commands
+namespace Apache.ActiveMQ.Commands
 {
     
     /// <summary>

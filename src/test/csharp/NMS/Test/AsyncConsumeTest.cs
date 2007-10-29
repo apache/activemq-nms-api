@@ -18,7 +18,7 @@ using System;
 using System.Threading;
 using NUnit.Framework;
 
-namespace NMS.Test
+namespace Apache.NMS.Test
 {
     [TestFixture]
     public abstract class AsyncConsumeTest : NMSTestSupport

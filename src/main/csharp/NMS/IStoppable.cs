@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace NMS
+namespace Apache.NMS
 {
 	/// <summary>
 	/// A lifecycle for NMS objects to indicate they can be stopped

@@ -14,43 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
+using Apache.NMS;
 using System;
 
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
 	public class MapMessage : BaseMessage, IMapMessage
     {
-        private PrimitiveMap body;
+        private PrimitiveMap body = new PrimitiveMap();
                 
         public IPrimitiveMap Body
         {
-            get {
-                if (body == null)
-                {
-                    // body = PrimitiveMap.Unmarshal(Content);
-                }
-                return body;
-            }
+            get { return body; }
         }
-        
-//        public override void BeforeMarshall(OpenWireFormat wireFormat)
-//        {
-//            if (body == null)
-//            {
-//                Content = null;
-//            }
-//            else
-//            {
-//                Content = body.Marshal();
-//            }
-//            
-//            Console.WriteLine("BeforeMarshalling, content is: " + Content);
-//			
-//            base.BeforeMarshall(wireFormat);
-//        }
-        
     }
 }
 

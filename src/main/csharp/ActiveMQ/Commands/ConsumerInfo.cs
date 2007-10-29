@@ -23,10 +23,11 @@
 using System;
 using System.Collections;
 
-using ActiveMQ.OpenWire;
-using ActiveMQ.Commands;
+using Apache.NMS;
+using Apache.ActiveMQ.OpenWire;
+using Apache.ActiveMQ.Commands;
 
-namespace ActiveMQ.Commands
+namespace Apache.ActiveMQ.Commands
 {
     /// <summary>
     ///  The ActiveMQ ConsumerInfo Command
@@ -52,6 +53,7 @@ namespace ActiveMQ.Commands
         bool networkSubscription;
         bool optimizedAcknowledge;
         bool noRangeAcks;
+        AcknowledgementMode acknowledgementMode = AcknowledgementMode.AutoAcknowledge;
 
 		public override string ToString() {
             return GetType().Name + "["
@@ -72,6 +74,7 @@ namespace ActiveMQ.Commands
                 + " NetworkSubscription=" + NetworkSubscription
                 + " OptimizedAcknowledge=" + OptimizedAcknowledge
                 + " NoRangeAcks=" + NoRangeAcks
+                + " AcknowledgementMode=" + AcknowledgementMode
                 + " ]";
 
 		}
@@ -185,5 +188,10 @@ namespace ActiveMQ.Commands
             set { this.noRangeAcks = value; }            
         }
 
+        public AcknowledgementMode AcknowledgementMode
+        {
+            get { return acknowledgementMode; }
+            set { this.acknowledgementMode = value; }            
+        }
     }
 }

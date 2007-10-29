@@ -18,88 +18,106 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using ActiveMQ.Commands;
-using ActiveMQ.OpenWire;
-using ActiveMQ.Transport;
-using ActiveMQ.Transport.Stomp;
-using ActiveMQ.Util;
+using System.Collections.Specialized;
+using Apache.ActiveMQ.OpenWire;
+using Apache.ActiveMQ.Transport.Stomp;
+using Apache.ActiveMQ.Util;
+using Apache.NMS;
 
-namespace ActiveMQ.Transport.Tcp {
-        public class TcpTransportFactory : ITransportFactory
-        {
-                private bool useLogging = false;
+namespace Apache.ActiveMQ.Transport.Tcp
+{
+	public class TcpTransportFactory : ITransportFactory
+	{
+		private bool useLogging = false;
 
-                public bool UseLogging {
-                        get { return useLogging; } 
-                        set { useLogging = value; } 
-                }
+		public TcpTransportFactory()
+		{
+		}
 
-                public ITransport CreateTransport(Uri location)
-                {
-                        // Extract query parameters from broker Uri
-                        System.Collections.Specialized.StringDictionary map = URISupport.ParseQuery(location.Query);
+		public bool UseLogging
+		{
+			get { return useLogging; }
+			set { useLogging = value; }
+		}
 
-                        // Set transport. properties on this (the factory)
-                        URISupport.SetProperties(this, map, "transport.");
+		#region ITransportFactory Members
 
-                        // Console.WriteLine("Opening socket to: " + host + " on port: " + port);
-                        Socket socket = Connect(location.Host, location.Port);
-						IWireFormat wireformat = CreateWireFormat(location, map);
-                        TcpTransport tcpTransport = new TcpTransport(socket, wireformat);
-						wireformat.Transport = tcpTransport;
-                        ITransport rc = tcpTransport;
+		public ITransport CreateTransport(Uri location)
+		{
+			// Extract query parameters from broker Uri
+			StringDictionary map = URISupport.ParseQuery(location.Query);
 
-                        if (UseLogging)
-                        {
-                                rc = new LoggingTransport(rc);
-                        }
+			// Set transport. properties on this (the factory)
+			URISupport.SetProperties(this, map, "transport.");
 
-						if (wireformat is OpenWireFormat)
-						{
-	                        rc = new WireFormatNegotiator(rc, (OpenWireFormat) wireformat);
-						}
-                        rc = new MutexTransport(rc);
-                        rc = new ResponseCorrelator(rc);
+			Tracer.Debug("Opening socket to: " + location.Host + " on port: " + location.Port);
+			Socket socket = Connect(location.Host, location.Port);
+			IWireFormat wireformat = CreateWireFormat(location, map);
+			ITransport transport = new TcpTransport(socket, wireformat);
 
-                        return rc;
-                }
+			wireformat.Transport = transport;
 
-                protected Socket Connect(string host, int port)
-                {
-                        // Looping through the AddressList allows different type of connections to be tried
-                        // (IPv4, IPv6 and whatever else may be available).
-                        IPHostEntry hostEntry = Dns.GetHostByName(host);
-                        foreach (IPAddress address in hostEntry.AddressList)
-                        {
-                                Socket socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                                socket.Connect(new IPEndPoint(address, port));
-                                if (socket.Connected)
-                                {
-                                        return socket;
-                                }
-                        }
-                        throw new SocketException();
-                }
+			if(UseLogging)
+			{
+				transport = new LoggingTransport(transport);
+			}
 
-				protected IWireFormat CreateWireFormat(Uri location, System.Collections.Specialized.StringDictionary map)
+			if(wireformat is OpenWireFormat)
+			{
+				transport = new WireFormatNegotiator(transport, (OpenWireFormat) wireformat);
+			}
+
+			transport = new MutexTransport(transport);
+			transport = new ResponseCorrelator(transport);
+
+			return transport;
+		}
+
+		#endregion
+
+		protected Socket Connect(string host, int port)
+		{
+			// Looping through the AddressList allows different type of connections to be tried
+			// (IPv4, IPv6 and whatever else may be available).
+			IPHostEntry hostEntry = Dns.GetHostEntry(host);
+			foreach(IPAddress address in hostEntry.AddressList)
+			{
+				Socket socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+				socket.Connect(new IPEndPoint(address, port));
+				if(socket.Connected)
 				{
-					// TODO detect STOMP etc
-					if ("stomp".Equals(location.Scheme)) 
-					{
-						IWireFormat answer = new StompWireFormat();
-
-	                    // Set wireformat. properties on the wireformat owned by the tcpTransport
-	                    URISupport.SetProperties(answer, map, "wireFormat.");
-						return answer;
-					}
-					else 
-					{
-						OpenWireFormat answer = new OpenWireFormat();
-
-	                    // Set wireformat. properties on the wireformat owned by the tcpTransport
-	                    URISupport.SetProperties(answer.PreferedWireFormatInfo, map, "wireFormat.");
-						return answer;
-					}
+					return socket;
 				}
-        }
+			}
+			throw new SocketException();
+		}
+
+		protected IWireFormat CreateWireFormat(Uri location, StringDictionary map)
+		{
+			object properties = null;
+			IWireFormat wireFormat = null;
+
+			// Detect STOMP etc
+			if(String.Compare(location.Scheme, "stomp", true) == 0)
+			{
+				wireFormat = new StompWireFormat();
+				properties = wireFormat;
+			}
+			else
+			{
+				OpenWireFormat openwireFormat = new OpenWireFormat();
+
+				wireFormat = openwireFormat;
+				properties = openwireFormat.PreferedWireFormatInfo;
+			}
+
+			if(null != properties)
+			{
+				// Set wireformat. properties on the wireformat owned by the tcpTransport
+				URISupport.SetProperties(properties, map, "wireFormat.");
+			}
+
+			return wireFormat;
+		}
+	}
 }

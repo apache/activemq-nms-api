@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F2F94D96-90F0-4724-A19F-086067556F39}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Stomp.Test</RootNamespace>
+    <RootNamespace>Apache.Stomp.Test</RootNamespace>
     <AssemblyName>NMS.Stomp.Test</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <SignAssembly>false</SignAssembly>
@@ -52,10 +52,6 @@
       <Project>{300C1716-0674-4D01-8F5D-151E59A504FE}</Project>
       <Name>vs2005-nms</Name>
     </ProjectReference>
-    <ProjectReference Include="vs2005-stomp.csproj">
-      <Project>{629E243B-AE34-44F5-A7E3-1BA40668E55C}</Project>
-      <Name>vs2005-stomp</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\test\csharp\Stomp\BadConsumeTest.cs" />
@@ -65,6 +61,7 @@
     <Compile Include="src\test\csharp\Stomp\MapMessageTest.cs" />
     <Compile Include="src\test\csharp\Stomp\NMSPropertyTest.cs" />
     <Compile Include="src\test\csharp\Stomp\StompHelperTest.cs" />
+    <Compile Include="src\test\csharp\Stomp\StompTestUtils.cs" />
     <Compile Include="src\test\csharp\Stomp\TemporaryQueueTest.cs" />
     <Compile Include="src\test\csharp\Stomp\TextMessage.cs" />
     <Compile Include="src\test\csharp\Stomp\TransactionTest.cs" />

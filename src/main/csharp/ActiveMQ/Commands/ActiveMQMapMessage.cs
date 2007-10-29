@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.OpenWire;
-using NMS;
+using Apache.ActiveMQ.OpenWire;
+using Apache.NMS;
 using System;
 
 
-namespace ActiveMQ.Commands
+namespace Apache.ActiveMQ.Commands
 {
 	public class ActiveMQMapMessage : ActiveMQMessage, IMapMessage
     {
@@ -55,7 +55,7 @@ namespace ActiveMQ.Commands
                 Content = body.Marshal();
             }
             
-            //Console.WriteLine("BeforeMarshalling, content is: " + Content);
+            Tracer.Debug("BeforeMarshalling, content is: " + Content);
 			
             base.BeforeMarshall(wireFormat);
         }

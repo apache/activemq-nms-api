@@ -16,7 +16,7 @@
  */
 using System.Collections;
 
-namespace NMS
+namespace Apache.NMS
 {
 	
     /// <summary>

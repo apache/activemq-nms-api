@@ -17,7 +17,7 @@
 
 using System;
 
-namespace ActiveMQ.Transport
+namespace Apache.ActiveMQ.Transport
 {
 	public interface ITransportFactory
     {

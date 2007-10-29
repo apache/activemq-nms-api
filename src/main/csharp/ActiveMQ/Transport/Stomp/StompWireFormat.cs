@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 using System.Reflection;
-using ActiveMQ.Commands;
-using ActiveMQ.OpenWire.V1;
-using ActiveMQ.Transport;
-using NMS;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.OpenWire.V1;
+using Apache.ActiveMQ.Transport;
+using Apache.NMS;
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
 
-namespace ActiveMQ.Transport.Stomp
+namespace Apache.ActiveMQ.Transport.Stomp
 {
     /// <summary>
     /// Implements the <a href="http://stomp.codehaus.org/">STOMP</a> protocol.
@@ -50,8 +50,7 @@ namespace ActiveMQ.Transport.Stomp
 
         public void Marshal(Object o, BinaryWriter binaryWriter)
         {
-			Console.WriteLine(">>>> " + o);
-			//Console.Out.Flush();
+			Tracer.Debug(">>>> " + o);
 			StompFrameStream ds = new StompFrameStream(binaryWriter, encoding);
 			
 			if (o is ConnectionInfo)
@@ -91,13 +90,11 @@ namespace ActiveMQ.Transport.Stomp
 					response.CorrelationId = command.CommandId;
 					SendCommand(response);
 				}
-				Console.WriteLine("#### Ignored command: " + o.GetType());
-                Console.Out.Flush();
+				Tracer.Debug("#### Ignored command: " + o.GetType());
 			}
 			else
 			{
-				Console.WriteLine("#### Ignored command: " + o.GetType());
-                Console.Out.Flush();
+				Tracer.Debug("#### Ignored command: " + o.GetType());
 			}
         }
 
@@ -130,7 +127,7 @@ namespace ActiveMQ.Transport.Stomp
 			}
 			while (command == "");
 			
-			Console.WriteLine("<<<< command: " + command);
+			Tracer.Debug("<<<< command: " + command);
 			
 			IDictionary headers = new Hashtable();
 			string line;
@@ -143,7 +140,7 @@ namespace ActiveMQ.Transport.Stomp
 					string value = line.Substring(idx + 1);
 					headers[key] = value;
 					
-					Console.WriteLine("<<<< header: " + key + " = " + value);
+					Tracer.Debug("<<<< header: " + key + " = " + value);
 				}
 				else
 				{
@@ -156,6 +153,12 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				int size = Int32.Parse(length);
 				content = dis.ReadBytes(size);
+				// Read the terminating NULL byte for this frame.
+				int nullByte = dis.Read();
+				if(nullByte != 0)
+				{
+					Tracer.Debug("<<<< error reading frame null byte.");
+				}
 			}
 			else
 			{
@@ -173,8 +176,7 @@ namespace ActiveMQ.Transport.Stomp
                 content = ms.ToArray();
 			}
 			Object answer = CreateCommand(command, headers, content);
-			Console.WriteLine("<<<< received: " + answer);
-			Console.Out.Flush();
+			Tracer.Debug("<<<< received: " + answer);
 			return answer;
         }
 
@@ -217,7 +219,7 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				return ReadMessage(command, headers, content);
 			}
-			Console.WriteLine("Unknown command: " + command + " headers: " + headers);
+			Tracer.Error("Unknown command: " + command + " headers: " + headers);
 			return null;
 		}
 		
@@ -319,7 +321,10 @@ namespace ActiveMQ.Transport.Stomp
             ss.WriteHeader("selector", command.Selector);
             if ( command.NoLocal )
                 ss.WriteHeader("no-local", command.NoLocal);
-			ss.WriteHeader("ack", "client");
+
+			if ( AcknowledgementMode.ClientAcknowledge == command.AcknowledgementMode
+				|| AcknowledgementMode.AutoClientAcknowledge == command.AcknowledgementMode )
+				ss.WriteHeader("ack", "client");
 
 			// ActiveMQ extensions to STOMP
 			ss.WriteHeader("activemq.dispatchAsync", command.DispatchAsync);
@@ -328,7 +333,7 @@ namespace ActiveMQ.Transport.Stomp
 		    
 			ss.WriteHeader("activemq.maximumPendingMessageLimit", command.MaximumPendingMessageLimit);
 			ss.WriteHeader("activemq.prefetchSize", command.PrefetchSize);
-			ss.WriteHeader("activemq.priority ", command.Priority);
+			ss.WriteHeader("activemq.priority", command.Priority);
             if ( command.Retroactive )
 			    ss.WriteHeader("activemq.retroactive", command.Retroactive);
 
@@ -393,12 +398,10 @@ namespace ActiveMQ.Transport.Stomp
 						type = "ABORT";
 						break;
 				}
-				Console.WriteLine(">>> For transaction type: " + transactionType + " we are using command type: " + type);
-				
+
+				Tracer.Debug(">>> For transaction type: " + transactionType + " we are using command type: " + type);
 				ss.WriteCommand(command, type);
-				
 				ss.WriteHeader("transaction", StompHelper.ToStomp(id));
-				
 				ss.Flush();
 			}
 		}
@@ -433,7 +436,14 @@ namespace ActiveMQ.Transport.Stomp
 			else
 			{
 				ss.Content = command.Content;
-				ss.ContentLength = command.Content.Length;
+				if(null != command.Content)
+				{
+					ss.ContentLength = command.Content.Length;
+				}
+				else
+				{
+					ss.ContentLength = 0;
+				}
 			}
 	
 			IPrimitiveMap map = command.Properties;
@@ -460,7 +470,7 @@ namespace ActiveMQ.Transport.Stomp
 		{
 			if (transport == null)
 			{
-				Console.WriteLine("No transport configured so cannot return command: " + command);
+				Tracer.Fatal("No transport configured so cannot return command: " + command);
 			}
 			else
 			{

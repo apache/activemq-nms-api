@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
+using Apache.NMS;
 using System;
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
 	public delegate void AcknowledgeHandler(BaseMessage baseMessage);
 
     public class BaseMessage : IMessage
     {
-        private PrimitiveMap properties;
+        private PrimitiveMap propertiesMap = new PrimitiveMap();
         private IDestination destination;
         private string correlationId;
-        private TimeSpan expiration;
+        private TimeSpan timeToLive;
         private string messageId;
         private bool persistent;
         private byte priority;
@@ -34,7 +34,7 @@ namespace MSMQ
         private string type;
         private event AcknowledgeHandler Acknowledger;
         private byte[] content;
-        private DateTime timestamp;
+        private DateTime timestamp = new DateTime();
 
         public byte[] Content
         {
@@ -60,7 +60,7 @@ namespace MSMQ
         public IPrimitiveMap Properties
         {
             get {
-                return properties;
+				return propertiesMap;
             }
         }
         
@@ -98,13 +98,13 @@ namespace MSMQ
         /// <summary>
         /// The time in milliseconds that this message should expire in
         /// </summary>
-        public TimeSpan NMSExpiration
+        public TimeSpan NMSTimeToLive
         {
             get {
-                return expiration;
+				return timeToLive;
             }
             set {
-                expiration = value;
+				timeToLive = value;
             }
         }
         

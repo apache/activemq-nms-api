@@ -24,12 +24,12 @@
 //        activemq-openwire module
 //
 
-using ActiveMQ.OpenWire;
+using Apache.ActiveMQ.OpenWire;
 using System;
 
 
 
-namespace ActiveMQ.Commands
+namespace Apache.ActiveMQ.Commands
 {
     public abstract class BaseCommand : BaseDataStructure, Command
     {

@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.Commands;
+using Apache.ActiveMQ.Commands;
 using System.Text;
-using NMS;
+using Apache.NMS;
 
-namespace ActiveMQ
+namespace Apache.ActiveMQ
 {
 	
 	/// <summary>

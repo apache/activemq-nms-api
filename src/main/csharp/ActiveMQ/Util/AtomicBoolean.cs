@@ -17,7 +17,7 @@
 using System;
 using System.Text;
 
-namespace ActiveMQ.Util
+namespace Apache.ActiveMQ.Util
 {
     public class AtomicBoolean
     {

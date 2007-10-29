@@ -25,11 +25,11 @@ using System;
 using System.Collections;
 using System.IO;
 
-using ActiveMQ.Commands;
-using ActiveMQ.OpenWire;
-using ActiveMQ.OpenWire.V1;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.OpenWire;
+using Apache.ActiveMQ.OpenWire.V1;
 
-namespace ActiveMQ.OpenWire.V1
+namespace Apache.ActiveMQ.OpenWire.V1
 {
   /// <summary>
   ///  Marshalling code for Open Wire Format for TransactionInfo

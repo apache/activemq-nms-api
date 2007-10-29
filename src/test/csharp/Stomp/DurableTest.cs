@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 using System;
-using NMS;
+using Apache.NMS;
 using NUnit.Framework;
 
-namespace Stomp
+namespace Apache.Stomp
 {
     [TestFixture]
     public class DurableTest : NMS.Test.DurableTest
     {
         protected override IConnectionFactory CreateConnectionFactory()
         {
-            return new ConnectionFactory();
-        }
+			return StompTestUtils.CreateStompConnectionFactory();
+		}
     }
 }

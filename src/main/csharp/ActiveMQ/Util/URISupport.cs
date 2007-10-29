@@ -19,7 +19,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Text;
 
-namespace ActiveMQ.Util
+namespace Apache.ActiveMQ.Util
 {
 	/// <summary>
 	/// Class to provide support for URI query parameters which uses .Net reflection

@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 using System.Reflection;
-using ActiveMQ.Commands;
-using ActiveMQ.OpenWire.V1;
-using ActiveMQ.Transport;
-using NMS;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.OpenWire.V1;
+using Apache.ActiveMQ.Transport;
+using Apache.NMS;
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
 
-namespace ActiveMQ.Transport.Stomp
+namespace Apache.ActiveMQ.Transport.Stomp
 {
     /// <summary>
     /// A Stream for writing a <a href="http://stomp.codehaus.org/">STOMP</a> Frame
@@ -103,14 +103,9 @@ namespace ActiveMQ.Transport.Stomp
 			{
 				ds.Write(content);
 			}
-			
-			// if no content length then lets write a null
-			if (contentLength < 0)
-			{
-				ds.Write(NULL);
-			}
-		}
 
-		
+			// Always write a terminating NULL byte to end the content frame.
+			ds.Write(NULL);
+		}
     }
 }

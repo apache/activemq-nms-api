@@ -16,9 +16,9 @@
  */
 using System;
 using System.Messaging;
-using NMS;
+using Apache.NMS;
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
     /// <summary>
     /// An object capable of sending messages to some destination
@@ -123,7 +123,7 @@ namespace MSMQ
 				
                 // Convert the Mesasge into a MSMQ message
                 message.NMSPersistent = persistent;
-                message.NMSExpiration = timeToLive;
+                message.NMSTimeToLive = timeToLive;
                 message.NMSPriority = priority;
                 
                 // message.NMSTimestamp = new DateTime().Date.;

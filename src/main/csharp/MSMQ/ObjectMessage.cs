@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using NMS;
+using Apache.NMS;
 using System;
 using System.Collections;
 using System.IO;
@@ -25,7 +25,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
     public class ObjectMessage : BaseMessage, IObjectMessage
     {

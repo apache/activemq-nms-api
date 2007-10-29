@@ -16,18 +16,17 @@
  */
 using System;
 
-namespace NMS {
+namespace Apache.NMS {
         /// <summary>
         /// The mode used to acknowledge messages after they are consumed
         /// </summary>
         public enum AcknowledgementMode
         {
                 /**
-                 * With this acknowledgment mode, the session automatically
-                 * acknowledges a client's receipt of a message either when
-                 * the session has successfully returned from a call to receive
-                 * or when the message listener the session has called to
-                 * process the message successfully returns.
+                 * With this acknowledgment mode, the session will not
+				 * acknowledge receipt of a message since the broker assumes
+				 * successful receipt of a message after the onMessage handler
+				 * has returned without error.
                  */
                 AutoAcknowledge,
 
@@ -48,9 +47,21 @@ namespace NMS {
                  */
                 ClientAcknowledge,
 
-                /**
-                 * Messages will be consumed when the transaction commits.
-                 */
+				/**
+				 * With this acknowledgment mode, the session automatically
+				 * acknowledges a client's receipt of a message either when
+				 * the session has successfully returned from a call to receive
+				 * or when the message listener the session has called to
+				 * process the message successfully returns.  The broker is
+				 * set to ClientAcknowledge mode, but no manual acknowledgements
+				 * are necessary from the client code.  This mode is useful for
+				 * controlling the flow of messages to the client.
+				 */
+				AutoClientAcknowledge,
+				
+				/**
+				 * Messages will be consumed when the transaction commits.
+				 */
                 Transactional
         }
 

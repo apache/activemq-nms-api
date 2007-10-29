@@ -17,7 +17,7 @@
 using System;
 using NUnit.Framework;
 
-namespace NMS.Test
+namespace Apache.NMS.Test
 {
     [TestFixture]
     public abstract class BadConsumeTest : NMSTestSupport

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//using ActiveMQ;
-using NMS;
+//using Apache.ActiveMQ;
+using Apache.NMS;
 using NUnit.Framework;
 using System;
 
-namespace NMS.Test
+namespace Apache.NMS.Test
 {
     [ TestFixture ]
     abstract public class NMSPropertyTest : NMSTestSupport
@@ -116,7 +116,7 @@ namespace NMS.Test
             AssertNonStringProperties(message);
             
             // lets now look at some standard NMS headers
-            Console.WriteLine("NMSExpiration: " + message.NMSExpiration);
+            Console.WriteLine("NMSTimeToLive: " + message.NMSTimeToLive);
             Console.WriteLine("NMSMessageId: " + message.NMSMessageId);
             Console.WriteLine("NMSRedelivered: " + message.NMSRedelivered);
             Console.WriteLine("NMSTimestamp: " + message.NMSTimestamp);

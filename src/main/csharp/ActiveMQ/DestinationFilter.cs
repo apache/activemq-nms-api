@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.Commands;
+using Apache.ActiveMQ.Commands;
 using System;
 
-namespace ActiveMQ
+namespace Apache.ActiveMQ
 {
 	/// <summary>
         /// Summary description for DestinationFilter.

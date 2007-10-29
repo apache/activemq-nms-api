@@ -16,15 +16,16 @@
  */
 using System;
 
-namespace NMS
+namespace Apache.NMS
 {
 	/// <summary>
 	/// Defines a number of constants
 	/// </summary>
 	public class NMSConstants
     {
-		public const int defaultPriority = 5;
+		public const byte defaultPriority = 5;
 		public const bool defaultPersistence = true;
+		public static readonly TimeSpan defaultTimeToLive = TimeSpan.Zero;
     }
 }
 

@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 using System.Messaging;
-using NMS;
+using Apache.NMS;
 
-namespace MSMQ
+namespace Apache.MSMQ
 {
     public interface IMessageConverter
     {

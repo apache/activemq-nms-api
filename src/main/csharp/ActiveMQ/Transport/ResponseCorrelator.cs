@@ -18,10 +18,11 @@
 using System;
 using System.Collections;
 
-using ActiveMQ.Commands;
-using ActiveMQ.Transport;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.Transport;
+using Apache.NMS;
 
-namespace ActiveMQ.Transport
+namespace Apache.ActiveMQ.Transport
 {
 	
     /// <summary>

@@ -24,11 +24,11 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
 
-using ActiveMQ.OpenWire;
-using ActiveMQ.Commands;
-using NMS;
+using Apache.ActiveMQ.OpenWire;
+using Apache.ActiveMQ.Commands;
+using Apache.NMS;
 
-namespace ActiveMQ.Commands
+namespace Apache.ActiveMQ.Commands
 {
     //
     //  Marshalling code for Open Wire Format for ActiveMQObjectMessage

@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
-using ActiveMQ.Commands;
+using Apache.ActiveMQ.Commands;
 using System.Collections;
 
-namespace ActiveMQ.OpenWire
+namespace Apache.ActiveMQ.OpenWire
 {
     public delegate object PropertyGetter(ActiveMQMessage message);
     public delegate void PropertySetter(ActiveMQMessage message, object value);

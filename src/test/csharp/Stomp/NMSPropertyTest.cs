@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using NMS;
+using Apache.NMS;
 using NUnit.Framework;
-using Stomp;
+using Apache.Stomp;
 using System;
 
-namespace Stomp
+namespace Apache.Stomp
 {
     [ TestFixture ]
     public class NMSPropertyTest : NMS.Test.NMSPropertyTest
     {
         protected override IConnectionFactory CreateConnectionFactory()
         {
-            return new ConnectionFactory();
-        }
+			return StompTestUtils.CreateStompConnectionFactory();
+		}
 		
 		protected override void AssertNonStringProperties(IMessage message)
 		{

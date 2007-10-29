@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.OpenWire;
-using ActiveMQ.Util;
-using NMS;
+using Apache.ActiveMQ.OpenWire;
+using Apache.ActiveMQ.Util;
+using Apache.NMS;
 using System;
 
-namespace ActiveMQ.Commands
+namespace Apache.ActiveMQ.Commands
 {
 	public delegate void AcknowledgeHandler(ActiveMQMessage message);
 }
 
-namespace ActiveMQ.Commands
+namespace Apache.ActiveMQ.Commands
 {
 	public class ActiveMQMessage : Message, IMessage, MarshallAware
     {
@@ -35,6 +35,8 @@ namespace ActiveMQ.Commands
         private PrimitiveMap properties;
         
         public event AcknowledgeHandler Acknowledger;
+
+		protected DateTime expirationBaseTime;
         
         public static ActiveMQMessage Transform(IMessage message)
         {
@@ -108,16 +110,25 @@ namespace ActiveMQ.Commands
         /// <summary>
         /// The time in milliseconds that this message should expire in
         /// </summary>
-        public TimeSpan NMSExpiration
-        {
-            get {
-                return TimeSpan.FromMilliseconds(Expiration);
-            }
-            set {
-                Expiration = value.Milliseconds;
-            }
-        }
-        
+		public TimeSpan NMSTimeToLive
+		{
+			get {
+				if(0 != Expiration)
+				{
+					DateTime expirationTime = DateUtils.ToDateTime(Expiration);
+					return expirationTime - expirationBaseTime;
+				}
+				else
+				{
+					return TimeSpan.FromMilliseconds(0);
+				}
+			}
+			set {
+				expirationBaseTime = DateTime.UtcNow;
+				Expiration = DateUtils.ToJavaTime(expirationBaseTime + value);
+			}
+		}
+
         /// <summary>
         /// The message ID which is set by the provider
         /// </summary>
@@ -186,6 +197,9 @@ namespace ActiveMQ.Commands
         {
             get {
                 return DateUtils.ToDateTime(Timestamp);
+            }
+            set {
+                Timestamp = DateUtils.ToJavaTime(value);
             }
         }
         

@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{08321F42-4B3D-4815-B592-95962BAC3B9F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ActiveMQ</RootNamespace>
+    <RootNamespace>Apache.ActiveMQ</RootNamespace>
     <AssemblyName>NMS.ActiveMQ</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <SignAssembly>false</SignAssembly>
@@ -266,7 +266,6 @@
     <Compile Include="src\main\csharp\ActiveMQ\ISynchronization.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\main\csharp\ActiveMQ\ITrace.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\MessageConsumer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -661,7 +660,6 @@
     <Compile Include="src\main\csharp\ActiveMQ\Session.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\main\csharp\ActiveMQ\Tracer.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\TransactionContext.cs">
       <SubType>Code</SubType>
     </Compile>

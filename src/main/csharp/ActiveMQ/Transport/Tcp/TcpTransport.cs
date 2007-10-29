@@ -14,18 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ;
-using ActiveMQ.Commands;
-using ActiveMQ.OpenWire;
-using ActiveMQ.Transport;
+using Apache.ActiveMQ.Commands;
+using Apache.ActiveMQ.OpenWire;
+using Apache.ActiveMQ.Transport;
 using System;
-using System.Collections;
 using System.IO;
-using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace ActiveMQ.Transport.Tcp
+namespace Apache.ActiveMQ.Transport.Tcp
 {
 	
     /// <summary>
@@ -33,11 +30,14 @@ namespace ActiveMQ.Transport.Tcp
     /// </summary>
     public class TcpTransport : ITransport
     {
-        private Socket socket;
-        private IWireFormat wireformat = new OpenWireFormat();
+		private readonly object initLock = "initLock";
+        private readonly Socket socket;
+    	private IWireFormat wireformat;
         private BinaryReader socketReader;
+		private readonly object socketReaderLock = "socketReaderLock";
         private BinaryWriter socketWriter;
-        private Thread readThread;
+		private readonly object socketWriterLock = "socketWriterLock";
+		private Thread readThread;
         private bool started;
         private Util.AtomicBoolean closed = new Util.AtomicBoolean(false);
         
@@ -55,30 +55,62 @@ namespace ActiveMQ.Transport.Tcp
         /// </summary>
         public void Start()
         {
-            if (!started)
-            {
-                if( commandHandler == null )
-                    throw new InvalidOperationException ("command cannot be null when Start is called.");
-                if( exceptionHandler == null )
-                    throw new InvalidOperationException ("exception cannot be null when Start is called.");
+			lock (initLock)
+			{
+				if (!started)
+				{
+					if (null == commandHandler)
+					{
+                		throw new InvalidOperationException(
+                				"command cannot be null when Start is called.");
+					}
 
-                started = true;
-                
-                // As reported in AMQ-988 it appears that NetworkStream is not thread safe
-                // so lets use an instance for each of the 2 streams
-                socketWriter = new OpenWireBinaryWriter(new NetworkStream(socket));
-                socketReader = new OpenWireBinaryReader(new NetworkStream(socket));
-                
-                // now lets create the background read thread
-                readThread = new Thread(new ThreadStart(ReadLoop));
-                readThread.Start();
-            }
+					if (null == exceptionHandler)
+            		{
+            			throw new InvalidOperationException(
+            					"exception cannot be null when Start is called.");
+            		}
+
+            		started = true;
+	                
+					// As reported in AMQ-988 it appears that NetworkStream is not thread safe
+					// so lets use an instance for each of the 2 streams
+					socketWriter = new OpenWireBinaryWriter(new NetworkStream(socket));
+					socketReader = new OpenWireBinaryReader(new NetworkStream(socket));
+	                
+					// now lets create the background read thread
+					readThread = new Thread(ReadLoop);
+					readThread.Start();
+				}
+			}
         }
         
         public void Oneway(Command command)
         {
-            Wireformat.Marshal(command, socketWriter);
-            socketWriter.Flush();
+			lock (socketWriterLock)
+			{
+				try
+				{
+					Wireformat.Marshal(command, socketWriter);
+					socketWriter.Flush();
+				}
+				catch(Exception ex)
+				{
+					if (command.ResponseRequired)
+					{
+						// Make sure that something higher up doesn't get blocked.
+						// Respond with an exception.
+						ExceptionResponse er = new ExceptionResponse();
+						BrokerError error = new BrokerError();
+
+						error.Message = "Transport connection error: " + ex.Message;
+						error.ExceptionClass = ex.ToString();
+						er.Exception = error;
+						er.CorrelationId = command.CommandId;
+						commandHandler(this, er);
+					}
+				}
+			}
         }
         
         public FutureResponse AsyncRequest(Command command)
@@ -93,14 +125,50 @@ namespace ActiveMQ.Transport.Tcp
 
         public void Close()
         {
-            if (closed.CompareAndSet(false, true))
-            {
-                socket.Close();
-                if (System.Threading.Thread.CurrentThread != readThread)
-                    readThread.Join();
-                socketWriter.Close();
-                socketReader.Close();
-            }
+			lock (initLock)
+			{
+				if (closed.CompareAndSet(false, true))
+				{
+					try
+					{
+						socket.Shutdown(SocketShutdown.Both);
+					}
+					catch
+					{
+					}
+
+					lock (socketWriterLock)
+					{
+						if(null != socketWriter)
+						{
+            				socketWriter.Close();
+							socketWriter = null;
+						}
+					}
+
+					lock (socketReaderLock)
+					{
+						if(null != socketReader)
+						{
+							socketReader.Close();
+							socketReader = null;
+						}
+					}
+
+					socket.Close();
+
+					if(null != readThread
+						&& Thread.CurrentThread != readThread
+						&& readThread.IsAlive)
+					{
+						readThread.Abort();
+						readThread.Join();
+						readThread = null;
+					}
+				}
+
+				started = false;
+			}
         }
 
         public void Dispose()
@@ -133,11 +201,11 @@ namespace ActiveMQ.Transport.Tcp
                 }
                 catch(Exception ex)
                 {
-                    if( !closed.Value )
+                    if (!closed.Value)
                     {
-                        this.exceptionHandler(this, ex);
-                        // Close the socket as there's little that can be done with this transport now.
-                        Close();
+						// Close the socket as there's little that can be done with this transport now.
+						Close();
+						this.exceptionHandler(this, ex);
                         break;
                     }
                 }
@@ -149,7 +217,7 @@ namespace ActiveMQ.Transport.Tcp
 						this.commandHandler(this, command);
 					}
                 }
-                catch ( Exception e)
+                catch (Exception e)
                 {
                     this.exceptionHandler(this, e);
                 }
@@ -158,12 +226,14 @@ namespace ActiveMQ.Transport.Tcp
                 
         // Implementation methods
                 
-        public CommandHandler Command {
+        public CommandHandler Command
+		{
             get { return commandHandler; }
             set { this.commandHandler = value; }
         }
 
-        public  ExceptionHandler Exception {
+        public  ExceptionHandler Exception
+		{
             get { return exceptionHandler; }
             set { this.exceptionHandler = value; }
         }

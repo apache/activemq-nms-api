@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using ActiveMQ.Commands;
+using Apache.ActiveMQ.Commands;
 using System;
 using System.IO;
 
 
-namespace ActiveMQ.Commands
+namespace Apache.ActiveMQ.Commands
 {
     public struct StackTraceElement
     {

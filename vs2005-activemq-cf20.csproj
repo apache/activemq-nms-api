@@ -283,7 +283,6 @@
     <Compile Include="src\main\csharp\ActiveMQ\ISynchronization.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\main\csharp\ActiveMQ\ITrace.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\MessageConsumer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -678,7 +677,6 @@
     <Compile Include="src\main\csharp\ActiveMQ\Session.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\main\csharp\ActiveMQ\Tracer.cs" />
     <Compile Include="src\main\csharp\ActiveMQ\TransactionContext.cs">
       <SubType>Code</SubType>
     </Compile>
