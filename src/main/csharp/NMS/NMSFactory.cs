@@ -91,17 +91,17 @@ namespace Apache.NMS
 			// TODO: Read an external configuration file that maps scheme to provider implementation.
 			if(String.Compare(scheme, "tibco", true) == 0)
 			{
-				cfi.assemblyFileName = "Apache.NMS.TIBCO.dll";
+				cfi.assemblyFileName = "NMS.TIBCO.dll";
 				cfi.factoryClassName = "Apache.TibcoEMS.ConnectionFactory";
 			}
 			else if(String.Compare(scheme, "msmq", true) == 0)
 			{
-				cfi.assemblyFileName = "Apache.NMS.MSMQ.dll";
+				cfi.assemblyFileName = "NMS.MSMQ.dll";
 				cfi.factoryClassName = "Apache.MSMQ.ConnectionFactory";
 			}
 			else
 			{
-				cfi.assemblyFileName = "Apache.NMS.ActiveMQ.dll";
+				cfi.assemblyFileName = "NMS.ActiveMQ.dll";
 				cfi.factoryClassName = "Apache.ActiveMQ.ConnectionFactory";
 			}
 
