@@ -159,7 +159,10 @@ namespace Apache.ActiveMQ.Transport.Tcp
 
 					if(null != readThread
 						&& Thread.CurrentThread != readThread
-						&& readThread.IsAlive)
+#if !NETCF
+						&& readThread.IsAlive
+#endif
+						)
 					{
 						readThread.Abort();
 						readThread.Join();
