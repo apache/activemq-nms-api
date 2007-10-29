@@ -7,7 +7,7 @@
     <ProjectGuid>{300C1716-0674-4D01-8F5D-151E59A504FE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Apache.NMS</RootNamespace>
-    <AssemblyName>NMS</AssemblyName>
+    <AssemblyName>Apache.NMS</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <StartupObject>
     </StartupObject>
