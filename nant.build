@@ -15,7 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project name="activemq-dotnet" default="compile-all" xmlns="http://nant.sourceforge.net/release/0.85/nant.xsd">
+<project name="Apache.NMS" default="compile-all" xmlns="http://nant.sourceforge.net/release/0.85/nant.xsd">
 
   <!-- ============================================================================================ -->
   <!--      I N I T I A L I Z A T I O N                                                             -->
@@ -30,146 +30,22 @@
            value="Apache NMS Class Library"/>
   <property name="project.description"
            value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers"/>
-  
+
   <!-- Sets up all the different framework targets -->
-	<include buildfile="${basedir}/build-common.xml"/>
-
-  <target name="compile" depends="compile-nms,compile-nms-test" description="Compile everything"/>
-
-  <!-- Compile the nms module -->
-  <target name="compile-nms" depends="init" description="Build the Apache.NMS library">
-    <echo message="Building the Apache.NMS library"/>
-    
-    <asminfo output="src/main/csharp/CommonAssemblyInfo.cs" language="CSharp">
-      <imports>
-        <import namespace="System" />
-        <import namespace="System.Reflection" />
-        <import namespace="System.Runtime.InteropServices" />
-      </imports>
-      <attributes>
-        <attribute type="ComVisibleAttribute"            value="false" />
-        <attribute type="CLSCompliantAttribute"          value="true" />
-        <attribute type="AssemblyTitleAttribute"         value="${project.short_description}" />
-        <attribute type="AssemblyDescriptionAttribute"   value="${project.description}" />
-        <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/nms" />
-        <attribute type="AssemblyProductAttribute"       value="${project.short_description}" />
-        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
-        <attribute type="AssemblyTrademarkAttribute"     value="" />
-        <attribute type="AssemblyCultureAttribute"       value="" />
-        <attribute type="AssemblyVersionAttribute"       value="${project.version}" />
-        <attribute type="AssemblyInformationalVersionAttribute" value="${project.version}" />
-      </attributes>
-    </asminfo>
-
-    <csc if="${current.build.keysign}" keyfile="default.snk" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/${project.name}.dll" doc="${build.bin.dir}/${project.name}.xml">
-      <nowarn>
-        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-        <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/main/csharp/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-      </references>
-    </csc>
-    <csc if="${not current.build.keysign}" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/${project.name}.dll" doc="${build.bin.dir}/${project.name}.xml">
-      <nowarn>
-    <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-    <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/main/csharp/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-      </references>
-    </csc>
+	<include buildfile="${basedir}/nant-common.xml"/>
+	
+  <target name="dependency-init" description="Initializes build dependencies">
+  	<assemblyfileset failonempty="true" id="dependencies">
+      <include name="mscorlib.dll" asis="true"/>
+      <include name="System.dll" asis="true"/>
+  	</assemblyfileset>
+  	
+  	<assemblyfileset failonempty="true" id="test.dependencies">
+      <lib refid="dependencies"/>
+      <include name="${build.bin.dir}/${project.name}.dll"/>
+      <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
+  	</assemblyfileset>  
   </target>
-
-  <!-- Compile the nms-test module -->
-  <target name="compile-nms-test" depends="compile-nms" description="Build the Apache.NMS.Test library">
-    <echo message="Building the Apache.NMS.Test library" />
-
-    <asminfo output="src/test/csharp/CommonAssemblyInfo.cs" language="CSharp">
-      <imports>
-        <import namespace="System" />
-        <import namespace="System.Reflection" />
-        <import namespace="System.Runtime.InteropServices" />
-      </imports>
-      <attributes>
-        <attribute type="ComVisibleAttribute"            value="false" />
-        <attribute type="CLSCompliantAttribute"          value="true" />
-        <attribute type="AssemblyTitleAttribute"         value="${project.short_description}" />
-        <attribute type="AssemblyDescriptionAttribute"   value="${project.description}" />
-        <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/nms" />
-        <attribute type="AssemblyProductAttribute"       value="${project.short_description}" />
-        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
-        <attribute type="AssemblyTrademarkAttribute"     value="" />
-        <attribute type="AssemblyCultureAttribute"       value="" />
-        <attribute type="AssemblyVersionAttribute"       value="${project.version}" />
-        <attribute type="AssemblyInformationalVersionAttribute" value="${project.version}" />
-      </attributes>
-    </asminfo>
-
-    <csc if="${current.build.keysign}" keyfile="default.snk" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/${project.name}.Test.dll" doc="${build.bin.dir}/${project.name}.Test.xml">
-      <nowarn>
-        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-        <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-          <include name="src/test/csharp/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/${project.name}.dll"/>
-      </references>
-    </csc>
-    <csc if="${not current.build.keysign}" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/${project.name}.Test.dll" doc="${build.bin.dir}/${project.name}.Test.xml">
-      <nowarn>
-        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-        <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/test/csharp/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/${project.name}.dll"/>
-      </references>
-    </csc>
-  </target>
+  
   
 </project>
