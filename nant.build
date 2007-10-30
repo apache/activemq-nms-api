@@ -15,239 +15,32 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project name="activemq-dotnet" default="compile-all" xmlnds="http://tempuri.org/nant-vs.xsd">
+<project name="activemq-dotnet" default="compile-all" xmlns="http://nant.sourceforge.net/release/0.85/nant.xsd">
 
   <!-- ============================================================================================ -->
   <!--      I N I T I A L I Z A T I O N                                                             -->
-  <!-- ============================================================================================ -->
-
-  <!-- global project settings -->
-  <property name="project.name"          value="activemq-dotnet" />
-  <property name="project.version"       value="4.0" unless="${property::exists('project.version')}" />
-  <property name="project.release.type"  value="SNAPSHOT" unless="${property::exists('project.release.type')}" />
-  <property name="project.version.full"  value="${project.version + if(project.release.type == 'release', '', '-' + project.release.type)}" dynamic="true" />
-
-  <property name="basedir"               value="${project::get-base-directory()}" />
-  <property name="build.dir"             value="${basedir}/build" />
-  <property name="doc.dir"               value="${build.dir}/doc" />
-
-  <property name="lib.dir"               value="${path::combine(basedir, 'lib')}" dynamic="true" />
-  <property name="lib.family.dir"        value="${path::combine(lib.dir, framework::get-family(framework::get-target-framework()))}" dynamic="true" />
-  <property name="lib.framework.dir"     value="${path::combine(lib.family.dir, version::to-string(framework::get-version(framework::get-target-framework())))}" dynamic="true" />
-
-  <!-- default configuration -->
-  <property name="build.defines"           value=""/>
-  <property name="build.noskip"            value="false"/>
-  <property name="build.skip"              value="false"/>
-  <property name="current.build.config"    value="${if(project.release.type == 'release', 'release', 'debug')}"/>
-  <property name="current.build.framework" value="${framework::get-target-framework()}"/>
-  <property name="current.build.defines"   value="${build.defines}" />
-
-  <!-- Helper targets used to enable build configurations -->
-  <target name="set-noskip-configuration" description="Disable skiping builds">
-    <property name="project.noskip"         value="true" />
-  </target>
-  <target name="set-debug-configuration" description="Enabled 'debug' builds">
-    <property name="current.build.config"         value="debug" />
-    <property name="current.build.config.debug"   value="true" />
-    <property name="current.build.config.release" value="false" />
-    <property name="csc.debug"                    value="true" />
-  </target>
-  <target name="set-release-configuration" description="Enabled 'release' builds">
-    <property name="current.build.config"         value="release" />
-    <property name="current.build.config.release" value="true" />
-    <property name="current.build.config.debug"   value="false" />
-    <property name="csc.debug"                    value="true" />
-  </target>
+  <!-- ============================================================================================ -->  
+  <property name="basedir"                 
+           value="${project::get-base-directory()}"/>
+  <property name="project.name"
+           value="Apache.NMS"/>
+  <property name="project.version"
+           value="1.0" unless="${property::exists('project.version')}"/>
+  <property name="project.short_description"
+           value="Apache NMS Class Library"/>
+  <property name="project.description"
+           value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers"/>
   
-  <target name="set-net-1.0-framework-configuration">
-    <property name="current.build.framework" value="net-1.0" />
-    <property name="current.build.framework.name" value=".NET 1.0"/>
-    <property name="current.build.defines" value="${build.defines}NET,NET_1_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="true" />
-    <property name="link.sdkdoc.version" value="SDK_v1_0" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-  <target name="set-net-1.1-framework-configuration">
-    <property name="current.build.framework" value="net-1.1" />
-    <property name="current.build.framework.name" value=".NET 1.1"/>
-    <property name="current.build.defines" value="${build.defines}NET,NET_1_1" dynamic="true" />
-    <property name="current.build.framework.sign" value="true" />
-    <property name="link.sdkdoc.version" value="SDK_v1_1" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-  <target name="set-net-2.0-framework-configuration">
-    <property name="current.build.framework" value="net-2.0" />
-    <property name="current.build.framework.name" value=".NET 2.0"/>
-    <property name="current.build.defines" value="${build.defines}NET,NET_2_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="true"/>
-    <property name="link.sdkdoc.version" value="SDK_v1_1" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-  <target name="set-netcf-1.0-framework-configuration">
-    <property name="current.build.framework" value="netcf-1.0" />
-    <property name="current.build.framework.name" value=".NET Compact Framework 1.0"/>
-    <property name="current.build.defines" value="${build.defines}PocketPC,NETCF,NETCF_1_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="false" />
-    <property name="link.sdkdoc.version" value="SDK_v1_1" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-  <target name="set-netcf-2.0-framework-configuration">
-    <property name="current.build.framework" value="netcf-2.0" />
-    <property name="current.build.framework.name" value=".NET Compact Framework 2.0"/>
-    <property name="current.build.defines" value="${build.defines}PocketPC,NETCF,NETCF_2_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="false" />
-    <property name="link.sdkdoc.version" value="SDK_v1_1" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-  <target name="set-mono-1.0-framework-configuration">
-    <property name="current.build.framework" value="mono-1.0" />
-    <property name="current.build.framework.name" value="Mono 1.0"/>
-    <property name="current.build.defines" value="${build.defines}MONO,MONO_1_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="true" />
-    <property name="link.sdkdoc.version" value="SDK_v1_1" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-  <target name="set-mono-2.0-framework-configuration">
-    <property name="current.build.framework" value="mono-2.0" />
-    <property name="current.build.framework.name" value="Mono 2.0"/>
-    <property name="current.build.defines" value="${build.defines}MONO,MONO_2_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="true" />
-    <property name="link.sdkdoc.version" value="SDK_v1_1" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-  <target name="set-sscli-1.0-framework-configuration">
-    <property name="current.build.framework" value="sscli-1.0" />
-    <property name="current.build.framework.name" value="sscli 1.0"/>
-    <property name="current.build.defines" value="${build.defines}SSCLI,SSCLI_1_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="false" />
-    <property name="link.sdkdoc.version" value="SDK_v1_0" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
+  <!-- Sets up all the different framework targets -->
+	<include buildfile="${basedir}/build-common.xml"/>
 
-  <!-- ============================================================================================ -->
-  <!--      T H E      M A I N      B U I L D      T A R G E T S                                    -->
-  <!-- ============================================================================================ -->
-
-  <target name="compile-all" depends="release-init" description="Compile all build configurations for all runtime configurations">
-    <echo message="Compiling all build configurations for all runtime configurations." />
-    <call target="set-debug-configuration" />
-    <call target="set-net-1.0-framework-configuration"  /><call target="conditional-compile" />
-    <call target="set-net-2.0-framework-configuration"  /><call target="conditional-compile" />
-    <call target="set-mono-1.0-framework-configuration" /><call target="conditional-compile" />
-    <call target="set-mono-2.0-framework-configuration" /><call target="conditional-compile" />
-    <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-compile" />
-    <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-compile" />
-
-    <!-- we can only do a release skip if the Key file is available -->
-    <if test="${not build.skip.release}">
-      <call target="set-release-configuration" />
-      <call target="set-net-1.0-framework-configuration"  /><call target="conditional-compile" />
-      <call target="set-net-2.0-framework-configuration"  /><call target="conditional-compile" />
-      <call target="set-mono-1.0-framework-configuration" /><call target="conditional-compile" />
-      <call target="set-mono-2.0-framework-configuration" /><call target="conditional-compile" />
-      <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-compile" />
-      <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-compile" />
-    </if>
-
-  </target>
-
-  <target name="release-init" description="Initializes release build properties">
-    <property name="snk.file"  value="${basedir}/activemq-dotnet.snk" />
-    <if test="${not file::exists(snk.file)}">
-      <if test="${build.noskip}">
-    <fail message="Release key file not found. You can generate a key file by running 'sn -k ${snk.file}'." />
-      </if>
-      <if test="${not(build.noskip)}">
-        <echo message="Release key file not found. You can generate a key file by running 'sn -k ${snk.file}'." />
-        <echo message="The Release build will be skipped." />
-        <property name="build.skip.release" value="true"/>
-      </if>
-    </if>
-    <if test="${file::exists(snk.file)}">
-      <property name="build.skip.release" value="false" />
-    </if>
-  </target>
-
-  <target name="conditional-compile" depends="init" unless="${build.skip}"
-      description="Conditionaly compiles all the modules if build framework and type are supported">
-    <call target="compile" />
-  </target>
-
-  <target name="init" description="Initializes build properties">
-    <!-- enabled the release or debug configuration -->
-    <call target="set-${current.build.config}-configuration"/>
-
-    <!-- Check to see if our build setup for the target framework -->
-    <if test="${not(target::exists('set-'+current.build.framework+'-framework-configuration'))}">
-      <fail message="The '${current.build.framework}' framework is not supported by this version of ActiveMQ .NET" />
-    </if>
-    <call target="set-${current.build.framework}-framework-configuration" />
-
-    <!-- Check to see current platform supports the target framework -->
-    <if test="${framework::exists(current.build.framework)}">
-       <!-- Make sure that the activemq-dotnet.snk exists for release builds -->
-       <if test="${current.build.config.release}">
-     <call target="release-init"/>
-     <property name="build.skip" value="${build.skip.release}" />
-       </if>
-       <if test="${not current.build.config.release}">
-         <property name="build.skip" value="false" />
-       </if>
-    </if>
-    <if test="${not framework::exists(current.build.framework)}">
-       <if test="${build.noskip}">
-      <fail message="${current.build.framework.name} is not available." />
-       </if>
-       <if test="${not(build.noskip)}">
-      <echo message="${current.build.framework.name} is not available. Build skipped." />
-          <property name="build.skip" value="true"/>
-       </if>
-    </if>
-
-    <if test="${not(build.skip)}">
-       <property name="current.build.keysign" value="${current.build.config=='release' and current.build.framework.sign}"/>
-       <echo message="Doing ${if(current.build.keysign,'a signed','an unsigned')} ${current.build.config} build for the ${current.build.framework.name} framework" />
-       <property name="build.bin.dir" value="${basedir}/build/${nant.settings.currentframework}/${current.build.config}" />
-       <mkdir dir="${build.bin.dir}"/>
-    </if>
-
-  </target>
-
-  <target name="compile"
-          depends="build-nms,build-nms-test,build-activemq,build-activemq-test,build-stomp-test,build-msmq-on-windows,build-msmq-test"
-      description="Build everything"/>
+  <target name="compile" depends="compile-nms,compile-nms-test" description="Compile everything"/>
 
   <!-- Compile the nms module -->
-  <target name="build-nms" depends="init" description="Build the NMS library">
-    <echo message="Building the NMS library"/>
-
-    <attrib file="src/main/csharp/NMS/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/main/csharp/NMS/CommonAssemblyInfo.cs')}" />
-    <asminfo output="src/main/csharp/NMS/CommonAssemblyInfo.cs" language="CSharp">
+  <target name="compile-nms" depends="init" description="Build the Apache.NMS library">
+    <echo message="Building the Apache.NMS library"/>
+    
+    <asminfo output="src/main/csharp/CommonAssemblyInfo.cs" language="CSharp">
       <imports>
         <import namespace="System" />
         <import namespace="System.Reflection" />
@@ -256,11 +49,11 @@
       <attributes>
         <attribute type="ComVisibleAttribute"            value="false" />
         <attribute type="CLSCompliantAttribute"          value="true" />
-        <attribute type="AssemblyTitleAttribute"         value="Apache NMS Class Library" />
-        <attribute type="AssemblyDescriptionAttribute"   value="NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers" />
+        <attribute type="AssemblyTitleAttribute"         value="${project.short_description}" />
+        <attribute type="AssemblyDescriptionAttribute"   value="${project.description}" />
         <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
-        <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
+        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/nms" />
+        <attribute type="AssemblyProductAttribute"       value="${project.short_description}" />
         <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
         <attribute type="AssemblyTrademarkAttribute"     value="" />
         <attribute type="AssemblyCultureAttribute"       value="" />
@@ -269,15 +62,15 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
+    <csc if="${current.build.keysign}" keyfile="default.snk" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.dll" doc="${build.bin.dir}/NMS.xml">
+      output="${build.bin.dir}/${project.name}.dll" doc="${build.bin.dir}/${project.name}.xml">
       <nowarn>
-    <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-    <warning number="0618" /> <!-- do not report deprecation warnings -->
+        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
-        <include name="src/main/csharp/NMS/*.cs" />
+        <include name="src/main/csharp/**.cs" />
       </sources>
       <resources failonempty="true">
         <include name="NOTICE.txt" />
@@ -290,13 +83,13 @@
     </csc>
     <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.dll" doc="${build.bin.dir}/NMS.xml">
+      output="${build.bin.dir}/${project.name}.dll" doc="${build.bin.dir}/${project.name}.xml">
       <nowarn>
     <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
     <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
-        <include name="src/main/csharp/NMS/*.cs" />
+        <include name="src/main/csharp/**.cs" />
       </sources>
       <resources failonempty="true">
         <include name="NOTICE.txt" />
@@ -307,16 +100,13 @@
         <include name="System.dll" asis="true"/>
       </references>
     </csc>
-
-
   </target>
 
   <!-- Compile the nms-test module -->
-  <target name="build-nms-test" depends="init,build-nms" description="Build the NMS.Test library">
-    <echo message="Building the NMS.Test library" />
+  <target name="compile-nms-test" depends="compile-nms" description="Build the Apache.NMS.Test library">
+    <echo message="Building the Apache.NMS.Test library" />
 
-    <attrib file="src/test/csharp/NMS/Test/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/test/csharp/NMS/Test/CommonAssemblyInfo.cs')}" />
-    <asminfo output="src/test/csharp/NMS/Test/CommonAssemblyInfo.cs" language="CSharp">
+    <asminfo output="src/test/csharp/CommonAssemblyInfo.cs" language="CSharp">
       <imports>
         <import namespace="System" />
         <import namespace="System.Reflection" />
@@ -325,11 +115,11 @@
       <attributes>
         <attribute type="ComVisibleAttribute"            value="false" />
         <attribute type="CLSCompliantAttribute"          value="true" />
-        <attribute type="AssemblyTitleAttribute"         value="Apache NMS Class Library Tests" />
-        <attribute type="AssemblyDescriptionAttribute"   value="NMS (.Net Messaging Library) Unit Tests"/>
+        <attribute type="AssemblyTitleAttribute"         value="${project.short_description}" />
+        <attribute type="AssemblyDescriptionAttribute"   value="${project.description}" />
         <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
-        <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
+        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/nms" />
+        <attribute type="AssemblyProductAttribute"       value="${project.short_description}" />
         <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
         <attribute type="AssemblyTrademarkAttribute"     value="" />
         <attribute type="AssemblyCultureAttribute"       value="" />
@@ -338,14 +128,15 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
+    <csc if="${current.build.keysign}" keyfile="default.snk" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.Test.dll" doc="${build.bin.dir}/NMS.Test.xml">
+      output="${build.bin.dir}/${project.name}.Test.dll" doc="${build.bin.dir}/${project.name}.Test.xml">
       <nowarn>
-        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
+        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
-          <include name="src/test/csharp/NMS/Test/**.cs" />
+          <include name="src/test/csharp/**.cs" />
       </sources>
       <resources failonempty="true">
         <include name="NOTICE.txt" />
@@ -355,17 +146,18 @@
         <include name="mscorlib.dll" asis="true"/>
         <include name="System.dll" asis="true"/>
         <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
+        <include name="${build.bin.dir}/${project.name}.dll"/>
       </references>
     </csc>
     <csc if="${not current.build.keysign}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.Test.dll" doc="${build.bin.dir}/NMS.Test.xml">
+      output="${build.bin.dir}/${project.name}.Test.dll" doc="${build.bin.dir}/${project.name}.Test.xml">
       <nowarn>
-        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
+        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
-          <include name="src/test/csharp/NMS/Test/**.cs" />
+        <include name="src/test/csharp/**.cs" />
       </sources>
       <resources failonempty="true">
         <include name="NOTICE.txt" />
@@ -375,505 +167,9 @@
         <include name="mscorlib.dll" asis="true"/>
         <include name="System.dll" asis="true"/>
         <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
+        <include name="${build.bin.dir}/${project.name}.dll"/>
       </references>
     </csc>
-  </target>
-
-  <!-- Compile the activemq module -->
-  <target name="build-activemq" depends="init,build-nms" description="Build the NMS.ActiveMQ library">
-    <echo message="Building the NMS.ActiveMQ library" />
-
-    <attrib file="src/main/csharp/ActiveMQ/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/main/csharp/ActiveMQ/CommonAssemblyInfo.cs')}" />
-    <asminfo output="src/main/csharp/ActiveMQ/CommonAssemblyInfo.cs" language="CSharp">
-      <imports>
-        <import namespace="System" />
-        <import namespace="System.Reflection" />
-        <import namespace="System.Runtime.InteropServices" />
-      </imports>
-      <attributes>
-        <attribute type="ComVisibleAttribute"            value="false" />
-        <attribute type="CLSCompliantAttribute"          value="true" />
-        <attribute type="AssemblyTitleAttribute"         value="Apache NMS for ActiveMQ" />
-        <attribute type="AssemblyDescriptionAttribute"   value="An NMS (.Net Messaging Library) interface to Apache ActiveMQ"/>
-        <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
-        <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
-        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
-        <attribute type="AssemblyTrademarkAttribute"     value="" />
-        <attribute type="AssemblyCultureAttribute"       value="" />
-        <attribute type="AssemblyVersionAttribute"       value="${project.version}" />
-        <attribute type="AssemblyInformationalVersionAttribute" value="${project.version}" />
-      </attributes>
-    </asminfo>
-
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.ActiveMQ.dll" doc="${build.bin.dir}/NMS.ActiveMQ.xml">
-      <nowarn>
-        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/main/csharp/ActiveMQ/**.cs" />
-        <include name="src/main/csharp/Stomp/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
-      </references>
-    </csc>
-    <csc if="${not current.build.keysign}" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.ActiveMQ.dll" doc="${build.bin.dir}/NMS.ActiveMQ.xml">
-      <nowarn>
-        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/main/csharp/ActiveMQ/**.cs" />
-        <include name="src/main/csharp/Stomp/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
-      </references>
-    </csc>
-  </target>
-
-  <!-- Compile the activemq-test module -->
-  <target name="build-activemq-test" depends="init,build-nms,build-nms-test,build-activemq" description="Build the NMS.ActiveMQ.Test library">
-    <echo message="Building the NMS.ActiveMQ.Test library" />
-
-    <attrib file="src/test/csharp/ActiveMQ/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/test/csharp/ActiveMQ/CommonAssemblyInfo.cs')}" />
-    <asminfo output="src/test/csharp/ActiveMQ/CommonAssemblyInfo.cs" language="CSharp">
-      <imports>
-        <import namespace="System" />
-        <import namespace="System.Reflection" />
-        <import namespace="System.Runtime.InteropServices" />
-      </imports>
-      <attributes>
-        <attribute type="ComVisibleAttribute"            value="false" />
-        <attribute type="CLSCompliantAttribute"          value="true" />
-        <attribute type="AssemblyTitleAttribute"         value="Apache ActiveMQ .NET Tests" />
-        <attribute type="AssemblyDescriptionAttribute"   value="Unit Tests for the NMS (.Net Messaging Library) to Apache ActiveMQ"/>
-        <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
-        <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
-        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
-        <attribute type="AssemblyTrademarkAttribute"     value="" />
-        <attribute type="AssemblyCultureAttribute"       value="" />
-        <attribute type="AssemblyVersionAttribute"       value="${project.version}" />
-        <attribute type="AssemblyInformationalVersionAttribute" value="${project.version}" />
-      </attributes>
-    </asminfo>
-
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.ActiveMQ.Test.dll" doc="${build.bin.dir}/NMS.ActiveMQ.Test.xml">
-      <nowarn>
-        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/test/csharp/ActiveMQ/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
-        <include name="${build.bin.dir}/NMS.Test.dll"/>
-        <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
-      </references>
-    </csc>
-    <csc if="${not current.build.keysign}" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.ActiveMQ.Test.dll" doc="${build.bin.dir}/NMS.ActiveMQ.Test.xml">
-      <nowarn>
-        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->        <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/test/csharp/ActiveMQ/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
-        <include name="${build.bin.dir}/NMS.Test.dll"/>
-        <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
-      </references>
-    </csc>
-  </target>
-
-  <!-- Compile the Stomp.Test module -->
-  <target name="build-stomp-test" depends="init,build-nms,build-nms-test,build-activemq" description="Build the NMS.Stomp.Test library">
-    <echo message="Building the NMS.Stomp.Test library" />
-
-    <attrib file="src/test/csharp/Stomp/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/test/csharp/Stomp/CommonAssemblyInfo.cs')}" />
-    <asminfo output="src/test/csharp/Stomp/CommonAssemblyInfo.cs" language="CSharp">
-      <imports>
-        <import namespace="System" />
-        <import namespace="System.Reflection" />
-        <import namespace="System.Runtime.InteropServices" />
-      </imports>
-      <attributes>
-        <attribute type="ComVisibleAttribute"            value="false" />
-        <attribute type="CLSCompliantAttribute"          value="true" />
-        <attribute type="AssemblyTitleAttribute"         value="Stomp .NET Tests" />
-        <attribute type="AssemblyDescriptionAttribute"   value="Unit Tests for the NMS (.Net Messaging Library) using the STOMP protocol"/>
-        <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
-        <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
-        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
-        <attribute type="AssemblyTrademarkAttribute"     value="" />
-        <attribute type="AssemblyCultureAttribute"       value="" />
-        <attribute type="AssemblyVersionAttribute"       value="${project.version}" />
-        <attribute type="AssemblyInformationalVersionAttribute" value="${project.version}" />
-      </attributes>
-    </asminfo>
-
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.Stomp.Test.dll" doc="${build.bin.dir}/NMS.Stomp.Test.xml">
-      <nowarn>
-          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-          <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/test/csharp/Stomp/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
-        <include name="${build.bin.dir}/NMS.Test.dll"/>
-        <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
-      </references>
-    </csc>
-    <csc if="${not current.build.keysign}" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.Stomp.Test.dll" doc="${build.bin.dir}/NMS.Stomp.Test.xml">
-      <nowarn>
-          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-          <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/test/csharp/Stomp/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
-        <include name="${build.bin.dir}/NMS.Test.dll"/>
-        <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
-      </references>
-    </csc>
-  </target>
-
-  <target name="build-msmq-on-windows" depends="init,build-nms" description="Build the NMS.MSMQ library" if="${platform::is-win32() and framework::get-target-framework()!='netcf-2.0'}">
-    <call target="build-msmq" />
   </target>
   
-  <!-- Compile the msmq module -->
-  <target name="build-msmq" depends="init,build-nms" description="Build the NMS.MSMQ library">
-    <echo message="Building the NMS.MSMQ library using ${lib.framework.dir}/System.Messaging.dll" />
-
-    <attrib file="src/main/csharp/MSMQ/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/main/csharp/MSMQ/CommonAssemblyInfo.cs')}" />
-    <asminfo output="src/main/csharp/MSMQ/CommonAssemblyInfo.cs" language="CSharp">
-      <imports>
-        <import namespace="System" />
-        <import namespace="System.Reflection" />
-        <import namespace="System.Runtime.InteropServices" />
-        <import namespace="System.Messaging" />
-      </imports>
-      <attributes>
-        <attribute type="ComVisibleAttribute"            value="false" />
-        <attribute type="CLSCompliantAttribute"          value="true" />
-        <attribute type="AssemblyTitleAttribute"         value="Apache NMS for MSMQ" />
-        <attribute type="AssemblyDescriptionAttribute"   value="An NMS (.Net Messaging Library) to MSMQ"/>
-        <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
-        <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
-        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
-        <attribute type="AssemblyTrademarkAttribute"     value="" />
-        <attribute type="AssemblyCultureAttribute"       value="" />
-        <attribute type="AssemblyVersionAttribute"       value="${project.version}" />
-        <attribute type="AssemblyInformationalVersionAttribute" value="${project.version}" />
-      </attributes>
-    </asminfo>
-
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.MSMQ.dll" doc="${build.bin.dir}/NMS.MSMQ.xml">
-      <nowarn>
-          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-          <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/main/csharp/MSMQ/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <!-- TODO was using the following - I wonder if it now breaks on windows?
-        <include name="${lib.framework.dir}/System.Messaging.dll" />
-        -->
-        <include name="System.Messaging.dll" />
-        <include name="${build.bin.dir}/NMS.dll"/>
-        <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
-      </references>
-    </csc>
-    <csc if="${not current.build.keysign}" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.MSMQ.dll" doc="${build.bin.dir}/NMS.MSMQ.xml">
-      <nowarn>
-          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-          <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/main/csharp/MSMQ/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <!-- TODO was using the following - I wonder if it now breaks on windows?
-        <include name="${lib.framework.dir}/System.Messaging.dll" />
-        -->
-        <include name="System.Messaging.dll" />
-        <include name="${build.bin.dir}/NMS.dll"/>
-        <include name="${build.bin.dir}/NMS.ActiveMQ.dll"/>
-      </references>
-    </csc>
-  </target>
-
-  <!-- Compile the msmq.Test module -->
-  <target name="build-msmq-test" depends="init,build-nms,build-nms-test,build-msmq-on-windows" description="Build the NMS.MSMQ.Test library" if="${platform::is-win32() and framework::get-target-framework()!='netcf-2.0'}">
-    <echo message="Building the NMS.MSMQ.Test library" />
-
-    <attrib file="src/test/csharp/MSMQ/CommonAssemblyInfo.cs" readonly="false" if="${file::exists('src/test/csharp/MSMQ/CommonAssemblyInfo.cs')}" />
-    <asminfo output="src/test/csharp/MSMQ/CommonAssemblyInfo.cs" language="CSharp">
-      <imports>
-        <import namespace="System" />
-        <import namespace="System.Reflection" />
-        <import namespace="System.Runtime.InteropServices" />
-      </imports>
-      <attributes>
-        <attribute type="ComVisibleAttribute"            value="false" />
-        <attribute type="CLSCompliantAttribute"          value="true" />
-        <attribute type="AssemblyTitleAttribute"         value="Apache NMS for MSMQ Tests" />
-        <attribute type="AssemblyDescriptionAttribute"   value="Unit Tests for the NMS (.Net Messaging Library) to MSMQ"/>
-        <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
-        <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/" />
-        <attribute type="AssemblyProductAttribute"       value="Apache ActiveMQ" />
-        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
-        <attribute type="AssemblyTrademarkAttribute"     value="" />
-        <attribute type="AssemblyCultureAttribute"       value="" />
-        <attribute type="AssemblyVersionAttribute"       value="${project.version}" />
-        <attribute type="AssemblyInformationalVersionAttribute" value="${project.version}" />
-      </attributes>
-    </asminfo>
-
-    <csc if="${current.build.keysign}" keyfile="activemq-dotnet.snk" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.MSMQ.Test.dll" doc="${build.bin.dir}/NMS.MSMQ.Test.xml">
-      <nowarn>
-          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-          <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/test/csharp/MSMQ/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <!-- TODO was using the following - I wonder if it now breaks on windows?
-        <include name="${lib.framework.dir}/System.Messaging.dll" />
-        -->
-        <include name="System.Messaging.dll" />
-        <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
-        <include name="${build.bin.dir}/NMS.Test.dll"/>
-        <include name="${build.bin.dir}/NMS.MSMQ.dll"/>
-      </references>
-    </csc>
-    <csc if="${not current.build.keysign}" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
-      output="${build.bin.dir}/NMS.MSMQ.Test.dll" doc="${build.bin.dir}/NMS.MSMQ.Test.xml">
-      <nowarn>
-          <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-          <warning number="0618" /> <!-- do not report deprecation warnings -->
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/test/csharp/MSMQ/**.cs" />
-      </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references failonempty="true">
-        <include name="mscorlib.dll" asis="true"/>
-        <include name="System.dll" asis="true"/>
-        <!-- TODO was using the following - I wonder if it now breaks on windows?
-        <include name="${lib.framework.dir}/System.Messaging.dll" />
-        -->
-        <include name="System.Messaging.dll" />
-        <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
-        <include name="${build.bin.dir}/NMS.dll"/>
-        <include name="${build.bin.dir}/NMS.Test.dll"/>
-        <include name="${build.bin.dir}/NMS.MSMQ.dll"/>
-      </references>
-    </csc>
-  </target>
-
-  <!-- ============================================================================================ -->
-  <!--      T E S T I N G    T A R G E T S                                                          -->
-  <!-- ============================================================================================ -->
-
-  <target name="test" depends="build-activemq-test" description="Runs all the NUnit test cases">
-    <nunit2>
-      <formatter type="Plain" />
-      <test assemblyname="${build.bin.dir}/NMS.ActiveMQ.Test.dll"></test>
-    </nunit2>
-  </target>
-
-  <target name="test-case" depends="build-activemq-test" description="Run a specific NUnit test case using the 'test' variable">
-    <nunit2>
-      <formatter type="Plain" />
-      <test assemblyname="${build.bin.dir}/NMS.ActiveMQ.Test.dll" testname="${test}"></test>
-    </nunit2>
-  </target>
-
-  <target name="test-stomp" depends="build-stomp-test" description="Runs all the NUnit test cases">
-    <nunit2>
-      <formatter type="Plain" />
-      <test assemblyname="${build.bin.dir}/NMS.Stomp.Test.dll"></test>
-    </nunit2>
-  </target>
-
-  <!-- ============================================================================================ -->
-  <!--      M I S C E L L A N E O U S    T A R G E T S                                              -->
-  <!-- ============================================================================================ -->
-
-  <target name="clean" description="Deletes build">
-    <delete dir="build" if="${directory::exists('build')}" />
-  </target>
-
-  <target name="doc" depends="build-activemq">
-
-    <mkdir dir="${doc.dir}/nms"/>
-    <ndoc failonerror="false">
-      <assemblies basedir="${build.bin.dir}">
-        <include name="NMS.dll" />
-      </assemblies>
-      <summaries basedir="${basedir}/src/main/ndoc">
-        <include name="NamespaceSummary.xml" />
-      </summaries>
-      <documenters>
-        <documenter name="MSDN">
-        <property name="OutputDirectory" value="${doc.dir}/nms" />
-          <property name="HtmlHelpName" value="NMS" />
-          <property name="HtmlHelpCompilerFilename" value="hhc.exe" />
-          <property name="IncludeFavorites" value="False" />
-          <property name="Title" value="The Apache NMS Class Library (.Net Messaging Library)" />
-          <property name="SplitTOCs" value="False" />
-          <property name="DefaulTOC" value="" />
-          <!--
-            <property name="ShowVisualBasic" value="True" />
-            <property name="ShowMissingSummaries" value="True" />
-            <property name="ShowMissingRemarks" value="True" />
-            <property name="ShowMissingParams" value="True" />
-            <property name="ShowMissingReturns" value="True" />
-            <property name="ShowMissingValues" value="True" />
-          -->
-          <property name="DocumentInternals" value="False" />
-          <property name="DocumentProtected" value="True" />
-          <property name="DocumentPrivates" value="False" />
-          <property name="DocumentEmptyNamespaces" value="False" />
-          <property name="IncludeAssemblyVersion" value="False" />
-          <property name="CopyrightText" value="" />
-          <property name="CopyrightHref" value="" />
-        </documenter>
-      </documenters>
-    </ndoc>
-
-    <mkdir dir="${doc.dir}/all"/>
-    <ndoc failonerror="false">
-      <assemblies basedir="${build.bin.dir}">
-        <include name="NMS.dll" />
-        <include name="NMS.ActiveMQ.dll" />
-        <include name="NMS.MSMQ.dll" if="${platform::is-win32()}"/>
-      </assemblies>
-      <summaries basedir="${basedir}/src/main/ndoc">
-        <include name="NamespaceSummary.xml" />
-      </summaries>
-      <documenters>
-        <documenter name="MSDN">
-          <property name="OutputDirectory" value="${doc.dir}/all" />
-          <property name="HtmlHelpName" value="NMS" />
-          <property name="HtmlHelpCompilerFilename" value="hhc.exe" />
-          <property name="IncludeFavorites" value="False" />
-          <property name="Title" value="The Apache NMS Class Library (.Net Messaging Library)" />
-          <property name="SplitTOCs" value="False" />
-          <property name="DefaulTOC" value="" />
-          <!--
-            <property name="ShowVisualBasic" value="True" />
-            <property name="ShowMissingSummaries" value="True" />
-            <property name="ShowMissingRemarks" value="True" />
-            <property name="ShowMissingParams" value="True" />
-            <property name="ShowMissingReturns" value="True" />
-            <property name="ShowMissingValues" value="True" />
-          -->
-          <property name="DocumentInternals" value="False" />
-          <property name="DocumentProtected" value="True" />
-          <property name="DocumentPrivates" value="False" />
-          <property name="DocumentEmptyNamespaces" value="False" />
-          <property name="IncludeAssemblyVersion" value="False" />
-          <property name="CopyrightText" value="" />
-          <property name="CopyrightHref" value="" />
-        </documenter>
-      </documenters>
-    </ndoc>
-
-  </target>
-  
-
 </project>

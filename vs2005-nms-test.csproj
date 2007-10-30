@@ -37,39 +37,39 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\test\csharp\NMS\Test\AsyncConsumeTest.cs">
+    <Compile Include="src\test\csharp\ AsyncConsumeTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\BadConsumeTest.cs">
+    <Compile Include="src\test\csharp\BadConsumeTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\BytesMessageTest.cs">
+    <Compile Include="src\test\csharp\BytesMessageTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\CommonAssemblyInfo.cs" />
-    <Compile Include="src\test\csharp\NMS\Test\ConsumerTest.cs">
+    <Compile Include="src\test\csharp\CommonAssemblyInfo.cs" />
+    <Compile Include="src\test\csharp\ConsumerTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\DurableTest.cs">
+    <Compile Include="src\test\csharp\DurableTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\NMSPropertyTest.cs" />
-    <Compile Include="src\test\csharp\NMS\Test\NMSTestSupport.cs">
+    <Compile Include="src\test\csharp\NMSPropertyTest.cs" />
+    <Compile Include="src\test\csharp\NMSTestSupport.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\MapMessageTest.cs">
+    <Compile Include="src\test\csharp\MapMessageTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\MessageTest.cs">
+    <Compile Include="src\test\csharp\MessageTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\TemporaryQueueTest.cs">
+    <Compile Include="src\test\csharp\TemporaryQueueTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\TextMessage.cs">
+    <Compile Include="src\test\csharp\TextMessage.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\NMS\Test\TransactionTest.cs">
+    <Compile Include="src\test\csharp\TransactionTest.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
