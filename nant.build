@@ -31,9 +31,6 @@
   <property name="project.description"
            value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers"/>
 
-  <!-- Sets up all the different framework targets -->
-	<include buildfile="${basedir}/nant-common.xml"/>
-	
   <target name="dependency-init" description="Initializes build dependencies">
   	<assemblyfileset failonempty="true" id="dependencies">
       <include name="mscorlib.dll" asis="true"/>
@@ -41,11 +38,14 @@
   	</assemblyfileset>
   	
   	<assemblyfileset failonempty="true" id="test.dependencies">
-      <lib refid="dependencies"/>
+      <include name="mscorlib.dll" asis="true"/>
+      <include name="System.dll" asis="true"/>
       <include name="${build.bin.dir}/${project.name}.dll"/>
       <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
   	</assemblyfileset>  
   </target>
   
+  <!-- Load the common target definitions  -->
+	<include buildfile="${basedir}/build-common.xml"/>
   
 </project>
