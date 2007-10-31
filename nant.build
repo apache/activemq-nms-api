@@ -46,6 +46,6 @@
   </target>
   
   <!-- Load the common target definitions  -->
-	<include buildfile="${basedir}/build-common.xml"/>
+	<include buildfile="${basedir}/nant-common.xml"/>
   
 </project>
