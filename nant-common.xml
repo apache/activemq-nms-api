@@ -39,7 +39,70 @@
   <property name="current.build.framework" value="${framework::get-target-framework()}"/>
   <property name="current.build.defines"   value="${build.defines}" />
 
-  <!-- Helper targets used to enable build configurations -->
+  <!-- Figure out the user's HOME directory --> 
+  <property name="user.home" value="${environment::get-variable('HOME')}"
+            if="${environment::variable-exists('HOME')}"
+            unless="${property::exists('user.home')}"/>
+  <fail message="The HOME environment is not defined.  Please set it to your home directory."
+            unless="${property::exists('user.home')}"/>
+            
+  <!-- Figure out the NANT repositories--> 
+  <property name="nant.repo" value="${environment::get-variable('NANT_REPO')}"
+            if="${environment::variable-exists('NANT_REPO')}"
+            unless="${property::exists('nant.repo')}"/>
+  <property name="nant.local.repo" value="${user.home}/.nant/repository"
+            unless="${property::exists('nant.local.repo')}"/>
+
+  <property name="nant.remote.repo" value="${environment::get-variable('NANT_REMOTE_REPO')}"
+                      if="${environment::variable-exists('NANT_REMOTE_REPO')}"
+                      unless="${property::exists('nant.remote.repo')}"/>                      
+  <property name="nant.remote.repo" value="http://people.apache.org/~chirino/nant-repo"
+          unless="${property::exists('nant.remote.repo')}"/>
+          
+  <!-- Nant Repo Tasks -->
+  <target name="repo-download" description="Download a dependency from the remote repo to the local repo">
+    <fail message="The repo.task.artifact variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.artifact')}"/>
+
+    <property name="repo.task.src" value="${nant.remote.repo}/${repo.task.artifact}"/>   
+    <property name="repo.task.dest" value="${nant.local.repo}/${repo.task.artifact}"/>   
+
+    <property name="repo.task.download" value="false"/>   
+    <if test="${not file::exists(repo.task.dest)}">
+      <property name="repo.task.download" value="true"/>   
+    </if>
+    
+    <if test="${file::exists(repo.task.dest)}">
+      <!-- TODO: we could also download if the file is a SNAPSHOT and is stale -->
+      <property name="repo.task.download" value="false"/>   
+      <echo message="Artifact: ${nant.remote.repo}/${repo.task.artifact} is up to date."/>
+    </if>
+    
+    <if test="${repo.task.download}">
+      <echo message="Downloading artifact: ${repo.task.src}"/>
+      <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
+      <get src="${repo.task.src}" dest="${repo.task.dest}"/>
+    </if>   
+  </target>
+  
+  <target name="repo-install" description="Install a dependency to the local repo">
+    <fail message="The repo.task.artifact variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.artifact')}"/>
+    <fail message="The repo.task.src variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.src')}"/>
+        
+    <property name="repo.task.dest" value="${nant.local.repo}/${repo.task.artifact}"/>   
+    <copy file="${repo.task.src}" tofile="${nant.local.repo}/${repo.task.dest}"/>    
+  </target>
+  
+  <script language="C#" prefix="test" >
+    <code><![CDATA[
+       [Function("test-func")]       
+       public static string Testfunc(  ) {
+            return "some result !!!!!!!!";
+       }
+    ]]></code>
+  </script>
+  <echo message='${test::test-func()}'/>
+  
+<!-- Helper targets used to enable build configurations -->
   <target name="set-noskip-configuration" description="Disable skiping builds">
     <property name="project.noskip"         value="true" />
   </target>

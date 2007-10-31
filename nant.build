@@ -30,8 +30,14 @@
            value="Apache NMS Class Library"/>
   <property name="project.description"
            value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers"/>
+  
+  <property name="nunit.dll" value="org.nunit/nunit/2.2.8/all/nunit.framework.dll"/>    
 
   <target name="dependency-init" description="Initializes build dependencies">
+  
+    <property name="repo.task.artifact" value="${nunit.dll}"/>    
+    <call target="repo-download"/>
+  
   	<assemblyfileset failonempty="true" id="dependencies">
       <include name="mscorlib.dll" asis="true"/>
       <include name="System.dll" asis="true"/>
@@ -41,7 +47,7 @@
       <include name="mscorlib.dll" asis="true"/>
       <include name="System.dll" asis="true"/>
       <include name="${build.bin.dir}/${project.name}.dll"/>
-      <include name="${lib.dir}/all/nunit/nunit.framework.dll"/>
+      <include name="${nant.local.repo}/${nunit.dll}"/>
   	</assemblyfileset>  
   </target>
   
