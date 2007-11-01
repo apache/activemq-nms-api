@@ -37,9 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\test\csharp\ AsyncConsumeTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="src\test\csharp\AsyncConsumeTest.cs" />
     <Compile Include="src\test\csharp\BadConsumeTest.cs">
       <SubType>Code</SubType>
     </Compile>
