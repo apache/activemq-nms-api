@@ -89,19 +89,20 @@
     <fail message="The repo.task.src variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.src')}"/>
         
     <property name="repo.task.dest" value="${nant.local.repo}/${repo.task.artifact}"/>   
-    <copy file="${repo.task.src}" tofile="${nant.local.repo}/${repo.task.dest}"/>    
+    <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
+    <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>    
   </target>
-  
-  <script language="C#" prefix="test" >
-    <code><![CDATA[
-       [Function("test-func")]       
-       public static string Testfunc(  ) {
-            return "some result !!!!!!!!";
-       }
-    ]]></code>
-  </script>
-  <echo message='${test::test-func()}'/>
-  
+
+  <target name="repo-deploy" description="Deploy a dependency to the deployment repo">     
+    <fail message="Then nant.deploy.repo variable has not been set.  Please set it before you call this task." unless="${property::exists('nant.deploy.repo')}"/>
+    <fail message="The repo.task.artifact variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.artifact')}"/>
+    <fail message="The repo.task.src variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.src')}"/>
+        
+    <property name="repo.task.dest" value="${nant.deploy.repo}/${repo.task.artifact}"/>   
+    <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
+    <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>    
+  </target>
+    
 <!-- Helper targets used to enable build configurations -->
   <target name="set-noskip-configuration" description="Disable skiping builds">
     <property name="project.noskip"         value="true" />
@@ -424,7 +425,113 @@
       <references refid="test.dependencies"/>
     </csc>
   </target>
+  
+  
+  <!-- ============================================================================================ -->
+  <!--      I N S T A L L     T A R G E T S                                                         -->
+  <!-- ============================================================================================ -->
 
+  <target name="install-all" depends="release-init" description="Install all build configurations for all runtime configurations">
+    <echo message="Installing all build configurations for all runtime configurations." />
+    <call target="set-debug-configuration" />
+    <call target="set-net-1.0-framework-configuration"  /><call target="conditional-install" />
+    <call target="set-net-2.0-framework-configuration"  /><call target="conditional-install" />
+    <call target="set-mono-1.0-framework-configuration" /><call target="conditional-install" />
+    <call target="set-mono-2.0-framework-configuration" /><call target="conditional-install" />
+    <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-install" />
+    <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-install" />
+
+    <!-- we can only do a release skip if the Key file is available -->
+    <if test="${not build.skip.release}">
+      <call target="set-release-configuration" />
+      <call target="set-net-1.0-framework-configuration"  /><call target="conditional-install" />
+      <call target="set-net-2.0-framework-configuration"  /><call target="conditional-install" />
+      <call target="set-mono-1.0-framework-configuration" /><call target="conditional-install" />
+      <call target="set-mono-2.0-framework-configuration" /><call target="conditional-install" />
+      <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-install" />
+      <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-install" />
+    </if>
+  </target>
+  
+  <target name="conditional-install" depends="init" unless="${build.skip}"
+      description="Conditionaly install all the modules if build framework and type are supported">
+    <call target="install" />
+  </target>
+  
+  <!-- Install the modules to the local repo -->
+  <target name="install" depends="compile" description="Install the artifacts into the nant repo">
+    <property name="path" value="${project.group}/${project.name}/${project.version.full}/${current.build.framework}/${current.build.config}"/>    
+
+    <property name="repo.task.artifact" value="${path}/${project.name}.dll"/>    
+    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.dll"/>    
+    <call target="repo-install"/>
+    <property name="repo.task.artifact" value="${path}/${project.name}.xml"/>    
+    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.xml"/>    
+    <call target="repo-install"/>
+    <property name="repo.task.artifact" value="${path}/${project.name}.Test.dll"/>    
+    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.Test.dll"/>    
+    <call target="repo-install"/>
+    <property name="repo.task.artifact" value="${path}/${project.name}.Test.xml"/>    
+    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.Test.xml"/>    
+    <call target="repo-install"/>
+    
+  </target>
+
+  <!-- ============================================================================================ -->
+  <!--      D E P L O Y     T A R G E T S                                                           -->
+  <!-- ============================================================================================ -->
+
+  <target name="deploy-all" depends="release-init" description="Deploy all build configurations for all runtime configurations">
+    
+    <echo message="Deploying all build configurations for all runtime configurations." />
+
+    <call target="set-debug-configuration" />
+    <call target="set-net-1.0-framework-configuration"  /><call target="conditional-deploy" />
+    <call target="set-net-2.0-framework-configuration"  /><call target="conditional-deploy" />
+    <call target="set-mono-1.0-framework-configuration" /><call target="conditional-deploy" />
+    <call target="set-mono-2.0-framework-configuration" /><call target="conditional-deploy" />
+    <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-deploy" />
+    <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-deploy" />
+
+    <!-- we can only do a release skip if the Key file is available -->
+    <if test="${not build.skip.release}">
+      <call target="set-release-configuration" />
+      <call target="set-net-1.0-framework-configuration"  /><call target="conditional-deploy" />
+      <call target="set-net-2.0-framework-configuration"  /><call target="conditional-deploy" />
+      <call target="set-mono-1.0-framework-configuration" /><call target="conditional-deploy" />
+      <call target="set-mono-2.0-framework-configuration" /><call target="conditional-deploy" />
+      <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-deploy" />
+      <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-deploy" />
+    </if>
+  </target>
+  
+  <target name="conditional-deploy" depends="init" unless="${build.skip}"
+      description="Conditionaly deploy all the modules if build framework and type are supported">
+    <call target="deploy" />
+  </target>
+  
+  <target name="init-deploy">
+     <fail message="Then nant.deploy.repo variable has not been set.  Please set it before you call this task." unless="${property::exists('nant.deploy.repo')}"/>
+  </target>
+  
+  <!-- Install the modules to the local repo -->
+  <target name="deploy" depends="init-deploy, compile" description="Deploy the artifacts into the nant repo">
+    <property name="path" value="${project.group}/${project.name}/${project.version.full}/${current.build.framework}/${current.build.config}"/>    
+
+    <property name="repo.task.artifact" value="${path}/${project.name}.dll"/>    
+    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.dll"/>    
+    <call target="repo-deploy"/>
+    <property name="repo.task.artifact" value="${path}/${project.name}.xml"/>    
+    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.xml"/>    
+    <call target="repo-deploy"/>
+    <property name="repo.task.artifact" value="${path}/${project.name}.Test.dll"/>    
+    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.Test.dll"/>    
+    <call target="repo-deploy"/>
+    <property name="repo.task.artifact" value="${path}/${project.name}.Test.xml"/>    
+    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.Test.xml"/>    
+    <call target="repo-deploy"/>
+    
+  </target>
     
   <!-- ============================================================================================ -->
   <!--      M I S C E L L A N E O U S    T A R G E T S                                              -->
