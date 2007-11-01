@@ -521,7 +521,7 @@
   </target>
   
   <!-- Install the modules to the local repo -->
-  <target name="deploy" depends="init-deploy, compile" description="Deploy the artifacts into the nant repo">
+  <target name="deploy" depends="init-deploy, install" description="Deploy the artifacts into the nant repo">
     <property name="path" value="${project.group}/${project.name}/${project.version.full}/${current.build.framework}/${current.build.config}"/>    
 
     <property name="repo.task.artifact" value="${path}/${project.name}.dll"/>    
