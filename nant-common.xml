@@ -41,10 +41,16 @@
 
   <!-- Figure out the user's HOME directory --> 
   <property name="user.home" value="${environment::get-variable('HOME')}"
-            if="${environment::variable-exists('HOME')}"
+            if="${environment::variable-exists('HOME') and platform::is-unix()}"
             unless="${property::exists('user.home')}"/>
-  <fail message="The HOME environment is not defined.  Please set it to your home directory."
+  <property name="user.home" value="${environment::get-variable('USERPROFILE')}"
+            if="${environment::variable-exists('USERPROFILE') and platform::is-win32()}"
             unless="${property::exists('user.home')}"/>
+            
+  <fail message="The HOME environment variable is not defined.  Please set it to your home directory."
+            unless="${property::exists('user.home')}" if="${platform::is-unix()}"/>
+  <fail message="The USERPROFILE environment variable is not defined.  Please set it to your home directory."
+            unless="${property::exists('user.home')}" if="${platform::is-win32()}"/>
             
   <!-- Figure out the NANT repositories--> 
   <property name="nant.repo" value="${environment::get-variable('NANT_REPO')}"
