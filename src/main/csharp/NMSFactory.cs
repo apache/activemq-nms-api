@@ -92,17 +92,17 @@ namespace Apache.NMS
 			if(String.Compare(scheme, "tibco", true) == 0)
 			{
 				cfi.assemblyFileName = "NMS.TIBCO.dll";
-				cfi.factoryClassName = "Apache.TibcoEMS.ConnectionFactory";
+				cfi.factoryClassName = "Apache.NMS.EMS.ConnectionFactory";
 			}
 			else if(String.Compare(scheme, "msmq", true) == 0)
 			{
 				cfi.assemblyFileName = "NMS.MSMQ.dll";
-				cfi.factoryClassName = "Apache.MSMQ.ConnectionFactory";
+				cfi.factoryClassName = "Apache.NMS.MSMQ.ConnectionFactory";
 			}
 			else
 			{
 				cfi.assemblyFileName = "NMS.ActiveMQ.dll";
-				cfi.factoryClassName = "Apache.ActiveMQ.ConnectionFactory";
+				cfi.factoryClassName = "Apache.NMS.ActiveMQ.ConnectionFactory";
 			}
 
 			return true;
