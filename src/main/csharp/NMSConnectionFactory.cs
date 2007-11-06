@@ -81,7 +81,7 @@ namespace Apache.NMS
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (Assembly assembly in assemblies)
             {
-                string resourceFile = assembly.GetName().Name + "." + "Apache.NMS.NMSFactory." + scheme;
+                string resourceFile = assembly.GetName().Name + "." + "Apache.NMS.NMSConnectionFactory." + scheme;
                 Stream fs = assembly.GetManifestResourceStream(resourceFile);
                 if (fs != null)
                 {
