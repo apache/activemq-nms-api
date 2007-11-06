@@ -59,7 +59,7 @@
     <Compile Include="src\main\csharp\NMSConnectionException.cs" />
     <Compile Include="src\main\csharp\NMSConstants.cs" />
     <Compile Include="src\main\csharp\NMSException.cs" />
-    <Compile Include="src\main\csharp\NMSFactory.cs" />
+    <Compile Include="src\main\csharp\NMSConnectionFactory.cs" />
     <Compile Include="src\main\csharp\NMSSecurityException.cs" />
     <Compile Include="src\main\csharp\Tracer.cs" />
   </ItemGroup>
