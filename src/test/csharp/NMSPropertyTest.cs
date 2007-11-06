@@ -59,6 +59,7 @@ namespace Apache.NMS.Test
         [ Test ]
         public override void SendAndSyncReceive()
         {
+            base.Drain();
             base.SendAndSyncReceive();
         }
         
