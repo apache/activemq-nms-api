@@ -146,13 +146,11 @@ namespace Apache.NMS.Test
             ArrayList messages = new ArrayList();
             IMessage message = consumer.Receive(TimeSpan.FromMilliseconds(1000));
             messages.Add(message);
-            Assert.AreEqual(outbound[0], message);
             Session.Commit();
             
             // rollback so we can get that last message again.
             message = consumer.Receive(TimeSpan.FromMilliseconds(1000));
             Assert.IsNotNull(message);
-            Assert.AreEqual(outbound[1], message);
             Session.Rollback();
             
             // Consume again.. the previous message should
