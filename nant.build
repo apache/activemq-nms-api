@@ -6,23 +6,23 @@
     The ASF licenses this file to You under the Apache License, Version 2.0
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
-   
+
     http://www.apache.org/licenses/LICENSE-2.0
-   
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project name="Apache.NMS" default="install-all" xmlns="http://nant.sourceforge.net/release/0.85/nant.xsd">
+<project name="Apache.NMS" default="compile-all" xmlns="http://nant.sourceforge.net/release/0.85/nant.xsd">
 
   <!-- ============================================================================================ -->
   <!--      I N I T I A L I Z A T I O N                                                             -->
-  <!-- ============================================================================================ -->  
-  <property name="basedir"                 
+  <!-- ============================================================================================ -->
+  <property name="basedir"
            value="${project::get-base-directory()}"/>
- <property name="project.name"
+  <property name="project.name"
            value="Apache.NMS"/>
   <property name="project.group"
            value="org.apache.activemq"/>
@@ -32,31 +32,39 @@
            value="Apache NMS Class Library"/>
   <property name="project.description"
            value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers"/>
-  
+  <property name="project.cls.compliant" value="true"/>
+
   <!-- Repository organized as: organization/module/version/plaform/artifact, platform might be something like 'all' or 'net-2.0/release' -->
-  <property name="nunit.dll" value="org.nunit/nunit/2.2.8/all/nunit.framework.dll"/>    
+  <property name="nunit.dll" value="org.nunit/nunit/2.2.8/all/nunit.framework.dll"/>
+
+  <target name="vendor-init" description="Initializes the vendor libraries.">
+    <!-- The following does a poor man's maven style dependency install to the local repo -->
+    <property name="repo.task.artifact" value="${nunit.dll}"/>
+    <call target="repo-download"/>
+  </target>
 
   <target name="dependency-init" description="Initializes build dependencies">
-  
-    <!-- The following does a poor man's maven style dependency install to the local repo -->
-    <property name="repo.task.artifact" value="${nunit.dll}"/>    
-    <call target="repo-download"/>
-  
-  	<assemblyfileset failonempty="true" id="dependencies">
+
+    <assemblyfileset failonempty="true" id="dependencies">
       <include name="mscorlib.dll" asis="true"/>
       <include name="System.dll" asis="true"/>
-  	</assemblyfileset>
-  	
-  	<assemblyfileset failonempty="true" id="test.dependencies">
+      <include name="System.Xml.dll" asis="true"/>
+    </assemblyfileset>
+
+    <assemblyfileset failonempty="true" id="test.dependencies">
       <include name="mscorlib.dll" asis="true"/>
       <include name="System.dll" asis="true"/>
       <include name="${build.bin.dir}/${project.name}.dll"/>
       <include name="${nant.local.repo}/${nunit.dll}"/>
-  	</assemblyfileset>  
-  	
+    </assemblyfileset>
+
+    <fileset id="content.filenames">
+      <include name="LICENSE.txt"/>
+      <include name="NOTICE.txt"/>
+    </fileset>
   </target>
-  
+
   <!-- Load the common target definitions  -->
-	<include buildfile="${basedir}/nant-common.xml"/>
-  
+  <include buildfile="${basedir}/nant-common.xml"/>
+
 </project>

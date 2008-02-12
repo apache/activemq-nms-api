@@ -18,237 +18,266 @@ using Apache.NMS;
 using NUnit.Framework;
 using System;
 
-/// <summary>
-/// useful base class for test cases
-/// </summary>
-
 namespace Apache.NMS.Test
 {
-    [ TestFixture ]
-    public abstract class NMSTestSupport
-    {
+	/// <summary>
+	/// useful base class for test cases
+	/// </summary>
+	[TestFixture]
+	public abstract class NMSTestSupport
+	{
 		protected static object destinationLock = new object();
 		protected static int destinationCounter;
 
-        // enable/disable logging of message flows
-        protected bool logging = true;
+		// enable/disable logging of message flows
+		protected bool logging = true;
 
-        private IConnectionFactory factory;
-        private IConnection connection;
-        private ISession session;
-        private IDestination destination;
+		private IConnectionFactory factory;
+		private IConnection connection;
+		private ISession session;
+		private IDestination destination;
 
-        protected int receiveTimeout = 1000;
-        protected string clientId;
-        protected bool persistent = true;
-        protected DestinationType destinationType = DestinationType.Queue;
-        protected AcknowledgementMode acknowledgementMode = AcknowledgementMode.ClientAcknowledge;
+		protected TimeSpan receiveTimeout = TimeSpan.FromMilliseconds(1000);
+		protected string clientId;
+		protected bool persistent = true;
+		protected DestinationType destinationType = DestinationType.Queue;
+		protected AcknowledgementMode acknowledgementMode = AcknowledgementMode.ClientAcknowledge;
 
-        [SetUp]
-        virtual public void SetUp()
-        {
-        }
+		[SetUp]
+		public virtual void SetUp()
+		{
+		}
 
-        [TearDown]
-        virtual public void TearDown()
-        {
+		[TearDown]
+		public virtual void TearDown()
+		{
 			destination = null;
-            Disconnect();
-        }
+			Disconnect();
+		}
 
-        // Properties
-        public bool Connected
-        {
-            get { return connection!=null; }
-            set { if( value ) Connect(); else Disconnect(); }
-        }
+		// Properties
+		public bool Connected
+		{
+			get { return connection != null; }
+			set
+			{
+				if(value)
+				{
+					Connect();
+				}
+				else
+				{
+					Disconnect();
+				}
+			}
+		}
 
-        public IConnectionFactory Factory
-        {
-            get {
-                if( factory == null ) {
-                    factory = CreateConnectionFactory();
-                    Assert.IsNotNull(factory, "no factory created");
-                }
-                return factory;
-            }
-            set { this.factory = value; }
-        }
+		public IConnectionFactory Factory
+		{
+			get
+			{
+				if(factory == null)
+				{
+					factory = CreateConnectionFactory();
+					Assert.IsNotNull(factory, "no factory created");
+				}
+				return factory;
+			}
+			set { this.factory = value; }
+		}
 
-        public IConnection Connection
-        {
-            get {
-                if( connection == null ) {
-                    Connect();
-                }
-                return connection;
-            }
-            set { this.connection = value; }
-        }
+		public IConnection Connection
+		{
+			get
+			{
+				if(connection == null)
+				{
+					Connect();
+				}
+				return connection;
+			}
+			set { this.connection = value; }
+		}
 
-        public ISession Session
-        {
-            get {
-                if( session == null ) {
-                    session = Connection.CreateSession(acknowledgementMode);
-                    Assert.IsNotNull(connection != null, "no session created");
-                }
-                return session;
-            }
-            set { this.session = value; }
-        }
+		public ISession Session
+		{
+			get
+			{
+				if(session == null)
+				{
+					session = Connection.CreateSession(acknowledgementMode);
+					Assert.IsNotNull(connection != null, "no session created");
+				}
+				return session;
+			}
+			set { this.session = value; }
+		}
 
-        virtual protected void Connect()
-        {
-            WriteLine("Connectting...");
-            connection = CreateConnection();
-            Assert.IsNotNull(connection, "no connection created");
-            connection.Start();
-            WriteLine("Connected.");
-            Assert.IsNotNull(connection, "no connection created");
-        }
+		protected virtual void Connect()
+		{
+			WriteLine("Connecting...");
+			connection = CreateConnection();
+			Assert.IsNotNull(connection, "no connection created");
+			connection.Start();
+			WriteLine("Connected.");
+			Assert.IsNotNull(connection, "no connection created");
+		}
 
-        virtual protected void Disconnect()
-        {
-			if (session != null)
+		protected virtual void Disconnect()
+		{
+			if(session != null)
 			{
 				session.Dispose();
 				session = null;
 			}
-            if (connection != null)
-            {
-                WriteLine("Disconnecting...");
-                connection.Dispose();
-                connection = null;
-                WriteLine("Disconnected.");
-            }
-        }
-        
-        virtual protected void Reconnect()
-        {
-            Disconnect();
-            Connect();
-        }
 
-        protected virtual void Drain()
-        {
-            using (ISession session = Connection.CreateSession())
-            {
-                // Tries to consume any messages on the Destination
-                IMessageConsumer consumer = session.CreateConsumer(Destination);
+			if(connection != null)
+			{
+				WriteLine("Disconnecting...");
+				connection.Dispose();
+				connection = null;
+				WriteLine("Disconnected.");
+			}
+		}
 
-                // Should only need to wait for first message to arrive due to the way
-                // prefetching works.
-                IMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(receiveTimeout));
-                while (msg != null)
-                {
-                    msg = consumer.ReceiveNoWait();
-                }
-            }
-        }
+		protected virtual void Reconnect()
+		{
+			Disconnect();
+			Connect();
+		}
 
-        public virtual void SendAndSyncReceive()
-        {
-            using (ISession session = Connection.CreateSession())
-            {
+		protected virtual void Drain()
+		{
+			using(ISession drainSession = Connection.CreateSession())
+			{
+				// Tries to consume any messages on the Destination
+				IMessageConsumer consumer = drainSession.CreateConsumer(CreateDestination(drainSession));
 
-                IMessageConsumer consumer = session.CreateConsumer(Destination);
-                IMessageProducer producer = session.CreateProducer(Destination);
+				// Should only need to wait for first message to arrive due to the way
+				// prefetching works.
+				while(consumer.Receive(receiveTimeout) != null)
+				{
+				}
+			}
+		}
+
+		public virtual void SendAndSyncReceive()
+		{
+			using(ISession sendSession = Connection.CreateSession())
+			{
+				IDestination sendDestination = CreateDestination(sendSession);
+				IMessageConsumer consumer = sendSession.CreateConsumer(sendDestination);
+				IMessageProducer producer = sendSession.CreateProducer(sendDestination);
 				producer.Persistent = persistent;
 
-                IMessage request = CreateMessage();
-                producer.Send(request);
+				IMessage request = sendSession.CreateMessage();
+				producer.Send(request);
 
-                IMessage message = consumer.Receive(TimeSpan.FromMilliseconds(receiveTimeout));
-                Assert.IsNotNull(message, "No message returned!");
-                AssertValidMessage(message);
-            }
-        }
+				IMessage message = consumer.Receive(receiveTimeout);
+				Assert.IsNotNull(message, "No message returned!");
+				AssertValidMessage(message);
+			}
+		}
 
-        abstract protected IConnectionFactory CreateConnectionFactory();
+		protected abstract IConnectionFactory CreateConnectionFactory();
 
-        protected virtual IConnection CreateConnection()
-        {
-            IConnection connection =  Factory.CreateConnection();
-            if( clientId!=null ) {
-                connection.ClientId = clientId;
-            }
-            return connection;
-        }
+		protected virtual IConnection CreateConnection()
+		{
+			IConnection newConnection = Factory.CreateConnection();
+			if(clientId != null)
+			{
+				newConnection.ClientId = clientId;
+			}
+			return newConnection;
+		}
 
-        protected virtual IMessageProducer CreateProducer()
-        {
-            IMessageProducer producer = Session.CreateProducer(Destination);
-            return producer;
-        }
+		protected virtual IMessageProducer CreateProducer()
+		{
+			return Session.CreateProducer(Destination);
+		}
 
-        protected virtual IMessageConsumer CreateConsumer()
-        {
-            IMessageConsumer consumer = Session.CreateConsumer(Destination);
-            return consumer;
-        }
-        
-        protected virtual IDestination CreateDestination()
-        {
-            if( destinationType == DestinationType.Queue ) {
-                return Session.GetQueue(CreateDestinationName());
-            } else if( destinationType == DestinationType.Topic ) {
-                return Session.GetTopic(CreateDestinationName());
-            } else if( destinationType == DestinationType.TemporaryQueue ) {
-                return Session.CreateTemporaryQueue();
-            } else if( destinationType == DestinationType.TemporaryTopic ) {
-                return Session.CreateTemporaryTopic();
-            } else {
-                throw new Exception("Unknown destination type: "+destinationType);
-            }
-        }
+		protected virtual IMessageConsumer CreateConsumer()
+		{
+			return Session.CreateConsumer(Destination);
+		}
 
-        protected virtual string CreateDestinationName()
-        {
-            return "Test.DotNet." + GetType().Name + "." + NextNumber.ToString();
-        }
-		
+		protected virtual IDestination CreateDestination()
+		{
+			return CreateDestination(Session);
+		}
+
+		protected virtual IDestination CreateDestination(ISession curSession)
+		{
+			if(destinationType == DestinationType.Queue)
+			{
+				return curSession.GetQueue(CreateDestinationName());
+			}
+			else if(destinationType == DestinationType.Topic)
+			{
+				return curSession.GetTopic(CreateDestinationName());
+			}
+			else if(destinationType == DestinationType.TemporaryQueue)
+			{
+				return curSession.CreateTemporaryQueue();
+			}
+			else if(destinationType == DestinationType.TemporaryTopic)
+			{
+				return curSession.CreateTemporaryTopic();
+			}
+			else
+			{
+				throw new Exception("Unknown destination type: " + destinationType);
+			}
+		}
+
+		protected virtual string CreateDestinationName()
+		{
+			return "Test.DotNet." + GetType().Name + "." + NextNumber.ToString();
+		}
+
 		public static int NextNumber
 		{
-			get { lock(destinationLock) { return ++destinationCounter; } }
+			get
+			{
+				lock(destinationLock)
+				{
+					return ++destinationCounter;
+				}
+			}
 		}
-        
-        protected virtual IMessage CreateMessage()
-        {
-            return Session.CreateMessage();
-        }
-        
-        protected virtual  void AssertValidMessage(IMessage message)
-        {
-            Assert.IsNotNull(message, "Null Message!");
-        }
 
+		protected virtual IMessage CreateMessage()
+		{
+			return Session.CreateMessage();
+		}
 
-        public IDestination Destination
-        {
-            get {
-                if (destination == null)
-                {
-                    destination = CreateDestination();
-                    Assert.IsNotNull(destination, "No destination available!");
-                    WriteLine("Using destination: " + destination);
-                }
-                return destination;
-            }
-            set {
-                destination = value;
-            }
-        }
+		protected virtual void AssertValidMessage(IMessage message)
+		{
+			Assert.IsNotNull(message, "Null Message!");
+		}
+
+		public IDestination Destination
+		{
+			get
+			{
+				if(destination == null)
+				{
+					destination = CreateDestination();
+					Assert.IsNotNull(destination, "No destination available!");
+					WriteLine("Using destination: " + destination);
+				}
+				return destination;
+			}
+			set { destination = value; }
+		}
 
 		protected virtual void WriteLine(string text)
 		{
-			if (logging)
+			if(logging)
 			{
 				Console.WriteLine();
 				Console.WriteLine("#### : " + text);
 			}
 		}
-    }
+	}
 }
-
-

@@ -48,18 +48,6 @@ namespace Apache.NMS {
                 ClientAcknowledge,
 
 				/**
-				 * With this acknowledgment mode, the session automatically
-				 * acknowledges a client's receipt of a message either when
-				 * the session has successfully returned from a call to receive
-				 * or when the message listener the session has called to
-				 * process the message successfully returns.  The broker is
-				 * set to ClientAcknowledge mode, but no manual acknowledgements
-				 * are necessary from the client code.  This mode is useful for
-				 * controlling the flow of messages to the client.
-				 */
-				AutoClientAcknowledge,
-				
-				/**
 				 * Messages will be consumed when the transaction commits.
 				 */
                 Transactional

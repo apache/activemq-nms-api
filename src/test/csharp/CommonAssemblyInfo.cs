@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfigurationAttribute("SNAPSHOT")]
 [assembly: AssemblyCompanyAttribute("http://activemq.apache.org/nms")]
 [assembly: AssemblyProductAttribute("Apache NMS Class Library")]
-[assembly: AssemblyCopyrightAttribute("Copyright (C) 2005-2007 Apache Software Foundation")]
+[assembly: AssemblyCopyrightAttribute("Copyright (C) 2005-2008 Apache Software Foundation")]
 [assembly: AssemblyTrademarkAttribute("")]
 [assembly: AssemblyCultureAttribute("")]
 [assembly: AssemblyVersionAttribute("1.0")]

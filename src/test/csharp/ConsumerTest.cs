@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using System;
+using System.Threading;
 using NUnit.Framework;
 
 namespace Apache.NMS.Test
@@ -28,7 +29,7 @@ namespace Apache.NMS.Test
         [SetUp]
         public override void SetUp()
         {
-            clientId = "test";
+            clientId = "Apache.NMS.Test.ConsumerTest";
             base.SetUp();
         }
 
@@ -51,7 +52,7 @@ namespace Apache.NMS.Test
         public void TestDurableConsumerSelectorChangeNonPersistent()
         {
             destinationType = DestinationType.Topic;
-            persistent = true;
+            persistent = false;
             doTestDurableConsumerSelectorChange();
         }
 
@@ -67,7 +68,7 @@ namespace Apache.NMS.Test
             message.Properties["color"] = "red";
             producer.Send(message);
 
-            IMessage m = consumer.Receive(TimeSpan.FromMilliseconds(receiveTimeout));
+            IMessage m = consumer.Receive(receiveTimeout);
             Assert.IsNotNull(m);
             Assert.AreEqual("1st", ((ITextMessage) m).Text);
 
@@ -89,5 +90,52 @@ namespace Apache.NMS.Test
 
             Assert.IsNull(consumer.ReceiveNoWait());
         }
+
+		[Test]
+		public void TestNoTimeoutConsumer()
+		{
+			destinationType = DestinationType.Queue;
+			// Launch a thread to perform IMessageConsumer.Receive().
+			// If it doesn't fail in less than three seconds, no exception was thrown.
+			Thread receiveThread = new Thread(doTestNoTimeoutConsumer);
+
+			using(timeoutConsumer = Session.CreateConsumer(Destination))
+			{
+				receiveThread.Start();
+				if(receiveThread.Join(3000))
+				{
+					Assert.Fail("IMessageConsumer.Receive() returned without blocking.  Test failed.");
+				}
+				else
+				{
+					// Kill the thread - otherwise it'll sit in Receive() until a message arrives.
+					receiveThread.Interrupt();
+				}
+			}
+		}
+
+		protected IMessageConsumer timeoutConsumer;
+		
+		public void doTestNoTimeoutConsumer()
+		{
+			try
+			{
+				timeoutConsumer.Receive();
+			}
+			catch(ArgumentOutOfRangeException e)
+			{
+				// The test failed.  We will know because the timeout will expire inside TestNoTimeoutConsumer().
+				Console.WriteLine("Test failed with exception: " + e.Message);
+			}
+			catch(ThreadInterruptedException)
+			{
+				// The test succeeded!  We were still blocked when we were interrupted.
+			}
+			catch(Exception e)
+			{
+				// Some other exception occurred.
+				Console.WriteLine("Test failed with exception: " + e.Message);
+			}
+		}
     }
 }

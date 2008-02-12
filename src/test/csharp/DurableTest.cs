@@ -88,7 +88,7 @@ namespace Apache.NMS.Test
                     IMessageConsumer consumer = session.CreateDurableConsumer(
                         topic, CONSUMER_ID, "2 > 1", false);
                     consumer.Listener += new MessageListener(consumer_Listener);
-                    /// Don't know how else to give the system enough time. /// Thread.Sleep(5000); Assert.AreEqual(0, count); Console.WriteLine("Count = " + count); SendPersistentMessage(); Thread.Sleep(5000); Assert.AreEqual(2, count); Console.WriteLine("Count = " + count); consumer.Dispose(); }
+                    // Don't know how else to give the system enough time. // Thread.Sleep(5000); Assert.AreEqual(0, count); Console.WriteLine("Count = " + count); SendPersistentMessage(); Thread.Sleep(5000); Assert.AreEqual(2, count); Console.WriteLine("Count = " + count); consumer.Dispose(); }
 
                     connection.Stop();
                 }

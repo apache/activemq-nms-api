@@ -6,9 +6,9 @@
     The ASF licenses this file to You under the Apache License, Version 2.0
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
-   
+
     http://www.apache.org/licenses/LICENSE-2.0
-   
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,12 +16,12 @@
     limitations under the License.
 -->
 <project xmlns="http://nant.sourceforge.net/release/0.85/nant.xsd">
-  
+
   <!-- ============================================================================================ -->
   <!--    I N I T I A L I Z A T I O N    T A R G E T S                                              -->
   <!-- ============================================================================================ -->
 
-  <!-- global project settings -->  
+  <!-- global project settings -->
   <property name="project.cls.compliant" value="true" unless="${property::exists('project.cls.compliant')}"/>
   <property name="project.release.type"  value="SNAPSHOT" unless="${property::exists('project.release.type')}" />
   <property name="project.version.full"  value="${project.version + if(project.release.type == 'release', '', '-' + project.release.type)}" dynamic="true" />
@@ -39,20 +39,20 @@
   <property name="current.build.framework" value="${framework::get-target-framework()}"/>
   <property name="current.build.defines"   value="${build.defines}" />
 
-  <!-- Figure out the user's HOME directory --> 
+  <!-- Figure out the user's HOME directory -->
   <property name="user.home" value="${environment::get-variable('HOME')}"
             if="${environment::variable-exists('HOME') and platform::is-unix()}"
             unless="${property::exists('user.home')}"/>
   <property name="user.home" value="${environment::get-variable('USERPROFILE')}"
             if="${environment::variable-exists('USERPROFILE') and platform::is-win32()}"
             unless="${property::exists('user.home')}"/>
-            
+
   <fail message="The HOME environment variable is not defined.  Please set it to your home directory."
             unless="${property::exists('user.home')}" if="${platform::is-unix()}"/>
   <fail message="The USERPROFILE environment variable is not defined.  Please set it to your home directory."
             unless="${property::exists('user.home')}" if="${platform::is-win32()}"/>
-            
-  <!-- Figure out the NANT repositories--> 
+
+  <!-- Figure out the NANT repositories-->
   <property name="nant.repo" value="${environment::get-variable('NANT_REPO')}"
             if="${environment::variable-exists('NANT_REPO')}"
             unless="${property::exists('nant.repo')}"/>
@@ -61,73 +61,75 @@
 
   <property name="nant.remote.repo" value="${environment::get-variable('NANT_REMOTE_REPO')}"
                       if="${environment::variable-exists('NANT_REMOTE_REPO')}"
-                      unless="${property::exists('nant.remote.repo')}"/>                      
+                      unless="${property::exists('nant.remote.repo')}"/>
   <property name="nant.remote.repo" value="http://people.apache.org/~chirino/nant-repo"
           unless="${property::exists('nant.remote.repo')}"/>
-          
+
   <!-- Nant Repo Tasks -->
   <target name="repo-download" description="Download a dependency from the remote repo to the local repo">
     <fail message="The repo.task.artifact variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.artifact')}"/>
 
-    <property name="repo.task.src" value="${nant.remote.repo}/${repo.task.artifact}"/>   
-    <property name="repo.task.dest" value="${nant.local.repo}/${repo.task.artifact}"/>   
+    <property name="repo.task.src" value="${nant.remote.repo}/${repo.task.artifact}"/>
+    <property name="repo.task.dest" value="${nant.local.repo}/${repo.task.artifact}"/>
 
-    <property name="repo.task.download" value="false"/>   
+    <property name="repo.task.download" value="false"/>
     <if test="${not file::exists(repo.task.dest)}">
-      <property name="repo.task.download" value="true"/>   
+      <property name="repo.task.download" value="true"/>
     </if>
-    
+
     <if test="${file::exists(repo.task.dest)}">
       <!-- TODO: we could also download if the file is a SNAPSHOT and is stale -->
-      <property name="repo.task.download" value="false"/>   
+      <property name="repo.task.download" value="false"/>
       <echo message="Artifact: ${nant.remote.repo}/${repo.task.artifact} is up to date."/>
     </if>
-    
+
     <if test="${repo.task.download}">
       <echo message="Downloading artifact: ${repo.task.src}"/>
       <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
       <get src="${repo.task.src}" dest="${repo.task.dest}"/>
-    </if>   
+    </if>
   </target>
-  
+
   <target name="repo-install" description="Install a dependency to the local repo">
     <fail message="The repo.task.artifact variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.artifact')}"/>
     <fail message="The repo.task.src variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.src')}"/>
-        
-    <property name="repo.task.dest" value="${nant.local.repo}/${repo.task.artifact}"/>   
+
+    <property name="repo.task.dest" value="${nant.local.repo}/${repo.task.artifact}"/>
     <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
-    <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>    
+    <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>
   </target>
 
-  <target name="repo-deploy" description="Deploy a dependency to the deployment repo">     
+  <target name="repo-deploy" description="Deploy a dependency to the deployment repo">
     <fail message="Then nant.deploy.repo variable has not been set.  Please set it before you call this task." unless="${property::exists('nant.deploy.repo')}"/>
     <fail message="The repo.task.artifact variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.artifact')}"/>
     <fail message="The repo.task.src variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.src')}"/>
-        
-    <property name="repo.task.dest" value="${nant.deploy.repo}/${repo.task.artifact}"/>   
+
+    <property name="repo.task.dest" value="${nant.deploy.repo}/${repo.task.artifact}"/>
     <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
-    <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>    
+    <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>
   </target>
-    
+
 <!-- Helper targets used to enable build configurations -->
   <target name="set-noskip-configuration" description="Disable skiping builds">
     <property name="project.noskip"         value="true" />
   </target>
-  
+
   <target name="set-debug-configuration" description="Enabled 'debug' builds">
     <property name="current.build.config"         value="debug" />
     <property name="current.build.config.debug"   value="true" />
     <property name="current.build.config.release" value="false" />
     <property name="csc.debug"                    value="true" />
+    <property name="csc.optimize"                 value="false" />
   </target>
-  
+
   <target name="set-release-configuration" description="Enabled 'release' builds">
     <property name="current.build.config"         value="release" />
     <property name="current.build.config.release" value="true" />
     <property name="current.build.config.debug"   value="false" />
     <property name="csc.debug"                    value="true" />
+    <property name="csc.optimize"                 value="true" />
   </target>
-  
+
   <target name="set-net-1.0-framework-configuration">
     <property name="current.build.framework" value="net-1.0" />
     <property name="current.build.framework.name" value=".NET 1.0"/>
@@ -139,7 +141,7 @@
       <property name="nant.settings.currentframework" value="${current.build.framework}" />
     </if>
   </target>
-  
+
   <target name="set-net-1.1-framework-configuration">
     <property name="current.build.framework" value="net-1.1" />
     <property name="current.build.framework.name" value=".NET 1.1"/>
@@ -151,7 +153,7 @@
       <property name="nant.settings.currentframework" value="${current.build.framework}" />
     </if>
   </target>
-  
+
   <target name="set-net-2.0-framework-configuration">
     <property name="current.build.framework" value="net-2.0" />
     <property name="current.build.framework.name" value=".NET 2.0"/>
@@ -163,7 +165,7 @@
       <property name="nant.settings.currentframework" value="${current.build.framework}" />
     </if>
   </target>
-  
+
   <target name="set-netcf-1.0-framework-configuration">
     <property name="current.build.framework" value="netcf-1.0" />
     <property name="current.build.framework.name" value=".NET Compact Framework 1.0"/>
@@ -175,7 +177,7 @@
       <property name="nant.settings.currentframework" value="${current.build.framework}" />
     </if>
   </target>
-  
+
   <target name="set-netcf-2.0-framework-configuration">
     <property name="current.build.framework" value="netcf-2.0" />
     <property name="current.build.framework.name" value=".NET Compact Framework 2.0"/>
@@ -187,7 +189,7 @@
       <property name="nant.settings.currentframework" value="${current.build.framework}" />
     </if>
   </target>
-  
+
   <target name="set-mono-1.0-framework-configuration">
     <property name="current.build.framework" value="mono-1.0" />
     <property name="current.build.framework.name" value="Mono 1.0"/>
@@ -199,7 +201,7 @@
       <property name="nant.settings.currentframework" value="${current.build.framework}" />
     </if>
   </target>
-  
+
   <target name="set-mono-2.0-framework-configuration">
     <property name="current.build.framework" value="mono-2.0" />
     <property name="current.build.framework.name" value="Mono 2.0"/>
@@ -211,7 +213,7 @@
       <property name="nant.settings.currentframework" value="${current.build.framework}" />
     </if>
   </target>
-  
+
   <target name="set-sscli-1.0-framework-configuration">
     <property name="current.build.framework" value="sscli-1.0" />
     <property name="current.build.framework.name" value="sscli 1.0"/>
@@ -280,7 +282,7 @@
        <call target="dependency-init"/>
     </if>
   </target>
-  
+
   <!-- ============================================================================================ -->
   <!--     C O M P I L E    T A R G E T S                                                           -->
   <!-- ============================================================================================ -->
@@ -305,17 +307,17 @@
       <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-compile" />
     </if>
   </target>
-  
+
   <target name="conditional-compile" depends="init" unless="${build.skip}"
       description="Conditionaly compiles all the modules if build framework and type are supported">
     <call target="compile" />
-  </target>  
+  </target>
 
   <target name="compile" depends="compile-main,compile-test" description="Compile everything"/>
 
   <target name="compile-main" depends="init" description="Build the main library">
     <echo message="Building the ${project.name} library"/>
-    
+
     <asminfo output="src/main/csharp/CommonAssemblyInfo.cs" language="CSharp">
       <imports>
         <import namespace="System" />
@@ -338,8 +340,8 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="default.snk" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
+    <csc if="${current.build.keysign}" keyfile="${basedir}/activemq-dotnet.snk" target="library"
+      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}" optimize="${csc.optimize}"
       output="${build.bin.dir}/${project.name}.dll" doc="${build.bin.dir}/${project.name}.xml">
       <nowarn>
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
@@ -348,14 +350,10 @@
       <sources failonempty="true">
         <include name="src/main/csharp/**.cs" />
       </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references refid="dependencies"/>
+      <references refid="dependencies" />
     </csc>
     <csc if="${not current.build.keysign}" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
+      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"  optimize="${csc.optimize}"
       output="${build.bin.dir}/${project.name}.dll" doc="${build.bin.dir}/${project.name}.xml">
       <nowarn>
     <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
@@ -364,12 +362,9 @@
       <sources failonempty="true">
         <include name="src/main/csharp/**.cs" />
       </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references refid="dependencies"/>
+      <references refid="dependencies" />
     </csc>
+    <call target="copy-content"/>
   </target>
 
   <!-- Compile the nms-test module -->
@@ -398,8 +393,8 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="default.snk" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
+    <csc if="${current.build.keysign}" keyfile="${basedir}/activemq-dotnet.snk" target="library"
+      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"  optimize="${csc.optimize}"
       output="${build.bin.dir}/${project.name}.Test.dll" doc="${build.bin.dir}/${project.name}.Test.xml">
       <nowarn>
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
@@ -408,14 +403,10 @@
       <sources failonempty="true">
           <include name="src/test/csharp/**.cs" />
       </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references refid="test.dependencies"/>
+      <references refid="test.dependencies" />
     </csc>
     <csc if="${not current.build.keysign}" target="library"
-      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"
+      define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"  optimize="${csc.optimize}"
       output="${build.bin.dir}/${project.name}.Test.dll" doc="${build.bin.dir}/${project.name}.Test.xml">
       <nowarn>
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
@@ -424,15 +415,22 @@
       <sources failonempty="true">
         <include name="src/test/csharp/**.cs" />
       </sources>
-      <resources failonempty="true">
-        <include name="NOTICE.txt" />
-        <include name="LICENSE.txt" />
-      </resources>
-      <references refid="test.dependencies"/>
+      <references refid="test.dependencies" />
     </csc>
+    <call target="copy-content"/>
   </target>
-  
-  
+
+  <target name="copy-content">
+    <foreach item="File" property="content.filename">
+      <in>
+        <items refid="content.filenames" />
+      </in>
+      <do>
+        <copy todir="${build.bin.dir}" file="${content.filename}" if="${not file::up-to-date(content.filename, '${build.bin.dir}/${content.filename}')}" />
+      </do>
+    </foreach>
+  </target>
+
   <!-- ============================================================================================ -->
   <!--      I N S T A L L     T A R G E T S                                                         -->
   <!-- ============================================================================================ -->
@@ -458,29 +456,27 @@
       <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-install" />
     </if>
   </target>
-  
+
   <target name="conditional-install" depends="init" unless="${build.skip}"
       description="Conditionaly install all the modules if build framework and type are supported">
     <call target="install" />
   </target>
-  
+
   <!-- Install the modules to the local repo -->
   <target name="install" depends="compile" description="Install the artifacts into the nant repo">
-    <property name="path" value="${project.group}/${project.name}/${project.version.full}/${current.build.framework}/${current.build.config}"/>    
+    <property name="path" value="${project.group}/${project.name}/${project.version.full}/${current.build.framework}/${current.build.config}"/>
 
-    <property name="repo.task.artifact" value="${path}/${project.name}.dll"/>    
-    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.dll"/>    
-    <call target="repo-install"/>
-    <property name="repo.task.artifact" value="${path}/${project.name}.xml"/>    
-    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.xml"/>    
-    <call target="repo-install"/>
-    <property name="repo.task.artifact" value="${path}/${project.name}.Test.dll"/>    
-    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.Test.dll"/>    
-    <call target="repo-install"/>
-    <property name="repo.task.artifact" value="${path}/${project.name}.Test.xml"/>    
-    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.Test.xml"/>    
-    <call target="repo-install"/>
-    
+    <foreach item="File" property="install.filename">
+      <in>
+        <items refid="install.filenames" />
+      </in>
+      <do>
+        <property name="repo.task.artifact" value="${path}/${install.filename}"/>
+        <property name="repo.task.src" value="${build.bin.dir}/${install.filename}"/>
+        <call target="repo-install"/>
+      </do>
+    </foreach>
+
   </target>
 
   <!-- ============================================================================================ -->
@@ -488,7 +484,7 @@
   <!-- ============================================================================================ -->
 
   <target name="deploy-all" depends="release-init" description="Deploy all build configurations for all runtime configurations">
-    
+
     <echo message="Deploying all build configurations for all runtime configurations." />
 
     <call target="set-debug-configuration" />
@@ -510,43 +506,45 @@
       <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-deploy" />
     </if>
   </target>
-  
+
   <target name="conditional-deploy" depends="init" unless="${build.skip}"
       description="Conditionaly deploy all the modules if build framework and type are supported">
     <call target="deploy" />
   </target>
-  
+
   <target name="init-deploy">
      <fail message="Then nant.deploy.repo variable has not been set.  Please set it before you call this task." unless="${property::exists('nant.deploy.repo')}"/>
   </target>
-  
-  <!-- Install the modules to the local repo -->
-  <target name="deploy" depends="init-deploy, install" description="Deploy the artifacts into the nant repo">
-    <property name="path" value="${project.group}/${project.name}/${project.version.full}/${current.build.framework}/${current.build.config}"/>    
 
-    <property name="repo.task.artifact" value="${path}/${project.name}.dll"/>    
-    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.dll"/>    
-    <call target="repo-deploy"/>
-    <property name="repo.task.artifact" value="${path}/${project.name}.xml"/>    
-    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.xml"/>    
-    <call target="repo-deploy"/>
-    <property name="repo.task.artifact" value="${path}/${project.name}.Test.dll"/>    
-    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.Test.dll"/>    
-    <call target="repo-deploy"/>
-    <property name="repo.task.artifact" value="${path}/${project.name}.Test.xml"/>    
-    <property name="repo.task.src" value="${build.bin.dir}/${project.name}.Test.xml"/>    
-    <call target="repo-deploy"/>
-    
+  <!-- Deploy the modules to the local repo -->
+  <target name="deploy" depends="init-deploy, install" description="Deploy the artifacts into the nant repo">
+    <property name="path" value="${project.group}/${project.name}/${project.version.full}/${current.build.framework}/${current.build.config}"/>
+
+    <foreach item="File" property="deploy.filename">
+      <in>
+        <items refid="deploy.filenames" />
+      </in>
+      <do>
+        <property name="repo.task.artifact" value="${path}/${deploy.filename}"/>
+        <property name="repo.task.src" value="${build.bin.dir}/${deploy.filename}"/>
+        <call target="repo-deploy"/>
+      </do>
+    </foreach>
+
   </target>
-    
+
   <!-- ============================================================================================ -->
   <!--      M I S C E L L A N E O U S    T A R G E T S                                              -->
   <!-- ============================================================================================ -->
 
   <target name="clean" description="Deletes build">
+    <if test="${target::exists('clean-init')}">
+      <call target="clean-init"/>
+    </if>
     <delete dir="build" if="${directory::exists('build')}" />
+    <delete dir="obj" if="${directory::exists('obj')}" />
   </target>
-  
+
   <target name="doc" depends="compile">
     <mkdir dir="${doc.dir}"/>
     <ndoc failonerror="false">
@@ -584,5 +582,5 @@
       </documenters>
     </ndoc>
   </target>
-  
+
 </project>

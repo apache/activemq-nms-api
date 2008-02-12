@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+
 namespace Apache.NMS
 {
 	/// <summary>
@@ -22,6 +24,11 @@ namespace Apache.NMS
 	public class NMSConnectionException : NMSException
 	{
 		public NMSConnectionException(string message) : base(message)
+		{
+		}
+
+		public NMSConnectionException(string message, Exception innerException)
+			: base(message, innerException)
 		{
 		}
 	}
