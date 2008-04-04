@@ -157,6 +157,14 @@
        </if>
     </if>
 
+    <!-- Check to see if we should skip this build framework. -->
+    <if test="${not(build.skip)}">
+      <if test="${property::exists('build.'+current.build.framework+'.skip')}">
+        <property name="build.skip" value="true"/>
+        <echo message="The '${current.build.framework}' framework is not supported by this version of ActiveMQ .NET" />
+      </if>
+    </if>
+
     <if test="${not(build.skip)}">
        <property name="current.build.keysign" value="${current.build.config=='release' and current.build.framework.sign}"/>
        <echo message="Doing ${if(current.build.keysign,'a signed','an unsigned')} ${current.build.config} build for the ${current.build.framework.name} framework" />
