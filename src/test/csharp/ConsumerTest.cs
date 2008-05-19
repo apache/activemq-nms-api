@@ -97,7 +97,7 @@ namespace Apache.NMS.Test
 			destinationType = DestinationType.Queue;
 			// Launch a thread to perform IMessageConsumer.Receive().
 			// If it doesn't fail in less than three seconds, no exception was thrown.
-			Thread receiveThread = new Thread(doTestNoTimeoutConsumer);
+			Thread receiveThread = new Thread(new ThreadStart(doTestNoTimeoutConsumer));
 
 			using(timeoutConsumer = Session.CreateConsumer(Destination))
 			{
