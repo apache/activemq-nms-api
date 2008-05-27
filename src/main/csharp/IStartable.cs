@@ -22,7 +22,8 @@ namespace Apache.NMS
 	public interface IStartable
     {
         void Start();
-    }
+		bool IsStarted { get; }
+	}
 }
 
 
