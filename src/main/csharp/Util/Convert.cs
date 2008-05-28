@@ -18,7 +18,7 @@ using System;
 
 namespace Apache.NMS.Util
 {
-	class NMSConvert
+	public class NMSConvert
 	{
 		public static AcknowledgementMode ToAcknowledgementMode(string ackText)
 		{
