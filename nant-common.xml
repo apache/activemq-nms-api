@@ -237,7 +237,7 @@
   <target name="set-net-3.5-framework-configuration">
     <property name="current.build.framework" value="net-3.5" />
     <property name="current.build.framework.name" value=".NET 3.5"/>
-    <property name="current.build.defines" value="${build.defines}NET,NET_3_5" dynamic="true" />
+    <property name="current.build.defines" value="${build.defines}NET,NET_2_0,NET_3_5" dynamic="true" />
     <property name="current.build.framework.sign" value="true"/>
     <property name="link.sdkdoc.version" value="SDK_v6_0a" />
     <property name="link.sdkdoc.web" value="true" />

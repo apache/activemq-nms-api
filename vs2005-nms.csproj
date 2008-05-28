@@ -19,14 +19,14 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>build\net-2.0\debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET,NET_2_0</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
     <OutputPath>build\net-2.0\release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NET,NET_2_0</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
@@ -62,6 +62,12 @@
     <Compile Include="src\main\csharp\NMSConnectionFactory.cs" />
     <Compile Include="src\main\csharp\NMSSecurityException.cs" />
     <Compile Include="src\main\csharp\Tracer.cs" />
+    <Compile Include="src\main\csharp\Util\Atomic.cs" />
+    <Compile Include="src\main\csharp\Util\AtomicBoolean.cs" />
+    <Compile Include="src\main\csharp\Util\Convert.cs" />
+    <Compile Include="src\main\csharp\Util\CountDownLatch.cs" />
+    <Compile Include="src\main\csharp\Util\DateUtils.cs" />
+    <Compile Include="src\main\csharp\Util\URISupport.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="activemq-dotnet.snk" />
