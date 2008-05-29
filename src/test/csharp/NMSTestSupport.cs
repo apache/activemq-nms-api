@@ -37,7 +37,7 @@ namespace Apache.NMS.Test
 		private ISession session;
 		private IDestination destination;
 
-		protected TimeSpan receiveTimeout = TimeSpan.FromMilliseconds(1000);
+		protected TimeSpan receiveTimeout = TimeSpan.FromMilliseconds(5000);
 		protected string clientId;
 		protected bool persistent = true;
 		protected DestinationType destinationType = DestinationType.Queue;
@@ -51,7 +51,6 @@ namespace Apache.NMS.Test
 		[TearDown]
 		public virtual void TearDown()
 		{
-			destination = null;
 			Disconnect();
 		}
 
@@ -63,7 +62,10 @@ namespace Apache.NMS.Test
 			{
 				if(value)
 				{
-					Connect();
+					if(connection == null)
+					{
+						Connect();
+					}
 				}
 				else
 				{
@@ -106,7 +108,7 @@ namespace Apache.NMS.Test
 				if(session == null)
 				{
 					session = Connection.CreateSession(acknowledgementMode);
-					Assert.IsNotNull(connection != null, "no session created");
+					Assert.IsNotNull(session, "no session created");
 				}
 				return session;
 			}
@@ -120,11 +122,11 @@ namespace Apache.NMS.Test
 			Assert.IsNotNull(connection, "no connection created");
 			connection.Start();
 			WriteLine("Connected.");
-			Assert.IsNotNull(connection, "no connection created");
 		}
 
 		protected virtual void Disconnect()
 		{
+			destination = null;
 			if(session != null)
 			{
 				session.Dispose();

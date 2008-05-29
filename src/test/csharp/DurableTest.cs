@@ -19,89 +19,130 @@ using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-    [TestFixture]
-    public abstract class DurableTest : NMSTestSupport
-    {
-        private static string TOPIC = "TestTopic";
-        private static String CLIENT_ID = "DurableClientId";
-        private static String CONSUMER_ID = "ConsumerId";
+	[TestFixture]
+	public abstract class DurableTest : NMSTestSupport
+	{
+		private static string TOPIC = "TestTopic";
+		private static String CLIENT_ID = "DurableClientId";
+		private static String CONSUMER_ID = "ConsumerId";
 
-        private int count = 0;
+		private int count = 0;
 
-        public void RegisterDurableConsumer()
-        {
-            using (IConnection connection = Factory.CreateConnection())
-            {
-                connection.ClientId = CLIENT_ID;
-                connection.Start();
+		public void RegisterDurableConsumer()
+		{
+			using (IConnection connection = Factory.CreateConnection())
+			{
+				connection.ClientId = CLIENT_ID;
+				connection.Start();
 
-                using (ISession session = connection.CreateSession(
-                    AcknowledgementMode.DupsOkAcknowledge))
-                {
-                    ITopic topic = session.GetTopic(TOPIC);
-                    IMessageConsumer consumer = session.CreateDurableConsumer(
-                        topic, CONSUMER_ID, "2 > 1", false);
-                    consumer.Dispose();
-                }
+				using (ISession session = connection.CreateSession(
+					AcknowledgementMode.DupsOkAcknowledge))
+				{
+					ITopic topic = session.GetTopic(TOPIC);
+					IMessageConsumer consumer = session.CreateDurableConsumer(
+						topic, CONSUMER_ID, "2 > 1", false);
+					consumer.Dispose();
+				}
 
-                connection.Stop();
-            }
-        }
+				connection.Stop();
+			}
+		}
 
-        public void SendPersistentMessage()
-        {
-            using (IConnection connection = Factory.CreateConnection())
-            {
-                connection.Start();
-                using (ISession session = connection.CreateSession(
-                    AcknowledgementMode.DupsOkAcknowledge))
-                {
-                    ITopic topic = session.GetTopic(TOPIC);
-                    ITextMessage message = session.CreateTextMessage("Hello");
-                    message.NMSPersistent = true;
-                    IMessageProducer producer = session.CreateProducer();
-                    producer.Send(topic, message);
-                    producer.Dispose();
-                }
+		public void SendPersistentMessage()
+		{
+			using (IConnection connection = Factory.CreateConnection())
+			{
+				connection.Start();
+				using (ISession session = connection.CreateSession(
+					AcknowledgementMode.DupsOkAcknowledge))
+				{
+					ITopic topic = session.GetTopic(TOPIC);
+					ITextMessage message = session.CreateTextMessage("Hello");
+					message.NMSPersistent = true;
+					IMessageProducer producer = session.CreateProducer();
+					producer.Send(topic, message);
+					producer.Dispose();
+				}
 
-                connection.Stop();
-            }
-        }
+				connection.Stop();
+			}
+		}
 
-        [Test]
-        public void TestMe()
-        {
-            count = 0;
+		[Test]
+		public void TestMe()
+		{
+			count = 0;
 
-            RegisterDurableConsumer();
-            SendPersistentMessage();
+			RegisterDurableConsumer();
+			SendPersistentMessage();
 
-            using (IConnection connection = Factory.CreateConnection())
-            {
-                connection.ClientId = CLIENT_ID;
-                connection.Start();
+			using (IConnection connection = Factory.CreateConnection())
+			{
+				connection.ClientId = CLIENT_ID;
+				connection.Start();
 
-                using (ISession session = connection.CreateSession(
-                    AcknowledgementMode.DupsOkAcknowledge))
-                {
-                    ITopic topic = session.GetTopic(TOPIC);
-                    IMessageConsumer consumer = session.CreateDurableConsumer(
-                        topic, CONSUMER_ID, "2 > 1", false);
-                    consumer.Listener += new MessageListener(consumer_Listener);
-                    // Don't know how else to give the system enough time. // Thread.Sleep(5000); Assert.AreEqual(0, count); Console.WriteLine("Count = " + count); SendPersistentMessage(); Thread.Sleep(5000); Assert.AreEqual(2, count); Console.WriteLine("Count = " + count); consumer.Dispose(); }
+				using (ISession session = connection.CreateSession(
+					AcknowledgementMode.DupsOkAcknowledge))
+				{
+					ITopic topic = session.GetTopic(TOPIC);
+					IMessageConsumer consumer = session.CreateDurableConsumer(
+						topic, CONSUMER_ID, "2 > 1", false);
+					consumer.Listener += new MessageListener(consumer_Listener);
+					// Don't know how else to give the system enough time. // Thread.Sleep(5000); Assert.AreEqual(0, count); Console.WriteLine("Count = " + count); SendPersistentMessage(); Thread.Sleep(5000); Assert.AreEqual(2, count); Console.WriteLine("Count = " + count); consumer.Dispose(); }
 
-                    connection.Stop();
-                }
-            }
-        }
+					connection.Stop();
+				}
+			}
+		}
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="message"></param>
-        private void consumer_Listener(IMessage message)
-        {
-            ++count;
-        }
-    }
+		[Test]
+		public void TestMeTransactional()
+		{
+			count = 0;
+
+			RegisterDurableConsumer();
+			SendPersistentMessage();
+
+			using (IConnection connection = Factory.CreateConnection())
+			{
+				connection.ClientId = CLIENT_ID;
+				connection.Start();
+
+				using (ISession session = connection.CreateSession(
+					AcknowledgementMode.Transactional))
+				{
+					ITopic topic = session.GetTopic(TOPIC);
+					IMessageConsumer consumer = session.CreateDurableConsumer(
+						topic, CONSUMER_ID, "2 > 1", false);
+					consumer.Listener += new MessageListener(consumer_Listener);
+					/// Don't know how else to give the system enough time. 
+
+					System.Threading.Thread.Sleep(3000);
+					Assert.AreEqual(1, count);
+					Console.WriteLine("Count = " + count);
+					SendPersistentMessage();
+					System.Threading.Thread.Sleep(3000);
+					Assert.AreEqual(2, count);
+					Console.WriteLine("Count = " + count);
+
+					session.Commit();
+					// Timeout required before closing/disposing the connection otherwise orphan
+					// connection remains and test will fail when run the second time with a
+					// InvalidClientIDException: DurableClientID already connected.
+					//System.Threading.Thread.Sleep(3000); 
+					consumer.Dispose();
+					connection.Stop();
+				}
+			}
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="message"></param>
+		private void consumer_Listener(IMessage message)
+		{
+			++count;
+		}
+	}
 }
