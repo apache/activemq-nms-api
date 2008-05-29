@@ -45,6 +45,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\test\csharp\CommonAssemblyInfo.cs" />
+    <Compile Include="src\test\csharp\ConnectionTest.cs" />
     <Compile Include="src\test\csharp\ConsumerTest.cs">
       <SubType>Code</SubType>
     </Compile>
