@@ -55,7 +55,7 @@ namespace Apache.NMS.Util
 			}
 		}
 
-		public bool await(int timeout)
+		public bool await(TimeSpan timeout)
 		{
 			return mutex.WaitOne(timeout, false);
 		}
