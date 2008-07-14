@@ -33,7 +33,6 @@
       <HintPath>$(USERPROFILE)\.nant\repository\org.nunit\nunit\2.2.8\all\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
