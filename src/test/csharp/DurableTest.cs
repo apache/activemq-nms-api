@@ -130,7 +130,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, "2 > 1", false))
 					{
 						consumer.Listener += new MessageListener(consumer_Listener);
-						/// Don't know how else to give the system enough time. 
+						// Don't know how else to give the system enough time. 
 
 						System.Threading.Thread.Sleep(5000);
 						Assert.AreEqual(1, count);
