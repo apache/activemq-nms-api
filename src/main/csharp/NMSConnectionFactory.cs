@@ -65,9 +65,13 @@ namespace Apache.NMS
                 // If an implementation was found, try to instantiate it.
 				if(factoryType != null)
                 {
-                    object[] parameters = MakeParameterArray(uriProvider, constructorParams);
+#if NETCF
+					connectionFactory = (IConnectionFactory) Activator.CreateInstance(factoryType);
+#else
+					object[] parameters = MakeParameterArray(uriProvider, constructorParams);
 					connectionFactory = (IConnectionFactory) Activator.CreateInstance(factoryType, parameters);
-                }
+#endif
+				}
 
 				if(null == connectionFactory)
                 {
@@ -103,7 +107,11 @@ namespace Apache.NMS
 
 				if(null != assembly)
 				{
+#if NETCF
+					factoryType = assembly.GetType(factoryClassName, true);
+#else
 					factoryType = assembly.GetType(factoryClassName, true, true);
+#endif
 				}
 			}
 

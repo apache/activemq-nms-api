@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9C67B162-803E-4765-8A1C-041871E6928C}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -17,6 +17,12 @@
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FormFactorID>
     </FormFactorID>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <NativePlatformName>Pocket PC 2003</NativePlatformName>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,32 +55,39 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\main\csharp\NMS\CommonAssemblyInfo.cs" />
-    <Compile Include="src\main\csharp\NMS\IBytesMessage.cs" />
-    <Compile Include="src\main\csharp\NMS\IConnection.cs" />
-    <Compile Include="src\main\csharp\NMS\IConnectionFactory.cs" />
-    <Compile Include="src\main\csharp\NMS\IDestination.cs" />
-    <Compile Include="src\main\csharp\NMS\IMapMessage.cs" />
-    <Compile Include="src\main\csharp\NMS\IMessage.cs" />
-    <Compile Include="src\main\csharp\NMS\IMessageConsumer.cs" />
-    <Compile Include="src\main\csharp\NMS\IMessageProducer.cs" />
-    <Compile Include="src\main\csharp\NMS\InvalidDestinationException.cs" />
-    <Compile Include="src\main\csharp\NMS\IObjectMessage.cs" />
-    <Compile Include="src\main\csharp\NMS\IPrimitiveMap.cs" />
-    <Compile Include="src\main\csharp\NMS\IQueue.cs" />
-    <Compile Include="src\main\csharp\NMS\ISession.cs" />
-    <Compile Include="src\main\csharp\NMS\IStartable.cs" />
-    <Compile Include="src\main\csharp\NMS\IStoppable.cs" />
-    <Compile Include="src\main\csharp\NMS\ITemporaryQueue.cs" />
-    <Compile Include="src\main\csharp\NMS\ITemporaryTopic.cs" />
-    <Compile Include="src\main\csharp\NMS\ITextMessage.cs" />
-    <Compile Include="src\main\csharp\NMS\ITopic.cs" />
-    <Compile Include="src\main\csharp\NMS\ITrace.cs" />
-    <Compile Include="src\main\csharp\NMS\NMSConnectionException.cs" />
-    <Compile Include="src\main\csharp\NMS\NMSConstants.cs" />
-    <Compile Include="src\main\csharp\NMS\NMSException.cs" />
-    <Compile Include="src\main\csharp\NMS\NMSSecurityException.cs" />
-    <Compile Include="src\main\csharp\NMS\Tracer.cs" />
+    <Compile Include="src\main\csharp\CommonAssemblyInfo.cs" />
+    <Compile Include="src\main\csharp\IBytesMessage.cs" />
+    <Compile Include="src\main\csharp\IConnection.cs" />
+    <Compile Include="src\main\csharp\IConnectionFactory.cs" />
+    <Compile Include="src\main\csharp\IDestination.cs" />
+    <Compile Include="src\main\csharp\IMapMessage.cs" />
+    <Compile Include="src\main\csharp\IMessage.cs" />
+    <Compile Include="src\main\csharp\IMessageConsumer.cs" />
+    <Compile Include="src\main\csharp\IMessageProducer.cs" />
+    <Compile Include="src\main\csharp\InvalidDestinationException.cs" />
+    <Compile Include="src\main\csharp\IObjectMessage.cs" />
+    <Compile Include="src\main\csharp\IPrimitiveMap.cs" />
+    <Compile Include="src\main\csharp\IQueue.cs" />
+    <Compile Include="src\main\csharp\ISession.cs" />
+    <Compile Include="src\main\csharp\IStartable.cs" />
+    <Compile Include="src\main\csharp\IStoppable.cs" />
+    <Compile Include="src\main\csharp\ITemporaryQueue.cs" />
+    <Compile Include="src\main\csharp\ITemporaryTopic.cs" />
+    <Compile Include="src\main\csharp\ITextMessage.cs" />
+    <Compile Include="src\main\csharp\ITopic.cs" />
+    <Compile Include="src\main\csharp\ITrace.cs" />
+    <Compile Include="src\main\csharp\NMSConnectionException.cs" />
+    <Compile Include="src\main\csharp\NMSConnectionFactory.cs" />
+    <Compile Include="src\main\csharp\NMSConstants.cs" />
+    <Compile Include="src\main\csharp\NMSException.cs" />
+    <Compile Include="src\main\csharp\NMSSecurityException.cs" />
+    <Compile Include="src\main\csharp\Tracer.cs" />
+    <Compile Include="src\main\csharp\Util\Atomic.cs" />
+    <Compile Include="src\main\csharp\Util\AtomicBoolean.cs" />
+    <Compile Include="src\main\csharp\Util\Convert.cs" />
+    <Compile Include="src\main\csharp\Util\CountDownLatch.cs" />
+    <Compile Include="src\main\csharp\Util\DateUtils.cs" />
+    <Compile Include="src\main\csharp\Util\URISupport.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="activemq-dotnet.snk" />
@@ -95,4 +108,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Import Condition="'$(TargetFrameworkVersion)' == 'v3.5'" Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
 </Project>
