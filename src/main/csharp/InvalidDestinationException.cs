@@ -24,15 +24,15 @@ namespace Apache.NMS
 	public class InvalidDestinationException : NMSException
 	{
 		public InvalidDestinationException(string message)
-		    : base(message)
+			: base(message)
 		{
 		}
-	    
-        public InvalidDestinationException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
-    }
+		
+		public InvalidDestinationException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+	}
 }
 
 

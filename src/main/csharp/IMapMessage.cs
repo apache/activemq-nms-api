@@ -22,13 +22,7 @@ namespace Apache.NMS
 	/// of primitive types
 	/// </summary>
 	public interface IMapMessage : IMessage
-    {
-        IPrimitiveMap Body
-		{
-            get;
-        }
-    }
+	{
+		IPrimitiveMap Body { get; }
+	}
 }
-
-
-

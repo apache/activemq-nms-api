@@ -23,17 +23,14 @@ namespace Apache.NMS
 	/// </summary>
 	public class NMSException : System.Exception
 	{
-	    
-		public NMSException(string message) 
-		    : base(message)
+		public NMSException(string message)
+			: base(message)
 		{
 		}
-	    
-        public NMSException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
-    }
+
+		public NMSException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+	}
 }
-
-

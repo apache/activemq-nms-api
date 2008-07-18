@@ -22,11 +22,11 @@ namespace Apache.NMS
 	/// Defines a number of constants
 	/// </summary>
 	public class NMSConstants
-    {
+	{
 		public const byte defaultPriority = 5;
 		public const bool defaultPersistence = true;
 		public static readonly TimeSpan defaultTimeToLive = TimeSpan.Zero;
-    }
+	}
 }
 
 

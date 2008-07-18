@@ -18,15 +18,11 @@ namespace Apache.NMS
 {
 	/// <summary>
 	/// Represents a queue in a message broker. A message sent to a queue is delivered
-        /// to at most one consumer on the queue.
+	/// to at most one consumer on the queue.
 	/// </summary>
 	public interface IQueue : IDestination
 	{
-		
-		string QueueName
-		{
-			get;
-		}
+		string QueueName { get; }
 	}
 }
 

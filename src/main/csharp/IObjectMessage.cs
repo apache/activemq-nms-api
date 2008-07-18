@@ -20,13 +20,7 @@ namespace Apache.NMS
 	/// Represents an Object message which contains a serializable .Net object.
 	/// </summary>
 	public interface IObjectMessage : IMessage
-    {
-        object Body
-		{
-            get;
-        }
-    }
+	{
+		object Body { get; }
+	}
 }
-
-
-

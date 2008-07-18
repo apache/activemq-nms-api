@@ -22,9 +22,9 @@ using System.Xml;
 
 namespace Apache.NMS
 {
-    public class NMSConnectionFactory : IConnectionFactory
+	public class NMSConnectionFactory : IConnectionFactory
 	{
-    	protected readonly IConnectionFactory factory;
+		protected readonly IConnectionFactory factory;
 
 		/// <summary>
 		/// The ConnectionFactory object must define a constructor that takes as a minimum a Uri object.
@@ -57,14 +57,14 @@ namespace Apache.NMS
 		public static IConnectionFactory CreateConnectionFactory(Uri uriProvider, params object[] constructorParams)
 		{
 			IConnectionFactory connectionFactory = null;
-			
-			try
-            {
-                Type factoryType = GetTypeForScheme(uriProvider.Scheme);
 
-                // If an implementation was found, try to instantiate it.
+			try
+			{
+				Type factoryType = GetTypeForScheme(uriProvider.Scheme);
+
+				// If an implementation was found, try to instantiate it.
 				if(factoryType != null)
-                {
+				{
 #if NETCF
 					connectionFactory = (IConnectionFactory) Activator.CreateInstance(factoryType);
 #else
@@ -74,18 +74,18 @@ namespace Apache.NMS
 				}
 
 				if(null == connectionFactory)
-                {
-                    throw new NMSConnectionException("No IConnectionFactory implementation found for connection URI: " + uriProvider);
-                }
-            }
+				{
+					throw new NMSConnectionException("No IConnectionFactory implementation found for connection URI: " + uriProvider);
+				}
+			}
 			catch(NMSConnectionException)
-            {
-                throw;
-            }
-            catch(Exception ex)
-            {
+			{
+				throw;
+			}
+			catch(Exception ex)
+			{
 				throw new NMSConnectionException("Could not create the IConnectionFactory implementation: " + ex.Message, ex);
-            }
+			}
 
 			return connectionFactory;
 		}
@@ -95,7 +95,7 @@ namespace Apache.NMS
 		/// </summary>
 		/// <param name="scheme"></param>
 		/// <returns></returns>
-    	private static Type GetTypeForScheme(string scheme)
+		private static Type GetTypeForScheme(string scheme)
 		{
 			string assemblyFileName;
 			string factoryClassName;
@@ -116,7 +116,7 @@ namespace Apache.NMS
 			}
 
 			return factoryType;
-        }
+		}
 
 		/// <summary>
 		/// Lookup the connection factory assembly filename and class name.
@@ -124,16 +124,16 @@ namespace Apache.NMS
 		/// Load XML config files named: nmsprovider-{scheme}.config
 		/// Following is a sample configuration file named nmsprovider-jms.config.  Replace
 		/// the parenthesis with angle brackets for proper XML formatting.
-		/// 
+		///
 		///		(?xml version="1.0" encoding="utf-8" ?)
 		///		(configuration)
 		///			(provider assembly="MyCompany.NMS.JMSProvider.dll" classFactory="MyCompany.NMS.JMSProvider.ConnectionFactory"/)
 		///		(/configuration)
-		/// 
+		///
 		/// This configuration file would be loaded and parsed when a connection uri with a scheme of 'jms'
 		/// is used for the provider.  In this example the connection string might look like:
 		///		jms://localhost:7222
-		/// 
+		///
 		/// </summary>
 		/// <param name="scheme"></param>
 		/// <param name="assemblyFileName"></param>
@@ -193,12 +193,12 @@ namespace Apache.NMS
 		}
 
 		/// <summary>
-        /// Creates a new connection
-        /// </summary>
-        public IConnection CreateConnection()
-        {
-            return this.factory.CreateConnection();
-        }
+		/// Creates a new connection
+		/// </summary>
+		public IConnection CreateConnection()
+		{
+			return this.factory.CreateConnection();
+		}
 
 		/// <summary>
 		/// Creates a new connection with the given user name and password
@@ -206,18 +206,18 @@ namespace Apache.NMS
 		/// <param name="userName"></param>
 		/// <param name="password"></param>
 		/// <returns></returns>
-        public IConnection CreateConnection(string userName, string password)
-        {
-            return this.factory.CreateConnection(userName, password);
-        }
+		public IConnection CreateConnection(string userName, string password)
+		{
+			return this.factory.CreateConnection(userName, password);
+		}
 
 		/// <summary>
-        /// The actual IConnectionFactory implementation that is being used.  This implemenation 
-        /// depends on the scheme of the URI used when constructed.
-        /// </summary>
-        public IConnectionFactory ConnectionFactory
-        {
-            get { return factory; }
-        }
+		/// The actual IConnectionFactory implementation that is being used.  This implemenation
+		/// depends on the scheme of the URI used when constructed.
+		/// </summary>
+		public IConnectionFactory ConnectionFactory
+		{
+			get { return factory; }
+		}
 	}
 }

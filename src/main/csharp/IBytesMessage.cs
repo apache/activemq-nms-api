@@ -20,14 +20,8 @@ namespace Apache.NMS
 	/// Represents a binary based message
 	/// </summary>
 	public interface IBytesMessage : IMessage
-    {
-        
-        byte[] Content
-        {
-            get;
-            set;
-        }
-    }
+	{
+		byte[] Content { get; set; }
+	}
 }
-
 

@@ -25,38 +25,38 @@ namespace Apache.NMS
 	/// A consumer of messages
 	/// </summary>
 	public interface IMessageConsumer : System.IDisposable
-    {
-        
-        /// <summary>
-        /// Waits until a message is available and returns it
-        /// </summary>
-        IMessage Receive();
-        
-        /// <summary>
-        /// If a message is available within the timeout duration it is returned otherwise this method returns null
-        /// </summary>
-        IMessage Receive(System.TimeSpan timeout);
-        
-        /// <summary>
-        /// If a message is available immediately it is returned otherwise this method returns null
-        /// </summary>
-        IMessage ReceiveNoWait();
-        
-        /// <summary>
-        /// An asynchronous listener which can be used to consume messages asynchronously
-        /// </summary>
-        event MessageListener Listener;
+	{
+		
+		/// <summary>
+		/// Waits until a message is available and returns it
+		/// </summary>
+		IMessage Receive();
+		
+		/// <summary>
+		/// If a message is available within the timeout duration it is returned otherwise this method returns null
+		/// </summary>
+		IMessage Receive(System.TimeSpan timeout);
+		
+		/// <summary>
+		/// If a message is available immediately it is returned otherwise this method returns null
+		/// </summary>
+		IMessage ReceiveNoWait();
+		
+		/// <summary>
+		/// An asynchronous listener which can be used to consume messages asynchronously
+		/// </summary>
+		event MessageListener Listener;
 
-        /// <summary>
-        /// Closes the message consumer. 
-        /// </summary>
-        /// <remarks>
-        /// Clients should close message consumers them when they are not needed.
-        /// This call blocks until a receive or message listener in progress has completed.
-        /// A blocked message consumer receive call returns null when this message consumer is closed.
-        /// </remarks>
-        void Close();
-    }
+		/// <summary>
+		/// Closes the message consumer. 
+		/// </summary>
+		/// <remarks>
+		/// Clients should close message consumers them when they are not needed.
+		/// This call blocks until a receive or message listener in progress has completed.
+		/// A blocked message consumer receive call returns null when this message consumer is closed.
+		/// </remarks>
+		void Close();
+	}
 }
 
 

@@ -20,14 +20,8 @@ namespace Apache.NMS
 	/// Represents a text based message
 	/// </summary>
 	public interface ITextMessage : IMessage
-    {
-        
-        string Text
-        {
-            get;
-            set;
-        }
-    }
+	{
+		string Text { get; set; }
+	}
 }
-
 

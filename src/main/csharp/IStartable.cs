@@ -20,8 +20,8 @@ namespace Apache.NMS
 	/// A lifecycle for NMS objects to indicate they can be started
 	/// </summary>
 	public interface IStartable
-    {
-        void Start();
+	{
+		void Start();
 		bool IsStarted { get; }
 	}
 }

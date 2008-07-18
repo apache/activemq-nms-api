@@ -18,101 +18,78 @@ using System;
 
 namespace Apache.NMS
 {
-	
 	/// <summary>
 	/// An object capable of sending messages to some destination
 	/// </summary>
 	public interface IMessageProducer : System.IDisposable
 	{
-		
-        /// <summary>
-        /// Sends the message to the default destination for this producer
-        /// </summary>
-        void Send(IMessage message);
-		
-        /// <summary>
-        /// Sends the message to the default destination with the explicit QoS configuration
-        /// </summary>
-        void Send(IMessage message, bool persistent, byte priority, TimeSpan timeToLive);
+		/// <summary>
+		/// Sends the message to the default destination for this producer
+		/// </summary>
+		void Send(IMessage message);
 
-        /// <summary>
-        /// Sends the message to the given destination
-        /// </summary>
-        void Send(IDestination destination, IMessage message);
-		
-        /// <summary>
-        /// Sends the message to the given destination with the explicit QoS configuration
-        /// </summary>
+		/// <summary>
+		/// Sends the message to the default destination with the explicit QoS configuration
+		/// </summary>
+		void Send(IMessage message, bool persistent, byte priority, TimeSpan timeToLive);
+
+		/// <summary>
+		/// Sends the message to the given destination
+		/// </summary>
+		void Send(IDestination destination, IMessage message);
+
+		/// <summary>
+		/// Sends the message to the given destination with the explicit QoS configuration
+		/// </summary>
 		void Send(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive);
-        
 
-		bool Persistent
-		{
-			get;
-			set;
-		}
-		
-		TimeSpan TimeToLive
-		{
-			get;
-			set;
-		}
-		
-		byte Priority
-		{
-			get;
-			set;
-		}
-		
-		bool DisableMessageID
-		{
-			get;
-			set;
-		}
-		
-		bool DisableMessageTimestamp
-		{
-			get;
-			set;
-		}
-		
-		// Factory methods to create messages
-		
+		bool Persistent { get; set; }
+
+		TimeSpan TimeToLive { get; set; }
+
+		byte Priority { get; set; }
+
+		bool DisableMessageID { get; set; }
+
+		bool DisableMessageTimestamp { get; set; }
+
+		#region Factory methods to create messages
+
 		/// <summary>
 		/// Creates a new message with an empty body
 		/// </summary>
 		IMessage CreateMessage();
-		
+
 		/// <summary>
 		/// Creates a new text message with an empty body
 		/// </summary>
 		ITextMessage CreateTextMessage();
-		
+
 		/// <summary>
 		/// Creates a new text message with the given body
 		/// </summary>
 		ITextMessage CreateTextMessage(string text);
-		
+
 		/// <summary>
 		/// Creates a new Map message which contains primitive key and value pairs
 		/// </summary>
 		IMapMessage CreateMapMessage();
-		
+
 		/// <summary>
 		/// Creates a new Object message containing the given .NET object as the body
 		/// </summary>
 		IObjectMessage CreateObjectMessage(object body);
-		
+
 		/// <summary>
 		/// Creates a new binary message
 		/// </summary>
 		IBytesMessage CreateBytesMessage();
-		
+
 		/// <summary>
 		/// Creates a new binary message with the given body
 		/// </summary>
 		IBytesMessage CreateBytesMessage(byte[] body);
-    }
+
+		#endregion
+	}
 }
-
-
