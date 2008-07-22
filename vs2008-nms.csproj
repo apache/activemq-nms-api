@@ -11,7 +11,7 @@
     <WarningLevel>4</WarningLevel>
     <StartupObject>
     </StartupObject>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>activemq-dotnet.snk</AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
