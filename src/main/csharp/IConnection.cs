@@ -76,6 +76,11 @@ namespace Apache.NMS
 		ISession CreateSession(AcknowledgementMode acknowledgementMode);
 
 		/// <summary>
+		/// Creates a new session to work on this connection
+		/// </summary>
+		ISession CreateSession(AcknowledgementMode acknowledgementMode, TimeSpan requestTimeout);
+
+		/// <summary>
 		/// The default acknowledgement mode
 		/// </summary>
 		AcknowledgementMode AcknowledgementMode { get; set; } 
