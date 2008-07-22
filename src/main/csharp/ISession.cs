@@ -54,6 +54,7 @@ namespace Apache.NMS
 		/// </summary>
 		IMessageConsumer CreateConsumer(IDestination destination, string selector);
 
+		/// <summary>
 		/// Creates a consumer of messages on a given destination with a selector
 		/// </summary>
 		IMessageConsumer CreateConsumer(IDestination destination, string selector, TimeSpan requestTimeout);
