@@ -17,6 +17,9 @@
 using Apache.NMS;
 using NUnit.Framework;
 using System;
+using System.IO;
+using System.Xml;
+using System.Collections;
 
 namespace Apache.NMS.Test
 {
@@ -32,13 +35,15 @@ namespace Apache.NMS.Test
 		// enable/disable logging of message flows
 		protected bool logging = true;
 
-		private IConnectionFactory factory;
+		private NMSConnectionFactory NMSFactory;
 		private IConnection connection;
 		private ISession session;
 		private IDestination destination;
 
 		protected TimeSpan receiveTimeout = TimeSpan.FromMilliseconds(5000);
-		protected string clientId;
+		protected virtual string clientId { get; set; }
+		protected virtual string passWord { get; set; }
+		protected virtual string userName { get; set; }
 		protected bool persistent = true;
 		protected DestinationType destinationType = DestinationType.Queue;
 		protected AcknowledgementMode acknowledgementMode = AcknowledgementMode.ClientAcknowledge;
@@ -78,41 +83,40 @@ namespace Apache.NMS.Test
 		{
 			get
 			{
-				if(factory == null)
+				if(null == NMSFactory)
 				{
-					factory = CreateConnectionFactory();
-					Assert.IsNotNull(factory, "no factory created");
+					Assert.IsTrue(CreateNMSFactory(), "Error creating factory.");
 				}
-				return factory;
+
+				return NMSFactory.ConnectionFactory;
 			}
-			set { this.factory = value; }
 		}
 
 		public IConnection Connection
 		{
 			get
 			{
-				if(connection == null)
+				if(null == connection)
 				{
 					Connect();
 				}
+
 				return connection;
 			}
-			set { this.connection = value; }
 		}
 
 		public ISession Session
 		{
 			get
 			{
-				if(session == null)
+				if(null == session)
 				{
 					session = Connection.CreateSession(acknowledgementMode);
 					Assert.IsNotNull(session, "no session created");
 				}
+
 				return session;
 			}
-			set { this.session = value; }
 		}
 
 		protected virtual void Connect()
@@ -165,31 +169,129 @@ namespace Apache.NMS.Test
 
 		public virtual void SendAndSyncReceive()
 		{
-			using(ISession sendSession = Connection.CreateSession())
-			{
-				IDestination sendDestination = CreateDestination(sendSession);
-				IMessageConsumer consumer = sendSession.CreateConsumer(sendDestination);
-				IMessageProducer producer = sendSession.CreateProducer(sendDestination);
-				producer.Persistent = persistent;
+			// IDestination sendDestination = CreateDestination(Session);
+			IMessageConsumer consumer = Session.CreateConsumer(Destination);
+			IMessageProducer producer = Session.CreateProducer(Destination);
 
-				IMessage request = sendSession.CreateMessage();
-				producer.Send(request);
+			producer.Persistent = persistent;
 
-				IMessage message = consumer.Receive(receiveTimeout);
-				Assert.IsNotNull(message, "No message returned!");
-				AssertValidMessage(message);
-			}
+			IMessage request = CreateMessage();
+			producer.Send(request);
+
+			IMessage message = consumer.Receive(receiveTimeout);
+			Assert.IsNotNull(message, "No message returned!");
+			AssertValidMessage(message);
 		}
 
-		protected abstract IConnectionFactory CreateConnectionFactory();
+		protected virtual string GetConnectionConfigFileName() { return "nmsprovider-test.config"; }
+
+		protected virtual string GetNameTestURI() { return "defaultURI"; }
+
+		protected bool CreateNMSFactory()
+		{
+			return CreateNMSFactory(GetNameTestURI());
+		}
+
+		protected bool CreateNMSFactory(string nameTestURI)
+		{
+			Uri brokerUri = null;
+			object[] factoryParams = null;
+			string connectionConfigFileName = GetConnectionConfigFileName();
+
+			Assert.IsTrue(File.Exists(connectionConfigFileName), "Connection configuration file does not exist.");
+			XmlDocument configDoc = new XmlDocument();
+
+			configDoc.Load(connectionConfigFileName);
+			XmlElement uriNode = (XmlElement) configDoc.SelectSingleNode(String.Format("/configuration/{0}", nameTestURI));
+
+			if(null != uriNode)
+			{
+				brokerUri = new Uri(uriNode.GetAttribute("value"));
+				factoryParams = GetFactoryParams(uriNode);
+	
+				XmlElement userNameNode = (XmlElement) uriNode.SelectSingleNode("userName");
+
+				if(null != userNameNode)
+				{
+					userName = userNameNode.GetAttribute("value");
+				}
+				else
+				{
+					userName = "guest";
+				}
+
+				XmlElement passWordNode = (XmlElement) uriNode.SelectSingleNode("passWord");
+
+				if(null != passWordNode)
+				{
+					passWord = passWordNode.GetAttribute("value");
+				}
+				else
+				{
+					passWord = "guest";
+				}
+
+				if(null == factoryParams)
+				{
+					NMSFactory = new Apache.NMS.NMSConnectionFactory(brokerUri);
+				}
+				else
+				{
+					NMSFactory = new Apache.NMS.NMSConnectionFactory(brokerUri, factoryParams);
+				}
+			}
+
+			return (null != NMSFactory);
+		}
+
+		protected object[] GetFactoryParams(XmlElement uriNode)
+		{
+			ArrayList factoryParams = new ArrayList();
+			XmlElement factoryParamsNode = (XmlElement) uriNode.SelectSingleNode("factoryParams");
+
+			if(null != factoryParamsNode)
+			{
+				XmlNodeList nodeList = factoryParamsNode.SelectNodes("param");
+
+				if(null != nodeList)
+				{
+					foreach(XmlElement paramNode in nodeList)
+					{
+						string paramType = paramNode.GetAttribute("type");
+						string paramValue = paramNode.GetAttribute("value");
+
+						switch(paramType)
+						{
+						case "string":
+							factoryParams.Add(paramValue);
+						break;
+
+						case "int":
+							factoryParams.Add(int.Parse(paramValue));
+						break;
+
+						// TODO: Add more parameter types
+						}
+					}
+				}
+			}
+
+			if(factoryParams.Count > 0)
+			{
+				return factoryParams.ToArray();
+			}
+
+			return null;
+		}
 
 		protected virtual IConnection CreateConnection()
 		{
-			IConnection newConnection = Factory.CreateConnection();
+			IConnection newConnection = Factory.CreateConnection(userName, passWord);
 			if(clientId != null)
 			{
 				newConnection.ClientId = clientId;
 			}
+
 			return newConnection;
 		}
 
