@@ -122,7 +122,7 @@ namespace Apache.NMS.Test
 		protected virtual void Connect()
 		{
 			WriteLine("Connecting...");
-			connection = CreateConnection();
+			connection = CreateConnection(this.clientId);
 			Assert.IsNotNull(connection, "no connection created");
 			connection.Start();
 			WriteLine("Connected.");
@@ -284,12 +284,13 @@ namespace Apache.NMS.Test
 			return null;
 		}
 
-		protected virtual IConnection CreateConnection()
+		public virtual IConnection CreateConnection(string newClientId)
 		{
 			IConnection newConnection = Factory.CreateConnection(userName, passWord);
-			if(clientId != null)
+			Assert.IsNotNull(newConnection, "connection not created");
+			if(newClientId != null)
 			{
-				newConnection.ClientId = clientId;
+				newConnection.ClientId = newClientId;
 			}
 
 			return newConnection;

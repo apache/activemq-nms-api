@@ -30,17 +30,15 @@ namespace Apache.NMS.Test
 		[Test]
 		public void TwoConnections()
 		{
-			IConnection connection1 = Factory.CreateConnection();
-			connection1.Start();
-
-			IConnection connection2 = Factory.CreateConnection();
-			connection2.Start();
-
-			connection1.Stop();
-			connection1.Dispose();
-			connection2.Stop();
-			connection2.Dispose();
-			// with the bug present we'll get an exception in connection2.start()
+			using(IConnection connection1 = CreateConnection(null))
+			{
+				connection1.Start();
+				using(IConnection connection2 = CreateConnection(null))
+				{
+					// with the bug present we'll get an exception in connection2.start()
+					connection2.Start();
+				}
+			}
 		}
 	}
 }
