@@ -80,6 +80,12 @@ namespace Apache.NMS
 		IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal, TimeSpan requestTimeout);
 
 		/// <summary>
+		/// Deletes a durable consumer created with CreateDurableConsumer().
+		/// </summary>
+		/// <param name="name">Name of the durable consumer</param>
+		void DeleteDurableConsumer(string name);
+
+		/// <summary>
 		/// Returns the queue for the given name
 		/// </summary>
 		IQueue GetQueue(string name);
