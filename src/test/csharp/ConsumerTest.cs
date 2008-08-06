@@ -17,78 +17,80 @@
 using System;
 using System.Threading;
 using NUnit.Framework;
+using Apache.NMS.Util;
 
 namespace Apache.NMS.Test
 {
     [TestFixture]
     public abstract class ConsumerTest : NMSTestSupport
     {
-        public int prefetch;
-        public bool durableConsumer;
-
-        [SetUp]
-        public override void SetUp()
-        {
-            clientId = "Apache.NMS.Test.ConsumerTest";
-            base.SetUp();
-        }
-
-        [TearDown]
-        public override void TearDown()
-        {
-            base.TearDown();
-        }
-
+		private static string TEST_CLIENT_ID = "ConsumerTestClientId";
+		private static string TOPIC = "TestTopicConsumerTest";
+		private static string CONSUMER_ID = "ConsumerTestConsumerId";
 
         [Test]
         public void TestDurableConsumerSelectorChangePersistent()
         {
-            destinationType = DestinationType.Topic;
-            persistent = true;
-            doTestDurableConsumerSelectorChange();
+            doTestDurableConsumerSelectorChange(true);
         }
 
         [Test]
         public void TestDurableConsumerSelectorChangeNonPersistent()
         {
-            destinationType = DestinationType.Topic;
-            persistent = false;
-            doTestDurableConsumerSelectorChange();
+            doTestDurableConsumerSelectorChange(false);
         }
 
-        public void doTestDurableConsumerSelectorChange()
+        public void doTestDurableConsumerSelectorChange(bool persistent)
         {
-            IMessageProducer producer = Session.CreateProducer(Destination);
-            producer.Persistent = persistent;
-            IMessageConsumer consumer =
-                Session.CreateDurableConsumer((ITopic) Destination, "test", "color='red'", false);
+			try
+			{
+				using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+				{
+					connection.Start();
+					using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+					{
+						ITopic topic = SessionUtil.GetTopic(session, TOPIC);
+						IMessageProducer producer = session.CreateProducer(topic);
+						IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, "color='red'", false);
 
-            // Send the messages
-            ITextMessage message = Session.CreateTextMessage("1st");
-            message.Properties["color"] = "red";
-            producer.Send(message);
+						producer.Persistent = persistent;
 
-            IMessage m = consumer.Receive(receiveTimeout);
-            Assert.IsNotNull(m);
-            Assert.AreEqual("1st", ((ITextMessage) m).Text);
+						// Send the messages
+						ITextMessage sendMessage = session.CreateTextMessage("1st");
+						sendMessage.Properties["color"] = "red";
+						producer.Send(sendMessage);
 
-            // Change the subscription.
-            consumer.Dispose();
-            consumer = Session.CreateDurableConsumer((ITopic) Destination, "test", "color='blue'", false);
+						ITextMessage receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
+						Assert.IsNotNull(receiveMsg, "Failed to retrieve 1st durable message.");
+						Assert.AreEqual("1st", receiveMsg.Text);
+						Assert.IsTrue(receiveMsg.NMSPersistent == persistent, "message does not match persistent setting.");
 
-            message = Session.CreateTextMessage("2nd");
-            message.Properties["color"] = "red";
-            producer.Send(message);
-            message = Session.CreateTextMessage("3rd");
-            message.Properties["color"] = "blue";
-            producer.Send(message);
+						// Change the subscription.
+						consumer.Dispose();
+						consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, "color='blue'", false);
 
-            // Selector should skip the 2nd message.
-            m = consumer.Receive(TimeSpan.FromMilliseconds(1000));
-            Assert.IsNotNull(m);
-            Assert.AreEqual("3rd", ((ITextMessage) m).Text);
+						sendMessage = session.CreateTextMessage("2nd");
+						sendMessage.Properties["color"] = "red";
+						producer.Send(sendMessage);
+						sendMessage = session.CreateTextMessage("3rd");
+						sendMessage.Properties["color"] = "blue";
+						producer.Send(sendMessage);
 
-            Assert.IsNull(consumer.ReceiveNoWait());
+						// Selector should skip the 2nd message.
+						receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
+						Assert.IsNotNull(receiveMsg, "Failed to retrieve durable message.");
+						Assert.AreEqual("3rd", receiveMsg.Text, "Retrieved the wrong durable message.");
+						Assert.IsTrue(receiveMsg.NMSPersistent == persistent, "message does not match persistent setting.");
+
+						// Make sure there are no pending messages.
+						Assert.IsNull(consumer.ReceiveNoWait(), "Wrong number of messages in durable subscription.");
+					}
+				}
+			}
+			finally
+			{
+				UnregisterDurableConsumer(TEST_CLIENT_ID, CONSUMER_ID);
+			}
         }
 
 		[Test]
@@ -97,26 +99,33 @@ namespace Apache.NMS.Test
 			destinationType = DestinationType.Queue;
 			// Launch a thread to perform IMessageConsumer.Receive().
 			// If it doesn't fail in less than three seconds, no exception was thrown.
-			Thread receiveThread = new Thread(new ThreadStart(doTestNoTimeoutConsumer));
-
-			using(timeoutConsumer = Session.CreateConsumer(Destination))
+			Thread receiveThread = new Thread(new ThreadStart(TimeoutConsumerThreadProc));
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
-				receiveThread.Start();
-				if(receiveThread.Join(3000))
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					Assert.Fail("IMessageConsumer.Receive() returned without blocking.  Test failed.");
-				}
-				else
-				{
-					// Kill the thread - otherwise it'll sit in Receive() until a message arrives.
-					receiveThread.Interrupt();
+					ITemporaryQueue queue = session.CreateTemporaryQueue();
+					using(this.timeoutConsumer = session.CreateConsumer(queue))
+					{
+						receiveThread.Start();
+						if(receiveThread.Join(3000))
+						{
+							Assert.Fail("IMessageConsumer.Receive() returned without blocking.  Test failed.");
+						}
+						else
+						{
+							// Kill the thread - otherwise it'll sit in Receive() until a message arrives.
+							receiveThread.Interrupt();
+						}
+					}
 				}
 			}
 		}
 
 		protected IMessageConsumer timeoutConsumer;
 		
-		public void doTestNoTimeoutConsumer()
+		protected void TimeoutConsumerThreadProc()
 		{
 			try
 			{
@@ -125,7 +134,7 @@ namespace Apache.NMS.Test
 			catch(ArgumentOutOfRangeException e)
 			{
 				// The test failed.  We will know because the timeout will expire inside TestNoTimeoutConsumer().
-				Console.WriteLine("Test failed with exception: " + e.Message);
+				Assert.Fail("Test failed with exception: " + e.Message);
 			}
 			catch(ThreadInterruptedException)
 			{
@@ -134,7 +143,7 @@ namespace Apache.NMS.Test
 			catch(Exception e)
 			{
 				// Some other exception occurred.
-				Console.WriteLine("Test failed with exception: " + e.Message);
+				Assert.Fail("Test failed with exception: " + e.Message);
 			}
 		}
     }

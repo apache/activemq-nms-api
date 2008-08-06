@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Apache.NMS;
+using Apache.NMS.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -47,6 +48,11 @@ namespace Apache.NMS.Test
 		protected bool persistent = true;
 		protected DestinationType destinationType = DestinationType.Queue;
 		protected AcknowledgementMode acknowledgementMode = AcknowledgementMode.ClientAcknowledge;
+
+		public NMSTestSupport()
+		{
+			clientId = "NMSUnitTests";
+		}
 
 		[SetUp]
 		public virtual void SetUp()
@@ -294,6 +300,41 @@ namespace Apache.NMS.Test
 			}
 
 			return newConnection;
+		}
+
+		/// <summary>
+		/// Register a durable consumer
+		/// </summary>
+		/// <param name="destination">Destination name to register.  Supports embedded prefix names.</param>
+		/// <param name="consumerID">Name of the durable consumer.</param>
+		/// <param name="selector">Selector parameters for consumer.</param>
+		/// <param name="noLocal"></param>
+		protected void RegisterDurableConsumer(string connectionID, string destination, string consumerID, string selector, bool noLocal)
+		{
+			using(IConnection connection = CreateConnection(connectionID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
+				{
+					ITopic destinationTopic = SessionUtil.GetTopic(session, destination);
+					Assert.IsNotNull(destinationTopic, "Could not get destination topic.");
+					using(IMessageConsumer consumer = session.CreateDurableConsumer(destinationTopic, consumerID, selector, noLocal, receiveTimeout))
+					{
+					}
+				}
+			}
+		}
+
+		protected void UnregisterDurableConsumer(string connectionID, string consumerID)
+		{
+			using(IConnection connection = CreateConnection(connectionID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
+				{
+					session.DeleteDurableConsumer(consumerID, receiveTimeout);
+				}
+			}
 		}
 
 		protected virtual IMessageProducer CreateProducer()

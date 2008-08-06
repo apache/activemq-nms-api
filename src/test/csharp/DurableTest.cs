@@ -16,6 +16,7 @@
  */
 using System;
 using NUnit.Framework;
+using Apache.NMS.Util;
 
 namespace Apache.NMS.Test
 {
@@ -28,33 +29,6 @@ namespace Apache.NMS.Test
 		private static string CONSUMER_ID = "DurableTestConsumerId";
 		private static string DURABLE_SELECTOR = "2 > 1";
 
-		protected void RegisterDurableConsumer()
-		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
-			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
-				{
-					ITopic topic = session.GetTopic(TOPIC);
-					using(IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, DURABLE_SELECTOR, false))
-					{
-					}
-				}
-			}
-		}
-
-		protected void UnregisterDurableConsumer()
-		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
-			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
-				{
-					session.DeleteDurableConsumer(CONSUMER_ID);
-				}
-			}
-		}
-
 		protected void SendPersistentMessage()
 		{
 			using(IConnection connection = CreateConnection(SEND_CLIENT_ID))
@@ -62,11 +36,13 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
 				{
-					ITopic topic = session.GetTopic(TOPIC);
+					ITopic topic = SessionUtil.GetTopic(session, TOPIC);
 					ITextMessage message = session.CreateTextMessage("Persistent Hello");
-					using(IMessageProducer producer = session.CreateProducer())
+					using(IMessageProducer producer = session.CreateProducer(topic))
 					{
-						producer.Send(topic, message, true, message.NMSPriority, receiveTimeout);
+						producer.Persistent = true;
+						producer.RequestTimeout = TimeSpan.FromSeconds(5);
+						producer.Send(message);
 					}
 				}
 			}
@@ -75,17 +51,17 @@ namespace Apache.NMS.Test
 		[Test]
 		public void TestDurableConsumer()
 		{
-			RegisterDurableConsumer();
-			SendPersistentMessage();
-
 			try
 			{
+				RegisterDurableConsumer(TEST_CLIENT_ID, TOPIC, CONSUMER_ID, DURABLE_SELECTOR, false);
+				SendPersistentMessage();
+
 				using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 				{
 					connection.Start();
 					using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
 					{
-						ITopic topic = session.GetTopic(TOPIC);
+						ITopic topic = SessionUtil.GetTopic(session, TOPIC);
 						using(IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, DURABLE_SELECTOR, false))
 						{
 							IMessage msg = consumer.Receive(receiveTimeout);
@@ -100,22 +76,22 @@ namespace Apache.NMS.Test
 			}
 			finally
 			{
-				UnregisterDurableConsumer();
+				UnregisterDurableConsumer(TEST_CLIENT_ID, CONSUMER_ID);
 			}
 		}
 
 		[Test]
 		public void TestDurableConsumerTransactional()
 		{
-			RegisterDurableConsumer();
 			try
 			{
+				RegisterDurableConsumer(TEST_CLIENT_ID, TOPIC, CONSUMER_ID, DURABLE_SELECTOR, false);
 				RunTestDurableConsumerTransactional();
 				RunTestDurableConsumerTransactional();
 			}
 			finally
 			{
-				UnregisterDurableConsumer();
+				UnregisterDurableConsumer(TEST_CLIENT_ID, CONSUMER_ID);
 			}
 		}
 
@@ -128,7 +104,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
 				{
-					ITopic topic = session.GetTopic(TOPIC);
+					ITopic topic = SessionUtil.GetTopic(session, TOPIC);
 					using(IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, DURABLE_SELECTOR, false))
 					{
 						IMessage msg = consumer.Receive(receiveTimeout);
