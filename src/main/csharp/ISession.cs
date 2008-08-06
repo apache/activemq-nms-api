@@ -86,6 +86,13 @@ namespace Apache.NMS
 		void DeleteDurableConsumer(string name);
 
 		/// <summary>
+		/// Deletes a durable consumer created with CreateDurableConsumer().
+		/// </summary>
+		/// <param name="name">Name of the durable consumer</param>
+		/// <param name="requestTimeout">Timeout to wait for response from broker.</param>
+		void DeleteDurableConsumer(string name, TimeSpan requestTimeout);
+
+		/// <summary>
 		/// Returns the queue for the given name
 		/// </summary>
 		IQueue GetQueue(string name);

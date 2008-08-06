@@ -17,7 +17,6 @@
 using System;
 using System.Collections.Specialized;
 using System.Globalization;
-using System.Text;
 using System.Reflection;
 
 namespace Apache.NMS.Util

@@ -47,6 +47,8 @@ namespace Apache.NMS
 
 		TimeSpan TimeToLive { get; set; }
 
+		TimeSpan RequestTimeout { get; set; }
+
 		byte Priority { get; set; }
 
 		bool DisableMessageID { get; set; }
