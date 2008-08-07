@@ -50,11 +50,11 @@ namespace Apache.NMS.Test
 
             // Send message to queue which has a listener to reply to the temporary queue
             IMessageProducer producer = CreateProducer();
+			producer.Persistent = false;
             
             IMessage request = CreateMessage();
             request.NMSCorrelationID = "abc";
             request.NMSReplyTo = tempQ;
-            request.NMSPersistent = false;
             producer.Send(request);
 
             // now lets wait for the message to arrive on the temporary queue

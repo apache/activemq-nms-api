@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+using Apache.NMS.Util;
 using NUnit.Framework;
 
 namespace Apache.NMS.Test
@@ -22,38 +24,58 @@ namespace Apache.NMS.Test
     [TestFixture]
     public abstract class TextMessage : NMSTestSupport
     {
-        private string expected = "Hello World!";
-
-        [SetUp]
-        public override void SetUp()
-        {
-            base.SetUp();
-        }
-
-        [TearDown]
-        public override void TearDown()
-        {
-            base.TearDown();
-        }
-
+		protected static string DESTINATION_NAME = "TextMessageDestination";
+		protected static string TEST_CLIENT_ID = "TextMessageClientId";
+		
         [Test]
-        public override void SendAndSyncReceive()
+        public void SendReceiveTextMessage()
         {
-            base.SendAndSyncReceive();
+			doSendReceiveTextMessage(false);
+		}
+
+		[Test]
+		public void SendReceiveTextMessagePersistent()
+		{
+			doSendReceiveTextMessage(true);
+		}
+
+		protected void doSendReceiveTextMessage(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						IMessage request = session.CreateTextMessage("Hello World!");
+						producer.Send(request);
+
+						IMessage message = consumer.Receive(receiveTimeout);
+						AssertTextMessageEqual(request, message, "Text message does not match.");
+						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+					}
+				}
+			}
         }
 
-        protected override IMessage CreateMessage()
-        {
-            IMessage request = Session.CreateTextMessage(expected);
-            return request;
-        }
-
-        protected override void AssertValidMessage(IMessage message)
-        {
-            ITextMessage textMessage = (ITextMessage) message;
-            String text = textMessage.Text;
-            Console.WriteLine("Received message with text: " + text);
-            Assert.AreEqual(expected, text, "the message text");
-        }
-    }
+		/// <summary>
+		/// Assert that two messages are ITextMessages and their text bodies are equal.
+		/// </summary>
+		/// <param name="expected"></param>
+		/// <param name="actual"></param>
+		/// <param name="message"></param>
+		protected void AssertTextMessageEqual(IMessage expected, IMessage actual, String message)
+		{
+			ITextMessage expectedTextMsg = expected as ITextMessage;
+			Assert.IsNotNull(expectedTextMsg, "'expected' message not a text message");
+			ITextMessage actualTextMsg = actual as ITextMessage;
+			Assert.IsNotNull(actualTextMsg, "'actual' message not a text message");
+			Assert.AreEqual(expectedTextMsg.Text, actualTextMsg.Text, message);
+		}
+	}
 }

@@ -19,35 +19,47 @@ using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-    [TestFixture]
-    public abstract class BadConsumeTest : NMSTestSupport
-    {
-        [SetUp]
-        public override void SetUp()
-        {
-            base.SetUp();
-        }
+	[TestFixture]
+	public abstract class BadConsumeTest : NMSTestSupport
+	{
+		protected static string TEST_CLIENT_ID = "BadConsumeTestClientId";
+		protected IConnection connection;
+		protected ISession session;
 
-        [TearDown]
-        public override void TearDown()
-        {
-            base.TearDown();
-        }
+		[SetUp]
+		public override void SetUp()
+		{
+			connection = CreateConnection(TEST_CLIENT_ID);
+			connection.Start();
+			session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge);
+		}
 
-        [Test]
-        public void TestBadConsumeOperationToTestExceptions()
-        {
-            try
-            {
-                IMessageConsumer consumer = Session.CreateConsumer(null);
-                Console.WriteLine("Created consumer: " + consumer);
-                Assert.Fail("Should  have thrown an exception!");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Caught expected exception: " + e);
-                Console.WriteLine("Stack: " + e.StackTrace);
-            }
-        }
-    }
+		[TearDown]
+		public override void TearDown()
+		{
+			if(null != session)
+			{
+				session.Dispose();
+				session = null;
+			}
+
+			if(null != connection)
+			{
+				connection.Dispose();
+				connection = null;
+			}
+		}
+
+		[Test]
+		[ExpectedException(Handler="ExceptionValidationCheck")]
+		public void TestBadConsumerException()
+		{
+			IMessageConsumer consumer = session.CreateConsumer(null);
+		}
+
+		public void ExceptionValidationCheck(Exception ex)
+		{
+			Assert.IsNotNull(ex as NMSException, "Invalid exception was thrown.");
+		}
+	}
 }

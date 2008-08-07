@@ -23,11 +23,11 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public abstract class DurableTest : NMSTestSupport
 	{
-		private static string TOPIC = "TestTopicDurableConsumer";
-		private static string SEND_CLIENT_ID = "SendDurableTestClientId";
-		private static string TEST_CLIENT_ID = "DurableTestClientId";
-		private static string CONSUMER_ID = "DurableTestConsumerId";
-		private static string DURABLE_SELECTOR = "2 > 1";
+		protected static string TOPIC = "TestTopicDurableConsumer";
+		protected static string SEND_CLIENT_ID = "SendDurableTestClientId";
+		protected static string TEST_CLIENT_ID = "DurableTestClientId";
+		protected static string CONSUMER_ID = "DurableTestConsumerId";
+		protected static string DURABLE_SELECTOR = "2 > 1";
 
 		protected void SendPersistentMessage()
 		{
@@ -37,11 +37,12 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
 				{
 					ITopic topic = SessionUtil.GetTopic(session, TOPIC);
-					ITextMessage message = session.CreateTextMessage("Persistent Hello");
-					using(IMessageProducer producer = session.CreateProducer(topic))
+					using(IMessageProducer producer = session.CreateProducer(topic, receiveTimeout))
 					{
+						ITextMessage message = session.CreateTextMessage("Persistent Hello");
+
 						producer.Persistent = true;
-						producer.RequestTimeout = TimeSpan.FromSeconds(5);
+						producer.RequestTimeout = receiveTimeout;
 						producer.Send(message);
 					}
 				}

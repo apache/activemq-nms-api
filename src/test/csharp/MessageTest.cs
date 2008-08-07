@@ -14,110 +14,114 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Apache.NMS;
-using NUnit.Framework;
-using System;
 
+using System;
+using NUnit.Framework;
+using Apache.NMS.Util;
 
 namespace Apache.NMS.Test
 {
-	[ TestFixture ]
+	[TestFixture]
 	abstract public class MessageTest : NMSTestSupport
 	{
-	    
-		bool a = true;
-        byte b = 123;
-        char c = 'c';
-        short d = 0x1234;
-        int e = 0x12345678;
-        long f = 0x1234567812345678;
-        string g = "Hello World!";
-		bool h = false;
-        byte i = 0xFF;
-        short j = -0x1234;
-        int k = -0x12345678;
-        long l = -0x1234567812345678;
-        
-		[SetUp]
-        override public void SetUp()
-        {
-			base.SetUp();
-        }
-		
-        [TearDown]
-        override public void TearDown()
-        {
-			base.TearDown();
-        }
-		
-        [ Test ]
-        public override void SendAndSyncReceive()
-        {
-            base.SendAndSyncReceive();
-        }
-		
-        protected override IMessage CreateMessage()
-        {
-            IMessage message = Session.CreateMessage();
-            
-            message.Properties["a"] = a;
-            message.Properties["b"] = b;
-            message.Properties["c"] = c;
-            message.Properties["d"] = d;
-            message.Properties["e"] = e;
-            message.Properties["f"] = f;
-            message.Properties["g"] = g;
-            message.Properties["h"] = h;
-            message.Properties["i"] = i;
-            message.Properties["j"] = j;
-            message.Properties["k"] = k;
-            message.Properties["l"] = l;
-            
-            return message;
-        }
-        
-        protected override void AssertValidMessage(IMessage message)
-        {
-            Console.WriteLine("Received message: " + message);
-            Console.WriteLine("Received Count: " + message.Properties.Count);
-			
-            Assert.AreEqual(ToHex(f), ToHex(message.Properties.GetLong("f")), "map entry: f as hex");
-            
-            // use generic API to access entries
-            Assert.AreEqual(a, message.Properties["a"], "generic map entry: a");
-            Assert.AreEqual(b, message.Properties["b"], "generic map entry: b");
-            Assert.AreEqual(c, message.Properties["c"], "generic map entry: c");
-            Assert.AreEqual(d, message.Properties["d"], "generic map entry: d");
-            Assert.AreEqual(e, message.Properties["e"], "generic map entry: e");
-            Assert.AreEqual(f, message.Properties["f"], "generic map entry: f");
-            Assert.AreEqual(g, message.Properties["g"], "generic map entry: g");
-            Assert.AreEqual(h, message.Properties["h"], "generic map entry: h");
-            Assert.AreEqual(i, message.Properties["i"], "generic map entry: i");
-            Assert.AreEqual(j, message.Properties["j"], "generic map entry: j");
-            Assert.AreEqual(k, message.Properties["k"], "generic map entry: k");
-            Assert.AreEqual(l, message.Properties["l"], "generic map entry: l");
-            
-            // use type safe APIs
-            Assert.AreEqual(a, message.Properties.GetBool("a"), "map entry: a");
-            Assert.AreEqual(b, message.Properties.GetByte("b"), "map entry: b");
-            Assert.AreEqual(c, message.Properties.GetChar("c"), "map entry: c");
-            Assert.AreEqual(d, message.Properties.GetShort("d"), "map entry: d");
-            Assert.AreEqual(e, message.Properties.GetInt("e"), "map entry: e");
-            Assert.AreEqual(f, message.Properties.GetLong("f"), "map entry: f");
-            Assert.AreEqual(g, message.Properties.GetString("g"), "map entry: g");
-            Assert.AreEqual(h, message.Properties.GetBool("h"), "map entry: h");
-            Assert.AreEqual(i, message.Properties.GetByte("i"), "map entry: i");
-            Assert.AreEqual(j, message.Properties.GetShort("j"), "map entry: j");
-            Assert.AreEqual(k, message.Properties.GetInt("k"), "map entry: k");
-            Assert.AreEqual(l, message.Properties.GetLong("l"), "map entry: l");
-            
-        }
-        
-        protected string ToHex(long value)
-        {
-            return String.Format("{0:x}", value);
-        }
-		
+		protected static string DESTINATION_NAME = "MessagePropsDestination";
+		protected static string TEST_CLIENT_ID = "MessagePropsClientId";
+
+		protected bool		a = true;
+		protected byte		b = 123;
+		protected char		c = 'c';
+		protected short		d = 0x1234;
+		protected int		e = 0x12345678;
+		protected long		f = 0x1234567812345678;
+		protected string	g = "Hello World!";
+		protected bool		h = false;
+		protected byte		i = 0xFF;
+		protected short		j = -0x1234;
+		protected int		k = -0x12345678;
+		protected long		l = -0x1234567812345678;
+
+		[Test]
+		public void SendReceiveMessageProperties()
+		{
+			doSendReceiveMessageProperties(false);
+		}
+
+		[Test]
+		public void SendReceiveMessagePropertiesPersistent()
+		{
+			doSendReceiveMessageProperties(true);
+		}
+
+		protected void doSendReceiveMessageProperties(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						IMessage request = session.CreateMessage();
+						request.Properties["a"] = a;
+						request.Properties["b"] = b;
+						request.Properties["c"] = c;
+						request.Properties["d"] = d;
+						request.Properties["e"] = e;
+						request.Properties["f"] = f;
+						request.Properties["g"] = g;
+						request.Properties["h"] = h;
+						request.Properties["i"] = i;
+						request.Properties["j"] = j;
+						request.Properties["k"] = k;
+						request.Properties["l"] = l;
+						producer.Send(request);
+
+						IMessage message = consumer.Receive(receiveTimeout);
+						Assert.IsNotNull(message, "No message returned!");
+						Assert.AreEqual(12, message.Properties.Count, "Invalid number of properties.");
+						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+						Assert.AreEqual(ToHex(f), ToHex(message.Properties.GetLong("f")), "map entry: f as hex");
+
+						// use generic API to access entries
+						Assert.AreEqual(a, message.Properties["a"], "generic map entry: a");
+						Assert.AreEqual(b, message.Properties["b"], "generic map entry: b");
+						Assert.AreEqual(c, message.Properties["c"], "generic map entry: c");
+						Assert.AreEqual(d, message.Properties["d"], "generic map entry: d");
+						Assert.AreEqual(e, message.Properties["e"], "generic map entry: e");
+						Assert.AreEqual(f, message.Properties["f"], "generic map entry: f");
+						Assert.AreEqual(g, message.Properties["g"], "generic map entry: g");
+						Assert.AreEqual(h, message.Properties["h"], "generic map entry: h");
+						Assert.AreEqual(i, message.Properties["i"], "generic map entry: i");
+						Assert.AreEqual(j, message.Properties["j"], "generic map entry: j");
+						Assert.AreEqual(k, message.Properties["k"], "generic map entry: k");
+						Assert.AreEqual(l, message.Properties["l"], "generic map entry: l");
+
+						// use type safe APIs
+						Assert.AreEqual(a, message.Properties.GetBool("a"),   "map entry: a");
+						Assert.AreEqual(b, message.Properties.GetByte("b"),   "map entry: b");
+						Assert.AreEqual(c, message.Properties.GetChar("c"),   "map entry: c");
+						Assert.AreEqual(d, message.Properties.GetShort("d"),  "map entry: d");
+						Assert.AreEqual(e, message.Properties.GetInt("e"),    "map entry: e");
+						Assert.AreEqual(f, message.Properties.GetLong("f"),   "map entry: f");
+						Assert.AreEqual(g, message.Properties.GetString("g"), "map entry: g");
+						Assert.AreEqual(h, message.Properties.GetBool("h"),   "map entry: h");
+						Assert.AreEqual(i, message.Properties.GetByte("i"),   "map entry: i");
+						Assert.AreEqual(j, message.Properties.GetShort("j"),  "map entry: j");
+						Assert.AreEqual(k, message.Properties.GetInt("k"),    "map entry: k");
+						Assert.AreEqual(l, message.Properties.GetLong("l"),   "map entry: l");
+					}
+				}
+			}
+		}
+
+		protected static string ToHex(long value)
+		{
+			return String.Format("{0:x}", value);
+		}
 	}
 }
 

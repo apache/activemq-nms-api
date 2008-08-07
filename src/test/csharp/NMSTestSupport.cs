@@ -30,23 +30,28 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public abstract class NMSTestSupport
 	{
+		[Obsolete]
 		protected static object destinationLock = new object();
+		[Obsolete]
 		protected static int destinationCounter;
 
-		// enable/disable logging of message flows
-		protected bool logging = true;
-
 		private NMSConnectionFactory NMSFactory;
+		[Obsolete]
 		private IConnection connection;
+		[Obsolete]
 		private ISession session;
+		[Obsolete]
 		private IDestination destination;
 
 		protected TimeSpan receiveTimeout = TimeSpan.FromMilliseconds(5000);
 		protected virtual string clientId { get; set; }
 		protected virtual string passWord { get; set; }
 		protected virtual string userName { get; set; }
+		[Obsolete]
 		protected bool persistent = true;
+		[Obsolete]
 		protected DestinationType destinationType = DestinationType.Queue;
+		[Obsolete]
 		protected AcknowledgementMode acknowledgementMode = AcknowledgementMode.ClientAcknowledge;
 
 		public NMSTestSupport()
@@ -66,6 +71,7 @@ namespace Apache.NMS.Test
 		}
 
 		// Properties
+		[Obsolete]
 		public bool Connected
 		{
 			get { return connection != null; }
@@ -85,6 +91,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
+		/// <summary>
+		/// The connection factory interface property.
+		/// </summary>
 		public IConnectionFactory Factory
 		{
 			get
@@ -98,6 +107,7 @@ namespace Apache.NMS.Test
 			}
 		}
 
+		[Obsolete]
 		public IConnection Connection
 		{
 			get
@@ -111,6 +121,7 @@ namespace Apache.NMS.Test
 			}
 		}
 
+		[Obsolete]
 		public ISession Session
 		{
 			get
@@ -125,15 +136,17 @@ namespace Apache.NMS.Test
 			}
 		}
 
+		[Obsolete]
 		protected virtual void Connect()
 		{
-			WriteLine("Connecting...");
+			Console.WriteLine("Connecting...");
 			connection = CreateConnection(this.clientId);
 			Assert.IsNotNull(connection, "no connection created");
 			connection.Start();
-			WriteLine("Connected.");
+			Console.WriteLine("Connected.");
 		}
 
+		[Obsolete]
 		protected virtual void Disconnect()
 		{
 			destination = null;
@@ -145,19 +158,14 @@ namespace Apache.NMS.Test
 
 			if(connection != null)
 			{
-				WriteLine("Disconnecting...");
+				Console.WriteLine("Disconnecting...");
 				connection.Dispose();
 				connection = null;
-				WriteLine("Disconnected.");
+				Console.WriteLine("Disconnected.");
 			}
 		}
 
-		protected virtual void Reconnect()
-		{
-			Disconnect();
-			Connect();
-		}
-
+		[Obsolete]
 		protected virtual void Drain()
 		{
 			using(ISession drainSession = Connection.CreateSession())
@@ -173,6 +181,7 @@ namespace Apache.NMS.Test
 			}
 		}
 
+		[Obsolete]
 		public virtual void SendAndSyncReceive()
 		{
 			// IDestination sendDestination = CreateDestination(Session);
@@ -189,15 +198,33 @@ namespace Apache.NMS.Test
 			AssertValidMessage(message);
 		}
 
+		/// <summary>
+		/// Name of the connection configuration filename.
+		/// </summary>
+		/// <returns></returns>
 		protected virtual string GetConnectionConfigFileName() { return "nmsprovider-test.config"; }
 
+		/// <summary>
+		/// The name of the connection configuration that CreateNMSFactory() will load.
+		/// </summary>
+		/// <returns></returns>
 		protected virtual string GetNameTestURI() { return "defaultURI"; }
 
+		/// <summary>
+		/// Create the NMS Factory that can create NMS Connections.
+		/// </summary>
+		/// <returns></returns>
 		protected bool CreateNMSFactory()
 		{
 			return CreateNMSFactory(GetNameTestURI());
 		}
 
+		/// <summary>
+		/// Create the NMS Factory that can create NMS Connections.  This function loads the
+		/// connection settings from the configuration file.
+		/// </summary>
+		/// <param name="nameTestURI">The named connection configuration.</param>
+		/// <returns></returns>
 		protected bool CreateNMSFactory(string nameTestURI)
 		{
 			Uri brokerUri = null;
@@ -250,6 +277,11 @@ namespace Apache.NMS.Test
 			return (null != NMSFactory);
 		}
 
+		/// <summary>
+		/// Get the parameters for the ConnectionFactory from the configuration file.
+		/// </summary>
+		/// <param name="uriNode">Parent node of the factoryParams node.</param>
+		/// <returns>Object array of parameter objects to be passsed to provider factory object.  Null if no parameters are specified in configuration file.</returns>
 		protected object[] GetFactoryParams(XmlElement uriNode)
 		{
 			ArrayList factoryParams = new ArrayList();
@@ -290,6 +322,11 @@ namespace Apache.NMS.Test
 			return null;
 		}
 
+		/// <summary>
+		/// Create a new connection to the broker.
+		/// </summary>
+		/// <param name="newClientId">Client ID of the new connection.</param>
+		/// <returns></returns>
 		public virtual IConnection CreateConnection(string newClientId)
 		{
 			IConnection newConnection = Factory.CreateConnection(userName, passWord);
@@ -305,6 +342,7 @@ namespace Apache.NMS.Test
 		/// <summary>
 		/// Register a durable consumer
 		/// </summary>
+		/// <param name="connectionID">Connection ID of the consumer.</param>
 		/// <param name="destination">Destination name to register.  Supports embedded prefix names.</param>
 		/// <param name="consumerID">Name of the durable consumer.</param>
 		/// <param name="selector">Selector parameters for consumer.</param>
@@ -325,6 +363,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
+		/// <summary>
+		/// Unregister a durable consumer for the given connection ID.
+		/// </summary>
+		/// <param name="connectionID">Connection ID of the consumer.</param>
+		/// <param name="consumerID">Name of the durable consumer.</param>
 		protected void UnregisterDurableConsumer(string connectionID, string consumerID)
 		{
 			using(IConnection connection = CreateConnection(connectionID))
@@ -337,21 +380,25 @@ namespace Apache.NMS.Test
 			}
 		}
 
+		[Obsolete]
 		protected virtual IMessageProducer CreateProducer()
 		{
 			return Session.CreateProducer(Destination);
 		}
 
+		[Obsolete]
 		protected virtual IMessageConsumer CreateConsumer()
 		{
 			return Session.CreateConsumer(Destination);
 		}
 
+		[Obsolete]
 		protected virtual IDestination CreateDestination()
 		{
 			return CreateDestination(Session);
 		}
 
+		[Obsolete]
 		protected virtual IDestination CreateDestination(ISession curSession)
 		{
 			if(destinationType == DestinationType.Queue)
@@ -376,6 +423,7 @@ namespace Apache.NMS.Test
 			}
 		}
 
+		[Obsolete]
 		protected virtual string CreateDestinationName()
 		{
 			return "Test.DotNet." + GetType().Name + "." + NextNumber.ToString();
@@ -392,6 +440,7 @@ namespace Apache.NMS.Test
 			}
 		}
 
+		[Obsolete]
 		protected virtual IMessage CreateMessage()
 		{
 			return Session.CreateMessage();
@@ -402,6 +451,7 @@ namespace Apache.NMS.Test
 			Assert.IsNotNull(message, "Null Message!");
 		}
 
+		[Obsolete]
 		public IDestination Destination
 		{
 			get
@@ -410,20 +460,11 @@ namespace Apache.NMS.Test
 				{
 					destination = CreateDestination();
 					Assert.IsNotNull(destination, "No destination available!");
-					WriteLine("Using destination: " + destination);
+					Console.WriteLine("Using destination: " + destination);
 				}
 				return destination;
 			}
 			set { destination = value; }
-		}
-
-		protected virtual void WriteLine(string text)
-		{
-			if(logging)
-			{
-				Console.WriteLine();
-				Console.WriteLine("#### : " + text);
-			}
 		}
 	}
 }

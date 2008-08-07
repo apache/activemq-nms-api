@@ -42,9 +42,9 @@ namespace Apache.NMS.Util
 		///		</list>
 		///	</param>
 		/// <returns></returns>
-		public static IDestination GetDestinationByType(ISession session, string destinationName)
+		public static IDestination GetDestination(ISession session, string destinationName)
 		{
-			return SessionUtil.GetDestinationByType(session, destinationName, DestinationType.Queue);
+			return SessionUtil.GetDestination(session, destinationName, DestinationType.Queue);
 		}
 
 		/// <summary>
@@ -61,7 +61,7 @@ namespace Apache.NMS.Util
 		///	</param>
 		/// <param name="defaultType">Default type if no embedded prefix is specified.</param>
 		/// <returns></returns>
-		public static IDestination GetDestinationByType(ISession session, string destinationName, DestinationType defaultType)
+		public static IDestination GetDestination(ISession session, string destinationName, DestinationType defaultType)
 		{
 			IDestination destination = null;
 			DestinationType destinationType = defaultType;
@@ -111,12 +111,12 @@ namespace Apache.NMS.Util
 
 		public static IQueue GetQueue(ISession session, string queueName)
 		{
-			return GetDestinationByType(session, queueName, DestinationType.Queue) as IQueue;
+			return GetDestination(session, queueName, DestinationType.Queue) as IQueue;
 		}
 
 		public static ITopic GetTopic(ISession session, string topicName)
 		{
-			return GetDestinationByType(session, topicName, DestinationType.Topic) as ITopic;
+			return GetDestination(session, topicName, DestinationType.Topic) as ITopic;
 		}
 	}
 }

@@ -40,7 +40,7 @@ namespace Apache.NMS
 		string NMSCorrelationID { get; set; }
 		
 		/// <summary>
-		/// The destination of the message.
+		/// The destination of the message.  This property is set by the IMessageProducer.
 		/// </summary>
 		IDestination NMSDestination { get; }
 		
@@ -55,14 +55,14 @@ namespace Apache.NMS
 		string NMSMessageId { get; }
 		
 		/// <summary>
-		/// Whether or not this message is persistent.
+		/// Whether or not this message is persistent.  This property is set by the IMessageProducer.
 		/// </summary>
-		bool NMSPersistent { get; set; }
+		bool NMSPersistent { get; }
 		
 		/// <summary>
-		/// The Priority of this message.
+		/// The Priority of this message.  This property is set by the IMessageProducer.
 		/// </summary>
-		byte NMSPriority { get; set; }
+		byte NMSPriority { get; }
 		
 		/// <summary>
 		/// Returns true if this message has been redelivered to this or another consumer before being acknowledged successfully.

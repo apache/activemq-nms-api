@@ -21,27 +21,27 @@ using Apache.NMS.Util;
 
 namespace Apache.NMS.Test
 {
-    [TestFixture]
-    public abstract class ConsumerTest : NMSTestSupport
-    {
-		private static string TEST_CLIENT_ID = "ConsumerTestClientId";
-		private static string TOPIC = "TestTopicConsumerTest";
-		private static string CONSUMER_ID = "ConsumerTestConsumerId";
+	[TestFixture]
+	public abstract class ConsumerTest : NMSTestSupport
+	{
+		protected static string TEST_CLIENT_ID = "ConsumerTestClientId";
+		protected static string TOPIC = "TestTopicConsumerTest";
+		protected static string CONSUMER_ID = "ConsumerTestConsumerId";
 
-        [Test]
-        public void TestDurableConsumerSelectorChangePersistent()
-        {
-            doTestDurableConsumerSelectorChange(true);
-        }
+		[Test]
+		public void TestDurableConsumerSelectorChange()
+		{
+			doTestDurableConsumerSelectorChange(false);
+		}
 
-        [Test]
-        public void TestDurableConsumerSelectorChangeNonPersistent()
-        {
-            doTestDurableConsumerSelectorChange(false);
-        }
+		[Test]
+		public void TestDurableConsumerSelectorChangePersistent()
+		{
+			doTestDurableConsumerSelectorChange(true);
+		}
 
-        public void doTestDurableConsumerSelectorChange(bool persistent)
-        {
+		public void doTestDurableConsumerSelectorChange(bool persistent)
+		{
 			try
 			{
 				using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -63,7 +63,7 @@ namespace Apache.NMS.Test
 						ITextMessage receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
 						Assert.IsNotNull(receiveMsg, "Failed to retrieve 1st durable message.");
 						Assert.AreEqual("1st", receiveMsg.Text);
-						Assert.IsTrue(receiveMsg.NMSPersistent == persistent, "message does not match persistent setting.");
+						Assert.AreEqual(persistent, receiveMsg.NMSPersistent, "NMSPersistent does not match");
 
 						// Change the subscription.
 						consumer.Dispose();
@@ -80,23 +80,26 @@ namespace Apache.NMS.Test
 						receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
 						Assert.IsNotNull(receiveMsg, "Failed to retrieve durable message.");
 						Assert.AreEqual("3rd", receiveMsg.Text, "Retrieved the wrong durable message.");
-						Assert.IsTrue(receiveMsg.NMSPersistent == persistent, "message does not match persistent setting.");
+						Assert.AreEqual(persistent, receiveMsg.NMSPersistent, "NMSPersistent does not match");
 
 						// Make sure there are no pending messages.
 						Assert.IsNull(consumer.ReceiveNoWait(), "Wrong number of messages in durable subscription.");
 					}
 				}
 			}
+			catch(Exception ex)
+			{
+				Assert.Fail(ex.Message);
+			}
 			finally
 			{
 				UnregisterDurableConsumer(TEST_CLIENT_ID, CONSUMER_ID);
 			}
-        }
+		}
 
 		[Test]
 		public void TestNoTimeoutConsumer()
 		{
-			destinationType = DestinationType.Queue;
 			// Launch a thread to perform IMessageConsumer.Receive().
 			// If it doesn't fail in less than three seconds, no exception was thrown.
 			Thread receiveThread = new Thread(new ThreadStart(TimeoutConsumerThreadProc));
@@ -146,5 +149,5 @@ namespace Apache.NMS.Test
 				Assert.Fail("Test failed with exception: " + e.Message);
 			}
 		}
-    }
+	}
 }
