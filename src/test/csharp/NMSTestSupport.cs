@@ -30,29 +30,11 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public abstract class NMSTestSupport
 	{
-		[Obsolete]
-		protected static object destinationLock = new object();
-		[Obsolete]
-		protected static int destinationCounter;
-
 		private NMSConnectionFactory NMSFactory;
-		[Obsolete]
-		private IConnection connection;
-		[Obsolete]
-		private ISession session;
-		[Obsolete]
-		private IDestination destination;
-
 		protected TimeSpan receiveTimeout = TimeSpan.FromMilliseconds(5000);
 		protected string clientId;
 		protected string passWord;
 		protected string userName;
-		[Obsolete]
-		protected bool persistent = true;
-		[Obsolete]
-		protected DestinationType destinationType = DestinationType.Queue;
-		[Obsolete]
-		protected AcknowledgementMode acknowledgementMode = AcknowledgementMode.ClientAcknowledge;
 
 		public NMSTestSupport()
 		{
@@ -67,29 +49,9 @@ namespace Apache.NMS.Test
 		[TearDown]
 		public virtual void TearDown()
 		{
-			Disconnect();
 		}
 
 		// Properties
-		[Obsolete]
-		public bool Connected
-		{
-			get { return connection != null; }
-			set
-			{
-				if(value)
-				{
-					if(connection == null)
-					{
-						Connect();
-					}
-				}
-				else
-				{
-					Disconnect();
-				}
-			}
-		}
 
 		/// <summary>
 		/// The connection factory interface property.
@@ -105,97 +67,6 @@ namespace Apache.NMS.Test
 
 				return NMSFactory.ConnectionFactory;
 			}
-		}
-
-		[Obsolete]
-		public IConnection Connection
-		{
-			get
-			{
-				if(null == connection)
-				{
-					Connect();
-				}
-
-				return connection;
-			}
-		}
-
-		[Obsolete]
-		public ISession Session
-		{
-			get
-			{
-				if(null == session)
-				{
-					session = Connection.CreateSession(acknowledgementMode);
-					Assert.IsNotNull(session, "no session created");
-				}
-
-				return session;
-			}
-		}
-
-		[Obsolete]
-		protected virtual void Connect()
-		{
-			Console.WriteLine("Connecting...");
-			connection = CreateConnection(this.clientId);
-			Assert.IsNotNull(connection, "no connection created");
-			connection.Start();
-			Console.WriteLine("Connected.");
-		}
-
-		[Obsolete]
-		protected virtual void Disconnect()
-		{
-			destination = null;
-			if(session != null)
-			{
-				session.Dispose();
-				session = null;
-			}
-
-			if(connection != null)
-			{
-				Console.WriteLine("Disconnecting...");
-				connection.Dispose();
-				connection = null;
-				Console.WriteLine("Disconnected.");
-			}
-		}
-
-		[Obsolete]
-		protected virtual void Drain()
-		{
-			using(ISession drainSession = Connection.CreateSession())
-			{
-				// Tries to consume any messages on the Destination
-				IMessageConsumer consumer = drainSession.CreateConsumer(CreateDestination(drainSession));
-
-				// Should only need to wait for first message to arrive due to the way
-				// prefetching works.
-				while(consumer.Receive(receiveTimeout) != null)
-				{
-				}
-			}
-		}
-
-		[Obsolete]
-		public virtual void SendAndSyncReceive()
-		{
-			// IDestination sendDestination = CreateDestination(Session);
-			IMessageConsumer consumer = Session.CreateConsumer(Destination);
-			IMessageProducer producer = Session.CreateProducer(Destination);
-
-			producer.Persistent = persistent;
-
-			IMessage request = CreateMessage();
-			producer.Send(request);
-
-			IMessage message = consumer.Receive(receiveTimeout);
-			Assert.IsNotNull(message, "No message returned!");
-			AssertValidMessage(message);
 		}
 
 		/// <summary>
@@ -380,91 +251,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[Obsolete]
-		protected virtual IMessageProducer CreateProducer()
+		public static string ToHex(long value)
 		{
-			return Session.CreateProducer(Destination);
-		}
-
-		[Obsolete]
-		protected virtual IMessageConsumer CreateConsumer()
-		{
-			return Session.CreateConsumer(Destination);
-		}
-
-		[Obsolete]
-		protected virtual IDestination CreateDestination()
-		{
-			return CreateDestination(Session);
-		}
-
-		[Obsolete]
-		protected virtual IDestination CreateDestination(ISession curSession)
-		{
-			if(destinationType == DestinationType.Queue)
-			{
-				return curSession.GetQueue(CreateDestinationName());
-			}
-			else if(destinationType == DestinationType.Topic)
-			{
-				return curSession.GetTopic(CreateDestinationName());
-			}
-			else if(destinationType == DestinationType.TemporaryQueue)
-			{
-				return curSession.CreateTemporaryQueue();
-			}
-			else if(destinationType == DestinationType.TemporaryTopic)
-			{
-				return curSession.CreateTemporaryTopic();
-			}
-			else
-			{
-				throw new Exception("Unknown destination type: " + destinationType);
-			}
-		}
-
-		[Obsolete]
-		protected virtual string CreateDestinationName()
-		{
-			return "Test.DotNet." + GetType().Name + "." + NextNumber.ToString();
-		}
-
-		public static int NextNumber
-		{
-			get
-			{
-				lock(destinationLock)
-				{
-					return ++destinationCounter;
-				}
-			}
-		}
-
-		[Obsolete]
-		protected virtual IMessage CreateMessage()
-		{
-			return Session.CreateMessage();
-		}
-
-		protected virtual void AssertValidMessage(IMessage message)
-		{
-			Assert.IsNotNull(message, "Null Message!");
-		}
-
-		[Obsolete]
-		public IDestination Destination
-		{
-			get
-			{
-				if(destination == null)
-				{
-					destination = CreateDestination();
-					Assert.IsNotNull(destination, "No destination available!");
-					Console.WriteLine("Using destination: " + destination);
-				}
-				return destination;
-			}
-			set { destination = value; }
+			return String.Format("{0:x}", value);
 		}
 	}
 }

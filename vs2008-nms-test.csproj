@@ -33,6 +33,10 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>activemq-dotnet.snk</AssemblyOriginatorKeyFile>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -79,9 +83,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\test\csharp\MessageTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="src\test\csharp\TemporaryQueueTest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\test\csharp\TextMessage.cs">

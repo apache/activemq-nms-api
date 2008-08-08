@@ -39,6 +39,8 @@ namespace Apache.NMS.Test
 		protected short		j = -0x1234;
 		protected int		k = -0x12345678;
 		protected long		l = -0x1234567812345678;
+		protected float		m = 2.1F;
+		protected double	n = 2.3;
 
 		[Test]
 		public void SendReceiveMessageProperties()
@@ -78,11 +80,13 @@ namespace Apache.NMS.Test
 						request.Properties["j"] = j;
 						request.Properties["k"] = k;
 						request.Properties["l"] = l;
+						request.Properties["m"] = m;
+						request.Properties["n"] = n;
 						producer.Send(request);
 
 						IMessage message = consumer.Receive(receiveTimeout);
 						Assert.IsNotNull(message, "No message returned!");
-						Assert.AreEqual(12, message.Properties.Count, "Invalid number of properties.");
+						Assert.AreEqual(request.Properties.Count, message.Properties.Count, "Invalid number of properties.");
 						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
 						Assert.AreEqual(ToHex(f), ToHex(message.Properties.GetLong("f")), "map entry: f as hex");
 
@@ -99,6 +103,8 @@ namespace Apache.NMS.Test
 						Assert.AreEqual(j, message.Properties["j"], "generic map entry: j");
 						Assert.AreEqual(k, message.Properties["k"], "generic map entry: k");
 						Assert.AreEqual(l, message.Properties["l"], "generic map entry: l");
+						Assert.AreEqual(m, message.Properties["m"], "generic map entry: m");
+						Assert.AreEqual(n, message.Properties["n"], "generic map entry: n");
 
 						// use type safe APIs
 						Assert.AreEqual(a, message.Properties.GetBool("a"),   "map entry: a");
@@ -113,14 +119,11 @@ namespace Apache.NMS.Test
 						Assert.AreEqual(j, message.Properties.GetShort("j"),  "map entry: j");
 						Assert.AreEqual(k, message.Properties.GetInt("k"),    "map entry: k");
 						Assert.AreEqual(l, message.Properties.GetLong("l"),   "map entry: l");
+						Assert.AreEqual(m, message.Properties.GetFloat("m"),  "map entry: m");
+						Assert.AreEqual(n, message.Properties.GetDouble("n"), "map entry: n");
 					}
 				}
 			}
-		}
-
-		protected static string ToHex(long value)
-		{
-			return String.Format("{0:x}", value);
 		}
 	}
 }

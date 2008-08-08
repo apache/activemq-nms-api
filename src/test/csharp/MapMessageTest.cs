@@ -14,121 +14,116 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Apache.NMS;
-using NUnit.Framework;
+
 using System;
-
-
+using NUnit.Framework;
+using Apache.NMS.Util;
 
 namespace Apache.NMS.Test
 {
-	[ TestFixture ]
-    abstract public class MapMessageTest : NMSTestSupport
-    {
-        bool a = true;
-        byte b = 123;
-        char c = 'c';
-        short d = 0x1234;
-        int e = 0x12345678;
-        long f = 0x1234567812345678;
-        string g = "Hello World!";
-		bool h = false;
-        byte i = 0xFF;
-        short j = -0x1234;
-        int k = -0x12345678;
-        long l = -0x1234567812345678;
-		float m = 2.1F;
-		double n = 2.3;
-        
-		[SetUp]
-        override public void SetUp()
-        {
-			base.SetUp();
-        }
-		
-        [TearDown]
-        override public void TearDown()
-        {
-			base.TearDown();
-        }
-		
-        [ Test ]
-        public override void SendAndSyncReceive()
-        {
-            base.SendAndSyncReceive();
-        }
-		
-        protected override IMessage CreateMessage()
-        {
-            IMapMessage message = Session.CreateMapMessage();
-            
-            message.Body["a"] = a;
-            message.Body["b"] = b;
-            message.Body["c"] = c;
-            message.Body["d"] = d;
-            message.Body["e"] = e;
-            message.Body["f"] = f;
-            message.Body["g"] = g;
-            message.Body["h"] = h;
-            message.Body["i"] = i;
-            message.Body["j"] = j;
-            message.Body["k"] = k;
-            message.Body["l"] = l;
-            message.Body["m"] = m;
-            message.Body["n"] = n;
-            
-            return message;
-        }
-        
-        protected override void AssertValidMessage(IMessage message)
-        {
-            Assert.IsTrue(message is IMapMessage, "Did not receive a MapMessage!");
-            IMapMessage mapMessage = (IMapMessage) message;
-            
-            Console.WriteLine("Received MapMessage: " + message);
-            Console.WriteLine("Received Count: " + mapMessage.Body.Count);
-			
-            Assert.AreEqual(ToHex(f), ToHex(mapMessage.Body.GetLong("f")), "map entry: f as hex");
-            
-            // use generic API to access entries
-            Assert.AreEqual(a, mapMessage.Body["a"], "generic map entry: a");
-            Assert.AreEqual(b, mapMessage.Body["b"], "generic map entry: b");
-            Assert.AreEqual(c, mapMessage.Body["c"], "generic map entry: c");
-            Assert.AreEqual(d, mapMessage.Body["d"], "generic map entry: d");
-            Assert.AreEqual(e, mapMessage.Body["e"], "generic map entry: e");
-            Assert.AreEqual(f, mapMessage.Body["f"], "generic map entry: f");
-            Assert.AreEqual(g, mapMessage.Body["g"], "generic map entry: g");
-            Assert.AreEqual(h, mapMessage.Body["h"], "generic map entry: h");
-            Assert.AreEqual(i, mapMessage.Body["i"], "generic map entry: i");
-            Assert.AreEqual(j, mapMessage.Body["j"], "generic map entry: j");
-            Assert.AreEqual(k, mapMessage.Body["k"], "generic map entry: k");
-            Assert.AreEqual(l, mapMessage.Body["l"], "generic map entry: l");
-            Assert.AreEqual(m, mapMessage.Body["m"], "generic map entry: m");
-            Assert.AreEqual(n, mapMessage.Body["n"], "generic map entry: n");
-			
-            // use type safe APIs
-            Assert.AreEqual(a, mapMessage.Body.GetBool("a"), "map entry: a");
-            Assert.AreEqual(b, mapMessage.Body.GetByte("b"), "map entry: b");
-            Assert.AreEqual(c, mapMessage.Body.GetChar("c"), "map entry: c");
-            Assert.AreEqual(d, mapMessage.Body.GetShort("d"), "map entry: d");
-            Assert.AreEqual(e, mapMessage.Body.GetInt("e"), "map entry: e");
-            Assert.AreEqual(f, mapMessage.Body.GetLong("f"), "map entry: f");
-            Assert.AreEqual(g, mapMessage.Body.GetString("g"), "map entry: g");
-            Assert.AreEqual(h, mapMessage.Body.GetBool("h"), "map entry: h");
-            Assert.AreEqual(i, mapMessage.Body.GetByte("i"), "map entry: i");
-            Assert.AreEqual(j, mapMessage.Body.GetShort("j"), "map entry: j");
-            Assert.AreEqual(k, mapMessage.Body.GetInt("k"), "map entry: k");
-            Assert.AreEqual(l, mapMessage.Body.GetLong("l"), "map entry: l");
-            Assert.AreEqual(m, mapMessage.Body.GetFloat("m"), "map entry: m");
-            Assert.AreEqual(n, mapMessage.Body.GetDouble("n"), "map entry: n");
-			
-        }
-        
-        protected string ToHex(long value)
-        {
-            return String.Format("{0:x}", value);
-        }
-    }
+	[TestFixture]
+	abstract public class MapMessageTest : NMSTestSupport
+	{
+		protected static string DESTINATION_NAME = "MessagePropsDestination";
+		protected static string TEST_CLIENT_ID = "MessagePropsClientId";
+
+		protected bool		a = true;
+		protected byte		b = 123;
+		protected char		c = 'c';
+		protected short		d = 0x1234;
+		protected int		e = 0x12345678;
+		protected long		f = 0x1234567812345678;
+		protected string	g = "Hello World!";
+		protected bool		h = false;
+		protected byte		i = 0xFF;
+		protected short		j = -0x1234;
+		protected int		k = -0x12345678;
+		protected long		l = -0x1234567812345678;
+		protected float		m = 2.1F;
+		protected double	n = 2.3;
+
+		[Test]
+		public void SendReceiveMapMessage()
+		{
+			doSendReceiveMapMessage(false);
+		}
+
+		[Test]
+		public void SendReceiveMapMessagePersistent()
+		{
+			doSendReceiveMapMessage(true);
+		}
+
+		protected void doSendReceiveMapMessage(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						IMapMessage request = session.CreateMapMessage();
+						request.Body["a"] = a;
+						request.Body["b"] = b;
+						request.Body["c"] = c;
+						request.Body["d"] = d;
+						request.Body["e"] = e;
+						request.Body["f"] = f;
+						request.Body["g"] = g;
+						request.Body["h"] = h;
+						request.Body["i"] = i;
+						request.Body["j"] = j;
+						request.Body["k"] = k;
+						request.Body["l"] = l;
+						request.Body["m"] = m;
+						request.Body["n"] = n;
+						producer.Send(request);
+
+						IMapMessage message = consumer.Receive(receiveTimeout) as IMapMessage;
+						Assert.IsNotNull(message, "No message returned!");
+						Assert.AreEqual(request.Properties.Count, message.Body.Count, "Invalid number of message maps.");
+						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+						Assert.AreEqual(ToHex(f), ToHex(message.Body.GetLong("f")), "map entry: f as hex");
+
+						// use generic API to access entries
+						Assert.AreEqual(a, message.Body["a"], "generic map entry: a");
+						Assert.AreEqual(b, message.Body["b"], "generic map entry: b");
+						Assert.AreEqual(c, message.Body["c"], "generic map entry: c");
+						Assert.AreEqual(d, message.Body["d"], "generic map entry: d");
+						Assert.AreEqual(e, message.Body["e"], "generic map entry: e");
+						Assert.AreEqual(f, message.Body["f"], "generic map entry: f");
+						Assert.AreEqual(g, message.Body["g"], "generic map entry: g");
+						Assert.AreEqual(h, message.Body["h"], "generic map entry: h");
+						Assert.AreEqual(i, message.Body["i"], "generic map entry: i");
+						Assert.AreEqual(j, message.Body["j"], "generic map entry: j");
+						Assert.AreEqual(k, message.Body["k"], "generic map entry: k");
+						Assert.AreEqual(l, message.Body["l"], "generic map entry: l");
+						Assert.AreEqual(m, message.Body["m"], "generic map entry: m");
+						Assert.AreEqual(n, message.Body["n"], "generic map entry: n");
+
+						// use type safe APIs
+						Assert.AreEqual(a, message.Body.GetBool("a"),   "map entry: a");
+						Assert.AreEqual(b, message.Body.GetByte("b"),   "map entry: b");
+						Assert.AreEqual(c, message.Body.GetChar("c"),   "map entry: c");
+						Assert.AreEqual(d, message.Body.GetShort("d"),  "map entry: d");
+						Assert.AreEqual(e, message.Body.GetInt("e"),    "map entry: e");
+						Assert.AreEqual(f, message.Body.GetLong("f"),   "map entry: f");
+						Assert.AreEqual(g, message.Body.GetString("g"), "map entry: g");
+						Assert.AreEqual(h, message.Body.GetBool("h"),   "map entry: h");
+						Assert.AreEqual(i, message.Body.GetByte("i"),   "map entry: i");
+						Assert.AreEqual(j, message.Body.GetShort("j"),  "map entry: j");
+						Assert.AreEqual(k, message.Body.GetInt("k"),    "map entry: k");
+						Assert.AreEqual(l, message.Body.GetLong("l"),   "map entry: l");
+						Assert.AreEqual(m, message.Body.GetFloat("m"),  "map entry: m");
+						Assert.AreEqual(n, message.Body.GetDouble("n"), "map entry: n");
+					}
+				}
+			}
+		}
+	}
 }
-
-

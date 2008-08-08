@@ -26,6 +26,7 @@ namespace Apache.NMS.Test
 	{
 		protected static string DESTINATION_NAME = "AsyncConsumeDestination";
 		protected static string TEST_CLIENT_ID = "AsyncConsumeClientId";
+		protected static string RESPONSE_CLIENT_ID = "AsyncConsumeResponseClientId";
 		protected object semaphore = new object();
 		protected bool received;
 		protected IMessage receivedMsg;
@@ -36,6 +37,13 @@ namespace Apache.NMS.Test
 			base.SetUp();
 			received = false;
 			receivedMsg = null;
+		}
+
+		[TearDown]
+		public override void TearDown()
+		{
+			receivedMsg = null;
+			base.TearDown();
 		}
 
 		[Test]
@@ -199,6 +207,72 @@ namespace Apache.NMS.Test
 							Assert.AreEqual(request.Properties["myHeader"], receivedMsg.Properties["myHeader"], "Invalid myHeader.");
 							Assert.AreEqual(request.Text, ((ITextMessage) receivedMsg).Text, "Invalid text body.");
 						}
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestTemporaryQueueAsynchronousConsume()
+		{
+			doTestTemporaryQueueAsynchronousConsume(false);
+		}
+
+		[Test]
+		public void TestTemporaryQueueAsynchronousConsumePersistent()
+		{
+			doTestTemporaryQueueAsynchronousConsume(true);
+		}
+
+		protected void doTestTemporaryQueueAsynchronousConsume(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					ITemporaryQueue tempReplyDestination = session.CreateTemporaryQueue();
+
+					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					using(IMessageConsumer tempConsumer = session.CreateConsumer(tempReplyDestination, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						tempConsumer.Listener += new MessageListener(OnMessage);
+						consumer.Listener += new MessageListener(OnQueueMessage);
+
+						IMessage request = session.CreateMessage();
+						request.NMSCorrelationID = "TemqQueueAsyncConsume";
+						request.NMSType = "Test";
+						request.NMSReplyTo = tempReplyDestination;
+						producer.Send(request);
+
+						WaitForMessageToArrive();
+						Assert.AreEqual("TempQueueAsyncResponse", receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
+					}
+				}
+			}
+		}
+
+		protected void OnQueueMessage(IMessage message)
+		{
+			Assert.AreEqual("TemqQueueAsyncConsume", message.NMSCorrelationID, "Invalid correlation ID.");
+			using(IConnection connection = CreateConnection(RESPONSE_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					using(IMessageProducer producer = session.CreateProducer(message.NMSReplyTo, receiveTimeout))
+					{
+						producer.Persistent = message.NMSPersistent;
+						producer.RequestTimeout = receiveTimeout;
+
+						ITextMessage response = session.CreateTextMessage("Asynchronous Response Message Text");
+						response.NMSCorrelationID = "TempQueueAsyncResponse";
+						response.NMSType = message.NMSType;
+						producer.Send(response); 
 					}
 				}
 			}
