@@ -86,7 +86,7 @@ namespace Apache.NMS.Test
 
 						IMapMessage message = consumer.Receive(receiveTimeout) as IMapMessage;
 						Assert.IsNotNull(message, "No message returned!");
-						Assert.AreEqual(request.Properties.Count, message.Body.Count, "Invalid number of message maps.");
+						Assert.AreEqual(request.Body.Count, message.Body.Count, "Invalid number of message maps.");
 						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
 						Assert.AreEqual(ToHex(f), ToHex(message.Body.GetLong("f")), "map entry: f as hex");
 
