@@ -198,18 +198,6 @@
     <property name="csc.optimize"                 value="true" />
   </target>
 
-  <target name="set-net-1.0-framework-configuration">
-    <property name="current.build.framework" value="net-1.0" />
-    <property name="current.build.framework.name" value=".NET 1.0"/>
-    <property name="current.build.defines" value="${build.defines}NET,NET_1_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="true" />
-    <property name="link.sdkdoc.version" value="SDK_v1_0" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-
   <target name="set-net-1.1-framework-configuration">
     <property name="current.build.framework" value="net-1.1" />
     <property name="current.build.framework.name" value=".NET 1.1"/>
@@ -246,35 +234,11 @@
     </if>
   </target>
 
-  <target name="set-netcf-1.0-framework-configuration">
-    <property name="current.build.framework" value="netcf-1.0" />
-    <property name="current.build.framework.name" value=".NET Compact Framework 1.0"/>
-    <property name="current.build.defines" value="${build.defines}PocketPC,NETCF,NETCF_1_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="false" />
-    <property name="link.sdkdoc.version" value="SDK_v1_1" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-
   <target name="set-netcf-2.0-framework-configuration">
     <property name="current.build.framework" value="netcf-2.0" />
     <property name="current.build.framework.name" value=".NET Compact Framework 2.0"/>
     <property name="current.build.defines" value="${build.defines}PocketPC,NETCF,NETCF_2_0" dynamic="true" />
     <property name="current.build.framework.sign" value="false" />
-    <property name="link.sdkdoc.version" value="SDK_v1_1" />
-    <property name="link.sdkdoc.web" value="true" />
-    <if test="${framework::exists(current.build.framework)}">
-      <property name="nant.settings.currentframework" value="${current.build.framework}" />
-    </if>
-  </target>
-
-  <target name="set-mono-1.0-framework-configuration">
-    <property name="current.build.framework" value="mono-1.0" />
-    <property name="current.build.framework.name" value="Mono 1.0"/>
-    <property name="current.build.defines" value="${build.defines}MONO,MONO_1_0" dynamic="true" />
-    <property name="current.build.framework.sign" value="true" />
     <property name="link.sdkdoc.version" value="SDK_v1_1" />
     <property name="link.sdkdoc.web" value="true" />
     <if test="${framework::exists(current.build.framework)}">
@@ -300,25 +264,19 @@
   <target name="compile-all" depends="release-init" description="Compile all build configurations for all runtime configurations">
     <echo message="Compiling all build configurations for all runtime configurations." />
     <call target="set-debug-configuration" />
-    <call target="set-net-1.0-framework-configuration"  /><call target="conditional-compile" />
     <call target="set-net-1.1-framework-configuration"  /><call target="conditional-compile" />
     <call target="set-net-2.0-framework-configuration"  /><call target="conditional-compile" />
     <call target="set-net-3.5-framework-configuration"  /><call target="conditional-compile" />
-    <call target="set-mono-1.0-framework-configuration" /><call target="conditional-compile" />
     <call target="set-mono-2.0-framework-configuration" /><call target="conditional-compile" />
-    <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-compile" />
     <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-compile" />
 
     <!-- we can only do a release skip if the Key file is available -->
     <if test="${not build.skip.release}">
       <call target="set-release-configuration" />
-      <call target="set-net-1.0-framework-configuration"  /><call target="conditional-compile" />
       <call target="set-net-1.1-framework-configuration"  /><call target="conditional-compile" />
       <call target="set-net-2.0-framework-configuration"  /><call target="conditional-compile" />
       <call target="set-net-3.5-framework-configuration"  /><call target="conditional-compile" />
-      <call target="set-mono-1.0-framework-configuration" /><call target="conditional-compile" />
       <call target="set-mono-2.0-framework-configuration" /><call target="conditional-compile" />
-      <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-compile" />
       <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-compile" />
     </if>
   </target>
@@ -453,25 +411,19 @@
   <target name="install-all" depends="release-init" description="Install all build configurations for all runtime configurations">
     <echo message="Installing all build configurations for all runtime configurations." />
     <call target="set-debug-configuration" />
-    <call target="set-net-1.0-framework-configuration"  /><call target="conditional-install" />
     <call target="set-net-1.1-framework-configuration"  /><call target="conditional-install" />
     <call target="set-net-2.0-framework-configuration"  /><call target="conditional-install" />
     <call target="set-net-3.5-framework-configuration"  /><call target="conditional-install" />
-    <call target="set-mono-1.0-framework-configuration" /><call target="conditional-install" />
     <call target="set-mono-2.0-framework-configuration" /><call target="conditional-install" />
-    <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-install" />
     <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-install" />
 
     <!-- we can only do a release skip if the Key file is available -->
     <if test="${not build.skip.release}">
       <call target="set-release-configuration" />
-      <call target="set-net-1.0-framework-configuration"  /><call target="conditional-install" />
       <call target="set-net-1.1-framework-configuration"  /><call target="conditional-install" />
       <call target="set-net-2.0-framework-configuration"  /><call target="conditional-install" />
       <call target="set-net-3.5-framework-configuration"  /><call target="conditional-install" />
-      <call target="set-mono-1.0-framework-configuration" /><call target="conditional-install" />
       <call target="set-mono-2.0-framework-configuration" /><call target="conditional-install" />
-      <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-install" />
       <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-install" />
     </if>
   </target>
@@ -505,25 +457,19 @@
     <echo message="Deploying all build configurations for all runtime configurations." />
 
     <call target="set-debug-configuration" />
-    <call target="set-net-1.0-framework-configuration"  /><call target="conditional-deploy" />
     <call target="set-net-1.1-framework-configuration"  /><call target="conditional-deploy" />
     <call target="set-net-2.0-framework-configuration"  /><call target="conditional-deploy" />
     <call target="set-net-3.5-framework-configuration"  /><call target="conditional-deploy" />
-    <call target="set-mono-1.0-framework-configuration" /><call target="conditional-deploy" />
     <call target="set-mono-2.0-framework-configuration" /><call target="conditional-deploy" />
-    <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-deploy" />
     <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-deploy" />
 
     <!-- we can only do a release skip if the Key file is available -->
     <if test="${not build.skip.release}">
       <call target="set-release-configuration" />
-      <call target="set-net-1.0-framework-configuration"  /><call target="conditional-deploy" />
       <call target="set-net-1.1-framework-configuration"  /><call target="conditional-deploy" />
       <call target="set-net-2.0-framework-configuration"  /><call target="conditional-deploy" />
       <call target="set-net-3.5-framework-configuration"  /><call target="conditional-deploy" />
-      <call target="set-mono-1.0-framework-configuration" /><call target="conditional-deploy" />
       <call target="set-mono-2.0-framework-configuration" /><call target="conditional-deploy" />
-      <call target="set-netcf-1.0-framework-configuration"/><call target="conditional-deploy" />
       <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-deploy" />
     </if>
   </target>

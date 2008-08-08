@@ -21,15 +21,15 @@ using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-    [TestFixture]
-    public abstract class TextMessage : NMSTestSupport
-    {
+	[TestFixture]
+	public abstract class TextMessageTest : NMSTestSupport
+	{
 		protected static string DESTINATION_NAME = "TextMessageDestination";
 		protected static string TEST_CLIENT_ID = "TextMessageClientId";
 		
-        [Test]
-        public void SendReceiveTextMessage()
-        {
+		[Test]
+		public void SendReceiveTextMessage()
+		{
 			doSendReceiveTextMessage(false);
 		}
 
@@ -56,26 +56,25 @@ namespace Apache.NMS.Test
 						producer.Send(request);
 
 						IMessage message = consumer.Receive(receiveTimeout);
-						AssertTextMessageEqual(request, message, "Text message does not match.");
+						AssertTextMessageEqual(request, message);
 						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
 					}
 				}
 			}
-        }
+		}
 
 		/// <summary>
 		/// Assert that two messages are ITextMessages and their text bodies are equal.
 		/// </summary>
 		/// <param name="expected"></param>
 		/// <param name="actual"></param>
-		/// <param name="message"></param>
-		protected void AssertTextMessageEqual(IMessage expected, IMessage actual, String message)
+		protected void AssertTextMessageEqual(IMessage expected, IMessage actual)
 		{
 			ITextMessage expectedTextMsg = expected as ITextMessage;
 			Assert.IsNotNull(expectedTextMsg, "'expected' message not a text message");
 			ITextMessage actualTextMsg = actual as ITextMessage;
 			Assert.IsNotNull(actualTextMsg, "'actual' message not a text message");
-			Assert.AreEqual(expectedTextMsg.Text, actualTextMsg.Text, message);
+			Assert.AreEqual(expectedTextMsg.Text, actualTextMsg.Text, "Text message does not match.");
 		}
 	}
 }

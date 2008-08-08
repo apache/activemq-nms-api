@@ -14,135 +14,217 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
+
 using System.Threading;
+using Apache.NMS.Util;
 using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-    [TestFixture]
-    public abstract class AsyncConsumeTest : NMSTestSupport
-    {
-        protected Object semaphore = new Object();
-        protected bool received;
+	[TestFixture]
+	public abstract class AsyncConsumeTest : NMSTestSupport
+	{
+		protected static string DESTINATION_NAME = "AsyncConsumeDestination";
+		protected static string TEST_CLIENT_ID = "AsyncConsumeClientId";
+		protected object semaphore = new object();
+		protected bool received;
+		protected IMessage receivedMsg;
 
+		[SetUp]
+		public override void SetUp()
+		{
+			base.SetUp();
+			received = false;
+			receivedMsg = null;
+		}
 
-        [SetUp]
-        public override void SetUp()
-        {
-            base.SetUp();
-        }
+		[Test]
+		public void TestAsynchronousConsume()
+		{
+			doTestAsynchronousConsume(false);
+		}
 
-        [TearDown]
-        public override void TearDown()
-        {
-            base.TearDown();
-        }
+		[Test]
+		public void TestAsynchronousConsumePersistent()
+		{
+			doTestAsynchronousConsume(true);
+		}
 
-        [Test]
-        public void TestAsynchronousConsume()
-        {
-            // START SNIPPET: demo
-            IMessageConsumer consumer = Session.CreateConsumer(Destination);
-            consumer.Listener += new MessageListener(OnMessage);
-            // END SNIPPET: demo
+		protected void doTestAsynchronousConsume(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						consumer.Listener += new MessageListener(OnMessage);
 
-            // now lets send a message
-            IMessageProducer producer = CreateProducer();
-            IMessage request = CreateMessage();
-            request.NMSCorrelationID = "abc";
-            request.NMSType = "Test";
-            producer.Send(request);
+						IMessage request = session.CreateMessage();
+						request.NMSCorrelationID = "AsyncConsume";
+						request.NMSType = "Test";
+						producer.Send(request);
 
-            WaitForMessageToArrive();
-        }
+						WaitForMessageToArrive();
+						Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
+					}
+				}
+			}
+		}
 
-        [Test]
-        public void TestCreateConsumerAfterSend()
-        {
-            // now lets send a message
-            IMessageProducer producer = CreateProducer();
-            IMessage request = CreateMessage();
-            request.NMSCorrelationID = "abc";
-            request.NMSType = "Test";
-            producer.Send(request);
+		[Test]
+		public void TestCreateConsumerAfterSend()
+		{
+			doTestCreateConsumerAfterSend(false);
+		}
 
-            // lets create an async consumer
-            IMessageConsumer consumer = Session.CreateConsumer(Destination);
-            consumer.Listener += new MessageListener(OnMessage);
+		[Test]
+		public void TestCreateConsumerAfterSendPersistent()
+		{
+			doTestCreateConsumerAfterSend(true);
+		}
 
-            WaitForMessageToArrive();
-        }
+		protected void doTestCreateConsumerAfterSend(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					{
+						producer.Persistent = false;
+						producer.RequestTimeout = receiveTimeout;
 
-        [Test]
-        public void TestCreateConsumerBeforeSendButAddListenerAfterSend()
-        {
-            // lets create an async consumer
-            IMessageConsumer consumer = Session.CreateConsumer(Destination);
+						IMessage request = session.CreateMessage();
+						request.NMSCorrelationID = "AsyncConsumeAfterSend";
+						request.NMSType = "Test";
+						producer.Send(request);
 
-            // now lets send a message
-            IMessageProducer producer = CreateProducer();
-            IMessage request = CreateMessage();
-            request.NMSCorrelationID = "abc";
-            request.NMSType = "Test";
-            producer.Send(request);
+						using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+						{
+							consumer.Listener += new MessageListener(OnMessage);
+							WaitForMessageToArrive();
+							Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
+						}
+					}
+				}
+			}
+		}
 
-            // now lets add the listener
-            consumer.Listener += new MessageListener(OnMessage);
+		[Test]
+		public void TestCreateConsumerBeforeSendAddListenerAfterSend()
+		{
+			doTestCreateConsumerBeforeSendAddListenerAfterSend(false);
+		}
 
-            WaitForMessageToArrive();
-        }
+		[Test]
+		public void TestCreateConsumerBeforeSendAddListenerAfterSendPersistent()
+		{
+			doTestCreateConsumerBeforeSendAddListenerAfterSend(true);
+		}
 
-        [Test]
-        public void TextMessageSRExample()
-        {
-            using (IConnection connection = Factory.CreateConnection())
-            {
-                AcknowledgementMode acknowledgementMode = AcknowledgementMode.AutoAcknowledge;
-                ISession session = connection.CreateSession(acknowledgementMode);
+		public void doTestCreateConsumerBeforeSendAddListenerAfterSend(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
 
-                IDestination destination = session.GetQueue("FOO.BAR");
+						IMessage request = session.CreateMessage();
+						request.NMSCorrelationID = "AsyncConsumeAfterSendLateListener";
+						request.NMSType = "Test";
+						producer.Send(request);
 
-                // lets create a consumer and producer
-                IMessageConsumer consumer = session.CreateConsumer(destination);
-                consumer.Listener += new MessageListener(OnMessage);
+						// now lets add the listener
+						consumer.Listener += new MessageListener(OnMessage);
+						WaitForMessageToArrive();
+						Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
+					}
+				}
+			}
+		}
 
-                IMessageProducer producer = session.CreateProducer(destination);
-                producer.Persistent = true;
+		[Test]
+		public void TestAsynchronousTextMessageConsume()
+		{
+			doTestAsynchronousTextMessageConsume(false);
+		}
 
-                // lets send a message
-                ITextMessage request = session.CreateTextMessage(
-                    "HelloWorld!");
-                request.NMSCorrelationID = "abc";
-                request.Properties["NMSXGroupID"] = "cheese";
-                request.Properties["myHeader"] = "James";
+		[Test]
+		public void TestAsynchronousTextMessageConsumePersistent()
+		{
+			doTestAsynchronousTextMessageConsume(true);
+		}
 
-                producer.Send(request);
+		public void doTestAsynchronousTextMessageConsume(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					{
+						consumer.Listener += new MessageListener(OnMessage);
+						using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+						{
+							producer.Persistent = persistent;
+							producer.RequestTimeout = receiveTimeout;
 
-                WaitForMessageToArrive();
-            }
-        }
+							ITextMessage request = session.CreateTextMessage("Hello, World!");
+							request.NMSCorrelationID = "AsyncConsumeTextMessage";
+							request.Properties["NMSXGroupID"] = "cheese";
+							request.Properties["myHeader"] = "James";
 
-        protected void OnMessage(IMessage message)
-        {
-            Console.WriteLine("Received message: " + message);
-            lock (semaphore)
-            {
-                received = true;
-                Monitor.PulseAll(semaphore);
-            }
-        }
+							producer.Send(request);
 
-        protected void WaitForMessageToArrive()
-        {
-            lock (semaphore)
-            {
-                if (!received)
-                {
-                    Monitor.Wait(semaphore, receiveTimeout);
-                }
-                Assert.AreEqual(true, received, "Should have received a message by now!");
-            }
-        }
-    }
+							WaitForMessageToArrive();
+							Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
+							Assert.AreEqual(request.Properties["NMSXGroupID"], receivedMsg.Properties["NMSXGroupID"], "Invalid NMSXGroupID.");
+							Assert.AreEqual(request.Properties["myHeader"], receivedMsg.Properties["myHeader"], "Invalid myHeader.");
+							Assert.AreEqual(request.Text, ((ITextMessage) receivedMsg).Text, "Invalid text body.");
+						}
+					}
+				}
+			}
+		}
+
+		protected void OnMessage(IMessage message)
+		{
+			lock(semaphore)
+			{
+				receivedMsg = message;
+				received = true;
+				Monitor.PulseAll(semaphore);
+			}
+		}
+
+		protected void WaitForMessageToArrive()
+		{
+			lock(semaphore)
+			{
+				if(!received)
+				{
+					Monitor.Wait(semaphore, receiveTimeout);
+				}
+			}
+
+			Assert.IsTrue(received, "Should have received a message by now!");
+		}
+	}
 }

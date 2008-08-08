@@ -34,14 +34,7 @@
            value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers"/>
   <property name="project.cls.compliant" value="true"/>
 
-  <!-- Repository organized as: organization/module/version/plaform/artifact, platform might be something like 'all' or 'net-2.0/release' -->
-  <property name="nunit.dll" value="org.nunit/nunit/2.2.8/all/nunit.framework.dll"/>
-
-  <target name="vendor-init" description="Initializes the vendor libraries.">
-    <!-- The following does a poor man's maven style dependency install to the local repo -->
-    <property name="repo.task.artifact" value="${nunit.dll}"/>
-    <call target="repo-download"/>
-  </target>
+  <property name="nunit.dll" value="${basedir}/lib/nunit.framework.dll"/>
 
   <target name="dependency-init" description="Initializes build dependencies">
 
@@ -54,8 +47,9 @@
     <assemblyfileset failonempty="true" id="test.dependencies">
       <include name="mscorlib.dll" asis="true"/>
       <include name="System.dll" asis="true"/>
+      <include name="System.Xml.dll" asis="true"/>
       <include name="${build.bin.dir}/${project.name}.dll"/>
-      <include name="${nant.local.repo}/${nunit.dll}"/>
+      <include name="${nunit.dll}"/>
     </assemblyfileset>
 
     <fileset id="content.filenames">

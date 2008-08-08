@@ -14,50 +14,67 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
+
+using Apache.NMS.Util;
 using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-    [TestFixture]
-    public abstract class BytesMessageTest : NMSTestSupport
-    {
-        private byte[] expected = {1, 2, 3, 4, 5, 6, 7, 8};
+	[TestFixture]
+	public abstract class BytesMessageTest : NMSTestSupport
+	{
+		protected static string DESTINATION_NAME = "BytesMessageDestination";
+		protected static string TEST_CLIENT_ID = "BytesMessageClientId";
+		protected byte[] msgContent = {1, 2, 3, 4, 5, 6, 7, 8};
+		
+		[Test]
+		public void SendReceiveBytesMessage()
+		{
+			doSendReceiveBytesMessage(false);
+		}
 
-        [SetUp]
-        public override void SetUp()
-        {
-            base.SetUp();
-        }
+		[Test]
+		public void SendReceiveBytesMessagePersistent()
+		{
+			doSendReceiveBytesMessage(true);
+		}
 
-        [TearDown]
-        public override void TearDown()
-        {
-            base.TearDown();
-        }
+		protected void doSendReceiveBytesMessage(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						IMessage request = session.CreateBytesMessage(msgContent);
+						producer.Send(request);
 
-        [Test]
-        public override void SendAndSyncReceive()
-        {
-            base.SendAndSyncReceive();
-        }
+						IMessage message = consumer.Receive(receiveTimeout);
+						AssertBytesMessageEqual(request, message);
+						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+					}
+				}
+			}
+		}
 
-        protected override IMessage CreateMessage()
-        {
-            IBytesMessage request = Session.CreateBytesMessage(expected);
-            return request;
-        }
-
-        protected override void AssertValidMessage(IMessage message)
-        {
-            Assert.IsTrue(message is IBytesMessage, "Did not receive a IBytesMessage: " + message);
-
-            Console.WriteLine("Received IBytesMessage: " + message);
-
-            IBytesMessage bytesMessage = (IBytesMessage) message;
-            byte[] actual = bytesMessage.Content;
-            Console.WriteLine("Received message with content: " + actual);
-            Assert.AreEqual(expected, actual, "the message content");
-        }
-    }
+		/// <summary>
+		/// Assert that two messages are IBytesMessages and their contents are equal.
+		/// </summary>
+		/// <param name="expected"></param>
+		/// <param name="actual"></param>
+		protected void AssertBytesMessageEqual(IMessage expected, IMessage actual)
+		{
+			IBytesMessage expectedBytesMsg = expected as IBytesMessage;
+			Assert.IsNotNull(expectedBytesMsg, "'expected' message not a bytes message");
+			IBytesMessage actualBytesMsg = actual as IBytesMessage;
+			Assert.IsNotNull(actualBytesMsg, "'actual' message not a bytes message");
+			Assert.AreEqual(expectedBytesMsg.Content, actualBytesMsg.Content, "Bytes message contents do not match.");
+		}
+	}
 }

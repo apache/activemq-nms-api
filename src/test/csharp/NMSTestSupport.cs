@@ -44,9 +44,9 @@ namespace Apache.NMS.Test
 		private IDestination destination;
 
 		protected TimeSpan receiveTimeout = TimeSpan.FromMilliseconds(5000);
-		protected virtual string clientId { get; set; }
-		protected virtual string passWord { get; set; }
-		protected virtual string userName { get; set; }
+		protected string clientId;
+		protected string passWord;
+		protected string userName;
 		[Obsolete]
 		protected bool persistent = true;
 		[Obsolete]
