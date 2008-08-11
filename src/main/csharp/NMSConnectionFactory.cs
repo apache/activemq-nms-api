@@ -103,7 +103,12 @@ namespace Apache.NMS
 
 			if(LookupConnectionFactoryInfo(scheme, out assemblyFileName, out factoryClassName))
 			{
-				Assembly assembly = Assembly.LoadFrom(assemblyFileName);
+#if NETCF
+				string assemblyFolder = "";
+#else
+				string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+#endif
+				Assembly assembly = Assembly.LoadFrom(Path.Combine(assemblyFolder, assemblyFileName));
 
 				if(null != assembly)
 				{
@@ -141,7 +146,12 @@ namespace Apache.NMS
 		/// <returns></returns>
 		private static bool LookupConnectionFactoryInfo(string scheme, out string assemblyFileName, out string factoryClassName)
 		{
-			string configFileName = String.Format("nmsprovider-{0}.config", scheme.ToLower());
+#if NETCF
+			string assemblyFolder = "";
+#else
+			string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+#endif
+			string configFileName = Path.Combine(assemblyFolder, String.Format("nmsprovider-{0}.config", scheme.ToLower()));
 			bool foundFactory = false;
 
 			assemblyFileName = String.Empty;
