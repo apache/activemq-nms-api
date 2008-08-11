@@ -38,7 +38,6 @@ namespace Apache.NMS.Test
 
 		public NMSTestSupport()
 		{
-			clientId = "NMSUnitTests";
 		}
 
 		[SetUp]
@@ -112,28 +111,9 @@ namespace Apache.NMS.Test
 			{
 				brokerUri = new Uri(uriNode.GetAttribute("value"));
 				factoryParams = GetFactoryParams(uriNode);
-	
-				XmlElement userNameNode = (XmlElement) uriNode.SelectSingleNode("userName");
-
-				if(null != userNameNode)
-				{
-					userName = userNameNode.GetAttribute("value");
-				}
-				else
-				{
-					userName = "guest";
-				}
-
-				XmlElement passWordNode = (XmlElement) uriNode.SelectSingleNode("passWord");
-
-				if(null != passWordNode)
-				{
-					passWord = passWordNode.GetAttribute("value");
-				}
-				else
-				{
-					passWord = "guest";
-				}
+				clientId = GetNodeValueAttribute(uriNode, "clientId", "NMSTestClientId");
+				userName = GetNodeValueAttribute(uriNode, "userName", "guest");
+				passWord = GetNodeValueAttribute(uriNode, "passWord", "guest");
 
 				if(null == factoryParams)
 				{
@@ -191,6 +171,23 @@ namespace Apache.NMS.Test
 			}
 
 			return null;
+		}
+
+		protected static string GetNodeValueAttribute(XmlElement parentNode, string nodeName, string dflt)
+		{
+			XmlElement node = (XmlElement) parentNode.SelectSingleNode(nodeName);
+			string val;
+
+			if(null != node)
+			{
+				val = node.GetAttribute("value");
+			}
+			else
+			{
+				val = dflt;
+			}
+
+			return val;
 		}
 
 		/// <summary>

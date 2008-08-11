@@ -66,22 +66,22 @@ namespace Apache.NMS.Util
 			IDestination destination = null;
 			DestinationType destinationType = defaultType;
 
-			if(destinationName.StartsWith(QueuePrefix, StringComparison.CurrentCultureIgnoreCase))
+			if(0 == String.Compare(destinationName.Substring(0, QueuePrefix.Length), QueuePrefix, false))
 			{
 				destinationType = DestinationType.Queue;
 				destinationName = destinationName.Substring(QueuePrefix.Length);
 			}
-			else if(destinationName.StartsWith(TopicPrefix, StringComparison.CurrentCultureIgnoreCase))
+			else if(0 == String.Compare(destinationName.Substring(0, TopicPrefix.Length), TopicPrefix, false))
 			{
 				destinationType = DestinationType.Topic;
 				destinationName = destinationName.Substring(TopicPrefix.Length);
 			}
-			else if(destinationName.StartsWith(TempQueuePrefix, StringComparison.CurrentCultureIgnoreCase))
+			else if(0 == String.Compare(destinationName.Substring(0, TempQueuePrefix.Length), TempQueuePrefix, false))
 			{
 				destinationType = DestinationType.TemporaryQueue;
 				destinationName = destinationName.Substring(TempQueuePrefix.Length);
 			}
-			else if(destinationName.StartsWith(TempTopicPrefix, StringComparison.CurrentCultureIgnoreCase))
+			else if(0 == String.Compare(destinationName.Substring(0, TempTopicPrefix.Length), TempTopicPrefix, false))
 			{
 				destinationType = DestinationType.TemporaryTopic;
 				destinationName = destinationName.Substring(TempTopicPrefix.Length);
