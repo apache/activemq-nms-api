@@ -18,6 +18,7 @@
 using System;
 using NUnit.Framework;
 using Apache.NMS.Util;
+using System.Collections;
 
 namespace Apache.NMS.Test
 {
@@ -121,6 +122,89 @@ namespace Apache.NMS.Test
 						Assert.AreEqual(l, message.Body.GetLong("l"),   "map entry: l");
 						Assert.AreEqual(m, message.Body.GetFloat("m"),  "map entry: m");
 						Assert.AreEqual(n, message.Body.GetDouble("n"), "map entry: n");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void SendReceiveNestedMapMessage()
+		{
+			doSendReceiveNestedMapMessage(false);
+		}
+
+		[Test]
+		public void SendReceiveNestedMapMessagePersistent()
+		{
+			doSendReceiveNestedMapMessage(true);
+		}
+
+		protected void doSendReceiveNestedMapMessage(bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						IMapMessage request = session.CreateMapMessage();
+						const string textFieldValue = "Nested Map Messages Rule!";
+
+						request.Body.SetString("textField", textFieldValue);
+
+						IDictionary grandChildMap = new Hashtable();
+						grandChildMap["x"] = "abc";
+						grandChildMap["y"] = new ArrayList(new object[] {"a", "b", "c"});
+
+						IDictionary nestedMap = new Hashtable();
+						nestedMap["a"] = "foo";
+						nestedMap["b"] = (int) 23;
+						nestedMap["c"] = (long) 45;
+						nestedMap["d"] = grandChildMap;
+
+						request.Body.SetDictionary("mapField", nestedMap);
+						request.Body.SetList("listField", new ArrayList(new Object[] {"a", "b", "c"}));
+
+						producer.Send(request);
+
+						IMapMessage message = consumer.Receive(receiveTimeout) as IMapMessage;
+						Assert.IsNotNull(message, "No message returned!");
+						Assert.AreEqual(request.Body.Count, message.Body.Count, "Invalid number of message maps.");
+						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+
+						string textFieldResponse = message.Body.GetString("textField");
+						Assert.AreEqual(textFieldValue, textFieldResponse, "textField does not match.");
+
+						IDictionary nestedMapResponse = message.Body.GetDictionary("mapField");
+						Assert.IsNotNull(nestedMapResponse, "Nested map not returned.");
+						Assert.AreEqual(nestedMap.Count, nestedMapResponse.Count, "nestedMap: Wrong number of elements");
+						Assert.AreEqual("foo", nestedMapResponse["a"], "nestedMap: a");
+						Assert.AreEqual(23, nestedMapResponse["b"], "nestedMap: b");
+						Assert.AreEqual(45, nestedMapResponse["c"], "nestedMap: c");
+
+						IDictionary grandChildMapResponse = nestedMapResponse["d"] as IDictionary;
+						Assert.IsNotNull(grandChildMapResponse, "Grand child map not returned.");
+						Assert.AreEqual(grandChildMap.Count, grandChildMapResponse.Count, "grandChildMap: Wrong number of elements");
+						Assert.AreEqual(grandChildMapResponse["x"], "abc", "grandChildMap: x");
+
+						IList grandChildList = grandChildMapResponse["y"] as IList;
+						Assert.IsNotNull(grandChildList, "Grand child list not returned.");
+						Assert.AreEqual(3, grandChildList.Count, "grandChildList: Wrong number of list elements.");
+						Assert.AreEqual("a", grandChildList[0], "grandChildList: a");
+						Assert.AreEqual("b", grandChildList[1], "grandChildList: b");
+						Assert.AreEqual("c", grandChildList[2], "grandChildList: c");
+
+						IList listFieldResponse = message.Body.GetList("listField");
+						Assert.IsNotNull(listFieldResponse, "Nested list not returned.");
+						Assert.AreEqual(3, listFieldResponse.Count, "listFieldResponse: Wrong number of list elements.");
+						Assert.AreEqual("a", listFieldResponse[0], "listFieldResponse: a");
+						Assert.AreEqual("b", listFieldResponse[1], "listFieldResponse: b");
+						Assert.AreEqual("c", listFieldResponse[2], "listFieldResponse: c");
 					}
 				}
 			}
