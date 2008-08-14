@@ -43,6 +43,11 @@ namespace Apache.NMS
 		/// </summary>
 		void Send(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive);
 
+		/// <summary>
+		/// Close the producer.
+		/// </summary>
+		void Close();
+
 		bool Persistent { get; set; }
 
 		TimeSpan TimeToLive { get; set; }
