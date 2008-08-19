@@ -38,8 +38,8 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
 				{
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
-					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
-					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.Persistent = false;
 						producer.RequestTimeout = receiveTimeout;
@@ -82,7 +82,7 @@ namespace Apache.NMS.Test
 				using(ISession session1 = connection1.CreateSession(AcknowledgementMode.Transactional))
 				{
 					IDestination destination1 = SessionUtil.GetDestination(session1, DESTINATION_NAME);
-					using(IMessageConsumer consumer = session1.CreateConsumer(destination1, receiveTimeout))
+					using(IMessageConsumer consumer = session1.CreateConsumer(destination1))
 					{
 						// First connection session that sends one message, and the
 						// second message is implicitly rolled back as the session is
@@ -93,7 +93,7 @@ namespace Apache.NMS.Test
 							using(ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
 							{
 								IDestination destination2 = SessionUtil.GetDestination(session2, DESTINATION_NAME);
-								using(IMessageProducer producer = session2.CreateProducer(destination2, receiveTimeout))
+								using(IMessageProducer producer = session2.CreateProducer(destination2))
 								{
 									producer.Persistent = false;
 									producer.RequestTimeout = receiveTimeout;
@@ -114,7 +114,7 @@ namespace Apache.NMS.Test
 							using(ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
 							{
 								IDestination destination2 = SessionUtil.GetDestination(session2, DESTINATION_NAME);
-								using(IMessageProducer producer = session2.CreateProducer(destination2, receiveTimeout))
+								using(IMessageProducer producer = session2.CreateProducer(destination2))
 								{
 									producer.Persistent = false;
 									producer.RequestTimeout = receiveTimeout;
@@ -148,8 +148,8 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
 				{
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
-					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
-					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.Persistent = false;
 						producer.RequestTimeout = receiveTimeout;
@@ -189,8 +189,8 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
 				{
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
-					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
-					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.Persistent = false;
 						producer.RequestTimeout = receiveTimeout;

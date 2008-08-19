@@ -47,8 +47,8 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
-					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
-					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.Persistent = persistent;
 						producer.RequestTimeout = receiveTimeout;

@@ -66,8 +66,8 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
-					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
-					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.Persistent = persistent;
 						producer.RequestTimeout = receiveTimeout;
@@ -105,7 +105,7 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
-					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.Persistent = false;
 						producer.RequestTimeout = receiveTimeout;
@@ -115,7 +115,7 @@ namespace Apache.NMS.Test
 						request.NMSType = "Test";
 						producer.Send(request);
 
-						using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+						using(IMessageConsumer consumer = session.CreateConsumer(destination))
 						{
 							consumer.Listener += new MessageListener(OnMessage);
 							WaitForMessageToArrive();
@@ -146,8 +146,8 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
-					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
-					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.Persistent = persistent;
 						producer.RequestTimeout = receiveTimeout;
@@ -186,10 +186,10 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
-					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					{
 						consumer.Listener += new MessageListener(OnMessage);
-						using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+						using(IMessageProducer producer = session.CreateProducer(destination))
 						{
 							producer.Persistent = persistent;
 							producer.RequestTimeout = receiveTimeout;
@@ -234,9 +234,9 @@ namespace Apache.NMS.Test
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
 					ITemporaryQueue tempReplyDestination = session.CreateTemporaryQueue();
 
-					using(IMessageConsumer consumer = session.CreateConsumer(destination, receiveTimeout))
-					using(IMessageConsumer tempConsumer = session.CreateConsumer(tempReplyDestination, receiveTimeout))
-					using(IMessageProducer producer = session.CreateProducer(destination, receiveTimeout))
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageConsumer tempConsumer = session.CreateConsumer(tempReplyDestination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.Persistent = persistent;
 						producer.RequestTimeout = receiveTimeout;
@@ -264,7 +264,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					using(IMessageProducer producer = session.CreateProducer(message.NMSReplyTo, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(message.NMSReplyTo))
 					{
 						producer.Persistent = message.NMSPersistent;
 						producer.RequestTimeout = receiveTimeout;

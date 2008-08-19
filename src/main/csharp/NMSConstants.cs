@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using System;
+using System.Threading;
 
 namespace Apache.NMS
 {
@@ -26,6 +27,7 @@ namespace Apache.NMS
 		public const byte defaultPriority = 5;
 		public const bool defaultPersistence = true;
 		public static readonly TimeSpan defaultTimeToLive = TimeSpan.Zero;
+		public static readonly TimeSpan defaultRequestTimeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 	}
 }
 

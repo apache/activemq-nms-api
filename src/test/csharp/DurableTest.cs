@@ -37,7 +37,7 @@ namespace Apache.NMS.Test
 				using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
 				{
 					ITopic topic = SessionUtil.GetTopic(session, TOPIC);
-					using(IMessageProducer producer = session.CreateProducer(topic, receiveTimeout))
+					using(IMessageProducer producer = session.CreateProducer(topic))
 					{
 						ITextMessage message = session.CreateTextMessage("Persistent Hello");
 

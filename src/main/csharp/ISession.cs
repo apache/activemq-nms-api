@@ -35,19 +35,9 @@ namespace Apache.NMS
 		IMessageProducer CreateProducer(IDestination destination);
 
 		/// <summary>
-		/// Creates a producer of messages on a given destination
-		/// </summary>
-		IMessageProducer CreateProducer(IDestination destination, TimeSpan requestTimeout);
-
-		/// <summary>
 		/// Creates a consumer of messages on a given destination
 		/// </summary>
 		IMessageConsumer CreateConsumer(IDestination destination);
-
-		/// <summary>
-		/// Creates a consumer of messages on a given destination
-		/// </summary>
-		IMessageConsumer CreateConsumer(IDestination destination, TimeSpan requestTimeout);
 
 		/// <summary>
 		/// Creates a consumer of messages on a given destination with a selector
@@ -57,17 +47,7 @@ namespace Apache.NMS
 		/// <summary>
 		/// Creates a consumer of messages on a given destination with a selector
 		/// </summary>
-		IMessageConsumer CreateConsumer(IDestination destination, string selector, TimeSpan requestTimeout);
-
-		/// <summary>
-		/// Creates a consumer of messages on a given destination with a selector
-		/// </summary>
 		IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal);
-
-		/// <summary>
-		/// Creates a consumer of messages on a given destination with a selector
-		/// </summary>
-		IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal, TimeSpan requestTimeout);
 
 		/// <summary>
 		/// Creates a named durable consumer of messages on a given destination with a selector
@@ -75,22 +55,10 @@ namespace Apache.NMS
 		IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
 
 		/// <summary>
-		/// Creates a named durable consumer of messages on a given destination with a selector
-		/// </summary>
-		IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal, TimeSpan requestTimeout);
-
-		/// <summary>
 		/// Deletes a durable consumer created with CreateDurableConsumer().
 		/// </summary>
 		/// <param name="name">Name of the durable consumer</param>
 		void DeleteDurableConsumer(string name);
-
-		/// <summary>
-		/// Deletes a durable consumer created with CreateDurableConsumer().
-		/// </summary>
-		/// <param name="name">Name of the durable consumer</param>
-		/// <param name="requestTimeout">Timeout to wait for response from broker.</param>
-		void DeleteDurableConsumer(string name, TimeSpan requestTimeout);
 
 		/// <summary>
 		/// Returns the queue for the given name
@@ -172,7 +140,9 @@ namespace Apache.NMS
 		#endregion
 
 		#region Attributes
-		
+
+		TimeSpan RequestTimeout { get; set; }
+
 		bool Transacted { get; }
 
 		AcknowledgementMode AcknowledgementMode { get; }

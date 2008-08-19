@@ -199,6 +199,7 @@ namespace Apache.NMS.Test
 		{
 			IConnection newConnection = Factory.CreateConnection(userName, passWord);
 			Assert.IsNotNull(newConnection, "connection not created");
+			newConnection.RequestTimeout = this.receiveTimeout;
 			if(newClientId != null)
 			{
 				newConnection.ClientId = newClientId;
@@ -224,7 +225,7 @@ namespace Apache.NMS.Test
 				{
 					ITopic destinationTopic = SessionUtil.GetTopic(session, destination);
 					Assert.IsNotNull(destinationTopic, "Could not get destination topic.");
-					using(IMessageConsumer consumer = session.CreateDurableConsumer(destinationTopic, consumerID, selector, noLocal, receiveTimeout))
+					using(IMessageConsumer consumer = session.CreateDurableConsumer(destinationTopic, consumerID, selector, noLocal))
 					{
 					}
 				}
@@ -243,7 +244,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
 				{
-					session.DeleteDurableConsumer(consumerID, receiveTimeout);
+					session.DeleteDurableConsumer(consumerID);
 				}
 			}
 		}

@@ -76,29 +76,33 @@ namespace Apache.NMS
 		ISession CreateSession(AcknowledgementMode acknowledgementMode);
 
 		/// <summary>
-		/// Creates a new session to work on this connection
+		/// Closes the connection.
 		/// </summary>
-		ISession CreateSession(AcknowledgementMode acknowledgementMode, TimeSpan requestTimeout);
-
-		/// <summary>
-		/// The default acknowledgement mode
-		/// </summary>
-		AcknowledgementMode AcknowledgementMode { get; set; } 
-
-		/// <summary>
-		/// Sets the unique clienet ID for this connection before Start() or returns the
-		/// unique client ID after the connection has started
-		/// </summary>
-		string ClientId { get; set; } 
+		void Close();
 
 		/// <summary>
 		/// An asynchronous listener which can be notified if an error occurs
 		/// </summary>
 		event ExceptionListener ExceptionListener;
 
+		#region Attributes
+
 		/// <summary>
-		/// Closes the connection.
+		/// The default timeout for network requests.
 		/// </summary>
-		void Close();
+		TimeSpan RequestTimeout { get; set; }
+
+		/// <summary>
+		/// The default acknowledgement mode
+		/// </summary>
+		AcknowledgementMode AcknowledgementMode { get; set; }
+
+		/// <summary>
+		/// Sets the unique clienet ID for this connection before Start() or returns the
+		/// unique client ID after the connection has started
+		/// </summary>
+		string ClientId { get; set; }
+
+		#endregion
 	}
 }
