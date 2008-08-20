@@ -66,35 +66,48 @@ namespace Apache.NMS.Util
 			IDestination destination = null;
 			DestinationType destinationType = defaultType;
 
-			if(0 == String.Compare(destinationName.Substring(0, QueuePrefix.Length), QueuePrefix, false))
+			if(null != destinationName)
 			{
-				destinationType = DestinationType.Queue;
-				destinationName = destinationName.Substring(QueuePrefix.Length);
-			}
-			else if(0 == String.Compare(destinationName.Substring(0, TopicPrefix.Length), TopicPrefix, false))
-			{
-				destinationType = DestinationType.Topic;
-				destinationName = destinationName.Substring(TopicPrefix.Length);
-			}
-			else if(0 == String.Compare(destinationName.Substring(0, TempQueuePrefix.Length), TempQueuePrefix, false))
-			{
-				destinationType = DestinationType.TemporaryQueue;
-				destinationName = destinationName.Substring(TempQueuePrefix.Length);
-			}
-			else if(0 == String.Compare(destinationName.Substring(0, TempTopicPrefix.Length), TempTopicPrefix, false))
-			{
-				destinationType = DestinationType.TemporaryTopic;
-				destinationName = destinationName.Substring(TempTopicPrefix.Length);
+				if(destinationName.Length > QueuePrefix.Length
+					&& 0 == String.Compare(destinationName.Substring(0, QueuePrefix.Length), QueuePrefix, false))
+				{
+					destinationType = DestinationType.Queue;
+					destinationName = destinationName.Substring(QueuePrefix.Length);
+				}
+				else if(destinationName.Length > TopicPrefix.Length
+					&& 0 == String.Compare(destinationName.Substring(0, TopicPrefix.Length), TopicPrefix, false))
+				{
+					destinationType = DestinationType.Topic;
+					destinationName = destinationName.Substring(TopicPrefix.Length);
+				}
+				else if(destinationName.Length > TempQueuePrefix.Length
+					&& 0 == String.Compare(destinationName.Substring(0, TempQueuePrefix.Length), TempQueuePrefix, false))
+				{
+					destinationType = DestinationType.TemporaryQueue;
+					destinationName = destinationName.Substring(TempQueuePrefix.Length);
+				}
+				else if(destinationName.Length > TempTopicPrefix.Length
+					&& 0 == String.Compare(destinationName.Substring(0, TempTopicPrefix.Length), TempTopicPrefix, false))
+				{
+					destinationType = DestinationType.TemporaryTopic;
+					destinationName = destinationName.Substring(TempTopicPrefix.Length);
+				}
 			}
 
 			switch(destinationType)
 			{
 			case DestinationType.Queue:
-				destination = session.GetQueue(destinationName);
+				if(null != destinationName)
+				{
+					destination = session.GetQueue(destinationName);
+				}
 			break;
 
 			case DestinationType.Topic:
-				destination = session.GetTopic(destinationName);
+				if(null != destinationName)
+				{
+					destination = session.GetTopic(destinationName);
+				}
 			break;
 
 			case DestinationType.TemporaryQueue:
