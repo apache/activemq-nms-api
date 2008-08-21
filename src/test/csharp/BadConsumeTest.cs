@@ -54,7 +54,7 @@ namespace Apache.NMS.Test
 		[ExpectedException(Handler="ExceptionValidationCheck")]
 		public void TestBadConsumerException()
 		{
-			IMessageConsumer consumer = session.CreateConsumer(null);
+			session.CreateConsumer(null);
 		}
 
 		public void ExceptionValidationCheck(Exception ex)
