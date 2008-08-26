@@ -34,7 +34,7 @@
            value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers"/>
   <property name="project.cls.compliant" value="true"/>
 
-  <property name="nunit.dll" value="${basedir}/lib/nunit.framework.dll"/>
+  <property name="nunit.dll" value="${basedir}/lib/${current.build.framework}/nunit.framework.dll" dynamic="true" />
 
   <target name="dependency-init" description="Initializes build dependencies">
 
