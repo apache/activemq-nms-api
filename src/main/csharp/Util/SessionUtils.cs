@@ -23,10 +23,10 @@ namespace Apache.NMS.Util
 	/// </summary>
 	public class SessionUtil
 	{
-		private static string QueuePrefix = "queue:";
-		private static string TopicPrefix = "topic:";
-		private static string TempQueuePrefix = "temp-queue:";
-		private static string TempTopicPrefix = "temp-topic:";
+		private static string QueuePrefix = "queue://";
+		private static string TopicPrefix = "topic://";
+		private static string TempQueuePrefix = "temp-queue://";
+		private static string TempTopicPrefix = "temp-topic://";
 
 		/// <summary>
 		/// Get the destination by parsing the embedded type prefix.  Default is Queue if no prefix is
@@ -35,10 +35,10 @@ namespace Apache.NMS.Util
 		/// <param name="session">Session object to use to get the destination.</param>
 		/// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
 		///		<list type="bullet">
-		///			<item>queue:</item>
-		///			<item>topic:</item>
-		///			<item>temp-queue:</item>
-		///			<item>temp-topic:</item>
+		///			<item>queue://</item>
+		///			<item>topic://</item>
+		///			<item>temp-queue://</item>
+		///			<item>temp-topic://</item>
 		///		</list>
 		///	</param>
 		/// <returns></returns>
@@ -53,10 +53,10 @@ namespace Apache.NMS.Util
 		/// <param name="session">Session object to use to get the destination.</param>
 		/// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
 		///		<list type="bullet">
-		///			<item>queue:</item>
-		///			<item>topic:</item>
-		///			<item>temp-queue:</item>
-		///			<item>temp-topic:</item>
+		///			<item>queue://</item>
+		///			<item>topic://</item>
+		///			<item>temp-queue://</item>
+		///			<item>temp-topic://</item>
 		///		</list>
 		///	</param>
 		/// <param name="defaultType">Default type if no embedded prefix is specified.</param>
