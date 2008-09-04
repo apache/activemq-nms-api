@@ -113,13 +113,9 @@
     <property name="snk.file"  value="${basedir}/activemq-dotnet.snk" />
     <if test="${not file::exists(snk.file)}">
       <if test="${build.noskip}">
-    <fail message="Release key file not found. You can generate a key file by running 'sn -k ${snk.file}'." />
+        <fail message="Release key file not found. You can generate a key file by running 'sn -k ${snk.file}'." />
       </if>
-      <if test="${not(build.noskip)}">
-        <echo message="Release key file not found. You can generate a key file by running 'sn -k ${snk.file}'." />
-        <echo message="The Release build will be skipped." />
-        <property name="build.skip.release" value="true"/>
-      </if>
+      <property name="build.skip.release" value="true" />
     </if>
     <if test="${file::exists(snk.file)}">
       <property name="build.skip.release" value="false" />
@@ -141,11 +137,8 @@
        <!-- Make sure that the activemq-dotnet.snk exists for release builds -->
        <if test="${current.build.config.release}">
          <call target="release-init"/>
-         <property name="build.skip" value="${build.skip.release}" />
        </if>
-       <if test="${not current.build.config.release}">
-         <property name="build.skip" value="false" />
-       </if>
+       <property name="build.skip" value="false" />
     </if>
     <if test="${not framework::exists(current.build.framework)}">
        <if test="${build.noskip}">
@@ -166,7 +159,7 @@
     </if>
 
     <if test="${not(build.skip)}">
-       <property name="current.build.keysign" value="${current.build.config=='release' and current.build.framework.sign}"/>
+       <property name="current.build.keysign" value="${current.build.config=='release' and file::exists(snk.file) and current.build.framework.sign}"/>
        <echo message="Doing ${if(current.build.keysign,'a signed','an unsigned')} ${current.build.config} build for the ${current.build.framework.name} framework" />
        <property name="build.bin.dir" value="${basedir}/build/${nant.settings.currentframework}/${current.build.config}" />
        <mkdir dir="${build.bin.dir}"/>
@@ -270,15 +263,12 @@
     <call target="set-mono-2.0-framework-configuration" /><call target="conditional-compile" />
     <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-compile" />
 
-    <!-- we can only do a release skip if the Key file is available -->
-    <if test="${not build.skip.release}">
-      <call target="set-release-configuration" />
-      <call target="set-net-1.1-framework-configuration"  /><call target="conditional-compile" />
-      <call target="set-net-2.0-framework-configuration"  /><call target="conditional-compile" />
-      <call target="set-net-3.5-framework-configuration"  /><call target="conditional-compile" />
-      <call target="set-mono-2.0-framework-configuration" /><call target="conditional-compile" />
-      <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-compile" />
-    </if>
+    <call target="set-release-configuration" />
+    <call target="set-net-1.1-framework-configuration"  /><call target="conditional-compile" />
+    <call target="set-net-2.0-framework-configuration"  /><call target="conditional-compile" />
+    <call target="set-net-3.5-framework-configuration"  /><call target="conditional-compile" />
+    <call target="set-mono-2.0-framework-configuration" /><call target="conditional-compile" />
+    <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-compile" />
   </target>
 
   <target name="conditional-compile" depends="init" unless="${build.skip}"
@@ -318,7 +308,6 @@
       output="${build.bin.dir}/${project.name}.dll" doc="${build.bin.dir}/${project.name}.xml">
       <nowarn>
         <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-        <warning number="0618" /> <!-- do not report deprecation warnings -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/main/csharp/**.cs" />
@@ -329,8 +318,7 @@
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"  optimize="${csc.optimize}"
       output="${build.bin.dir}/${project.name}.dll" doc="${build.bin.dir}/${project.name}.xml">
       <nowarn>
-    <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
-    <warning number="0618" /> <!-- do not report deprecation warnings -->
+        <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
       </nowarn>
       <sources failonempty="true">
         <include name="src/main/csharp/**.cs" />
