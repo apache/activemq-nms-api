@@ -55,14 +55,14 @@ namespace Apache.NMS
 		string NMSMessageId { get; }
 		
 		/// <summary>
-		/// Whether or not this message is persistent.  This property is set by the IMessageProducer.
+		/// Whether or not this message is persistent.
 		/// </summary>
-		bool NMSPersistent { get; }
+		bool NMSPersistent { get; set; }
 		
 		/// <summary>
-		/// The Priority of this message.  This property is set by the IMessageProducer.
+		/// The Priority of this message.
 		/// </summary>
-		byte NMSPriority { get; }
+		byte NMSPriority { get; set; }
 		
 		/// <summary>
 		/// Returns true if this message has been redelivered to this or another consumer before being acknowledged successfully.
