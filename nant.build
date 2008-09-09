@@ -35,6 +35,7 @@
   <property name="project.cls.compliant" value="true"/>
 
   <property name="nunit.dll" value="${basedir}/lib/${current.build.framework}/nunit.framework.dll" dynamic="true" />
+  <property name="nunit.extensions.dll" value="${basedir}/lib/${current.build.framework}/nunit.framework.extensions.dll" dynamic="true" />
 
   <target name="dependency-init" description="Initializes build dependencies">
 
@@ -50,6 +51,7 @@
       <include name="System.Xml.dll" asis="true"/>
       <include name="${build.bin.dir}/${project.name}.dll"/>
       <include name="${nunit.dll}"/>
+      <include name="${nunit.extensions.dll}"/>
     </assemblyfileset>
 
     <fileset id="content.filenames">
