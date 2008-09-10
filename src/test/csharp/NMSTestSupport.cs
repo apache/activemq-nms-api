@@ -195,6 +195,16 @@ namespace Apache.NMS.Test
 		/// </summary>
 		/// <param name="newClientId">Client ID of the new connection.</param>
 		/// <returns></returns>
+		public virtual IConnection CreateConnection()
+		{
+			return CreateConnection(null);
+		}
+
+		/// <summary>
+		/// Create a new connection to the broker.
+		/// </summary>
+		/// <param name="newClientId">Client ID of the new connection.</param>
+		/// <returns></returns>
 		public virtual IConnection CreateConnection(string newClientId)
 		{
 			IConnection newConnection = Factory.CreateConnection(userName, passWord);
