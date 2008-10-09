@@ -110,10 +110,13 @@
   </target>
 
   <target name="release-init" description="Initializes release build properties">
-    <property name="snk.file"  value="${basedir}/activemq-dotnet.snk" />
+    <property name="snk.file"  value="${environment::get-variable('ACTIVEMQ_DOTNET_SNK')}"
+            if="${environment::variable-exists('ACTIVEMQ_DOTNET_SNK')}"
+            unless="${property::exists('snk.file')}"/>
+    <property name="snk.file"  value="${basedir}/activemq-dotnet.snk" if="${not property::exists('snk.file')}"/>
     <if test="${not file::exists(snk.file)}">
       <if test="${build.noskip}">
-        <fail message="Release key file not found. You can generate a key file by running 'sn -k ${snk.file}'." />
+        <fail message="Release key file not found. You can generate a key file by running 'sn -k activemq-dotnet.snk'.  Then set the ACTIVEMQ_DOTNET_SNK environment variable to the full pathname of the file." />
       </if>
       <property name="build.skip.release" value="true" />
     </if>
@@ -303,7 +306,7 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="${basedir}/activemq-dotnet.snk" target="library"
+    <csc if="${current.build.keysign}" keyfile="${snk.file}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}" optimize="${csc.optimize}"
       output="${build.bin.dir}/${project.name}.dll" doc="${build.bin.dir}/${project.name}.xml">
       <nowarn>
@@ -354,7 +357,7 @@
       </attributes>
     </asminfo>
 
-    <csc if="${current.build.keysign}" keyfile="${basedir}/activemq-dotnet.snk" target="library"
+    <csc if="${current.build.keysign}" keyfile="${snk.file}" target="library"
       define="${current.build.defines}" warnaserror="false" debug="${csc.debug}"  optimize="${csc.optimize}"
       output="${build.bin.dir}/${project.name}.Test.dll" doc="${build.bin.dir}/${project.name}.Test.xml">
       <nowarn>
