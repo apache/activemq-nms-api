@@ -56,7 +56,18 @@
       <include name="LICENSE.txt"/>
       <include name="NOTICE.txt"/>
     </fileset>
-  </target>
+
+    <fileset id="deploy.filenames">
+		<include name="${build.bin.dir}/${project.name}.dll"/>
+		<include name="${build.bin.dir}/${project.name}.?db"/>
+		<include name="${build.bin.dir}/${project.name}.xml"/>
+		<include name="${build.bin.dir}/${project.name}.Test.dll"/>
+		<include name="${build.bin.dir}/${project.name}.Test.?db"/>
+		<include name="${build.bin.dir}/${project.name}.Test.xml"/>
+		<include name="LICENSE.txt"/>
+		<include name="NOTICE.txt"/>
+    </fileset>
+</target>
 
   <!-- Load the common target definitions  -->
   <include buildfile="${basedir}/nant-common.xml"/>

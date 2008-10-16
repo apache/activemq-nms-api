@@ -99,16 +99,6 @@
     <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>
   </target>
 
-  <target name="repo-deploy" description="Deploy a dependency to the deployment repo">
-    <fail message="Then nant.deploy.repo variable has not been set.  Please set it before you call this task." unless="${property::exists('nant.deploy.repo')}"/>
-    <fail message="The repo.task.artifact variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.artifact')}"/>
-    <fail message="The repo.task.src variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.src')}"/>
-
-    <property name="repo.task.dest" value="${nant.deploy.repo}/${repo.task.artifact}"/>
-    <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
-    <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>
-  </target>
-
   <target name="release-init" description="Initializes release build properties">
     <property name="snk.file"  value="${environment::get-variable('ACTIVEMQ_DOTNET_SNK')}"
             if="${environment::variable-exists('ACTIVEMQ_DOTNET_SNK')}"
@@ -445,24 +435,22 @@
   <!-- ============================================================================================ -->
 
   <target name="deploy-all" depends="release-init" description="Deploy all build configurations for all runtime configurations">
-    <echo message="Deploying all build configurations for all runtime configurations." />
+    <echo message="Deploying release configurations for all runtime configurations." />
 
-    <call target="set-debug-configuration" />
+    <call target="set-release-configuration" />
     <call target="set-net-1.1-framework-configuration"  /><call target="conditional-deploy" />
     <call target="set-net-2.0-framework-configuration"  /><call target="conditional-deploy" />
     <call target="set-net-3.5-framework-configuration"  /><call target="conditional-deploy" />
     <call target="set-mono-2.0-framework-configuration" /><call target="conditional-deploy" />
     <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-deploy" />
 
-    <!-- we can only do a release skip if the Key file is available -->
-    <if test="${not build.skip.release}">
-      <call target="set-release-configuration" />
-      <call target="set-net-1.1-framework-configuration"  /><call target="conditional-deploy" />
-      <call target="set-net-2.0-framework-configuration"  /><call target="conditional-deploy" />
-      <call target="set-net-3.5-framework-configuration"  /><call target="conditional-deploy" />
-      <call target="set-mono-2.0-framework-configuration" /><call target="conditional-deploy" />
-      <call target="set-netcf-2.0-framework-configuration"/><call target="conditional-deploy" />
-    </if>
+	<!-- Commit the deployed files to repository.  This completes the deployment. -->
+	<exec program="svn" failonerror="false">
+		<arg value="commit"/>
+		<arg value="deploy"/>
+		<arg value="-m"/>
+		<arg value="Deploy ${project.name} ${project.version}"/>
+	</exec>
   </target>
 
   <target name="conditional-deploy" depends="init" unless="${build.skip}"
@@ -471,21 +459,19 @@
   </target>
 
   <target name="init-deploy">
-     <fail message="Then nant.deploy.repo variable has not been set.  Please set it before you call this task." unless="${property::exists('nant.deploy.repo')}"/>
   </target>
 
-  <!-- Deploy the modules to the local repo -->
-  <target name="deploy" depends="init-deploy, install" description="Deploy the artifacts into the nant repo">
-    <property name="path" value="${project.group}/${project.name}/${project.version.full}/${current.build.framework}/${current.build.config}"/>
+  <!-- Deploy the modules to the global repo -->
+  <target name="deploy" depends="init-deploy" description="Deploy the artifacts into the nant repo">
+    <property name="repo.dir" value="deploy/${current.build.framework}"/>
 
     <foreach item="File" property="deploy.filename">
       <in>
         <items refid="deploy.filenames" />
       </in>
       <do>
-        <property name="repo.task.artifact" value="${path}/${deploy.filename}"/>
-        <property name="repo.task.src" value="${build.bin.dir}/${deploy.filename}"/>
-        <call target="repo-deploy"/>
+		<property name="repo.task.dest" value="${path::get-file-name(deploy.filename)}"/>
+		<copy file="${deploy.filename}" todir="${repo.dir}" if="${not file::up-to-date(deploy.filename, '${repo.dir}/${repo.task.dest}')}" />
       </do>
     </foreach>
 
