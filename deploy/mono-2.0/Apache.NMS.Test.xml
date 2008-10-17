@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>D:\Hudson\jobs\Apache.NMS 1.0.0\workspace\Apache.NMS\build\mono-2.0\release\Apache.NMS.Test</name>
+        <name>D:\Hudson\jobs\Apache.NMS Trunk\workspace\Apache.NMS\build\mono-2.0\release\Apache.NMS.Test</name>
     </assembly>
     <members>
         <member name="M:Apache.NMS.Test.BytesMessageTest.AssertBytesMessageEqual(Apache.NMS.IMessage,Apache.NMS.IMessage)">
@@ -66,6 +66,13 @@
             </summary>
             <param name="uriNode">Parent node of the factoryParams node.</param>
             <returns>Object array of parameter objects to be passsed to provider factory object.  Null if no parameters are specified in configuration file.</returns>
+        </member>
+        <member name="M:Apache.NMS.Test.NMSTestSupport.CreateConnection">
+            <summary>
+            Create a new connection to the broker.
+            </summary>
+            <returns>
+            </returns>
         </member>
         <member name="M:Apache.NMS.Test.NMSTestSupport.CreateConnection(System.String)">
             <summary>

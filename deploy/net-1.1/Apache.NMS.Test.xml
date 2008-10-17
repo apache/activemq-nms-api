@@ -42,6 +42,12 @@
             <param name="uriNode">Parent node of the factoryParams node.</param>
             <returns>Object array of parameter objects to be passsed to provider factory object.  Null if no parameters are specified in configuration file.</returns>
         </member>
+        <member name="M:Apache.NMS.Test.NMSTestSupport.CreateConnection">
+            <summary>
+            Create a new connection to the broker.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Apache.NMS.Test.NMSTestSupport.CreateConnection(System.String)">
             <summary>
             Create a new connection to the broker.
