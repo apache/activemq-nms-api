@@ -23,7 +23,7 @@
   <property name="basedir" value="${project::get-base-directory()}"/>
   <property name="project.name" value="Apache.NMS"/>
   <property name="project.group" value="org.apache.activemq"/>
-  <property name="project.version" value="1.0.0" unless="${property::exists('project.version')}"/>
+  <property name="project.version" value="1.1.0" unless="${property::exists('project.version')}"/>
   <property name="project.short_description" value="Apache NMS Class Library"/>
   <property name="project.description" value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers"/>
   <property name="project.cls.compliant" value="true"/>
