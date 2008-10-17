@@ -193,7 +193,6 @@ namespace Apache.NMS.Test
 		/// <summary>
 		/// Create a new connection to the broker.
 		/// </summary>
-		/// <param name="newClientId">Client ID of the new connection.</param>
 		/// <returns></returns>
 		public virtual IConnection CreateConnection()
 		{
