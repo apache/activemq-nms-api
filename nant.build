@@ -35,6 +35,7 @@
     <assemblyfileset failonempty="true" id="dependencies">
       <include name="mscorlib.dll" asis="true"/>
       <include name="System.dll" asis="true"/>
+      <include name="System.Web.dll" asis="true"/>
       <include name="System.Xml.dll" asis="true"/>
     </assemblyfileset>
 

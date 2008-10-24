@@ -105,7 +105,7 @@ namespace Apache.NMS.Util
 			}
 		}
 
-		private static String UrlDecode(String s)
+		public static String UrlDecode(String s)
 		{
 #if !NETCF
 			return HttpUtility.HtmlDecode(s);
@@ -114,7 +114,7 @@ namespace Apache.NMS.Util
 #endif
 		}
 
-		private static String UrlEncode(String s)
+		public static String UrlEncode(String s)
 		{
 #if !NETCF
 			return HttpUtility.HtmlEncode(s);
@@ -277,7 +277,6 @@ namespace Apache.NMS.Util
 		/// <param name="uri"></param>
 		/// <param name="rc"></param>
 		/// <param name="ssp"></param>
-		/// <param name="p"></param>
 		private static void parseComposite(Uri uri, CompositeData rc, String ssp)
 		{
 			String componentString;
@@ -353,13 +352,13 @@ namespace Apache.NMS.Util
 		/// <summary>
 		/// </summary>
 		/// <param name="componentString"></param>
-		private static String[] splitComponents(String str)
+		private static String[] splitComponents(String componentString)
 		{
 			ArrayList l = new ArrayList();
 
 			int last = 0;
 			int depth = 0;
-			char[] chars = str.ToCharArray();
+			char[] chars = componentString.ToCharArray();
 			for(int i = 0; i < chars.Length; i++)
 			{
 				switch(chars[i])
@@ -373,7 +372,7 @@ namespace Apache.NMS.Util
 				case ',':
 				if(depth == 0)
 				{
-					String s = str.Substring(last, i);
+					String s = componentString.Substring(last, i);
 					l.Add(s);
 					last = i + 1;
 				}
@@ -383,7 +382,7 @@ namespace Apache.NMS.Util
 				}
 			}
 
-			String ending = str.Substring(last);
+			String ending = componentString.Substring(last);
 			if(ending.Length != 0)
 			{
 				l.Add(ending);
