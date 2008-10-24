@@ -15,24 +15,27 @@
  * limitations under the License.
  */
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
+using System.Text;
+using System.Web;
 
 namespace Apache.NMS.Util
 {
 	/// <summary>
-	/// Class to provide support for URI query parameters which uses .Net reflection
+	/// Class to provide support for Uri query parameters which uses .Net reflection
 	/// to identify and set properties.
 	/// </summary>
 	public class URISupport
 	{
 		/// <summary>
-		/// Parse a URI query string of the form ?x=y&amp;z=0
+		/// Parse a Uri query string of the form ?x=y&amp;z=0
 		/// into a map of name/value pairs.
 		/// </summary>
 		/// <param name="query">The query string to parse. This string should not contain
-		/// URI escape characters.</param>
+		/// Uri escape characters.</param>
 		public static StringDictionary ParseQuery(string query)
 		{
 			StringDictionary map = new StringDictionary();
@@ -53,7 +56,7 @@ namespace Apache.NMS.Util
 
 					if(nameValue.Length != 2)
 					{
-						throw new NMS.NMSException("Invalid URI parameter: " + query);
+						throw new NMS.NMSException("Invalid Uri parameter: " + query);
 					}
 
 					map[nameValue[0]] = nameValue[1];
@@ -61,6 +64,11 @@ namespace Apache.NMS.Util
 			}
 
 			return map;
+		}
+
+		public static StringDictionary ParseParameters(Uri uri)
+		{
+			return uri.Query == null ? emptyMap() : ParseQuery(stripPrefix(uri.Query, "?"));
 		}
 
 		/// <summary>
@@ -95,6 +103,324 @@ namespace Apache.NMS.Util
 					prop.SetValue(target, Convert.ChangeType(map[key], prop.PropertyType, CultureInfo.InvariantCulture), null);
 				}
 			}
+		}
+
+		private static String UrlDecode(String s)
+		{
+#if !NETCF
+			return HttpUtility.HtmlDecode(s);
+#else
+			return Uri.UnescapeDataString(s);
+#endif
+		}
+
+		private static String UrlEncode(String s)
+		{
+#if !NETCF
+			return HttpUtility.HtmlEncode(s);
+#else
+			return Uri.EscapeUriString(s);
+#endif
+		}
+
+		public static String createQueryString(StringDictionary options)
+		{
+			if(options.Count > 0)
+			{
+				StringBuilder rc = new StringBuilder();
+				bool first = true;
+				foreach(String key in options.Keys)
+				{
+					string value = options[key];
+
+					if(first)
+					{
+						first = false;
+					}
+					else
+					{
+						rc.Append("&");
+					}
+					rc.Append(UrlEncode(key));
+					rc.Append("=");
+					rc.Append(UrlEncode(value));
+				}
+				return rc.ToString();
+			}
+			else
+			{
+				return "";
+			}
+		}
+
+		public class CompositeData
+		{
+			private String host;
+			private String scheme;
+			private String path;
+			private Uri[] components;
+			private StringDictionary parameters;
+			private String fragment;
+
+			public Uri[] Components
+			{
+				get { return components; }
+				set { components = value; }
+			}
+
+			public String Fragment
+			{
+				get { return fragment; }
+				set { fragment = value; }
+			}
+
+			public StringDictionary Parameters
+			{
+				get { return parameters; }
+				set { parameters = value; }
+			}
+
+			public String Scheme
+			{
+				get { return scheme; }
+				set { scheme = value; }
+			}
+
+			public String Path
+			{
+				get { return path; }
+				set { path = value; }
+			}
+
+			public String Host
+			{
+				get { return host; }
+				set { host = value; }
+			}
+
+			public Uri toUri()
+			{
+				StringBuilder sb = new StringBuilder();
+				if(scheme != null)
+				{
+					sb.Append(scheme);
+					sb.Append(':');
+				}
+
+				if(host != null && host.Length != 0)
+				{
+					sb.Append(host);
+				}
+				else
+				{
+					sb.Append('(');
+					for(int i = 0; i < components.Length; i++)
+					{
+						if(i != 0)
+						{
+							sb.Append(',');
+						}
+						sb.Append(components[i].ToString());
+					}
+					sb.Append(')');
+				}
+
+				if(path != null)
+				{
+					sb.Append('/');
+					sb.Append(path);
+				}
+
+				if(parameters.Count != 0)
+				{
+					sb.Append("?");
+					sb.Append(createQueryString(parameters));
+				}
+
+				if(fragment != null)
+				{
+					sb.Append("#");
+					sb.Append(fragment);
+				}
+
+				return new Uri(sb.ToString());
+			}
+		}
+
+		public static String stripPrefix(String value, String prefix)
+		{
+			if(value.StartsWith(prefix))
+			{
+				return value.Substring(prefix.Length);
+			}
+
+			return value;
+		}
+
+		public static CompositeData parseComposite(Uri uri)
+		{
+
+			CompositeData rc = new CompositeData();
+			rc.Scheme = uri.Scheme;
+			String ssp = stripPrefix(uri.AbsoluteUri.Trim(), rc.Scheme).Trim();
+			ssp = stripPrefix(ssp, ":").Trim();
+			ssp = stripPrefix(ssp, "//").Trim();
+
+			parseComposite(uri, rc, ssp);
+
+			rc.Fragment = uri.Fragment;
+			return rc;
+		}
+
+		/// <summary>
+		/// </summary>
+		/// <param name="uri"></param>
+		/// <param name="rc"></param>
+		/// <param name="ssp"></param>
+		/// <param name="p"></param>
+		private static void parseComposite(Uri uri, CompositeData rc, String ssp)
+		{
+			String componentString;
+			String parms;
+
+			if(!checkParenthesis(ssp))
+			{
+				throw new ApplicationException(uri.ToString() + ": Not a matching number of '(' and ')' parenthesis");
+			}
+
+			int p;
+			int intialParen = ssp.IndexOf("(");
+			if(intialParen >= 0)
+			{
+				rc.Host = ssp.Substring(0, intialParen);
+				p = rc.Host.IndexOf("/");
+				if(p >= 0)
+				{
+					rc.Path = rc.Host.Substring(p);
+					rc.Host = rc.Host.Substring(0, p);
+				}
+				p = ssp.LastIndexOf(")");
+				componentString = ssp.Substring(intialParen + 1, p - 1);
+				parms = ssp.Substring(p + 1).Trim();
+
+			}
+			else
+			{
+				p = ssp.IndexOf("?");
+				if(p >= 0)
+				{
+					componentString = ssp.Substring(0, p);
+					parms = ssp.Substring(p);
+				}
+				else
+				{
+					componentString = ssp;
+					parms = "";
+				}
+			}
+
+			String[] components = splitComponents(componentString);
+			rc.Components = new Uri[components.Length];
+			for(int i = 0; i < components.Length; i++)
+			{
+				rc.Components[i] = new Uri(components[i].Trim());
+			}
+
+			p = parms.IndexOf("?");
+			if(p >= 0)
+			{
+				if(p > 0)
+				{
+					rc.Path = stripPrefix(parms.Substring(0, p), "/");
+				}
+				rc.Parameters = ParseQuery(parms.Substring(p + 1));
+			}
+			else
+			{
+				if(parms.Length > 0)
+				{
+					rc.Path = stripPrefix(parms, "/");
+				}
+				rc.Parameters = emptyMap();
+			}
+		}
+
+		private static StringDictionary emptyMap()
+		{
+			return new StringDictionary();
+		}
+
+		/// <summary>
+		/// </summary>
+		/// <param name="componentString"></param>
+		private static String[] splitComponents(String str)
+		{
+			ArrayList l = new ArrayList();
+
+			int last = 0;
+			int depth = 0;
+			char[] chars = str.ToCharArray();
+			for(int i = 0; i < chars.Length; i++)
+			{
+				switch(chars[i])
+				{
+				case '(':
+				depth++;
+				break;
+				case ')':
+				depth--;
+				break;
+				case ',':
+				if(depth == 0)
+				{
+					String s = str.Substring(last, i);
+					l.Add(s);
+					last = i + 1;
+				}
+				break;
+				default:
+				break;
+				}
+			}
+
+			String ending = str.Substring(last);
+			if(ending.Length != 0)
+			{
+				l.Add(ending);
+			}
+
+			String[] rc = new String[l.Count];
+			l.CopyTo(rc);
+
+			return rc;
+		}
+
+		public static bool checkParenthesis(String str)
+		{
+			bool result = true;
+			if(str != null)
+			{
+				int open = 0;
+				int closed = 0;
+
+				int i = 0;
+				while((i = str.IndexOf('(', i)) >= 0)
+				{
+					i++;
+					open++;
+				}
+
+				i = 0;
+				while((i = str.IndexOf(')', i)) >= 0)
+				{
+					i++;
+					closed++;
+				}
+
+				result = (open == closed);
+			}
+
+			return result;
 		}
 	}
 }

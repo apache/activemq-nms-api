@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +75,7 @@
     <Compile Include="src\main\csharp\Tracer.cs" />
     <Compile Include="src\main\csharp\Util\Atomic.cs" />
     <Compile Include="src\main\csharp\Util\AtomicBoolean.cs" />
+    <Compile Include="src\main\csharp\Util\AtomicReference.cs" />
     <Compile Include="src\main\csharp\Util\Convert.cs" />
     <Compile Include="src\main\csharp\Util\CountDownLatch.cs" />
     <Compile Include="src\main\csharp\Util\DateUtils.cs" />
