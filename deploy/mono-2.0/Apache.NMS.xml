@@ -49,17 +49,17 @@
         </member>
         <member name="T:Apache.NMS.Util.URISupport">
             <summary>
-            Class to provide support for URI query parameters which uses .Net reflection
+            Class to provide support for Uri query parameters which uses .Net reflection
             to identify and set properties.
             </summary>
         </member>
         <member name="M:Apache.NMS.Util.URISupport.ParseQuery(System.String)">
             <summary>
-            Parse a URI query string of the form ?x=y&amp;z=0
+            Parse a Uri query string of the form ?x=y&amp;z=0
             into a map of name/value pairs.
             </summary>
             <param name="query">The query string to parse. This string should not contain
-            URI escape characters.</param>
+            Uri escape characters.</param>
         </member>
         <member name="M:Apache.NMS.Util.URISupport.SetProperties(System.Object,System.Collections.Specialized.StringDictionary,System.String)">
             <summary>
@@ -71,6 +71,22 @@
             <param name="map">Map of key/value pairs.</param>
             <param name="prefix">Key value prefix.  This is prepended to the property name
             before searching for a matching key value.</param>
+        </member>
+        <member name="M:Apache.NMS.Util.URISupport.parseComposite(System.Uri,Apache.NMS.Util.URISupport.CompositeData,System.String)">
+            <summary>
+            </summary>
+            <param name="uri">
+            </param>
+            <param name="rc">
+            </param>
+            <param name="ssp">
+            </param>
+        </member>
+        <member name="M:Apache.NMS.Util.URISupport.splitComponents(System.String)">
+            <summary>
+            </summary>
+            <param name="componentString">
+            </param>
         </member>
         <member name="T:Apache.NMS.IBytesMessage">
             <summary>
