@@ -30,6 +30,13 @@
 
   <property name="nunit.dll" value="${basedir}/lib/${current.build.framework}/nunit.framework.dll" dynamic="true" />
 
+  <target name="vendor-init" description="Initializes Vendor library from local repository.">
+    <!-- Vendor specific info.  The prefix of 'vendor.apache.org' is taken from the property
+         'vendor.fileset.names'.  This comma-delimited list is iterated, and properties with
+         well-known suffixes are used to access and copy down vendor file dependencies. -->
+    <property name="vendor.fileset.names" value=""/>
+  </target>
+
   <target name="dependency-init" description="Initializes build dependencies">
 
     <assemblyfileset failonempty="true" id="dependencies">
@@ -54,10 +61,12 @@
 
     <fileset id="deploy.filenames">
 		<include name="${build.bin.dir}/${project.name}.dll"/>
-		<include name="${build.bin.dir}/${project.name}.?db"/>
+		<include name="${build.bin.dir}/${project.name}.pdb"/>
+		<include name="${build.bin.dir}/${project.name}.dll.mdb"/>
 		<include name="${build.bin.dir}/${project.name}.xml"/>
 		<include name="${build.bin.dir}/${project.name}.Test.dll"/>
-		<include name="${build.bin.dir}/${project.name}.Test.?db"/>
+		<include name="${build.bin.dir}/${project.name}.Test.pdb"/>
+		<include name="${build.bin.dir}/${project.name}.Test.dll.mdb"/>
 		<include name="${build.bin.dir}/${project.name}.Test.xml"/>
 		<include name="LICENSE.txt"/>
 		<include name="NOTICE.txt"/>
@@ -65,9 +74,11 @@
 
     <fileset id="install.filenames">
 		<include name="${build.bin.dir}/${project.name}.dll"/>
-		<include name="${build.bin.dir}/${project.name}.?db"/>
+		<include name="${build.bin.dir}/${project.name}.pdb"/>
+		<include name="${build.bin.dir}/${project.name}.dll.mdb"/>
 		<include name="${build.bin.dir}/${project.name}.Test.dll"/>
-		<include name="${build.bin.dir}/${project.name}.Test.?db"/>
+		<include name="${build.bin.dir}/${project.name}.Test.pdb"/>
+		<include name="${build.bin.dir}/${project.name}.Test.dll.mdb"/>
     </fileset>
 </target>
 

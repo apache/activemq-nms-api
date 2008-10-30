@@ -96,6 +96,8 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
   <PropertyGroup>
     <PostBuildEvent>cd $(ProjectDir)
-nant install-all -D:compile.skip=true</PostBuildEvent>
+nant -nologo -q install-all -D:compile.skip=true</PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
