@@ -62,6 +62,13 @@
 		<include name="LICENSE.txt"/>
 		<include name="NOTICE.txt"/>
     </fileset>
+
+    <fileset id="install.filenames">
+		<include name="${build.bin.dir}/${project.name}.dll"/>
+		<include name="${build.bin.dir}/${project.name}.?db"/>
+		<include name="${build.bin.dir}/${project.name}.Test.dll"/>
+		<include name="${build.bin.dir}/${project.name}.Test.?db"/>
+    </fileset>
 </target>
 
   <!-- Load the common target definitions  -->
