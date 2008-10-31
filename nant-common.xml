@@ -359,18 +359,11 @@
       <do>
         <property name="repo.task.artifact" value="${path}/${path::get-file-name(install.filename)}"/>
         <property name="repo.task.src" value="${install.filename}"/>
-        <call target="repo-install"/>
+        <property name="repo.task.dest" value="${nant.local.repo}/${repo.task.artifact}"/>
+        <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
+        <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>
       </do>
     </foreach>
-  </target>
-
-  <target name="repo-install" description="Install a dependency to the local repo">
-    <fail message="The repo.task.artifact variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.artifact')}"/>
-    <fail message="The repo.task.src variable has not been set.  Please set it before you call this task." unless="${property::exists('repo.task.src')}"/>
-
-    <property name="repo.task.dest" value="${nant.local.repo}/${repo.task.artifact}"/>
-    <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
-    <copy file="${repo.task.src}" tofile="${repo.task.dest}"/>
   </target>
 
   <!-- ============================================================================================ -->
