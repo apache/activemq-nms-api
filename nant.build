@@ -28,13 +28,20 @@
   <property name="project.description" value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers"/>
   <property name="project.cls.compliant" value="true"/>
 
-  <property name="nunit.dll" value="${basedir}/lib/${current.build.framework}/nunit.framework.dll" dynamic="true" />
+  <property name="nunit.dll" value="${basedir}/lib/NUnit/${current.build.framework}/nunit.framework.dll" dynamic="true" />
 
   <target name="vendor-init" description="Initializes Vendor library from local repository.">
     <!-- Vendor specific info.  The prefix of 'vendor.apache.org' is taken from the property
          'vendor.fileset.names'.  This comma-delimited list is iterated, and properties with
          well-known suffixes are used to access and copy down vendor file dependencies. -->
-    <property name="vendor.fileset.names" value=""/>
+    <property name="vendor.fileset.names" value="vendor.nunit.org"/>
+
+    <!-- Property grouping for 'vendor.nunit.org' -->
+    <property name="vendor.nunit.org.name" value="NUnit"/>
+    <property name="vendor.nunit.org.group" value="org.nunit"/>
+    <property name="vendor.nunit.org.version" value="2.4.8"/>
+    <property name="vendor.nunit.org.filenames"
+              value="nunit.framework.dll,nunit.framework.extensions.dll" />
   </target>
 
   <target name="dependency-init" description="Initializes build dependencies">
@@ -82,7 +89,7 @@
     </fileset>
   </target>
   
-  <target name="default" depends="install-all"/>
+  <target name="default" depends="download-vendor-all, install-all" />
 
   <!-- Load the common target definitions  -->
   <include buildfile="${basedir}/nant-common.xml"/>

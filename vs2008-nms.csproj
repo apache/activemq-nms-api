@@ -97,7 +97,7 @@
   <PropertyGroup>
     <PostBuildEvent>cd $(ProjectDir)
 nant -nologo -q install-all -D:compile.skip=true</PostBuildEvent>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>cd $(ProjectDir)
+nant -nologo download-vendor -D:vendor.build.config=$(ConfigurationName) -D:vendor.build.framework=net-2.0</PreBuildEvent>
   </PropertyGroup>
 </Project>

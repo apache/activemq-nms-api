@@ -391,16 +391,25 @@
       <property name="vendor.version" value="${property::get-value(current.vendor + '.version')}"/>
       <property name="vendor.filenames" value="${property::get-value(current.vendor + '.filenames')}"/>
 
-      <property name="local.repo.vendor.path" value="${vendor.group}/${vendor.name}/${vendor.version}/${vendor.build.framework}/${vendor.build.config}"/>
-      <property name="vendor.repo" value="vendor/${vendor.name}/${vendor.build.framework}" />
+      <property name="local.repo.vendor.path" value="${nant.local.repo}/${vendor.group}/${vendor.name}/${vendor.version}/${vendor.build.framework}/${vendor.build.config}"/>
+      <property name="vendor.path" value="vendor/${vendor.name}/${vendor.build.framework}" />
+      <property name="lib.path" value="lib/${vendor.name}/${vendor.build.framework}" />
 
+      <!--
+           Update the LIB folder with the latest version of the file.  By default, the file from the
+           VENDOR folder will be used.  However, if there is a newer version installed in the local
+           repository, then that version will be copied into the LIB folder.
+       -->
       <foreach item="String" in="${vendor.filenames}" delim="," property="repo.task.artifact">
-        <property name="repo.task.src" value="${nant.local.repo}/${local.repo.vendor.path}/${repo.task.artifact}"/>
-        <property name="repo.task.dest" value="${vendor.repo}/${repo.task.artifact}"/>
+        <property name="lib.task.dest" value="${lib.path}/${repo.task.artifact}"/>
+        <mkdir dir="${directory::get-parent-directory(lib.task.dest)}" />
 
-        <if test="${file::exists(repo.task.src) and not file::up-to-date(repo.task.src, repo.task.dest)}">
-          <mkdir dir="${directory::get-parent-directory(repo.task.dest)}" />
-          <get src="${repo.task.src}" dest="${repo.task.dest}" />
+        <property name="vendor.task.src" value="${vendor.path}/${repo.task.artifact}"/>
+        <property name="repo.task.src" value="${local.repo.vendor.path}/${repo.task.artifact}"/>
+
+        <copy file="${repo.task.src}" tofile="${lib.task.dest}" if="${file::exists(repo.task.src)}"/>
+        <if test="${not file::exists(repo.task.src)}">
+          <copy file="${vendor.task.src}" tofile="${lib.task.dest}" if="${file::exists(vendor.task.src)}"/>
         </if>
       </foreach>
     </foreach>
@@ -444,7 +453,7 @@
       </in>
       <do>
 		<property name="repo.task.dest" value="${path::get-file-name(deploy.filename)}"/>
-		<copy file="${deploy.filename}" todir="${repo.dir}" if="${not file::up-to-date(deploy.filename, '${repo.dir}/${repo.task.dest}')}" />
+		<copy file="${deploy.filename}" todir="${repo.dir}" unless="${file::up-to-date(deploy.filename, '${repo.dir}/${repo.task.dest}')}" />
       </do>
     </foreach>
 
@@ -460,6 +469,7 @@
     </if>
     <delete dir="build" if="${directory::exists('build')}" />
     <delete dir="obj" if="${directory::exists('obj')}" />
+    <delete dir="lib" if="${directory::exists('lib')}" />
   </target>
 
   <target name="doc" depends="compile">
