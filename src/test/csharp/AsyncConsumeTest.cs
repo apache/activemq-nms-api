@@ -47,9 +47,11 @@ namespace Apache.NMS.Test
 			base.TearDown();
 		}
 
+#if !NET_1_1
 		[RowTest]
 		[Row(true)]
 		[Row(false)]
+#endif
 		public void TestAsynchronousConsume(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -77,9 +79,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
+#if !NET_1_1
 		[RowTest]
 		[Row(true)]
 		[Row(false)]
+#endif
 		public void TestCreateConsumerAfterSend(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -109,9 +113,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
+#if !NET_1_1
 		[RowTest]
 		[Row(true)]
 		[Row(false)]
+#endif
 		public void TestCreateConsumerBeforeSendAddListenerAfterSend(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -140,9 +146,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
+#if !NET_1_1
 		[RowTest]
 		[Row(true)]
 		[Row(false)]
+#endif
 		public void TestAsynchronousTextMessageConsume(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -177,9 +185,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
+#if !NET_1_1
 		[RowTest]
 		[Row(true)]
 		[Row(false)]
+#endif
 		public void TestTemporaryQueueAsynchronousConsume(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))

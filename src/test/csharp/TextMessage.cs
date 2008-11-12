@@ -27,9 +27,11 @@ namespace Apache.NMS.Test
 		protected static string DESTINATION_NAME = "TextMessageDestination";
 		protected static string TEST_CLIENT_ID = "TextMessageClientId";
 
+#if !NET_1_1
 		[RowTest]
 		[Row(true)]
 		[Row(false)]
+#endif
 		public void SendReceiveTextMessage(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))

@@ -30,9 +30,11 @@ namespace Apache.NMS.Test
 		protected static string TOPIC = "TestTopicConsumerTest";
 		protected static string CONSUMER_ID = "ConsumerTestConsumerId";
 
+#if !NET_1_1
 		[RowTest]
 		[Row(true)]
 		[Row(false)]
+#endif
 		public void TestDurableConsumerSelectorChange(bool persistent)
 		{
 			try
