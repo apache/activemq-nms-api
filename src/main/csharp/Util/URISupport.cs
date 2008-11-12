@@ -259,16 +259,58 @@ namespace Apache.NMS.Util
 
 		public static CompositeData parseComposite(Uri uri)
 		{
-
 			CompositeData rc = new CompositeData();
 			rc.Scheme = uri.Scheme;
-			String ssp = stripPrefix(uri.AbsoluteUri.Trim(), rc.Scheme).Trim();
-			ssp = stripPrefix(ssp, ":").Trim();
-			ssp = stripPrefix(ssp, "//").Trim();
 
+			// URI is one of these formats:
+			//     scheme://host:port/path?query
+			//     scheme://host/path(URI_1,URI_2,...,URI_N)?query
+			// where URI_x can be any valid URI (including a composite one).
+			// Host and port and path are optional.
+			// This does mean that a URI containing balanced parenthesis are considered
+			// to be composite. This can be a problem if parenthesis are used in another context.
+			//
+			// This routine constructs CompositeData reflecting either of
+			// these forms. Each of the URI_x are stored into the components
+			// of the CompositeData.
+			//
+			// Sample valid URI that should be accepted:
+			//
+			// tcp://192.168.1.1
+			// tcp://192.168.1.1/
+			// tcp://192.168.1.1:61616
+			// tcp://192.168.1.1:61616/
+			// tcp://machine:61616
+			// tcp://host:61616/
+			// failover://host/path(tcp://192.168.1.1:61616?trace=true,tcp://machine:61616?trace=false)?random=true
+
+			// If this is a composite URI, then strip the scheme and "//"
+			// and break up the URI into components. If not, then pass the URI directly.
+			// We detect "compositeness" by the existence of a "(" in the URI containing
+			// balanced parenthesis
+
+			// Start with original URI
+			String ssp = uri.AbsoluteUri.Trim();
+
+			// If balanced and existing, assume composite
+			if(checkParenthesis(ssp) && ssp.IndexOf("(") >= 0)
+			{
+				// Composite
+				ssp = stripPrefix(ssp, rc.Scheme).Trim();
+				ssp = stripPrefix(ssp, ":").Trim();
+				ssp = stripPrefix(ssp, "//").Trim();
+			}
+			else
+			{
+				// Fake a composite URL with parenthesis
+				ssp = "(" + ssp + ")";
+			}
+
+			// Handle the composite components
 			parseComposite(uri, rc, ssp);
 
 			rc.Fragment = uri.Fragment;
+
 			return rc;
 		}
 
@@ -299,7 +341,9 @@ namespace Apache.NMS.Util
 					rc.Host = rc.Host.Substring(0, p);
 				}
 				p = ssp.LastIndexOf(")");
-				componentString = ssp.Substring(intialParen + 1, p - 1);
+				int start = intialParen + 1;
+				int len = p - start;
+				componentString = ssp.Substring(start, len);
 				parms = ssp.Substring(p + 1).Trim();
 
 			}
@@ -364,21 +408,24 @@ namespace Apache.NMS.Util
 				switch(chars[i])
 				{
 				case '(':
-				depth++;
-				break;
+					depth++;
+					break;
+
 				case ')':
-				depth--;
-				break;
+					depth--;
+					break;
+
 				case ',':
-				if(depth == 0)
-				{
-					String s = componentString.Substring(last, i);
-					l.Add(s);
-					last = i + 1;
-				}
-				break;
+					if(depth == 0)
+					{
+						String s = componentString.Substring(last, i);
+						l.Add(s);
+						last = i + 1;
+					}
+					break;
+
 				default:
-				break;
+					break;
 				}
 			}
 
