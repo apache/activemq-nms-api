@@ -21,7 +21,7 @@ using Apache.NMS.Util;
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	public abstract class DurableTest : NMSTestSupport
+	public class DurableTest : NMSTestSupport
 	{
 		protected static string TOPIC = "TestTopicDurableConsumer";
 		protected static string SEND_CLIENT_ID = "SendDurableTestClientId";

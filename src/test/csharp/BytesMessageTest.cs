@@ -17,29 +17,21 @@
 
 using Apache.NMS.Util;
 using NUnit.Framework;
+using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	public abstract class BytesMessageTest : NMSTestSupport
+	public class BytesMessageTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "BytesMessageDestination";
 		protected static string TEST_CLIENT_ID = "BytesMessageClientId";
 		protected byte[] msgContent = {1, 2, 3, 4, 5, 6, 7, 8};
-		
-		[Test]
-		public void SendReceiveBytesMessage()
-		{
-			doSendReceiveBytesMessage(false);
-		}
 
-		[Test]
-		public void SendReceiveBytesMessagePersistent()
-		{
-			doSendReceiveBytesMessage(true);
-		}
-
-		protected void doSendReceiveBytesMessage(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void SendReceiveBytesMessage(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{

@@ -20,7 +20,7 @@ using NUnit.Framework;
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	public abstract class ConnectionTest : NMSTestSupport
+	public class ConnectionTest : NMSTestSupport
 	{
 		/// <summary>
 		/// Verify that it is possible to create multiple connections to the broker.

@@ -14,33 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Threading;
-using NUnit.Framework;
 using Apache.NMS.Util;
+using NUnit.Framework;
+using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	public abstract class ConsumerTest : NMSTestSupport
+	public class ConsumerTest : NMSTestSupport
 	{
 		protected static string TEST_CLIENT_ID = "ConsumerTestClientId";
 		protected static string TOPIC = "TestTopicConsumerTest";
 		protected static string CONSUMER_ID = "ConsumerTestConsumerId";
 
-		[Test]
-		public void TestDurableConsumerSelectorChange()
-		{
-			doTestDurableConsumerSelectorChange(false);
-		}
-
-		[Test]
-		public void TestDurableConsumerSelectorChangePersistent()
-		{
-			doTestDurableConsumerSelectorChange(true);
-		}
-
-		public void doTestDurableConsumerSelectorChange(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void TestDurableConsumerSelectorChange(bool persistent)
 		{
 			try
 			{

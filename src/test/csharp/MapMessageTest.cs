@@ -16,46 +16,38 @@
  */
 
 using System;
-using NUnit.Framework;
-using Apache.NMS.Util;
 using System.Collections;
+using Apache.NMS.Util;
+using NUnit.Framework;
+using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	abstract public class MapMessageTest : NMSTestSupport
+	public class MapMessageTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "MessagePropsDestination";
 		protected static string TEST_CLIENT_ID = "MessagePropsClientId";
 
-		protected bool		a = true;
-		protected byte		b = 123;
-		protected char		c = 'c';
-		protected short		d = 0x1234;
-		protected int		e = 0x12345678;
-		protected long		f = 0x1234567812345678;
-		protected string	g = "Hello World!";
-		protected bool		h = false;
-		protected byte		i = 0xFF;
-		protected short		j = -0x1234;
-		protected int		k = -0x12345678;
-		protected long		l = -0x1234567812345678;
-		protected float		m = 2.1F;
-		protected double	n = 2.3;
+		protected bool a = true;
+		protected byte b = 123;
+		protected char c = 'c';
+		protected short d = 0x1234;
+		protected int e = 0x12345678;
+		protected long f = 0x1234567812345678;
+		protected string g = "Hello World!";
+		protected bool h = false;
+		protected byte i = 0xFF;
+		protected short j = -0x1234;
+		protected int k = -0x12345678;
+		protected long l = -0x1234567812345678;
+		protected float m = 2.1F;
+		protected double n = 2.3;
 
-		[Test]
-		public void SendReceiveMapMessage()
-		{
-			doSendReceiveMapMessage(false);
-		}
-
-		[Test]
-		public void SendReceiveMapMessagePersistent()
-		{
-			doSendReceiveMapMessage(true);
-		}
-
-		protected void doSendReceiveMapMessage(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void SendReceiveMapMessage(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -108,38 +100,29 @@ namespace Apache.NMS.Test
 						Assert.AreEqual(n, message.Body["n"], "generic map entry: n");
 
 						// use type safe APIs
-						Assert.AreEqual(a, message.Body.GetBool("a"),   "map entry: a");
-						Assert.AreEqual(b, message.Body.GetByte("b"),   "map entry: b");
-						Assert.AreEqual(c, message.Body.GetChar("c"),   "map entry: c");
-						Assert.AreEqual(d, message.Body.GetShort("d"),  "map entry: d");
-						Assert.AreEqual(e, message.Body.GetInt("e"),    "map entry: e");
-						Assert.AreEqual(f, message.Body.GetLong("f"),   "map entry: f");
+						Assert.AreEqual(a, message.Body.GetBool("a"), "map entry: a");
+						Assert.AreEqual(b, message.Body.GetByte("b"), "map entry: b");
+						Assert.AreEqual(c, message.Body.GetChar("c"), "map entry: c");
+						Assert.AreEqual(d, message.Body.GetShort("d"), "map entry: d");
+						Assert.AreEqual(e, message.Body.GetInt("e"), "map entry: e");
+						Assert.AreEqual(f, message.Body.GetLong("f"), "map entry: f");
 						Assert.AreEqual(g, message.Body.GetString("g"), "map entry: g");
-						Assert.AreEqual(h, message.Body.GetBool("h"),   "map entry: h");
-						Assert.AreEqual(i, message.Body.GetByte("i"),   "map entry: i");
-						Assert.AreEqual(j, message.Body.GetShort("j"),  "map entry: j");
-						Assert.AreEqual(k, message.Body.GetInt("k"),    "map entry: k");
-						Assert.AreEqual(l, message.Body.GetLong("l"),   "map entry: l");
-						Assert.AreEqual(m, message.Body.GetFloat("m"),  "map entry: m");
+						Assert.AreEqual(h, message.Body.GetBool("h"), "map entry: h");
+						Assert.AreEqual(i, message.Body.GetByte("i"), "map entry: i");
+						Assert.AreEqual(j, message.Body.GetShort("j"), "map entry: j");
+						Assert.AreEqual(k, message.Body.GetInt("k"), "map entry: k");
+						Assert.AreEqual(l, message.Body.GetLong("l"), "map entry: l");
+						Assert.AreEqual(m, message.Body.GetFloat("m"), "map entry: m");
 						Assert.AreEqual(n, message.Body.GetDouble("n"), "map entry: n");
 					}
 				}
 			}
 		}
 
-		[Test]
-		public void SendReceiveNestedMapMessage()
-		{
-			doSendReceiveNestedMapMessage(false);
-		}
-
-		[Test]
-		public void SendReceiveNestedMapMessagePersistent()
-		{
-			doSendReceiveNestedMapMessage(true);
-		}
-
-		protected void doSendReceiveNestedMapMessage(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void SendReceiveNestedMapMessage(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -159,7 +142,7 @@ namespace Apache.NMS.Test
 
 						IDictionary grandChildMap = new Hashtable();
 						grandChildMap["x"] = "abc";
-						grandChildMap["y"] = new ArrayList(new object[] {"a", "b", "c"});
+						grandChildMap["y"] = new ArrayList(new object[] { "a", "b", "c" });
 
 						IDictionary nestedMap = new Hashtable();
 						nestedMap["a"] = "foo";
@@ -168,7 +151,7 @@ namespace Apache.NMS.Test
 						nestedMap["d"] = grandChildMap;
 
 						request.Body.SetDictionary("mapField", nestedMap);
-						request.Body.SetList("listField", new ArrayList(new Object[] {"a", "b", "c"}));
+						request.Body.SetList("listField", new ArrayList(new Object[] { "a", "b", "c" }));
 
 						producer.Send(request);
 

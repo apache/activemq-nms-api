@@ -20,7 +20,7 @@ using NUnit.Framework;
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	public abstract class BadConsumeTest : NMSTestSupport
+	public class BadConsumeTest : NMSTestSupport
 	{
 		protected static string TEST_CLIENT_ID = "BadConsumeTestClientId";
 		protected IConnection connection;

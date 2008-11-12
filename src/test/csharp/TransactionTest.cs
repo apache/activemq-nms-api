@@ -23,7 +23,7 @@ using NUnit.Framework;
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	abstract public class TransactionTest : NMSTestSupport
+	public class TransactionTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "TransactionTestDestination";
 		protected static string TEST_CLIENT_ID = "TransactionTestClientId";

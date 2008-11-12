@@ -17,12 +17,13 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Extensions;
 using Apache.NMS.Util;
 
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	abstract public class MessageTest : NMSTestSupport
+	public class MessageTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "MessagePropsDestination";
 		protected static string TEST_CLIENT_ID = "MessagePropsClientId";
@@ -42,19 +43,10 @@ namespace Apache.NMS.Test
 		protected float		m = 2.1F;
 		protected double	n = 2.3;
 
-		[Test]
-		public void SendReceiveMessageProperties()
-		{
-			doSendReceiveMessageProperties(false);
-		}
-
-		[Test]
-		public void SendReceiveMessagePropertiesPersistent()
-		{
-			doSendReceiveMessageProperties(true);
-		}
-
-		protected void doSendReceiveMessageProperties(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void SendReceiveMessageProperties(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{

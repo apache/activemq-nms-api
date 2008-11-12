@@ -27,7 +27,6 @@ namespace Apache.NMS.Test
 	/// <summary>
 	/// useful base class for test cases
 	/// </summary>
-	[TestFixture]
 	public abstract class NMSTestSupport
 	{
 		private NMSConnectionFactory NMSFactory;

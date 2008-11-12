@@ -18,11 +18,12 @@
 using System.Threading;
 using Apache.NMS.Util;
 using NUnit.Framework;
+using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	public abstract class AsyncConsumeTest : NMSTestSupport
+	public class AsyncConsumeTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "AsyncConsumeDestination";
 		protected static string TEST_CLIENT_ID = "AsyncConsumeClientId";
@@ -46,19 +47,10 @@ namespace Apache.NMS.Test
 			base.TearDown();
 		}
 
-		[Test]
-		public void TestAsynchronousConsume()
-		{
-			doTestAsynchronousConsume(false);
-		}
-
-		[Test]
-		public void TestAsynchronousConsumePersistent()
-		{
-			doTestAsynchronousConsume(true);
-		}
-
-		protected void doTestAsynchronousConsume(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void TestAsynchronousConsume(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -85,19 +77,10 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[Test]
-		public void TestCreateConsumerAfterSend()
-		{
-			doTestCreateConsumerAfterSend(false);
-		}
-
-		[Test]
-		public void TestCreateConsumerAfterSendPersistent()
-		{
-			doTestCreateConsumerAfterSend(true);
-		}
-
-		protected void doTestCreateConsumerAfterSend(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void TestCreateConsumerAfterSend(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -126,19 +109,10 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[Test]
-		public void TestCreateConsumerBeforeSendAddListenerAfterSend()
-		{
-			doTestCreateConsumerBeforeSendAddListenerAfterSend(false);
-		}
-
-		[Test]
-		public void TestCreateConsumerBeforeSendAddListenerAfterSendPersistent()
-		{
-			doTestCreateConsumerBeforeSendAddListenerAfterSend(true);
-		}
-
-		public void doTestCreateConsumerBeforeSendAddListenerAfterSend(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void TestCreateConsumerBeforeSendAddListenerAfterSend(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -166,19 +140,10 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[Test]
-		public void TestAsynchronousTextMessageConsume()
-		{
-			doTestAsynchronousTextMessageConsume(false);
-		}
-
-		[Test]
-		public void TestAsynchronousTextMessageConsumePersistent()
-		{
-			doTestAsynchronousTextMessageConsume(true);
-		}
-
-		public void doTestAsynchronousTextMessageConsume(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void TestAsynchronousTextMessageConsume(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -212,19 +177,10 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[Test]
-		public void TestTemporaryQueueAsynchronousConsume()
-		{
-			doTestTemporaryQueueAsynchronousConsume(false);
-		}
-
-		[Test]
-		public void TestTemporaryQueueAsynchronousConsumePersistent()
-		{
-			doTestTemporaryQueueAsynchronousConsume(true);
-		}
-
-		protected void doTestTemporaryQueueAsynchronousConsume(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void TestTemporaryQueueAsynchronousConsume(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{

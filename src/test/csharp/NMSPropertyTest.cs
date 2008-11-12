@@ -18,36 +18,28 @@
 using System;
 using Apache.NMS.Util;
 using NUnit.Framework;
+using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	abstract public class NMSPropertyTest : NMSTestSupport
+	public class NMSPropertyTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "NMSPropsDestination";
 		protected static string TEST_CLIENT_ID = "NMSPropsClientId";
 
 		// standard NMS properties
-		protected string	expectedText = "Hey this works!";
-		protected string	correlationID = "FooBar";
-		protected byte		priority = 4;
-		protected String	type = "FooType";
-		protected String	groupID = "BarGroup";
-		protected int		groupSeq = 1;
+		protected string expectedText = "Hey this works!";
+		protected string correlationID = "FooBar";
+		protected byte priority = 4;
+		protected String type = "FooType";
+		protected String groupID = "BarGroup";
+		protected int groupSeq = 1;
 
-		[Test]
-		public void SendReceiveNMSProperties()
-		{
-			doSendReceiveNMSProperties(false);
-		}
-
-		[Test]
-		public void SendReceiveNMSPropertiesPersistent()
-		{
-			doSendReceiveNMSProperties(true);
-		}
-
-		protected void doSendReceiveNMSProperties(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void SendReceiveNMSProperties(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -62,7 +54,7 @@ namespace Apache.NMS.Test
 						producer.Persistent = persistent;
 						producer.RequestTimeout = receiveTimeout;
 						ITextMessage request = session.CreateTextMessage(expectedText);
-						ITemporaryQueue	replyTo = session.CreateTemporaryQueue();
+						ITemporaryQueue replyTo = session.CreateTemporaryQueue();
 
 						// Set the headers
 						request.NMSCorrelationID = correlationID;

@@ -15,31 +15,22 @@
  * limitations under the License.
  */
 
-using System;
 using Apache.NMS.Util;
 using NUnit.Framework;
+using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	public abstract class TextMessageTest : NMSTestSupport
+	public class TextMessageTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "TextMessageDestination";
 		protected static string TEST_CLIENT_ID = "TextMessageClientId";
-		
-		[Test]
-		public void SendReceiveTextMessage()
-		{
-			doSendReceiveTextMessage(false);
-		}
 
-		[Test]
-		public void SendReceiveTextMessagePersistent()
-		{
-			doSendReceiveTextMessage(true);
-		}
-
-		protected void doSendReceiveTextMessage(bool persistent)
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+		public void SendReceiveTextMessage(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
