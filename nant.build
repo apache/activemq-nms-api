@@ -69,25 +69,27 @@
     </fileset>
 
     <fileset id="deploy.filenames">
-		<include name="${build.bin.dir}/${project.name}.dll"/>
-		<include name="${build.bin.dir}/${project.name}.pdb"/>
-		<include name="${build.bin.dir}/${project.name}.dll.mdb"/>
-		<include name="${build.bin.dir}/${project.name}.xml"/>
-		<include name="${build.bin.dir}/${project.name}.Test.dll"/>
-		<include name="${build.bin.dir}/${project.name}.Test.pdb"/>
-		<include name="${build.bin.dir}/${project.name}.Test.dll.mdb"/>
-		<include name="${build.bin.dir}/${project.name}.Test.xml"/>
-		<include name="LICENSE.txt"/>
-		<include name="NOTICE.txt"/>
+      <include name="LICENSE.txt"/>
+      <include name="NOTICE.txt"/>
+      <include name="${build.bin.dir}/${project.name}.dll"/>
+      <include name="${build.bin.dir}/${project.name}.pdb"/>
+      <include name="${build.bin.dir}/${project.name}.dll.mdb"/>
+      <include name="${build.bin.dir}/${project.name}.xml"/>
+      <include name="${build.bin.dir}/${project.name}.Test.dll"/>
+      <include name="${build.bin.dir}/${project.name}.Test.pdb"/>
+      <include name="${build.bin.dir}/${project.name}.Test.dll.mdb"/>
+      <include name="${build.bin.dir}/${project.name}.Test.xml"/>
     </fileset>
 
     <fileset id="install.filenames">
-		<include name="${build.bin.dir}/${project.name}.dll"/>
-		<include name="${build.bin.dir}/${project.name}.pdb"/>
-		<include name="${build.bin.dir}/${project.name}.dll.mdb"/>
-		<include name="${build.bin.dir}/${project.name}.Test.dll"/>
-		<include name="${build.bin.dir}/${project.name}.Test.pdb"/>
-		<include name="${build.bin.dir}/${project.name}.Test.dll.mdb"/>
+      <include name="LICENSE.txt"/>
+      <include name="NOTICE.txt"/>
+      <include name="${build.bin.dir}/${project.name}.dll"/>
+      <include name="${build.bin.dir}/${project.name}.pdb"/>
+      <include name="${build.bin.dir}/${project.name}.dll.mdb"/>
+      <include name="${build.bin.dir}/${project.name}.Test.dll"/>
+      <include name="${build.bin.dir}/${project.name}.Test.pdb"/>
+      <include name="${build.bin.dir}/${project.name}.Test.dll.mdb"/>
     </fileset>
   </target>
   
