@@ -97,18 +97,25 @@ namespace Apache.NMS
 		/// <returns></returns>
 		private static Type GetTypeForScheme(string scheme)
 		{
+			string[] paths = GetConfigSearchPaths();
 			string assemblyFileName;
 			string factoryClassName;
 			Type factoryType = null;
 
-			if(LookupConnectionFactoryInfo(scheme, out assemblyFileName, out factoryClassName))
+			if(LookupConnectionFactoryInfo(paths, scheme, out assemblyFileName, out factoryClassName))
 			{
-#if NETCF
-				string assemblyFolder = "";
-#else
-				string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-#endif
-				Assembly assembly = Assembly.LoadFrom(Path.Combine(assemblyFolder, assemblyFileName));
+				Assembly assembly = null;
+
+				foreach(string path in paths)
+				{
+					string fullpath = Path.Combine(path, assemblyFileName);
+
+					if(File.Exists(fullpath))
+					{
+						assembly = Assembly.LoadFrom(fullpath);
+						break;
+					}
+				}
 
 				if(null != assembly)
 				{
@@ -140,48 +147,78 @@ namespace Apache.NMS
 		///		jms://localhost:7222
 		///
 		/// </summary>
+		/// <param name="paths">Folder paths to look in.</param>
 		/// <param name="scheme"></param>
 		/// <param name="assemblyFileName"></param>
 		/// <param name="factoryClassName"></param>
 		/// <returns></returns>
-		private static bool LookupConnectionFactoryInfo(string scheme, out string assemblyFileName, out string factoryClassName)
+		private static bool LookupConnectionFactoryInfo(string[] paths, string scheme, out string assemblyFileName, out string factoryClassName)
 		{
-#if NETCF
-			string assemblyFolder = "";
-#else
-			string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-#endif
-			string configFileName = Path.Combine(assemblyFolder, String.Format("nmsprovider-{0}.config", scheme.ToLower()));
+			string configFileName = String.Format("nmsprovider-{0}.config", scheme.ToLower());
 			bool foundFactory = false;
 
 			assemblyFileName = String.Empty;
 			factoryClassName = String.Empty;
 
-			try
+			foreach(string path in paths)
 			{
-				if(File.Exists(configFileName))
+				string fullpath = Path.Combine(path, configFileName);
+
+				try
 				{
-					XmlDocument configDoc = new XmlDocument();
-
-					configDoc.Load(configFileName);
-					XmlElement providerNode = (XmlElement) configDoc.SelectSingleNode("/configuration/provider");
-
-					if(null != providerNode)
+					if(File.Exists(fullpath))
 					{
-						assemblyFileName = providerNode.GetAttribute("assembly");
-						factoryClassName = providerNode.GetAttribute("classFactory");
-						if(String.Empty != assemblyFileName && String.Empty != factoryClassName)
+						XmlDocument configDoc = new XmlDocument();
+
+						configDoc.Load(fullpath);
+						XmlElement providerNode = (XmlElement) configDoc.SelectSingleNode("/configuration/provider");
+
+						if(null != providerNode)
 						{
-							foundFactory = true;
+							assemblyFileName = providerNode.GetAttribute("assembly");
+							factoryClassName = providerNode.GetAttribute("classFactory");
+							if(String.Empty != assemblyFileName && String.Empty != factoryClassName)
+							{
+								foundFactory = true;
+								break;
+							}
 						}
 					}
 				}
-			}
-			catch
-			{
+				catch
+				{
+				}
 			}
 
 			return foundFactory;
+		}
+
+		/// <summary>
+		/// Get an array of search paths to look for config files.
+		/// </summary>
+		private static string[] GetConfigSearchPaths()
+		{
+			ArrayList pathList = new ArrayList();
+
+			// Check the current folder first.
+			pathList.Add("");
+#if !NETCF
+			AppDomain currentDomain = AppDomain.CurrentDomain;
+
+			// Check the folder the assembly is located in.
+			pathList.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+			if(null != currentDomain.BaseDirectory)
+			{
+				pathList.Add(currentDomain.BaseDirectory);
+			}
+
+			if(null != currentDomain.RelativeSearchPath)
+			{
+				pathList.Add(currentDomain.RelativeSearchPath);
+			}
+#endif
+
+			return (string[]) pathList.ToArray(typeof(string));
 		}
 
 		/// <summary>
