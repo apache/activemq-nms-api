@@ -601,7 +601,7 @@
             <returns>
             </returns>
         </member>
-        <member name="M:Apache.NMS.NMSConnectionFactory.LookupConnectionFactoryInfo(System.String,System.String@,System.String@)">
+        <member name="M:Apache.NMS.NMSConnectionFactory.LookupConnectionFactoryInfo(System.String[],System.String,System.String@,System.String@)">
             <summary>
             Lookup the connection factory assembly filename and class name.
             Read an external configuration file that maps scheme to provider implementation.
@@ -616,6 +616,7 @@
             is used for the provider.  In this example the connection string might look like:
             		jms://localhost:7222
             </summary>
+            <param name="paths">Folder paths to look in.</param>
             <param name="scheme">
             </param>
             <param name="assemblyFileName">
@@ -624,6 +625,11 @@
             </param>
             <returns>
             </returns>
+        </member>
+        <member name="M:Apache.NMS.NMSConnectionFactory.GetConfigSearchPaths">
+            <summary>
+            Get an array of search paths to look for config files.
+            </summary>
         </member>
         <member name="M:Apache.NMS.NMSConnectionFactory.MakeParameterArray(System.Object,System.Object[])">
             <summary>
