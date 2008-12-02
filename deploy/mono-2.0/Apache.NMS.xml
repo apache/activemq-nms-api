@@ -555,29 +555,30 @@
             Represents a connection failure.
             </summary>
         </member>
+        <member name="T:Apache.NMS.NMSConnectionFactory">
+            <summary>
+            Implementation of a factory for <see cref="T:Apache.NMS.IConnection" /> instances.
+            </summary>
+        </member>
         <member name="M:Apache.NMS.NMSConnectionFactory.#ctor(System.String,System.Object[])">
             <summary>
             The ConnectionFactory object must define a constructor that takes as a minimum a Uri object.
             Any additional parameters are optional, but will typically include a Client ID string.
             </summary>
-            <param name="providerURI">
-            </param>
-            <param name="constructorParams">
-            </param>
+            <param name="providerURI">The URI for the ActiveMQ provider.</param>
+            <param name="constructorParams">Optional parameters to use when creating the ConnectionFactory.</param>
         </member>
         <member name="M:Apache.NMS.NMSConnectionFactory.#ctor(System.Uri,System.Object[])">
             <summary>
             The ConnectionFactory object must define a constructor that takes as a minimum a Uri object.
             Any additional parameters are optional, but will typically include a Client ID string.
             </summary>
-            <param name="uriProvider">
-            </param>
-            <param name="constructorParams">
-            </param>
+            <param name="uriProvider">The URI for the ActiveMQ provider.</param>
+            <param name="constructorParams">Optional parameters to use when creating the ConnectionFactory.</param>
         </member>
         <member name="P:Apache.NMS.NMSConnectionFactory.ConnectionFactory">
             <summary>
-            The actual IConnectionFactory implementation that is being used.  This implemenation
+            The actual IConnectionFactory implementation that is being used.  This implementation
             depends on the scheme of the URI used when constructed.
             </summary>
         </member>
@@ -585,21 +586,17 @@
             <summary>
             Create a connection factory that can create connections for the given scheme in the URI.
             </summary>
-            <param name="uriProvider">
-            </param>
-            <param name="constructorParams">
-            </param>
-            <returns>
-            </returns>
+            <param name="uriProvider">The URI for the ActiveMQ provider.</param>
+            <param name="constructorParams">Optional parameters to use when creating the ConnectionFactory.</param>
+            <returns>A <see cref="T:Apache.NMS.IConnectionFactory" /> implementation that will be used.</returns>
         </member>
         <member name="M:Apache.NMS.NMSConnectionFactory.GetTypeForScheme(System.String)">
             <summary>
-            Finds the Type associated with the given scheme.
+            Finds the <see cref="T:System.Type" /> associated with the given scheme.
             </summary>
-            <param name="scheme">
-            </param>
-            <returns>
-            </returns>
+            <param name="scheme">The scheme (e.g. <c>tcp</c>, <c>activemq</c> or <c>stomp</c>).</param>
+            <returns>The <see cref="T:System.Type" /> of the ConnectionFactory that will be used
+            to create the connection for the specified <paramref name="scheme" />.</returns>
         </member>
         <member name="M:Apache.NMS.NMSConnectionFactory.LookupConnectionFactoryInfo(System.String[],System.String,System.String@,System.String@)">
             <summary>
@@ -608,55 +605,52 @@
             Load XML config files named: nmsprovider-{scheme}.config
             Following is a sample configuration file named nmsprovider-jms.config.  Replace
             the parenthesis with angle brackets for proper XML formatting.
-            		(?xml version="1.0" encoding="utf-8" ?)
-            		(configuration)
-            			(provider assembly="MyCompany.NMS.JMSProvider.dll" classFactory="MyCompany.NMS.JMSProvider.ConnectionFactory"/)
-            		(/configuration)
+            (?xml version="1.0" encoding="utf-8" ?)
+            (configuration)
+            (provider assembly="MyCompany.NMS.JMSProvider.dll" classFactory="MyCompany.NMS.JMSProvider.ConnectionFactory"/)
+            (/configuration)
             This configuration file would be loaded and parsed when a connection uri with a scheme of 'jms'
             is used for the provider.  In this example the connection string might look like:
-            		jms://localhost:7222
+            jms://localhost:7222
             </summary>
             <param name="paths">Folder paths to look in.</param>
-            <param name="scheme">
-            </param>
-            <param name="assemblyFileName">
-            </param>
-            <param name="factoryClassName">
-            </param>
+            <param name="scheme">The scheme.</param>
+            <param name="assemblyFileName">Name of the assembly file.</param>
+            <param name="factoryClassName">Name of the factory class.</param>
             <returns>
-            </returns>
+                <c>true</c> if the configuration file for the specified <paramref name="scheme" /> could
+            be found; otherwise, <c>false</c>.</returns>
         </member>
         <member name="M:Apache.NMS.NMSConnectionFactory.GetConfigSearchPaths">
             <summary>
             Get an array of search paths to look for config files.
             </summary>
+            <returns>
+            A collection of search paths, including the current directory, the current AppDomain's
+            BaseDirectory and the current AppDomain's RelativeSearchPath.
+            </returns>
         </member>
         <member name="M:Apache.NMS.NMSConnectionFactory.MakeParameterArray(System.Object,System.Object[])">
             <summary>
-            Create an object array containing the parameters to pass to the constructor.
+            Converts a <c>params object[]</c> collection into a plain <c>object[]</c>s, to pass to the constructor.
             </summary>
-            <param name="firstParam">
-            </param>
-            <param name="varParams">
-            </param>
-            <returns>
-            </returns>
+            <param name="firstParam">The first parameter in the collection.</param>
+            <param name="varParams">The remaining parameters.</param>
+            <returns>An array of <see cref="T:System.Object" /> instances.</returns>
         </member>
         <member name="M:Apache.NMS.NMSConnectionFactory.CreateConnection">
             <summary>
-            Creates a new connection
+            Creates a new connection.
             </summary>
+            <returns>An <see cref="T:Apache.NMS.IConnection" /> created by the requested ConnectionFactory.</returns>
         </member>
         <member name="M:Apache.NMS.NMSConnectionFactory.CreateConnection(System.String,System.String)">
             <summary>
-            Creates a new connection with the given user name and password
+            Creates a new connection with the given <paramref name="userName" /> and <paramref name="password" /> credentials.
             </summary>
-            <param name="userName">
-            </param>
-            <param name="password">
-            </param>
-            <returns>
-            </returns>
+            <param name="userName">The username to use when establishing the connection.</param>
+            <param name="password">The password to use when establishing the connection.</param>
+            <returns>An <see cref="T:Apache.NMS.IConnection" /> created by the requested ConnectionFactory.</returns>
         </member>
         <member name="T:Apache.NMS.NMSConstants">
             <summary>
