@@ -66,6 +66,7 @@
       <HintPath>lib\NUnit\net-3.5\nunit.framework.extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +95,8 @@
     <Compile Include="src\test\csharp\MessageTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\test\csharp\MessageSelectorTest.cs" />
+    <Compile Include="src\test\csharp\TempDestinationDeletionTest.cs" />
     <Compile Include="src\test\csharp\TextMessage.cs">
       <SubType>Code</SubType>
     </Compile>

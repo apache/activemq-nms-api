@@ -80,6 +80,11 @@ namespace Apache.NMS
 		/// </summary>
 		ITemporaryTopic CreateTemporaryTopic();
 
+		/// <summary>
+		/// Delete a destination (Queue, Topic, Temp Queue, Temp Topic).
+		/// </summary>
+		void DeleteDestination(IDestination destination);
+
 		// Factory methods to create messages
 
 		/// <summary>
