@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using Apache.NMS.Util;
 using NUnit.Framework;
+using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -29,8 +30,12 @@ namespace Apache.NMS.Test
 		protected static string TEST_CLIENT_ID = "TransactionTestClientId";
 		protected static string TEST_CLIENT_ID2 = "TransactionTestClientId2";
 
-		[Test]
-		public void TestSendRollback()
+#if !NET_1_1
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+#endif
+		public void TestSendRollback(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -41,7 +46,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = false;
+						producer.Persistent = persistent;
 						producer.RequestTimeout = receiveTimeout;
 						ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
 						producer.Send(firstMsgSend);
@@ -70,8 +75,12 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[Test]
-		public void TestSendSessionClose()
+#if !NET_1_1
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+#endif
+		public void TestSendSessionClose(bool persistent)
 		{
 			ITextMessage firstMsgSend;
 			ITextMessage secondMsgSend;
@@ -95,7 +104,7 @@ namespace Apache.NMS.Test
 								IDestination destination2 = SessionUtil.GetDestination(session2, DESTINATION_NAME);
 								using(IMessageProducer producer = session2.CreateProducer(destination2))
 								{
-									producer.Persistent = false;
+									producer.Persistent = persistent;
 									producer.RequestTimeout = receiveTimeout;
 									firstMsgSend = session2.CreateTextMessage("First Message");
 									producer.Send(firstMsgSend);
@@ -116,7 +125,7 @@ namespace Apache.NMS.Test
 								IDestination destination2 = SessionUtil.GetDestination(session2, DESTINATION_NAME);
 								using(IMessageProducer producer = session2.CreateProducer(destination2))
 								{
-									producer.Persistent = false;
+									producer.Persistent = persistent;
 									producer.RequestTimeout = receiveTimeout;
 									secondMsgSend = session2.CreateTextMessage("Second Message");
 									producer.Send(secondMsgSend);
@@ -139,8 +148,12 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[Test]
-		public void TestReceiveRollback()
+#if !NET_1_1
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+#endif
+		public void TestReceiveRollback(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -151,7 +164,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = false;
+						producer.Persistent = persistent;
 						producer.RequestTimeout = receiveTimeout;
 						// Send both messages
 						ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
@@ -180,8 +193,12 @@ namespace Apache.NMS.Test
 		}
 
 
-		[Test]
-		public void TestReceiveTwoThenRollback()
+#if !NET_1_1
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+#endif
+		public void TestReceiveTwoThenRollback(bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -192,7 +209,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = false;
+						producer.Persistent = persistent;
 						producer.RequestTimeout = receiveTimeout;
 						// Send both messages
 						ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
@@ -216,6 +233,70 @@ namespace Apache.NMS.Test
 						AssertTextMessageEqual(secondMsgSend, rollbackMsg, "Second rollback message does not match.");
 			
 						Assert.IsNull(consumer.ReceiveNoWait());
+						session.Commit();
+					}
+				}
+			}
+		}
+
+#if !NET_1_1
+		[RowTest]
+		[Row(AcknowledgementMode.AutoAcknowledge, true)]
+		[Row(AcknowledgementMode.AutoAcknowledge, false)]
+		[Row(AcknowledgementMode.ClientAcknowledge, true)]
+		[Row(AcknowledgementMode.ClientAcknowledge, false)]
+#endif
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void TestSendCommitNonTransaction(AcknowledgementMode ackMode, bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(ackMode))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						ITextMessage firstMsgSend = session.CreateTextMessage("SendCommitNonTransaction Message");
+						producer.Send(firstMsgSend);
+						session.Commit();
+					}
+				}
+			}
+		}
+
+#if !NET_1_1
+		[RowTest]
+		[Row(AcknowledgementMode.AutoAcknowledge, true)]
+		[Row(AcknowledgementMode.AutoAcknowledge, false)]
+		[Row(AcknowledgementMode.ClientAcknowledge, true)]
+		[Row(AcknowledgementMode.ClientAcknowledge, false)]
+#endif
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void TestReceiveCommitNonTransaction(AcknowledgementMode ackMode, bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(ackMode))
+				{
+					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						ITextMessage firstMsgSend = session.CreateTextMessage("ReceiveCommitNonTransaction Message");
+						producer.Send(firstMsgSend);
+
+						// Receive the messages
+
+						IMessage message = consumer.Receive(receiveTimeout);
+						AssertTextMessageEqual(firstMsgSend, message, "First message does not match.");
+						message.Acknowledge();
 						session.Commit();
 					}
 				}
