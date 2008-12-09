@@ -217,6 +217,18 @@ namespace Apache.NMS.Test
 		}
 
 		/// <summary>
+		/// Create a destination.  This will delete an existing destination and re-create it.
+		/// </summary>
+		/// <param name="session"></param>
+		/// <param name="destinationName"></param>
+		/// <returns></returns>
+		public virtual IDestination CreateDestination(ISession session, string destinationName)
+		{
+			SessionUtil.DeleteDestination(session, destinationName);
+			return SessionUtil.GetDestination(session, destinationName);
+		}
+
+		/// <summary>
 		/// Register a durable consumer
 		/// </summary>
 		/// <param name="connectionID">Connection ID of the consumer.</param>

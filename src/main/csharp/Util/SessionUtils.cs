@@ -131,6 +131,59 @@ namespace Apache.NMS.Util
 		{
 			return GetDestination(session, topicName, DestinationType.Topic) as ITopic;
 		}
+
+		/// <summary>
+		/// Delete the named destination by parsing the embedded type prefix.  Default is Queue if no prefix is
+		/// embedded in the destinationName.
+		/// </summary>
+		/// <param name="session">Session object to use to get the destination.</param>
+		/// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
+		///		<list type="bullet">
+		///			<item>queue://</item>
+		///			<item>topic://</item>
+		///			<item>temp-queue://</item>
+		///			<item>temp-topic://</item>
+		///		</list>
+		///	</param>
+		/// <returns></returns>
+		public static void DeleteDestination(ISession session, string destinationName)
+		{
+			SessionUtil.DeleteDestination(session, destinationName, DestinationType.Queue);
+		}
+
+		/// <summary>
+		/// Delete the named destination by parsing the embedded type prefix.
+		/// </summary>
+		/// <param name="session">Session object to use to get the destination.</param>
+		/// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
+		///		<list type="bullet">
+		///			<item>queue://</item>
+		///			<item>topic://</item>
+		///			<item>temp-queue://</item>
+		///			<item>temp-topic://</item>
+		///		</list>
+		///	</param>
+		/// <param name="defaultType">Default type if no embedded prefix is specified.</param>
+		/// <returns></returns>
+		public static void DeleteDestination(ISession session, string destinationName, DestinationType defaultType)
+		{
+			IDestination destination = SessionUtil.GetDestination(session, destinationName, defaultType);
+
+			if(null != destination)
+			{
+				session.DeleteDestination(destination);
+			}
+		}
+
+		public static void DeleteQueue(ISession session, string queueName)
+		{
+			DeleteDestination(session, queueName, DestinationType.Queue);
+		}
+
+		public static void DeleteTopic(ISession session, string topicName)
+		{
+			DeleteDestination(session, topicName, DestinationType.Topic);
+		}
 	}
 }
 

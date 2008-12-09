@@ -42,7 +42,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DESTINATION_NAME);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
@@ -90,7 +90,7 @@ namespace Apache.NMS.Test
 				connection1.Start();
 				using(ISession session1 = connection1.CreateSession(AcknowledgementMode.Transactional))
 				{
-					IDestination destination1 = SessionUtil.GetDestination(session1, DESTINATION_NAME);
+					IDestination destination1 = CreateDestination(session1, DESTINATION_NAME);
 					using(IMessageConsumer consumer = session1.CreateConsumer(destination1))
 					{
 						// First connection session that sends one message, and the
@@ -160,7 +160,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DESTINATION_NAME);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
@@ -205,7 +205,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DESTINATION_NAME);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
@@ -246,7 +246,6 @@ namespace Apache.NMS.Test
 		[Row(AcknowledgementMode.ClientAcknowledge, true)]
 		[Row(AcknowledgementMode.ClientAcknowledge, false)]
 #endif
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void TestSendCommitNonTransaction(AcknowledgementMode ackMode, bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -254,7 +253,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(ackMode))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DESTINATION_NAME);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
@@ -262,7 +261,14 @@ namespace Apache.NMS.Test
 						producer.RequestTimeout = receiveTimeout;
 						ITextMessage firstMsgSend = session.CreateTextMessage("SendCommitNonTransaction Message");
 						producer.Send(firstMsgSend);
-						session.Commit();
+						try
+						{
+							session.Commit();
+							Assert.Fail("Should have thrown an InvalidOperationException.");
+						}
+						catch(InvalidOperationException)
+						{
+						}
 					}
 				}
 			}
@@ -275,7 +281,6 @@ namespace Apache.NMS.Test
 		[Row(AcknowledgementMode.ClientAcknowledge, true)]
 		[Row(AcknowledgementMode.ClientAcknowledge, false)]
 #endif
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void TestReceiveCommitNonTransaction(AcknowledgementMode ackMode, bool persistent)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -283,7 +288,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(ackMode))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DESTINATION_NAME);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
@@ -296,8 +301,64 @@ namespace Apache.NMS.Test
 
 						IMessage message = consumer.Receive(receiveTimeout);
 						AssertTextMessageEqual(firstMsgSend, message, "First message does not match.");
-						message.Acknowledge();
-						session.Commit();
+						if(AcknowledgementMode.ClientAcknowledge == ackMode)
+						{
+							message.Acknowledge();
+						}
+
+						try
+						{
+							session.Commit();
+							Assert.Fail("Should have thrown an InvalidOperationException.");
+						}
+						catch(InvalidOperationException)
+						{
+						}
+					}
+				}
+			}
+		}
+
+#if !NET_1_1
+		[RowTest]
+		[Row(AcknowledgementMode.AutoAcknowledge, true)]
+		[Row(AcknowledgementMode.AutoAcknowledge, false)]
+		[Row(AcknowledgementMode.ClientAcknowledge, true)]
+		[Row(AcknowledgementMode.ClientAcknowledge, false)]
+#endif
+		public void TestReceiveRollbackNonTransaction(AcknowledgementMode ackMode, bool persistent)
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(ackMode))
+				{
+					IDestination destination = CreateDestination(session, DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
+					{
+						producer.Persistent = persistent;
+						producer.RequestTimeout = receiveTimeout;
+						ITextMessage firstMsgSend = session.CreateTextMessage("ReceiveCommitNonTransaction Message");
+						producer.Send(firstMsgSend);
+
+						// Receive the messages
+
+						IMessage message = consumer.Receive(receiveTimeout);
+						AssertTextMessageEqual(firstMsgSend, message, "First message does not match.");
+						if(AcknowledgementMode.ClientAcknowledge == ackMode)
+						{
+							message.Acknowledge();
+						}
+
+						try
+						{
+							session.Rollback();
+							Assert.Fail("Should have thrown an InvalidOperationException.");
+						}
+						catch(InvalidOperationException)
+						{
+						}
 					}
 				}
 			}
