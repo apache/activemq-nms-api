@@ -96,6 +96,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\test\csharp\MessageSelectorTest.cs" />
+    <Compile Include="src\test\csharp\NmsTracer.cs" />
     <Compile Include="src\test\csharp\TempDestinationDeletionTest.cs" />
     <Compile Include="src\test\csharp\TextMessage.cs">
       <SubType>Code</SubType>

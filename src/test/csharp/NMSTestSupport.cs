@@ -35,6 +35,11 @@ namespace Apache.NMS.Test
 		protected string passWord;
 		protected string userName;
 
+		static NMSTestSupport()
+		{
+			Apache.NMS.Tracer.Trace = new NmsTracer();
+		}
+		
 		public NMSTestSupport()
 		{
 		}
