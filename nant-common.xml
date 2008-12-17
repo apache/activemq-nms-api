@@ -62,7 +62,7 @@
   <fail message="The USERPROFILE environment variable is not defined.  Please set it to your home directory."
             unless="${property::exists('user.home')}" if="${platform::is-win32()}"/>
 
-  <!-- Figure out the NANT repositories-->
+  <!-- Figure out the NANT repositories -->
   <property name="nant.remote.repo" value="${environment::get-variable('NANT_REMOTE_REPO')}"
             if="${environment::variable-exists('NANT_REMOTE_REPO')}"
             unless="${property::exists('nant.remote.repo')}"/>
@@ -72,16 +72,15 @@
   <property name="nant.local.repo" value="${user.home}/.nant/repository"
             unless="${property::exists('nant.local.repo')}"/>
 			
+  <!-- Figure out the keyfile location -->
+  <property name="snk.file"  value="${environment::get-variable('ACTIVEMQ_DOTNET_SNK')}"
+            if="${environment::variable-exists('ACTIVEMQ_DOTNET_SNK')}"
+            unless="${property::exists('snk.file')}"/>
+  <property name="snk.file"  value="${basedir}/keyfile/NMSKey.snk" if="${not property::exists('snk.file')}"/>
+
   <!-- ============================================================================================ -->
   <!--      I N I T I A L I Z A T I O N     T A R G E T S                                           -->
   <!-- ============================================================================================ -->
-
-  <target name="release-init" description="Initializes release build properties">
-    <property name="snk.file"  value="${environment::get-variable('ACTIVEMQ_DOTNET_SNK')}"
-            if="${environment::variable-exists('ACTIVEMQ_DOTNET_SNK')}"
-            unless="${property::exists('snk.file')}"/>
-    <property name="snk.file"  value="${basedir}/activemq-dotnet.snk" if="${not property::exists('snk.file')}"/>
-  </target>
 
   <target name="init" description="Initializes build properties">
     <!-- enabled the release or debug configuration -->
@@ -95,8 +94,6 @@
 
     <!-- Check to see current platform supports the target framework -->
     <if test="${framework::exists(current.build.framework)}">
-       <!-- Make sure that the activemq-dotnet.snk exists for release builds -->
-       <call target="release-init"/>
        <property name="build.skip" value="false"/>
     </if>
     <if test="${not framework::exists(current.build.framework)}">
@@ -117,7 +114,7 @@
       </if>
     </if>
 
-   <property name="current.build.keysign" value="${current.build.config=='release' and file::exists(snk.file) and current.build.framework.sign}"/>
+   <property name="current.build.keysign" value="${current.build.framework.sign}"/>
    <property name="build.bin.dir" value="${basedir}/build/${nant.settings.currentframework}/${current.build.config}" />
     <if test="${not(build.skip)}">
        <echo message="Doing ${if(current.build.keysign,'a signed','an unsigned')} ${current.build.config} build for the ${current.build.framework.name} framework" />
@@ -239,7 +236,7 @@
   <!--     C O M P I L E    T A R G E T S                                                           -->
   <!-- ============================================================================================ -->
 
-  <target name="compile-all" depends="release-init" description="Compile all build configurations for all runtime configurations">
+  <target name="compile-all" description="Compile all build configurations for all runtime configurations">
     <echo message="Compiling all build configurations for all runtime configurations." />
       <foreach item="String" in="${build.framework.strings}" delim="," property="current.build.framework">
       <foreach item="String" in="${build.config.strings}" delim="," property="current.build.config">
@@ -338,7 +335,7 @@
   <!--      I N S T A L L     T A R G E T S                                                         -->
   <!-- ============================================================================================ -->
 
-  <target name="install-all" depends="release-init" description="Install all build configurations for all runtime configurations">
+  <target name="install-all" description="Install all build configurations for all runtime configurations">
     <echo message="Installing all build configurations for all runtime configurations." />
     <foreach item="String" in="${build.framework.strings}" delim="," property="current.build.framework">
       <foreach item="String" in="${build.config.strings}" delim="," property="current.build.config">
@@ -373,7 +370,7 @@
   <!--      R E P O    D O W N L O A D     T A R G E T S                                            -->
   <!-- ============================================================================================ -->
 
-  <target name="download-vendor-all" depends="release-init" description="Download vendor files for all runtime configurations">
+  <target name="download-vendor-all" description="Download vendor files for all runtime configurations">
     <echo message="Downloading vendor files for all runtime configurations." />
     <property name="vendor.build.config" value="release" />
     <foreach item="String" in="${build.framework.strings}" delim="," property="vendor.build.framework">
@@ -422,7 +419,7 @@
   <!--      D E P L O Y     T A R G E T S                                                           -->
   <!-- ============================================================================================ -->
 
-  <target name="deploy-all" depends="release-init" description="Deploy all build configurations for all runtime configurations">
+  <target name="deploy-all" description="Deploy all build configurations for all runtime configurations">
     <echo message="Deploying release configurations for all runtime configurations." />
 
     <call target="set-release-configuration" />
