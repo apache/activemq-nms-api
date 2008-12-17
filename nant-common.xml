@@ -463,6 +463,36 @@
   </target>
 
   <!-- ============================================================================================ -->
+  <!--      T E S T     T A R G E T S                                                               -->
+  <!-- ============================================================================================ -->
+
+  <target name="test" depends="test-debug" description="Alias test target to test-debug"/>
+  <target name="test-all" depends="test-debug, test-release" description="Test all build configurations for all runtime configurations"/>
+
+  <target name="test-debug" depends="" description="Test debug build configurations for all runtime configurations">
+	<property name="current.build.config" value="debug"/>
+    <call target="test-frameworks" />
+  </target>
+  
+  <target name="test-release" depends="" description="Test release build configurations for all runtime configurations">
+	<property name="current.build.config" value="release"/>
+    <call target="test-frameworks" />
+  </target>
+  
+  <target name="test-frameworks">
+    <foreach item="String" in="${build.framework.strings}" delim="," property="current.build.framework">
+      <call target="init" />
+	  <if test="${not build.skip}">
+	    <exec program="nunit-console" failonerror="true" workingdir="build/${current.build.framework}/${current.build.config}">
+	      <arg value="${NUnit.Projectfile}"/>
+	      <arg value="/labels"/>
+	      <arg value="/xml=Nunit.TestOutput.xml"/>
+	    </exec>
+	  </if>
+    </foreach>
+  </target>
+
+  <!-- ============================================================================================ -->
   <!--      M I S C E L L A N E O U S    T A R G E T S                                              -->
   <!-- ============================================================================================ -->
 
