@@ -57,6 +57,38 @@
             <param name="defaultType">Default type if no embedded prefix is specified.</param>
             <returns></returns>
         </member>
+        <member name="M:Apache.NMS.Util.SessionUtil.DeleteDestination(Apache.NMS.ISession,System.String)">
+            <summary>
+            Delete the named destination by parsing the embedded type prefix.  Default is Queue if no prefix is
+            embedded in the destinationName.
+            </summary>
+            <param name="session">Session object to use to get the destination.</param>
+            <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
+            	<list type="bullet">
+            		<item>queue://</item>
+            		<item>topic://</item>
+            		<item>temp-queue://</item>
+            		<item>temp-topic://</item>
+            	</list>
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:Apache.NMS.Util.SessionUtil.DeleteDestination(Apache.NMS.ISession,System.String,Apache.NMS.DestinationType)">
+            <summary>
+            Delete the named destination by parsing the embedded type prefix.
+            </summary>
+            <param name="session">Session object to use to get the destination.</param>
+            <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
+            	<list type="bullet">
+            		<item>queue://</item>
+            		<item>topic://</item>
+            		<item>temp-queue://</item>
+            		<item>temp-topic://</item>
+            	</list>
+            </param>
+            <param name="defaultType">Default type if no embedded prefix is specified.</param>
+            <returns></returns>
+        </member>
         <member name="T:Apache.NMS.Util.URISupport">
             <summary>
             Class to provide support for Uri query parameters which uses .Net reflection
@@ -480,6 +512,11 @@
         <member name="M:Apache.NMS.ISession.CreateTemporaryTopic">
             <summary>
             Creates a temporary topic
+            </summary>
+        </member>
+        <member name="M:Apache.NMS.ISession.DeleteDestination(Apache.NMS.IDestination)">
+            <summary>
+            Delete a destination (Queue, Topic, Temp Queue, Temp Topic).
             </summary>
         </member>
         <member name="M:Apache.NMS.ISession.CreateMessage">

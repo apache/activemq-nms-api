@@ -82,6 +82,17 @@
             <returns>
             </returns>
         </member>
+        <member name="M:Apache.NMS.Test.NMSTestSupport.CreateDestination(Apache.NMS.ISession,System.String)">
+            <summary>
+            Create a destination.  This will delete an existing destination and re-create it.
+            </summary>
+            <param name="session">
+            </param>
+            <param name="destinationName">
+            </param>
+            <returns>
+            </returns>
+        </member>
         <member name="M:Apache.NMS.Test.NMSTestSupport.RegisterDurableConsumer(System.String,System.String,System.String,System.String,System.Boolean)">
             <summary>
             Register a durable consumer
