@@ -66,7 +66,7 @@
   <property name="nant.remote.repo" value="${environment::get-variable('NANT_REMOTE_REPO')}"
             if="${environment::variable-exists('NANT_REMOTE_REPO')}"
             unless="${property::exists('nant.remote.repo')}"/>
-  <property name="nant.local.repo" value="${environment::get-variable('NANT_REPO')}"
+  <property name="nant.local.repo" value="${environment::get-variable('NANT_REPO')}/local"
             if="${environment::variable-exists('NANT_REPO')}"
             unless="${property::exists('nant.local.repo')}"/>
   <property name="nant.local.repo" value="${user.home}/.nant/repository/local"
