@@ -69,7 +69,7 @@
   <property name="nant.local.repo" value="${environment::get-variable('NANT_REPO')}"
             if="${environment::variable-exists('NANT_REPO')}"
             unless="${property::exists('nant.local.repo')}"/>
-  <property name="nant.local.repo" value="${user.home}/.nant/repository"
+  <property name="nant.local.repo" value="${user.home}/.nant/repository/local"
             unless="${property::exists('nant.local.repo')}"/>
 			
   <!-- Figure out the keyfile location -->
