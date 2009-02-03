@@ -6,8 +6,10 @@ Welcome to:
 For more information see http://activemq.apache.org/nms
 
 =======================================================================
-Building With NAnt 0.85 http://nant.sourceforge.net/
+Building With NAnt 0.86-Beta2 http://nant.sourceforge.net/
 =======================================================================
+
+A recent nightly build of the NAnt 0.86 beta 2 is required to build Apache.NMS.
 To build the code using NAnt, run:
 
   nant
@@ -18,7 +20,7 @@ To generate the documentation, run:
 
 
 =======================================================================
-Building With Visual Studio 2005
+Building With Visual Studio 2008
 =======================================================================
 
 First build the project with nant, this will download and install 
@@ -28,7 +30,7 @@ Open the solution File.  Build using "Build"->"Build Solution"
 menu option.
 
 The resulting DLLs will be in build\${framework}\debug or the 
-build\${framework}\release directories depending on you settings 
+build\${framework}\release directories depending on your settings 
 under "Build"->"Configuration Manager"
 
 If you have the Resharper plugin installed in Visual Studio, you can run 
