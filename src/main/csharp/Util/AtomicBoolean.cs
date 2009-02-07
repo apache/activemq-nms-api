@@ -19,17 +19,7 @@ using System.Text;
 
 namespace Apache.NMS.Util
 {
-#if NET_2_0
-
-	public class AtomicBoolean : Atomic<bool>
-	{
-		public AtomicBoolean(bool defaultValue)
-				: base(defaultValue)
-		{
-		}
-	}
-
-#else
+#if NET_1_0 || NET_1_1
 
 	public class AtomicBoolean
 	{
@@ -72,5 +62,16 @@ namespace Apache.NMS.Util
 			}
 		}
 	}
+
+#else
+
+	public class AtomicBoolean : Atomic<bool>
+	{
+		public AtomicBoolean(bool defaultValue)
+				: base(defaultValue)
+		{
+		}
+	}
+
 #endif
 }

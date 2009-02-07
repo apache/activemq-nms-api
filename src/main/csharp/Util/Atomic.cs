@@ -19,7 +19,7 @@ using System.Text;
 
 namespace Apache.NMS.Util
 {
-#if NET_2_0
+#if !NET_1_0 && !NET_1_1
 	public class Atomic<T> where T : IComparable
 	{
 		private T atomicValue;

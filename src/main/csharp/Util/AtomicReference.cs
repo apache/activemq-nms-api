@@ -19,7 +19,7 @@ using System.Text;
 
 namespace Apache.NMS.Util
 {
-#if !NET_1_1
+#if !NET_1_1 && !NET_1_0
 	public class AtomicReference<T>
 	{
 		private T atomicValue;
