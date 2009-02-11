@@ -282,15 +282,19 @@ namespace Apache.NMS.Util
 			// tcp://192.168.1.1:61616/
 			// tcp://machine:61616
 			// tcp://host:61616/
-			// failover://host/path(tcp://192.168.1.1:61616?trace=true,tcp://machine:61616?trace=false)?random=true
+			// failover:(tcp://192.168.1.1:61616?trace=true,tcp://machine:61616?trace=false)?random=true
 
-			// If this is a composite URI, then strip the scheme and "//"
+			// If this is a composite URI, then strip the scheme
 			// and break up the URI into components. If not, then pass the URI directly.
 			// We detect "compositeness" by the existence of a "(" in the URI containing
 			// balanced parenthesis
 
 			// Start with original URI
-			String ssp = uri.AbsoluteUri.Trim();
+#if NET_1_0 || NET_1_1
+            String ssp = uri.AbsoluteUri.Trim();
+#else
+            String ssp = uri.OriginalString.Trim();
+#endif
 
 			// If balanced and existing, assume composite
 			if(checkParenthesis(ssp) && ssp.IndexOf("(") >= 0)
@@ -298,7 +302,6 @@ namespace Apache.NMS.Util
 				// Composite
 				ssp = stripPrefix(ssp, rc.Scheme).Trim();
 				ssp = stripPrefix(ssp, ":").Trim();
-				ssp = stripPrefix(ssp, "//").Trim();
 			}
 			else
 			{
@@ -418,7 +421,7 @@ namespace Apache.NMS.Util
 				case ',':
 					if(depth == 0)
 					{
-						String s = componentString.Substring(last, i);
+						String s = componentString.Substring(last, i - last);
 						l.Add(s);
 						last = i + 1;
 					}
