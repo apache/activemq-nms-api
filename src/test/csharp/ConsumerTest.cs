@@ -92,6 +92,8 @@ namespace Apache.NMS.Test
 			}
 		}
 
+// The .NET CF does not have the ability to interrupt threads, so this test is impossible.
+#if !NETCF
 		[Test]
 		public void TestNoTimeoutConsumer()
 		{
@@ -144,5 +146,6 @@ namespace Apache.NMS.Test
 				Assert.Fail("Test failed with exception: " + e.Message);
 			}
 		}
+#endif
 	}
 }

@@ -41,6 +41,7 @@
   <property name="current.build.framework" value="${framework::get-target-framework()}"  overwrite="false"/>
   <property name="current.build.defines"   value="${build.defines}" />
   <property name="build.framework.strings" value="net-1.1,net-2.0,net-3.5,mono-2.0,netcf-2.0"/>
+  <property name="current.build.framework.assembly.dir" value="${framework::get-assembly-directory(framework::get-target-framework())}" dynamic="true"/>
 
   <if test="${build.skip.release}">
     <property name="build.config.strings"  value="debug"/>

@@ -28,7 +28,7 @@ namespace Apache.NMS.Test
 		protected static string DESTINATION_NAME = "AsyncConsumeDestination";
 		protected static string TEST_CLIENT_ID = "AsyncConsumeClientId";
 		protected static string RESPONSE_CLIENT_ID = "AsyncConsumeResponseClientId";
-		protected object semaphore = new object();
+		protected AutoResetEvent semaphore;
 		protected bool received;
 		protected IMessage receivedMsg;
 
@@ -36,6 +36,7 @@ namespace Apache.NMS.Test
 		public override void SetUp()
 		{
 			base.SetUp();
+			semaphore = new AutoResetEvent(false);
 			received = false;
 			receivedMsg = null;
 		}
@@ -246,24 +247,14 @@ namespace Apache.NMS.Test
 
 		protected void OnMessage(IMessage message)
 		{
-			lock(semaphore)
-			{
-				receivedMsg = message;
-				received = true;
-				Monitor.PulseAll(semaphore);
-			}
+			receivedMsg = message;
+			received = true;
+			semaphore.Set();
 		}
 
 		protected void WaitForMessageToArrive()
 		{
-			lock(semaphore)
-			{
-				if(!received)
-				{
-					Monitor.Wait(semaphore, receiveTimeout);
-				}
-			}
-
+			semaphore.WaitOne((int) receiveTimeout.TotalMilliseconds, true);
 			Assert.IsTrue(received, "Should have received a message by now!");
 		}
 	}
