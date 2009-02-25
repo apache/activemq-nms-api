@@ -169,7 +169,7 @@
     <property name="current.build.config"           value="release" />
     <property name="current.build.config.release"   value="true" />
     <property name="current.build.config.debug"     value="false" />
-    <property name="csc.debug"                      value="true" />
+    <property name="csc.debug"                      value="false" />
     <property name="csc.optimize"                   value="true" />
   </target>
 
