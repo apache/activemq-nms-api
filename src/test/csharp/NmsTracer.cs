@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+#define TRACE	// Force tracing to be enabled for this class
+
 using System;
 
 namespace Apache.NMS.Test
