@@ -14,15 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+using System;
+
 namespace Apache.NMS
 {
 	/// <summary>
-	/// Represents a connection failure.
+	/// Represents a security failure.
 	/// </summary>
 	public class NMSSecurityException : NMSException
 	{
 		public NMSSecurityException(string message)
 			: base(message)
+		{
+		}
+
+		public NMSSecurityException(string message, string errorCode)
+			: base(message, errorCode)
+		{
+		}
+
+		public NMSSecurityException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+
+		public NMSSecurityException(string message, string errorCode, Exception innerException)
+			: base(message, errorCode, innerException)
 		{
 		}
 	}

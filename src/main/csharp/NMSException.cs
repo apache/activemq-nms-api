@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace Apache.NMS
@@ -21,16 +22,39 @@ namespace Apache.NMS
 	/// <summary>
 	/// Represents a NMS exception
 	/// </summary>
+	[Serializable]
 	public class NMSException : System.Exception
 	{
+		protected string exceptionErrorCode;
+
 		public NMSException(string message)
 			: base(message)
 		{
 		}
 
+		public NMSException(string message, string errorCode)
+			: this(message)
+		{
+			exceptionErrorCode = errorCode;
+		}
+
 		public NMSException(string message, Exception innerException)
 			: base(message, innerException)
 		{
+		}
+
+		public NMSException(string message, string errorCode, Exception innerException)
+			: base(message, innerException)
+		{
+			exceptionErrorCode = errorCode;
+		}
+
+		/// <summary>
+		/// Returns the error code for the exception, if one has been provided.
+		/// </summary>
+		public string ErrorCode
+		{
+			get { return exceptionErrorCode; }
 		}
 	}
 }
