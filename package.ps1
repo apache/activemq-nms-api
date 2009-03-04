@@ -23,6 +23,7 @@ function package-legalfiles($zipfile)
 	zip -9 -u -j "$zipfile" ..\NOTICE.txt
 }
 
+write-progress "Creating package directory." "Initializing..."
 if(!(test-path package))
 {
 	md package
@@ -30,10 +31,12 @@ if(!(test-path package))
 
 pushd build
 
-# Application files
+$pkgdir = "..\package"
+
+write-progress "Packaging Application files." "Scanning..."
 foreach($configuration in $configurations)
 {
-	$zipfile = "..\package\Apache.NMS-$pkgver-$configuration.zip"
+	$zipfile = "$pkgdir\Apache.NMS-$pkgver-bin-$configuration.zip"
 	package-legalfiles $zipfile
 	foreach($framework in $frameworks)
 	{
@@ -41,10 +44,10 @@ foreach($configuration in $configurations)
 	}
 }
 
-# PDB Files
+write-progress "Packaging PDB files." "Scanning..."
 foreach($configuration in $configurations)
 {
-	$zipfile = "..\package\Apache.NMS-$pkgver-$configuration-PDBs.zip"
+	$zipfile = "$pkgdir\Apache.NMS-$pkgver-PDBs-$configuration.zip"
 	package-legalfiles $zipfile
 	foreach($framework in $frameworks)
 	{
@@ -59,10 +62,10 @@ foreach($configuration in $configurations)
 	}
 }
 
-# Unit test files
+write-progress "Packaging Unit test files." "Scanning..."
 foreach($configuration in $configurations)
 {
-	$zipfile = "..\package\Apache.NMS-$pkgver-$configuration-UnitTests.zip"
+	$zipfile = "$pkgdir\Apache.NMS-$pkgver-UnitTests-$configuration.zip"
 	package-legalfiles $zipfile
 	foreach($framework in $frameworks)
 	{
@@ -79,3 +82,12 @@ foreach($configuration in $configurations)
 }
 
 popd
+
+write-progress "Packaging Source code files." "Scanning..."
+$pkgdir = "package"
+$zipfile = "$pkgdir\Apache.NMS-$pkgver-src.zip"
+
+zip -9 -u "$zipfile" LICENSE.txt NOTICE.txt nant-common.xml nant.build package.ps1 vs2008-nms-test.csproj vs2008-nms.csproj vs2008-nms.sln
+zip -9 -u -r "$zipfile" keyfile lib src
+
+write-progress "Packaging" "Complete."
