@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -41,78 +43,54 @@ namespace Apache.NMS.Test
 			}
 		}
 
-        /// <summary>
-        /// Verify disposing a connection after a consumer has been created and disposed.
-        /// </summary>
-        [Test]
-        public void DisposeConnectionAfterDisposingConsumer()
+#if !NET_1_1
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+#endif
+		public void CreateAndDisposeWithConsumer(bool disposeConsumer)
         {
-            CreateAndDisposeWithConsumer(true);
+			using(IConnection connection = CreateConnection("DisposalTestConnection"))
+			{
+				connection.Start();
+
+				using(ISession session = connection.CreateSession())
+				{
+					IQueue queue = session.GetQueue("DisposalTestQueue");
+					IMessageConsumer consumer = session.CreateConsumer(queue);
+
+					connection.Stop();
+					if(disposeConsumer)
+					{
+						consumer.Dispose();
+					}
+				}
+			}
         }
 
-        /// <summary>
-        /// Verify disposing a connection after a consumer has been created but not disposed.
-        /// </summary>
-        [Test]
-        public void DisposeConnectionWithoutDisposingConsumer()
+#if !NET_1_1
+		[RowTest]
+		[Row(true)]
+		[Row(false)]
+#endif
+		public void CreateAndDisposeWithProducer(bool disposeProducer)
         {
-            CreateAndDisposeWithConsumer(false);
-        }
+			using(IConnection connection = CreateConnection("DisposalTestConnection"))
+			{
+				connection.Start();
 
-        /// <summary>
-        /// Verify disposing a connection after a producer has been created and disposed.
-        /// </summary>
-        [Test]
-        public void DisposeConnectionAfterDisposingProducer()
-        {
-            CreateAndDisposeWithProducer(true);
-        }
+				using(ISession session = connection.CreateSession())
+				{
+					IQueue queue = session.GetQueue("DisposalTestQueue");
+					IMessageProducer producer = session.CreateProducer(queue);
 
-        /// <summary>
-        /// Verify disposing a connection after a producer has been created but not disposed.
-        /// </summary>
-        [Test]
-        public void DisposeConnectionWithoutDisposingProducer()
-        {
-            CreateAndDisposeWithProducer(false);
-        }
-
-        private void CreateAndDisposeWithConsumer(bool disposeConsumer)
-        {
-            IConnection connection = CreateConnection("DisposalTestConnection");
-            connection.Start();
-
-            ISession session = connection.CreateSession();
-            IQueue queue = session.GetQueue("DisposalTestQueue");
-
-            IMessageConsumer consumer = session.CreateConsumer(queue);
-
-            connection.Stop();
-
-            if (disposeConsumer)
-                consumer.Dispose();
-
-            session.Dispose();
-            connection.Dispose();
-        }
-
-        private void CreateAndDisposeWithProducer(bool disposeProducer)
-        {
-            IConnection connection = CreateConnection("DisposalTestConnection");
-            connection.Start();
-
-            ISession session = connection.CreateSession();
-            IQueue queue = session.GetQueue("DisposalTestQueue");
-
-            IMessageProducer producer = session.CreateProducer(queue);
-
-            connection.Stop();
-
-            if (disposeProducer)
-                producer.Dispose();
-
-            session.Dispose();
-            connection.Dispose();
+					connection.Stop();
+					if(disposeProducer)
+					{
+						producer.Dispose();
+					}
+				}
+			}
         }
 	}
 }
