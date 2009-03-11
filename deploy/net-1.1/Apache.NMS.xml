@@ -314,6 +314,16 @@
             A base interface for destinations such as queues or topics
             </summary>
         </member>
+        <member name="T:Apache.NMS.NMSException">
+            <summary>
+            Represents a NMS exception
+            </summary>
+        </member>
+        <member name="P:Apache.NMS.NMSException.ErrorCode">
+            <summary>
+            Returns the error code for the exception, if one has been provided.
+            </summary>
+        </member>
         <member name="T:Apache.NMS.IMapMessage">
             <summary>
             Represents a Map message which contains key and value pairs which are
@@ -428,11 +438,6 @@
         <member name="T:Apache.NMS.InvalidDestinationException">
             <summary>
             An attempt is made to access an invalid destination
-            </summary>
-        </member>
-        <member name="T:Apache.NMS.NMSException">
-            <summary>
-            Represents a NMS exception
             </summary>
         </member>
         <member name="T:Apache.NMS.IObjectMessage">
@@ -716,7 +721,7 @@
         </member>
         <member name="T:Apache.NMS.NMSSecurityException">
             <summary>
-            Represents a connection failure.
+            Represents a security failure.
             </summary>
         </member>
     </members>
