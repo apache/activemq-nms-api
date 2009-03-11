@@ -27,9 +27,19 @@ namespace Apache.NMS
 			: base(message)
 		{
 		}
-		
+
+		public InvalidDestinationException(string message, string errorCode)
+			: base(message, errorCode)
+		{
+		}
+
 		public InvalidDestinationException(string message, Exception innerException)
 			: base(message, innerException)
+		{
+		}
+
+		public InvalidDestinationException(string message, string errorCode, Exception innerException)
+			: base(message, errorCode, innerException)
 		{
 		}
 	}

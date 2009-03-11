@@ -22,24 +22,24 @@ using System;
 namespace Apache.NMS
 {
 	[Serializable]
-	public class NMSTransactionRolledBackException : NMSException
+	public class TransactionInProgressException : NMSException
 	{
-		public NMSTransactionRolledBackException(string message)
+		public TransactionInProgressException(string message)
 			: base(message)
 		{
 		}
 
-		public NMSTransactionRolledBackException(string message, string errorCode)
+		public TransactionInProgressException(string message, string errorCode)
 			: base(message, errorCode)
 		{
 		}
 
-		public NMSTransactionRolledBackException(string message, Exception innerException)
+		public TransactionInProgressException(string message, Exception innerException)
 			: base(message, innerException)
 		{
 		}
 
-		public NMSTransactionRolledBackException(string message, string errorCode, Exception innerException)
+		public TransactionInProgressException(string message, string errorCode, Exception innerException)
 			: base(message, errorCode, innerException)
 		{
 		}

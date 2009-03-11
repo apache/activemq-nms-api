@@ -22,24 +22,24 @@ using System;
 namespace Apache.NMS
 {
 	[Serializable]
-	public class NMSMessageNotReadableException : NMSException
+	public class ResourceAllocationException : NMSException
 	{
-		public NMSMessageNotReadableException(string message)
+		public ResourceAllocationException(string message)
 			: base(message)
 		{
 		}
 
-		public NMSMessageNotReadableException(string message, string errorCode)
+		public ResourceAllocationException(string message, string errorCode)
 			: base(message, errorCode)
 		{
 		}
 
-		public NMSMessageNotReadableException(string message, Exception innerException)
+		public ResourceAllocationException(string message, Exception innerException)
 			: base(message, innerException)
 		{
 		}
 
-		public NMSMessageNotReadableException(string message, string errorCode, Exception innerException)
+		public ResourceAllocationException(string message, string errorCode, Exception innerException)
 			: base(message, errorCode, innerException)
 		{
 		}

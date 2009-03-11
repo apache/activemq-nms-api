@@ -22,24 +22,24 @@ using System;
 namespace Apache.NMS
 {
 	[Serializable]
-	public class NMSInvalidSelectorException : NMSException
+	public class MessageEOFException : NMSException
 	{
-		public NMSInvalidSelectorException(string message)
+		public MessageEOFException(string message)
 			: base(message)
 		{
 		}
 
-		public NMSInvalidSelectorException(string message, string errorCode)
+		public MessageEOFException(string message, string errorCode)
 			: base(message, errorCode)
 		{
 		}
 
-		public NMSInvalidSelectorException(string message, Exception innerException)
+		public MessageEOFException(string message, Exception innerException)
 			: base(message, innerException)
 		{
 		}
 
-		public NMSInvalidSelectorException(string message, string errorCode, Exception innerException)
+		public MessageEOFException(string message, string errorCode, Exception innerException)
 			: base(message, errorCode, innerException)
 		{
 		}
