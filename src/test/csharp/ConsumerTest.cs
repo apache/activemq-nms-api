@@ -146,6 +146,43 @@ namespace Apache.NMS.Test
 				Assert.Fail("Test failed with exception: " + e.Message);
 			}
 		}
+
+        [Test]
+        public void TestSyncReceiveConsumerClose()
+        {
+            // Launch a thread to perform IMessageConsumer.Receive().
+            // If it doesn't fail in less than three seconds, no exception was thrown.
+            Thread receiveThread = new Thread(new ThreadStart(TimeoutConsumerThreadProc));
+            using (IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {
+                connection.Start();
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                {
+                    ITemporaryQueue queue = session.CreateTemporaryQueue();
+                    using (this.timeoutConsumer = session.CreateConsumer(queue))
+                    {
+                        receiveThread.Start();
+                        if (receiveThread.Join(3000))
+                        {
+                            Assert.Fail("IMessageConsumer.Receive() returned without blocking.  Test failed.");
+                        }
+                        else
+                        {
+                            // Kill the thread - otherwise it'll sit in Receive() until a message arrives.
+                            this.timeoutConsumer.Close();
+                            receiveThread.Join(10000);
+                            if (receiveThread.IsAlive)
+                            {
+                                // Kill the thread - otherwise it'll sit in Receive() until a message arrives.
+                                receiveThread.Interrupt();
+                                Assert.Fail("IMessageConsumer.Receive() thread is still alive, close should have killed it.");
+                            }
+                        }
+                    }
+                }
+            }
+        }
 #endif
-	}
+
+    }
 }
