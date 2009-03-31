@@ -24,6 +24,11 @@ namespace Apache.NMS
 	[Serializable]
 	public class MessageEOFException : NMSException
 	{
+		public MessageEOFException()
+			: base()
+		{
+		}
+
 		public MessageEOFException(string message)
 			: base(message)
 		{

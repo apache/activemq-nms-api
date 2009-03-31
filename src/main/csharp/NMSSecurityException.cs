@@ -24,6 +24,11 @@ namespace Apache.NMS
 	/// </summary>
 	public class NMSSecurityException : NMSException
 	{
+		public NMSSecurityException()
+			: base()
+		{
+		}
+
 		public NMSSecurityException(string message)
 			: base(message)
 		{

@@ -24,6 +24,11 @@ namespace Apache.NMS
 	[Serializable]
 	public class MessageFormatException : NMSException
 	{
+		public MessageFormatException()
+			: base()
+		{
+		}
+
 		public MessageFormatException(string message)
 			: base(message)
 		{

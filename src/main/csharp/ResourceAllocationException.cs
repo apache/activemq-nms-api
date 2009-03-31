@@ -24,6 +24,11 @@ namespace Apache.NMS
 	[Serializable]
 	public class ResourceAllocationException : NMSException
 	{
+		public ResourceAllocationException()
+			: base()
+		{
+		}
+
 		public ResourceAllocationException(string message)
 			: base(message)
 		{

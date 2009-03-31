@@ -24,6 +24,11 @@ namespace Apache.NMS
 	[Serializable]
 	public class InvalidSelectorException : NMSException
 	{
+		public InvalidSelectorException()
+			: base()
+		{
+		}
+
 		public InvalidSelectorException(string message)
 			: base(message)
 		{

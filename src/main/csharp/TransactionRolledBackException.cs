@@ -24,6 +24,11 @@ namespace Apache.NMS
 	[Serializable]
 	public class TransactionRolledBackException : NMSException
 	{
+		public TransactionRolledBackException()
+			: base()
+		{
+		}
+
 		public TransactionRolledBackException(string message)
 			: base(message)
 		{

@@ -27,6 +27,11 @@ namespace Apache.NMS
 	{
 		protected string exceptionErrorCode;
 
+		public NMSException()
+			: base()
+		{
+		}
+
 		public NMSException(string message)
 			: base(message)
 		{

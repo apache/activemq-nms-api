@@ -24,6 +24,11 @@ namespace Apache.NMS
 	[Serializable]
 	public class MessageNotReadableException : NMSException
 	{
+		public MessageNotReadableException()
+			: base()
+		{
+		}
+
 		public MessageNotReadableException(string message)
 			: base(message)
 		{

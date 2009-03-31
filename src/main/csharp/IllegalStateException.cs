@@ -24,6 +24,11 @@ namespace Apache.NMS
 	[Serializable]
 	public class IllegalStateException : NMSException
 	{
+		public IllegalStateException()
+			: base()
+		{
+		}
+
 		public IllegalStateException(string message)
 			: base(message)
 		{

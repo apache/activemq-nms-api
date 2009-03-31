@@ -24,6 +24,11 @@ namespace Apache.NMS
 	[Serializable]
 	public class TransactionInProgressException : NMSException
 	{
+		public TransactionInProgressException()
+			: base()
+		{
+		}
+
 		public TransactionInProgressException(string message)
 			: base(message)
 		{

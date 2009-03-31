@@ -58,7 +58,7 @@ namespace Apache.NMS.Util
 
 					if(nameValue.Length != 2)
 					{
-						throw new NMS.NMSException("Invalid Uri parameter: " + query);
+						throw new NMS.NMSException(string.Format("Invalid Uri parameter: {0}", query));
 					}
 
 					map[nameValue[0]] = nameValue[1];

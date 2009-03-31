@@ -23,6 +23,11 @@ namespace Apache.NMS
 	/// </summary>
 	public class InvalidDestinationException : NMSException
 	{
+		public InvalidDestinationException()
+			: base()
+		{
+		}
+
 		public InvalidDestinationException(string message)
 			: base(message)
 		{

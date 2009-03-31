@@ -23,6 +23,11 @@ namespace Apache.NMS
 	/// </summary>
 	public class NMSConnectionException : NMSException
 	{
+		public NMSConnectionException()
+			: base()
+		{
+		}
+
 		public NMSConnectionException(string message)
 			: base(message)
 		{

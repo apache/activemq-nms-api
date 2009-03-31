@@ -24,6 +24,11 @@ namespace Apache.NMS
 	[Serializable]
 	public class InvalidClientIDException : NMSException
 	{
+		public InvalidClientIDException()
+			: base()
+		{
+		}
+
 		public InvalidClientIDException(string message)
 			: base(message)
 		{
