@@ -161,7 +161,8 @@
     <property name="current.build.config"           value="debug" />
     <property name="current.build.config.debug"     value="true" />
     <property name="current.build.config.release"   value="false" />
-    <property name="csc.debug"                      value="true" />
+    <property name="current.build.defines"          value="${build.defines}DEBUG,TRACE," dynamic="true" />
+    <property name="csc.debug"                      value="Full" />
     <property name="csc.optimize"                   value="false" />
   </target>
 
@@ -169,7 +170,7 @@
     <property name="current.build.config"           value="release" />
     <property name="current.build.config.release"   value="true" />
     <property name="current.build.config.debug"     value="false" />
-    <property name="csc.debug"                      value="false" />
+    <property name="csc.debug"                      value="Full" />
     <property name="csc.optimize"                   value="true" />
   </target>
 
