@@ -58,7 +58,6 @@ namespace Apache.NMS.Test
 				{
 					IDestination destination1 = CreateDestination(session1, destinationName);
 					IDestination destination2 = SessionUtil.GetDestination(session2, destinationName);
-					IDestination destination3 = SessionUtil.GetDestination(session2, destinationName);
 
 					using(IMessageProducer producer = session1.CreateProducer(destination1))
 					using(IMessageConsumer consumer1 = session2.CreateConsumer(destination2, "JMSType NOT LIKE '%IGNORE'"))

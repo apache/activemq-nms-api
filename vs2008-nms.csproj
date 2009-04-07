@@ -93,6 +93,7 @@
     <Compile Include="src\main\csharp\Util\URISupport.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\main\csharp\Util\XmlUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt">
