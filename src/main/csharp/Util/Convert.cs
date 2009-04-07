@@ -106,6 +106,9 @@ namespace Apache.NMS.Util
 		{
 			Type objType = null;
 
+#if NETCF
+			objType = Assembly.GetCallingAssembly().GetType(typeName, false);
+#else
 			foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				objType = assembly.GetType(typeName, false, true);
@@ -114,6 +117,7 @@ namespace Apache.NMS.Util
 					break;
 				}
 			}
+#endif
 
 			return objType;
 		}
