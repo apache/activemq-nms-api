@@ -16,16 +16,17 @@
  */
 
 using System;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using Apache.NMS.Util;
 using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-	// Serializable object.  In real life, this type of object would be generated from
-	// an XSD file using XSDObjectGen.
-	[Serializable]
+	// For ease of cross-platform exchange of information, you might generate objects from
+	// an XSD file using XSDObjectGen.  However, C# has built-in support for serializing.
+	// All of the XML attributes that are commented out are optional, but give you fine-grained
+	// control over the serialized format if you need it.
+
+	// [Serializable]
 	public enum CheckType
 	{
 		// [XmlEnum(Name = "message")]
@@ -36,7 +37,7 @@ namespace Apache.NMS.Test
 		response
 	}
 
-	[XmlRoot(ElementName = "NMSTestXmlType1", IsNullable = false), Serializable]
+	// [XmlRoot(ElementName = "NMSTestXmlType1", IsNullable = false), Serializable]
 	public class NMSTestXmlType1
 	{
 		// [XmlElement(ElementName = "crcCheck", IsNullable = false, DataType = "int")]
@@ -52,7 +53,7 @@ namespace Apache.NMS.Test
 		}
 	}
 
-	[XmlRoot(ElementName = "NMSTestXmlType2", IsNullable = false), Serializable]
+	// [XmlRoot(ElementName = "NMSTestXmlType2", IsNullable = false), Serializable]
 	public class NMSTestXmlType2
 	{
 		// [XmlElement(ElementName = "stringCheck", IsNullable = false, DataType = "string")]
