@@ -103,7 +103,7 @@
     <Compile Include="src\test\csharp\TransactionTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\test\csharp\XmlMessage.cs" />
+    <Compile Include="src\test\csharp\XmlMessageTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vs2008-nms.csproj">
