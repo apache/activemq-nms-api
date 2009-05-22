@@ -32,10 +32,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestDurableConsumerSelectorChange(bool persistent)
+		public void TestDurableConsumerSelectorChange(MsgDeliveryMode deliveryMode)
 		{
 			try
 			{
@@ -48,7 +48,7 @@ namespace Apache.NMS.Test
 						IMessageProducer producer = session.CreateProducer(topic);
 						IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, "color='red'", false);
 
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 
 						// Send the messages
 						ITextMessage sendMessage = session.CreateTextMessage("1st");
@@ -58,7 +58,7 @@ namespace Apache.NMS.Test
 						ITextMessage receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
 						Assert.IsNotNull(receiveMsg, "Failed to retrieve 1st durable message.");
 						Assert.AreEqual("1st", receiveMsg.Text);
-						Assert.AreEqual(persistent, receiveMsg.NMSPersistent, "NMSPersistent does not match");
+						Assert.AreEqual(deliveryMode, receiveMsg.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
 						// Change the subscription.
 						consumer.Dispose();
@@ -75,7 +75,7 @@ namespace Apache.NMS.Test
 						receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
 						Assert.IsNotNull(receiveMsg, "Failed to retrieve durable message.");
 						Assert.AreEqual("3rd", receiveMsg.Text, "Retrieved the wrong durable message.");
-						Assert.AreEqual(persistent, receiveMsg.NMSPersistent, "NMSPersistent does not match");
+						Assert.AreEqual(deliveryMode, receiveMsg.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
 						// Make sure there are no pending messages.
 						Assert.IsNull(consumer.ReceiveNoWait(), "Wrong number of messages in durable subscription.");

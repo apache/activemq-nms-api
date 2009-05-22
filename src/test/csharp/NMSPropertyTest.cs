@@ -31,17 +31,17 @@ namespace Apache.NMS.Test
 		// standard NMS properties
 		protected string expectedText = "Hey this works!";
 		protected string correlationID = "FooBar";
-		protected byte priority = 4;
+		protected MsgPriority priority = MsgPriority.Normal;
 		protected String type = "FooType";
 		protected String groupID = "BarGroup";
 		protected int groupSeq = 1;
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void SendReceiveNMSProperties(bool persistent)
+		public void SendReceiveNMSProperties(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -53,7 +53,7 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.Priority = priority;
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						ITextMessage request = session.CreateTextMessage(expectedText);
 						ITemporaryQueue replyTo = session.CreateTemporaryQueue();
@@ -74,7 +74,7 @@ namespace Apache.NMS.Test
 
 						// compare standard NMS headers
 						Assert.AreEqual(correlationID, message.NMSCorrelationID, "NMSCorrelationID does not match");
-						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+						Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 						Assert.AreEqual(priority, message.NMSPriority, "NMSPriority does not match");
 						Assert.AreEqual(type, message.NMSType, "NMSType does not match");
 						Assert.AreEqual(groupID, message.Properties["NMSXGroupID"], "NMSXGroupID does not match");

@@ -38,12 +38,12 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true, QUEUE_DESTINATION_NAME)]
-		[Row(false, QUEUE_DESTINATION_NAME)]
-		[Row(true, TOPIC_DESTINATION_NAME)]
-		[Row(false, TOPIC_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.Persistent, QUEUE_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.NonPersistent, QUEUE_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.Persistent, TOPIC_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.NonPersistent, TOPIC_DESTINATION_NAME)]
 #endif
-		public void FilterIgnoredMessagesTest(bool persistent, string destinationName)
+		public void FilterIgnoredMessagesTest(MsgDeliveryMode deliveryMode, string destinationName)
 		{
 			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))
 			using(IConnection connection2 = CreateConnection(TEST_CLIENT_ID2))
@@ -66,7 +66,7 @@ namespace Apache.NMS.Test
 						int numNonIgnoredMsgsSent = 0;
 						int numIgnoredMsgsSent = 0;
 
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						// producer.RequestTimeout = receiveTimeout;
 
 						receivedNonIgnoredMsgCount = 0;

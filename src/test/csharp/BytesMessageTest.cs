@@ -30,10 +30,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void SendReceiveBytesMessage(bool persistent)
+		public void SendReceiveBytesMessage(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -44,14 +44,14 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						IMessage request = session.CreateBytesMessage(msgContent);
 						producer.Send(request);
 
 						IMessage message = consumer.Receive(receiveTimeout);
 						AssertBytesMessageEqual(request, message);
-						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+						Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 					}
 				}
 			}

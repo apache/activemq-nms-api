@@ -32,10 +32,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestSendRollback(bool persistent)
+		public void TestSendRollback(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -46,7 +46,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
 						producer.Send(firstMsgSend);
@@ -77,10 +77,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestSendSessionClose(bool persistent)
+		public void TestSendSessionClose(MsgDeliveryMode deliveryMode)
 		{
 			ITextMessage firstMsgSend;
 			ITextMessage secondMsgSend;
@@ -104,7 +104,7 @@ namespace Apache.NMS.Test
 								IDestination destination2 = SessionUtil.GetDestination(session2, DESTINATION_NAME);
 								using(IMessageProducer producer = session2.CreateProducer(destination2))
 								{
-									producer.Persistent = persistent;
+									producer.DeliveryMode = deliveryMode;
 									producer.RequestTimeout = receiveTimeout;
 									firstMsgSend = session2.CreateTextMessage("First Message");
 									producer.Send(firstMsgSend);
@@ -125,7 +125,7 @@ namespace Apache.NMS.Test
 								IDestination destination2 = SessionUtil.GetDestination(session2, DESTINATION_NAME);
 								using(IMessageProducer producer = session2.CreateProducer(destination2))
 								{
-									producer.Persistent = persistent;
+									producer.DeliveryMode = deliveryMode;
 									producer.RequestTimeout = receiveTimeout;
 									secondMsgSend = session2.CreateTextMessage("Second Message");
 									producer.Send(secondMsgSend);
@@ -150,10 +150,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestReceiveRollback(bool persistent)
+		public void TestReceiveRollback(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -164,7 +164,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						// Send both messages
 						ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
@@ -195,10 +195,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestReceiveTwoThenRollback(bool persistent)
+		public void TestReceiveTwoThenRollback(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -209,7 +209,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						// Send both messages
 						ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
@@ -241,12 +241,12 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(AcknowledgementMode.AutoAcknowledge, true)]
-		[Row(AcknowledgementMode.AutoAcknowledge, false)]
-		[Row(AcknowledgementMode.ClientAcknowledge, true)]
-		[Row(AcknowledgementMode.ClientAcknowledge, false)]
+		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.Persistent)]
+		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.NonPersistent)]
+		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.Persistent)]
+		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestSendCommitNonTransaction(AcknowledgementMode ackMode, bool persistent)
+		public void TestSendCommitNonTransaction(AcknowledgementMode ackMode, MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -257,7 +257,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						ITextMessage firstMsgSend = session.CreateTextMessage("SendCommitNonTransaction Message");
 						producer.Send(firstMsgSend);
@@ -276,12 +276,12 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(AcknowledgementMode.AutoAcknowledge, true)]
-		[Row(AcknowledgementMode.AutoAcknowledge, false)]
-		[Row(AcknowledgementMode.ClientAcknowledge, true)]
-		[Row(AcknowledgementMode.ClientAcknowledge, false)]
+		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.Persistent)]
+		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.NonPersistent)]
+		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.Persistent)]
+		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestReceiveCommitNonTransaction(AcknowledgementMode ackMode, bool persistent)
+		public void TestReceiveCommitNonTransaction(AcknowledgementMode ackMode, MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -292,7 +292,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						ITextMessage firstMsgSend = session.CreateTextMessage("ReceiveCommitNonTransaction Message");
 						producer.Send(firstMsgSend);
@@ -321,12 +321,12 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(AcknowledgementMode.AutoAcknowledge, true)]
-		[Row(AcknowledgementMode.AutoAcknowledge, false)]
-		[Row(AcknowledgementMode.ClientAcknowledge, true)]
-		[Row(AcknowledgementMode.ClientAcknowledge, false)]
+		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.Persistent)]
+		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.NonPersistent)]
+		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.Persistent)]
+		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestReceiveRollbackNonTransaction(AcknowledgementMode ackMode, bool persistent)
+		public void TestReceiveRollbackNonTransaction(AcknowledgementMode ackMode, MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -337,7 +337,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						ITextMessage firstMsgSend = session.CreateTextMessage("ReceiveCommitNonTransaction Message");
 						producer.Send(firstMsgSend);

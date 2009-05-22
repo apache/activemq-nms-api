@@ -41,7 +41,7 @@ namespace Apache.NMS.Test
 					{
 						ITextMessage message = session.CreateTextMessage("Persistent Hello");
 
-						producer.Persistent = true;
+						producer.DeliveryMode = MsgDeliveryMode.Persistent;
 						producer.RequestTimeout = receiveTimeout;
 						producer.Send(message);
 					}

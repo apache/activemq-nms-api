@@ -57,12 +57,12 @@ namespace Apache.NMS
 		/// <summary>
 		/// Whether or not this message is persistent.
 		/// </summary>
-		bool NMSPersistent { get; set; }
-		
+		MsgDeliveryMode NMSDeliveryMode { get; set; }
+	
 		/// <summary>
 		/// The Priority of this message.
 		/// </summary>
-		byte NMSPriority { get; set; }
+		MsgPriority NMSPriority { get; set; }
 		
 		/// <summary>
 		/// Returns true if this message has been redelivered to this or another consumer before being acknowledged successfully.

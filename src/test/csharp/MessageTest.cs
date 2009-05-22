@@ -45,10 +45,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void SendReceiveMessageProperties(bool persistent)
+		public void SendReceiveMessageProperties(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -59,7 +59,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						IMessage request = session.CreateMessage();
 						request.Properties["a"] = a;
@@ -81,7 +81,7 @@ namespace Apache.NMS.Test
 						IMessage message = consumer.Receive(receiveTimeout);
 						Assert.IsNotNull(message, "No message returned!");
 						Assert.AreEqual(request.Properties.Count, message.Properties.Count, "Invalid number of properties.");
-						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+						Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 						Assert.AreEqual(ToHex(f), ToHex(message.Properties.GetLong("f")), "map entry: f as hex");
 
 						// use generic API to access entries

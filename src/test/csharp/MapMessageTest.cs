@@ -46,10 +46,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void SendReceiveMapMessage(bool persistent)
+		public void SendReceiveMapMessage(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -60,7 +60,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						IMapMessage request = session.CreateMapMessage();
 						request.Body["a"] = a;
@@ -82,7 +82,7 @@ namespace Apache.NMS.Test
 						IMapMessage message = consumer.Receive(receiveTimeout) as IMapMessage;
 						Assert.IsNotNull(message, "No message returned!");
 						Assert.AreEqual(request.Body.Count, message.Body.Count, "Invalid number of message maps.");
-						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+						Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 						Assert.AreEqual(ToHex(f), ToHex(message.Body.GetLong("f")), "map entry: f as hex");
 
 						// use generic API to access entries
@@ -123,10 +123,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void SendReceiveNestedMapMessage(bool persistent)
+		public void SendReceiveNestedMapMessage(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -137,7 +137,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						IMapMessage request = session.CreateMapMessage();
 						const string textFieldValue = "Nested Map Messages Rule!";
@@ -162,7 +162,7 @@ namespace Apache.NMS.Test
 						IMapMessage message = consumer.Receive(receiveTimeout) as IMapMessage;
 						Assert.IsNotNull(message, "No message returned!");
 						Assert.AreEqual(request.Body.Count, message.Body.Count, "Invalid number of message maps.");
-						Assert.AreEqual(persistent, message.NMSPersistent, "NMSPersistent does not match");
+						Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
 						string textFieldResponse = message.Body.GetString("textField");
 						Assert.AreEqual(textFieldValue, textFieldResponse, "textField does not match.");

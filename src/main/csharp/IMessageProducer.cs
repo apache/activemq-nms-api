@@ -31,7 +31,7 @@ namespace Apache.NMS
 		/// <summary>
 		/// Sends the message to the default destination with the explicit QoS configuration
 		/// </summary>
-		void Send(IMessage message, bool persistent, byte priority, TimeSpan timeToLive);
+		void Send(IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
 
 		/// <summary>
 		/// Sends the message to the given destination
@@ -41,20 +41,20 @@ namespace Apache.NMS
 		/// <summary>
 		/// Sends the message to the given destination with the explicit QoS configuration
 		/// </summary>
-		void Send(IDestination destination, IMessage message, bool persistent, byte priority, TimeSpan timeToLive);
+		void Send(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
 
 		/// <summary>
 		/// Close the producer.
 		/// </summary>
 		void Close();
 
-		bool Persistent { get; set; }
+		MsgDeliveryMode DeliveryMode { get; set; }
 
 		TimeSpan TimeToLive { get; set; }
 
 		TimeSpan RequestTimeout { get; set; }
 
-		byte Priority { get; set; }
+		MsgPriority Priority { get; set; }
 
 		bool DisableMessageID { get; set; }
 

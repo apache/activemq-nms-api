@@ -34,17 +34,17 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true, QUEUE_DESTINATION_NAME)]
-		[Row(false, QUEUE_DESTINATION_NAME)]
-		[Row(true, TOPIC_DESTINATION_NAME)]
-		[Row(false, TOPIC_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.Persistent, QUEUE_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.NonPersistent, QUEUE_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.Persistent, TOPIC_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.NonPersistent, TOPIC_DESTINATION_NAME)]
 
-		[Row(true, TEMP_QUEUE_DESTINATION_NAME)]
-		[Row(false, TEMP_QUEUE_DESTINATION_NAME)]
-		[Row(true, TEMP_TOPIC_DESTINATION_NAME)]
-		[Row(false, TEMP_TOPIC_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.Persistent, TEMP_QUEUE_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.NonPersistent, TEMP_QUEUE_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.Persistent, TEMP_TOPIC_DESTINATION_NAME)]
+		[Row(MsgDeliveryMode.NonPersistent, TEMP_TOPIC_DESTINATION_NAME)]
 #endif
-		public void TempDestinationDeletionTest(bool persistent, string destinationName)
+		public void TempDestinationDeletionTest(MsgDeliveryMode deliveryMode, string destinationName)
 		{
 			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -60,7 +60,7 @@ namespace Apache.NMS.Test
 						using(IMessageProducer producer = session.CreateProducer(destination))
 						using(IMessageConsumer consumer = session.CreateConsumer(destination))
 						{
-							producer.Persistent = persistent;
+							producer.DeliveryMode = deliveryMode;
 
 							IMessage request = session.CreateTextMessage("Hello World, Just Passing Through!");
 

@@ -50,10 +50,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestAsynchronousConsume(bool persistent)
+		public void TestAsynchronousConsume(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -64,7 +64,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						consumer.Listener += new MessageListener(OnMessage);
 
@@ -82,10 +82,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestCreateConsumerAfterSend(bool persistent)
+		public void TestCreateConsumerAfterSend(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -95,7 +95,7 @@ namespace Apache.NMS.Test
 					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = false;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 
 						IMessage request = session.CreateMessage();
@@ -116,10 +116,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestCreateConsumerBeforeSendAddListenerAfterSend(bool persistent)
+		public void TestCreateConsumerBeforeSendAddListenerAfterSend(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -130,7 +130,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 
 						IMessage request = session.CreateMessage();
@@ -149,10 +149,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestAsynchronousTextMessageConsume(bool persistent)
+		public void TestAsynchronousTextMessageConsume(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -165,7 +165,7 @@ namespace Apache.NMS.Test
 						consumer.Listener += new MessageListener(OnMessage);
 						using(IMessageProducer producer = session.CreateProducer(destination))
 						{
-							producer.Persistent = persistent;
+							producer.DeliveryMode = deliveryMode;
 							producer.RequestTimeout = receiveTimeout;
 
 							ITextMessage request = session.CreateTextMessage("Hello, World!");
@@ -188,10 +188,10 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(true)]
-		[Row(false)]
+		[Row(MsgDeliveryMode.Persistent)]
+		[Row(MsgDeliveryMode.NonPersistent)]
 #endif
-		public void TestTemporaryQueueAsynchronousConsume(bool persistent)
+		public void TestTemporaryQueueAsynchronousConsume(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -205,7 +205,7 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer tempConsumer = session.CreateConsumer(tempReplyDestination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.Persistent = persistent;
+						producer.DeliveryMode = deliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 						tempConsumer.Listener += new MessageListener(OnMessage);
 						consumer.Listener += new MessageListener(OnQueueMessage);
@@ -233,7 +233,7 @@ namespace Apache.NMS.Test
 				{
 					using(IMessageProducer producer = session.CreateProducer(message.NMSReplyTo))
 					{
-						producer.Persistent = message.NMSPersistent;
+						producer.DeliveryMode = message.NMSDeliveryMode;
 						producer.RequestTimeout = receiveTimeout;
 
 						ITextMessage response = session.CreateTextMessage("Asynchronous Response Message Text");
