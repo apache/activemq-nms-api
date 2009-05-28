@@ -252,6 +252,7 @@ namespace Apache.NMS.Test
 					Assert.IsNotNull(destinationTopic, "Could not get destination topic.");
 					using(IMessageConsumer consumer = session.CreateDurableConsumer(destinationTopic, consumerID, selector, noLocal))
 					{
+						Assert.IsNotNull(consumer, "Could not create durable consumer.");
 					}
 				}
 			}

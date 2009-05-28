@@ -67,10 +67,12 @@ namespace Apache.NMS.Test
 						{
 							IMessage msg = consumer.Receive(receiveTimeout);
 							Assert.IsNotNull(msg, "Did not receive first durable message.");
-							SendPersistentMessage();
+							msg.Acknowledge();
 
+							SendPersistentMessage();
 							msg = consumer.Receive(receiveTimeout);
 							Assert.IsNotNull(msg, "Did not receive second durable message.");
+							msg.Acknowledge();
 						}
 					}
 				}
@@ -110,10 +112,12 @@ namespace Apache.NMS.Test
 					{
 						IMessage msg = consumer.Receive(receiveTimeout);
 						Assert.IsNotNull(msg, "Did not receive first durable transactional message.");
+						msg.Acknowledge();
 						SendPersistentMessage();
 
 						msg = consumer.Receive(receiveTimeout);
 						Assert.IsNotNull(msg, "Did not receive second durable transactional message.");
+						msg.Acknowledge();
 						session.Commit();
 					}
 				}
