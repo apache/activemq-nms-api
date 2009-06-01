@@ -212,31 +212,55 @@ namespace Apache.NMS.Test
 		/// <returns></returns>
 		public static string ReplaceEnvVar(string srcText)
 		{
-			// TODO: This should be refactored to be more generic and support full variable
+			// NOTE: Might be able to refactor to be more generic and support full variable
 			// names that can be pulled from the environment.  Currently, we only support limited
-			// hard-coded variable names:
-			//
-			// "${activemqhost}"		- defaults to "localhost".
-			// "${activemqbackuphost}"	- defaults to "localhost".
+			// hard-coded variable names.
 
-			srcText = ReplaceEnvVar(srcText, "ActiveMQHost", "localhost");
-			srcText = ReplaceEnvVar(srcText, "ActiveMQBackupHost", "localhost");
+			string defaultBroker = GetEnvVar("NMSTestBroker", "localhost");
+
+			srcText = ReplaceEnvVar(srcText, "ActiveMQHost", defaultBroker);
+			srcText = ReplaceEnvVar(srcText, "ActiveMQBackupHost", defaultBroker);
+
+			srcText = ReplaceEnvVar(srcText, "TIBCOHost", defaultBroker);
+			srcText = ReplaceEnvVar(srcText, "TIBCOBackupHost", defaultBroker);
+
+			srcText = ReplaceEnvVar(srcText, "MSMQHost", defaultBroker);
+			srcText = ReplaceEnvVar(srcText, "MSMQBackupHost", defaultBroker);
 			return srcText;
 		}
 
+		/// <summary>
+		/// Replace the variable with environment variable.
+		/// </summary>
+		/// <param name="srcText"></param>
+		/// <param name="varName"></param>
+		/// <param name="defaultValue"></param>
+		/// <returns></returns>
 		public static string ReplaceEnvVar(string srcText, string varName, string defaultValue)
 		{
+			string replacementValue = GetEnvVar(varName, defaultValue);
+			return Regex.Replace(srcText, "\\${" + varName + "}", replacementValue, RegexOptions.IgnoreCase);
+		}
+
+		/// <summary>
+		/// Get environment variable value.
+		/// </summary>
+		/// <param name="varName"></param>
+		/// <param name="defaultValue"></param>
+		/// <returns></returns>
+		public static string GetEnvVar(string varName, string defaultValue)
+		{
 #if (PocketPC||NETCF||NETCF_2_0)
-			string replacementValue = null;
+			string varValue = null;
 #else
-			string replacementValue = Environment.GetEnvironmentVariable(varName);
+			string varValue = Environment.GetEnvironmentVariable(varName);
 #endif
-			if(null == replacementValue)
+			if(null == varValue)
 			{
-				replacementValue = defaultValue;
+				varValue = defaultValue;
 			}
 
-			return Regex.Replace(srcText, "\\${" + varName + "}", replacementValue, RegexOptions.IgnoreCase);
+			return varValue;
 		}
 
 		/// <summary>

@@ -33,34 +33,44 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(MsgDeliveryMode.Persistent)]
-		[Row(MsgDeliveryMode.NonPersistent)]
+		[Row(AcknowledgementMode.AutoAcknowledge)]
+		[Row(AcknowledgementMode.ClientAcknowledge)]
+		[Row(AcknowledgementMode.DupsOkAcknowledge)]
+		[Row(AcknowledgementMode.Transactional)]
 #endif
-		public void TestDurableConsumerSelectorChange(MsgDeliveryMode deliveryMode)
+		public void TestDurableConsumerSelectorChange(AcknowledgementMode ackMode)
 		{
 			try
 			{
 				using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 				{
 					connection.Start();
-					using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+					using(ISession session = connection.CreateSession(ackMode))
 					{
-						ITopic topic = SessionUtil.GetTopic(session, DURABLE_TOPIC);
+						ITopic topic = session.GetTopic(DURABLE_TOPIC);
 						IMessageProducer producer = session.CreateProducer(topic);
 						IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, "color='red'", false);
 
-						producer.DeliveryMode = deliveryMode;
+						producer.DeliveryMode = MsgDeliveryMode.Persistent;
 
 						// Send the messages
 						ITextMessage sendMessage = session.CreateTextMessage("1st");
 						sendMessage.Properties["color"] = "red";
 						producer.Send(sendMessage);
+						if(AcknowledgementMode.Transactional == ackMode)
+						{
+							session.Commit();
+						}
 
 						ITextMessage receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
 						Assert.IsNotNull(receiveMsg, "Failed to retrieve 1st durable message.");
 						Assert.AreEqual("1st", receiveMsg.Text);
-						Assert.AreEqual(deliveryMode, receiveMsg.NMSDeliveryMode, "NMSDeliveryMode does not match");
+						Assert.AreEqual(MsgDeliveryMode.Persistent, receiveMsg.NMSDeliveryMode, "NMSDeliveryMode does not match");
 						receiveMsg.Acknowledge();
+						if(AcknowledgementMode.Transactional == ackMode)
+						{
+							session.Commit();
+						}
 
 						// Change the subscription.
 						consumer.Dispose();
@@ -72,13 +82,21 @@ namespace Apache.NMS.Test
 						sendMessage = session.CreateTextMessage("3rd");
 						sendMessage.Properties["color"] = "blue";
 						producer.Send(sendMessage);
+						if(AcknowledgementMode.Transactional == ackMode)
+						{
+							session.Commit();
+						}
 
 						// Selector should skip the 2nd message.
 						receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
 						Assert.IsNotNull(receiveMsg, "Failed to retrieve durable message.");
 						Assert.AreEqual("3rd", receiveMsg.Text, "Retrieved the wrong durable message.");
-						Assert.AreEqual(deliveryMode, receiveMsg.NMSDeliveryMode, "NMSDeliveryMode does not match");
+						Assert.AreEqual(MsgDeliveryMode.Persistent, receiveMsg.NMSDeliveryMode, "NMSDeliveryMode does not match");
 						receiveMsg.Acknowledge();
+						if(AcknowledgementMode.Transactional == ackMode)
+						{
+							session.Commit();
+						}
 
 						// Make sure there are no pending messages.
 						Assert.IsNull(consumer.ReceiveNoWait(), "Wrong number of messages in durable subscription.");
@@ -97,25 +115,20 @@ namespace Apache.NMS.Test
 
 #if !NET_1_1
 		[RowTest]
-		[Row(MsgDeliveryMode.Persistent, AcknowledgementMode.AutoAcknowledge)]
-		[Row(MsgDeliveryMode.Persistent, AcknowledgementMode.ClientAcknowledge)]
-		[Row(MsgDeliveryMode.Persistent, AcknowledgementMode.DupsOkAcknowledge)]
-		[Row(MsgDeliveryMode.Persistent, AcknowledgementMode.Transactional)]
-
-		[Row(MsgDeliveryMode.NonPersistent, AcknowledgementMode.AutoAcknowledge)]
-		[Row(MsgDeliveryMode.NonPersistent, AcknowledgementMode.ClientAcknowledge)]
-		[Row(MsgDeliveryMode.NonPersistent, AcknowledgementMode.DupsOkAcknowledge)]
-		[Row(MsgDeliveryMode.NonPersistent, AcknowledgementMode.Transactional)]
+		[Row(AcknowledgementMode.AutoAcknowledge)]
+		[Row(AcknowledgementMode.ClientAcknowledge)]
+		[Row(AcknowledgementMode.DupsOkAcknowledge)]
+		[Row(AcknowledgementMode.Transactional)]
 #endif
-		public void TestDurableConsumer(MsgDeliveryMode deliveryMode, AcknowledgementMode ackMode)
+		public void TestDurableConsumer(AcknowledgementMode ackMode)
 		{
 			try
 			{
 				RegisterDurableConsumer(TEST_CLIENT_ID, DURABLE_TOPIC, CONSUMER_ID, DURABLE_SELECTOR, false);
-				RunTestDurableConsumer(deliveryMode, ackMode);
+				RunTestDurableConsumer(ackMode);
 				if(AcknowledgementMode.Transactional == ackMode)
 				{
-					RunTestDurableConsumer(deliveryMode, ackMode);
+					RunTestDurableConsumer(ackMode);
 				}
 			}
 			finally
@@ -124,9 +137,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		protected void RunTestDurableConsumer(MsgDeliveryMode deliveryMode, AcknowledgementMode ackMode)
+		protected void RunTestDurableConsumer(AcknowledgementMode ackMode)
 		{
-			SendDurableMessage(deliveryMode);
+			SendDurableMessage();
 
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -139,7 +152,7 @@ namespace Apache.NMS.Test
 						IMessage msg = consumer.Receive(receiveTimeout);
 						Assert.IsNotNull(msg, "Did not receive first durable message.");
 						msg.Acknowledge();
-						SendDurableMessage(deliveryMode);
+						SendDurableMessage();
 
 						msg = consumer.Receive(receiveTimeout);
 						Assert.IsNotNull(msg, "Did not receive second durable message.");
@@ -154,7 +167,7 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		protected void SendDurableMessage(MsgDeliveryMode deliveryMode)
+		protected void SendDurableMessage()
 		{
 			using(IConnection connection = CreateConnection(SEND_CLIENT_ID))
 			{
@@ -166,7 +179,7 @@ namespace Apache.NMS.Test
 					{
 						ITextMessage message = session.CreateTextMessage("Durable Hello");
 
-						producer.DeliveryMode = deliveryMode;
+						producer.DeliveryMode = MsgDeliveryMode.Persistent;
 						producer.RequestTimeout = receiveTimeout;
 						producer.Send(message);
 					}
