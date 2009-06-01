@@ -26,76 +26,16 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class ConsumerTest : NMSTestSupport
 	{
-		protected static string TEST_CLIENT_ID = "ConsumerTestClientId";
-		protected static string TOPIC = "TestTopicConsumerTest";
-		protected static string CONSUMER_ID = "ConsumerTestConsumerId";
-
-#if !NET_1_1
-		[RowTest]
-		[Row(MsgDeliveryMode.Persistent)]
-		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
-		public void TestDurableConsumerSelectorChange(MsgDeliveryMode deliveryMode)
-		{
-			try
-			{
-				using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
-				{
-					connection.Start();
-					using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-					{
-						ITopic topic = SessionUtil.GetTopic(session, TOPIC);
-						IMessageProducer producer = session.CreateProducer(topic);
-						IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, "color='red'", false);
-
-						producer.DeliveryMode = deliveryMode;
-
-						// Send the messages
-						ITextMessage sendMessage = session.CreateTextMessage("1st");
-						sendMessage.Properties["color"] = "red";
-						producer.Send(sendMessage);
-
-						ITextMessage receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
-						Assert.IsNotNull(receiveMsg, "Failed to retrieve 1st durable message.");
-						Assert.AreEqual("1st", receiveMsg.Text);
-						Assert.AreEqual(deliveryMode, receiveMsg.NMSDeliveryMode, "NMSDeliveryMode does not match");
-
-						// Change the subscription.
-						consumer.Dispose();
-						consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, "color='blue'", false);
-
-						sendMessage = session.CreateTextMessage("2nd");
-						sendMessage.Properties["color"] = "red";
-						producer.Send(sendMessage);
-						sendMessage = session.CreateTextMessage("3rd");
-						sendMessage.Properties["color"] = "blue";
-						producer.Send(sendMessage);
-
-						// Selector should skip the 2nd message.
-						receiveMsg = consumer.Receive(receiveTimeout) as ITextMessage;
-						Assert.IsNotNull(receiveMsg, "Failed to retrieve durable message.");
-						Assert.AreEqual("3rd", receiveMsg.Text, "Retrieved the wrong durable message.");
-						Assert.AreEqual(deliveryMode, receiveMsg.NMSDeliveryMode, "NMSDeliveryMode does not match");
-
-						// Make sure there are no pending messages.
-						Assert.IsNull(consumer.ReceiveNoWait(), "Wrong number of messages in durable subscription.");
-					}
-				}
-			}
-			catch(Exception ex)
-			{
-				Assert.Fail(ex.Message);
-			}
-			finally
-			{
-				UnregisterDurableConsumer(TEST_CLIENT_ID, CONSUMER_ID);
-			}
-		}
+		protected static string TEST_CLIENT_ID = "TestConsumerClientId";
 
 // The .NET CF does not have the ability to interrupt threads, so this test is impossible.
 #if !NETCF
-		[Test]
-		public void TestNoTimeoutConsumer()
+		[RowTest]
+		[Row(AcknowledgementMode.AutoAcknowledge)]
+		[Row(AcknowledgementMode.ClientAcknowledge)]
+		[Row(AcknowledgementMode.DupsOkAcknowledge)]
+		[Row(AcknowledgementMode.Transactional)]
+		public void TestNoTimeoutConsumer(AcknowledgementMode ackMode)
 		{
 			// Launch a thread to perform IMessageConsumer.Receive().
 			// If it doesn't fail in less than three seconds, no exception was thrown.
@@ -103,7 +43,7 @@ namespace Apache.NMS.Test
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
 				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				using(ISession session = connection.CreateSession(ackMode))
 				{
 					ITemporaryQueue queue = session.CreateTemporaryQueue();
 					using(this.timeoutConsumer = session.CreateConsumer(queue))
@@ -147,8 +87,12 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[Test]
-		public void TestSyncReceiveConsumerClose()
+		[RowTest]
+		[Row(AcknowledgementMode.AutoAcknowledge)]
+		[Row(AcknowledgementMode.ClientAcknowledge)]
+		[Row(AcknowledgementMode.DupsOkAcknowledge)]
+		[Row(AcknowledgementMode.Transactional)]
+		public void TestSyncReceiveConsumerClose(AcknowledgementMode ackMode)
 		{
 			// Launch a thread to perform IMessageConsumer.Receive().
 			// If it doesn't fail in less than three seconds, no exception was thrown.
@@ -156,7 +100,7 @@ namespace Apache.NMS.Test
 			using (IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
 				connection.Start();
-				using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				using (ISession session = connection.CreateSession(ackMode))
 				{
 					ITemporaryQueue queue = session.CreateTemporaryQueue();
 					using (this.timeoutConsumer = session.CreateConsumer(queue))

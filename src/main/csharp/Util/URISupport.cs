@@ -305,11 +305,6 @@ namespace Apache.NMS.Util
 				ssp = stripPrefix(ssp, rc.Scheme).Trim();
 				ssp = stripPrefix(ssp, ":").Trim();
 			}
-			else
-			{
-				// Fake a composite URL with parenthesis
-				ssp = "(" + ssp + ")";
-			}
 
 			// Handle the composite components
 			parseComposite(uri, rc, ssp);

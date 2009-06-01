@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace Apache.NMS.Test
 {
@@ -113,11 +114,12 @@ namespace Apache.NMS.Test
 
 			if(null != uriNode)
 			{
-				brokerUri = new Uri(uriNode.GetAttribute("value"));
+				// Replace any environment variables embedded inside the string.
+				brokerUri = new Uri(ReplaceEnvVar(uriNode.GetAttribute("value")));
 				factoryParams = GetFactoryParams(uriNode);
-				clientId = GetNodeValueAttribute(uriNode, "clientId", "NMSTestClientId");
-				userName = GetNodeValueAttribute(uriNode, "userName", "guest");
-				passWord = GetNodeValueAttribute(uriNode, "passWord", "guest");
+				clientId = ReplaceEnvVar(GetNodeValueAttribute(uriNode, "clientId", "NMSTestClientId"));
+				userName = ReplaceEnvVar(GetNodeValueAttribute(uriNode, "userName", "guest"));
+				passWord = ReplaceEnvVar(GetNodeValueAttribute(uriNode, "passWord", "guest"));
 
 				if(null == factoryParams)
 				{
@@ -151,7 +153,7 @@ namespace Apache.NMS.Test
 					foreach(XmlElement paramNode in nodeList)
 					{
 						string paramType = paramNode.GetAttribute("type");
-						string paramValue = paramNode.GetAttribute("value");
+						string paramValue = ReplaceEnvVar(paramNode.GetAttribute("value"));
 
 						switch(paramType)
 						{
@@ -177,6 +179,13 @@ namespace Apache.NMS.Test
 			return null;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="parentNode"></param>
+		/// <param name="nodeName"></param>
+		/// <param name="dflt"></param>
+		/// <returns></returns>
 		protected static string GetNodeValueAttribute(XmlElement parentNode, string nodeName, string dflt)
 		{
 			XmlElement node = (XmlElement) parentNode.SelectSingleNode(nodeName);
@@ -192,6 +201,42 @@ namespace Apache.NMS.Test
 			}
 
 			return val;
+		}
+
+		/// <summary>
+		/// Replace embedded variable markups with environment variable values.
+		/// Variable markups are of the following form:
+		///		${varname}
+		/// </summary>
+		/// <param name="srcText"></param>
+		/// <returns></returns>
+		public static string ReplaceEnvVar(string srcText)
+		{
+			// TODO: This should be refactored to be more generic and support full variable
+			// names that can be pulled from the environment.  Currently, we only support limited
+			// hard-coded variable names:
+			//
+			// "${activemqhost}"		- defaults to "localhost".
+			// "${activemqbackuphost}"	- defaults to "localhost".
+
+			srcText = ReplaceEnvVar(srcText, "ActiveMQHost", "localhost");
+			srcText = ReplaceEnvVar(srcText, "ActiveMQBackupHost", "localhost");
+			return srcText;
+		}
+
+		public static string ReplaceEnvVar(string srcText, string varName, string defaultValue)
+		{
+#if (PocketPC||NETCF||NETCF_2_0)
+			string replacementValue = null;
+#else
+			string replacementValue = Environment.GetEnvironmentVariable(varName);
+#endif
+			if(null == replacementValue)
+			{
+				replacementValue = defaultValue;
+			}
+
+			return Regex.Replace(srcText, "\\${" + varName + "}", replacementValue, RegexOptions.IgnoreCase);
 		}
 
 		/// <summary>
