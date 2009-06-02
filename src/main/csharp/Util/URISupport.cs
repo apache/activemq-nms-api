@@ -20,6 +20,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using Apache.NMS;
 #if !NETCF
 using System.Web;
 #endif
@@ -58,7 +59,7 @@ namespace Apache.NMS.Util
 
 					if(nameValue.Length != 2)
 					{
-						throw new NMS.NMSException(string.Format("Invalid Uri parameter: {0}", query));
+						throw new NMSException(string.Format("Invalid Uri parameter: {0}", query));
 					}
 
 					map[nameValue[0]] = nameValue[1];
@@ -70,7 +71,9 @@ namespace Apache.NMS.Util
 
 		public static StringDictionary ParseParameters(Uri uri)
 		{
-			return uri.Query == null ? emptyMap() : ParseQuery(stripPrefix(uri.Query, "?"));
+			return (uri.Query == null
+					? emptyMap
+					: ParseQuery(stripPrefix(uri.Query, "?")));
 		}
 
 		/// <summary>
@@ -99,7 +102,7 @@ namespace Apache.NMS.Util
 
 					if(null == prop)
 					{
-						throw new NMS.NMSException(string.Format("no such property: {0} on class: {1}", bareKey, target.GetType().Name));
+						throw new NMSException(string.Format("no such property: {0} on class: {1}", bareKey, target.GetType().Name));
 					}
 
 					prop.SetValue(target, Convert.ChangeType(map[key], prop.PropertyType, CultureInfo.InvariantCulture), null);
@@ -131,6 +134,7 @@ namespace Apache.NMS.Util
 			{
 				StringBuilder rc = new StringBuilder();
 				bool first = true;
+
 				foreach(String key in options.Keys)
 				{
 					string value = options[key];
@@ -143,10 +147,12 @@ namespace Apache.NMS.Util
 					{
 						rc.Append("&");
 					}
+
 					rc.Append(UrlEncode(key));
 					rc.Append("=");
 					rc.Append(UrlEncode(value));
 				}
+
 				return rc.ToString();
 			}
 			else
@@ -298,19 +304,11 @@ namespace Apache.NMS.Util
             String ssp = uri.OriginalString.Trim();
 #endif
 
-			// If balanced and existing, assume composite
-			if(checkParenthesis(ssp) && ssp.IndexOf("(") >= 0)
-			{
-				// Composite
-				ssp = stripPrefix(ssp, rc.Scheme).Trim();
-				ssp = stripPrefix(ssp, ":").Trim();
-			}
+			ssp = stripPrefix(ssp, "failover:");
 
 			// Handle the composite components
 			parseComposite(uri, rc, ssp);
-
 			rc.Fragment = uri.Fragment;
-
 			return rc;
 		}
 
@@ -326,11 +324,12 @@ namespace Apache.NMS.Util
 
 			if(!checkParenthesis(ssp))
 			{
-				throw new ApplicationException(uri.ToString() + ": Not a matching number of '(' and ')' parenthesis");
+				throw new NMSException(uri.ToString() + ": Not a matching number of '(' and ')' parenthesis");
 			}
 
 			int p;
 			int intialParen = ssp.IndexOf("(");
+
 			if(intialParen >= 0)
 			{
 				rc.Host = ssp.Substring(0, intialParen);
@@ -340,12 +339,12 @@ namespace Apache.NMS.Util
 					rc.Path = rc.Host.Substring(p);
 					rc.Host = rc.Host.Substring(0, p);
 				}
+
 				p = ssp.LastIndexOf(")");
 				int start = intialParen + 1;
 				int len = p - start;
 				componentString = ssp.Substring(start, len);
 				parms = ssp.Substring(p + 1).Trim();
-
 			}
 			else
 			{
@@ -376,6 +375,7 @@ namespace Apache.NMS.Util
 				{
 					rc.Path = stripPrefix(parms.Substring(0, p), "/");
 				}
+
 				rc.Parameters = ParseQuery(parms.Substring(p + 1));
 			}
 			else
@@ -384,13 +384,14 @@ namespace Apache.NMS.Util
 				{
 					rc.Path = stripPrefix(parms, "/");
 				}
-				rc.Parameters = emptyMap();
+
+				rc.Parameters = emptyMap;
 			}
 		}
 
-		private static StringDictionary emptyMap()
+		private static StringDictionary emptyMap
 		{
-			return new StringDictionary();
+			get { return new StringDictionary(); }
 		}
 
 		/// <summary>
@@ -437,13 +438,13 @@ namespace Apache.NMS.Util
 
 			String[] rc = new String[l.Count];
 			l.CopyTo(rc);
-
 			return rc;
 		}
 
 		public static bool checkParenthesis(String str)
 		{
 			bool result = true;
+
 			if(str != null)
 			{
 				int open = 0;
@@ -470,4 +471,3 @@ namespace Apache.NMS.Util
 		}
 	}
 }
-
