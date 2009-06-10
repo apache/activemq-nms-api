@@ -4,6 +4,36 @@
         <name>Apache.NMS</name>
     </assembly>
     <members>
+        <member name="M:Apache.NMS.Util.NMSConvert.ToAcknowledgementMode(System.String)">
+            <summary>
+            Convert the acknowledgment mode string into AcknowledgementMode enum.
+            </summary>
+            <param name="ackText"></param>
+            <returns>Equivalent enum value.  If unknown string is encounted, it will default to AutoAcknowledge.</returns>
+        </member>
+        <member name="M:Apache.NMS.Util.NMSConvert.ToXmlMessage(Apache.NMS.IMessageProducer,System.Object)">
+            <summary>
+            Convert an object into a text message.  The object must be serializable to XML.
+            </summary>
+        </member>
+        <member name="M:Apache.NMS.Util.NMSConvert.ToXmlMessage(Apache.NMS.ISession,System.Object)">
+            <summary>
+            Convert an object into a text message.  The object must be serializable to XML.
+            </summary>
+        </member>
+        <member name="M:Apache.NMS.Util.NMSConvert.FromXmlMessage(Apache.NMS.IMessage)">
+            <summary>
+            Convert a text message into an object.  The object must be serializable from XML.
+            </summary>
+        </member>
+        <member name="M:Apache.NMS.Util.NMSConvert.GetRuntimeType(System.String)">
+            <summary>
+            Get the runtime type for the class name.  This routine will search all loaded
+            assemblies in the current App Domain to find the type.
+            </summary>
+            <param name="typeName">Full name of the type.</param>
+            <returns>Type object if found, or null if not found.</returns>
+        </member>
         <member name="F:Apache.NMS.Util.DateUtils.windowsEpoch">
             <summary>
             The start of the Windows epoch
@@ -126,6 +156,11 @@
             </summary>
             <param name="componentString"></param>
         </member>
+        <member name="T:Apache.NMS.Util.XmlUtil">
+            <summary>
+            Class to provide support for working with Xml objects.
+            </summary>
+        </member>
         <member name="T:Apache.NMS.IBytesMessage">
             <summary>
             Represents a binary based message
@@ -167,7 +202,7 @@
             The message ID which is set by the provider.
             </summary>
         </member>
-        <member name="P:Apache.NMS.IMessage.NMSPersistent">
+        <member name="P:Apache.NMS.IMessage.NMSDeliveryMode">
             <summary>
             Whether or not this message is persistent.
             </summary>
@@ -380,7 +415,7 @@
             Sends the message to the default destination for this producer
             </summary>
         </member>
-        <member name="M:Apache.NMS.IMessageProducer.Send(Apache.NMS.IMessage,System.Boolean,System.Byte,System.TimeSpan)">
+        <member name="M:Apache.NMS.IMessageProducer.Send(Apache.NMS.IMessage,Apache.NMS.MsgDeliveryMode,Apache.NMS.MsgPriority,System.TimeSpan)">
             <summary>
             Sends the message to the default destination with the explicit QoS configuration
             </summary>
@@ -390,7 +425,7 @@
             Sends the message to the given destination
             </summary>
         </member>
-        <member name="M:Apache.NMS.IMessageProducer.Send(Apache.NMS.IDestination,Apache.NMS.IMessage,System.Boolean,System.Byte,System.TimeSpan)">
+        <member name="M:Apache.NMS.IMessageProducer.Send(Apache.NMS.IDestination,Apache.NMS.IMessage,Apache.NMS.MsgDeliveryMode,Apache.NMS.MsgPriority,System.TimeSpan)">
             <summary>
             Sends the message to the given destination with the explicit QoS configuration
             </summary>
@@ -712,6 +747,19 @@
             <summary>
             The actual IConnectionFactory implementation that is being used.  This implementation
             depends on the scheme of the URI used when constructed.
+            </summary>
+        </member>
+        <member name="T:Apache.NMS.MsgPriority">
+            <summary>
+            Define an enumerated array of message priorities.
+            </summary>
+        </member>
+        <member name="T:Apache.NMS.MsgDeliveryMode">
+            <summary>
+            Define an enumerated array of message delivery modes.  Provider-specific
+            values can be used to extend this enumerated mode.  TIBCO is known to
+            provide a third value of ReliableDelivery.  At minimum, a provider must
+            support Persistent and NonPersistent.
             </summary>
         </member>
         <member name="T:Apache.NMS.NMSConstants">

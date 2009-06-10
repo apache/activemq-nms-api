@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>C:\Projects\ActiveMQ\activemq-dotnet\Apache.NMS\trunk\build\mono-2.0\release\Apache.NMS.Test</name>
+        <name>D:\Hudson\jobs\Apache.NMS 1.1.0\workspace\build\mono-2.0\release\Apache.NMS.Test</name>
     </assembly>
     <members>
         <member name="M:Apache.NMS.Test.BytesMessageTest.AssertBytesMessageEqual(Apache.NMS.IMessage,Apache.NMS.IMessage)">
@@ -66,6 +66,53 @@
             </summary>
             <param name="uriNode">Parent node of the factoryParams node.</param>
             <returns>Object array of parameter objects to be passsed to provider factory object.  Null if no parameters are specified in configuration file.</returns>
+        </member>
+        <member name="M:Apache.NMS.Test.NMSTestSupport.GetNodeValueAttribute(System.Xml.XmlElement,System.String,System.String)">
+            <summary>
+            </summary>
+            <param name="parentNode">
+            </param>
+            <param name="nodeName">
+            </param>
+            <param name="dflt">
+            </param>
+            <returns>
+            </returns>
+        </member>
+        <member name="M:Apache.NMS.Test.NMSTestSupport.ReplaceEnvVar(System.String)">
+            <summary>
+            Replace embedded variable markups with environment variable values.
+            Variable markups are of the following form:
+            		${varname}
+            </summary>
+            <param name="srcText">
+            </param>
+            <returns>
+            </returns>
+        </member>
+        <member name="M:Apache.NMS.Test.NMSTestSupport.ReplaceEnvVar(System.String,System.String,System.String)">
+            <summary>
+            Replace the variable with environment variable.
+            </summary>
+            <param name="srcText">
+            </param>
+            <param name="varName">
+            </param>
+            <param name="defaultValue">
+            </param>
+            <returns>
+            </returns>
+        </member>
+        <member name="M:Apache.NMS.Test.NMSTestSupport.GetEnvVar(System.String,System.String)">
+            <summary>
+            Get environment variable value.
+            </summary>
+            <param name="varName">
+            </param>
+            <param name="defaultValue">
+            </param>
+            <returns>
+            </returns>
         </member>
         <member name="M:Apache.NMS.Test.NMSTestSupport.CreateConnection">
             <summary>
