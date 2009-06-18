@@ -25,6 +25,7 @@
   <property name="project.cls.compliant" value="true" unless="${property::exists('project.cls.compliant')}"/>
   <property name="project.release.type"  value="SNAPSHOT" unless="${property::exists('project.release.type')}" />
   <property name="project.version.full"  value="${project.version + if(project.release.type == 'snapshot', '-' + project.release.type, '')}" dynamic="true" />
+  <property name="project.startyear"     value="2005" />
   <property name="build.dir"             value="${basedir}/build" />
   <property name="doc.dir"               value="${build.dir}/doc" />
   <property name="lib.dir"               value="${path::combine(basedir, 'lib')}" dynamic="true" />
@@ -124,8 +125,30 @@
     <call target="dependency-init"/>
   </target>
 
+  <target name="generate-build-number">
+    <script language="C#">
+       <imports>
+           <import namespace="System.Globalization" />
+           <import namespace="System.Threading" />
+       </imports>
+
+       <code>
+       <!-- Format for assembly revision is the number of days from the year the project 'started', property project.startyear.  -->
+           <![CDATA[
+               public static void ScriptMain(Project project)
+               {
+                   int startYear = Convert.ToInt32(project.Properties["project.startyear"]);
+                   DateTime start = new DateTime(startYear, 1, 1);
+                   TimeSpan ts = DateTime.Now - start;
+                   project.Properties["project.version.numeric"] = project.Properties["project.version"].ToString() + "." + ts.Days.ToString();
+               }
+           ]]>
+       </code>
+    </script>
+  </target>
+
   <!-- Generate assemblyinfo.cs files -->
-  <target name="generate-assemblyinfo" description="Generate the assembly info for the path in assemblyinfo.filename">
+  <target name="generate-assemblyinfo" depends="generate-build-number" description="Generate the assembly info for the path in assemblyinfo.filename">
     <asminfo output="${assemblyinfo.filename}" language="CSharp">
       <imports>
         <import namespace="System" />
@@ -140,10 +163,10 @@
         <attribute type="AssemblyConfigurationAttribute" value="${project.release.type}" />
         <attribute type="AssemblyCompanyAttribute"       value="http://activemq.apache.org/nms" />
         <attribute type="AssemblyProductAttribute"       value="${project.short_description}" />
-        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) 2005-${datetime::get-year(datetime::now())} Apache Software Foundation" />
+        <attribute type="AssemblyCopyrightAttribute"     value="Copyright (C) ${project.startyear}-${datetime::get-year(datetime::now())} Apache Software Foundation" />
         <attribute type="AssemblyTrademarkAttribute"     value="" />
         <attribute type="AssemblyCultureAttribute"       value="" />
-        <attribute type="AssemblyVersionAttribute"       value="${project.version}" />
+        <attribute type="AssemblyVersionAttribute"       value="${project.version.numeric}" />
         <attribute type="AssemblyInformationalVersionAttribute" value="${project.version}" />
       </attributes>
     </asminfo>
@@ -421,7 +444,7 @@
   <!--      D E P L O Y     T A R G E T S                                                           -->
   <!-- ============================================================================================ -->
 
-  <target name="deploy-all" description="Deploy all build configurations for all runtime configurations">
+  <target name="deploy-all" depends="generate-build-number" description="Deploy all build configurations for all runtime configurations">
     <echo message="Deploying release configurations for all runtime configurations." />
 
     <call target="set-release-configuration" />
@@ -434,7 +457,7 @@
 		<arg value="commit"/>
 		<arg value="deploy"/>
 		<arg value="-m"/>
-		<arg value="Deploy ${project.name} ${project.version}"/>
+		<arg value="Deploy ${project.name} ${project.version.numeric}"/>
 	</exec>
   </target>
 
