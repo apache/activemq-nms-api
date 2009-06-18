@@ -39,7 +39,7 @@ if(test-path build)
 		foreach($framework in $frameworks)
 		{
 			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll"
-			zip -9 -u "$zipfile" "$framework\$configuration\nmsprovider*.config"
+			# zip -9 -u "$zipfile" "$framework\$configuration\nmsprovider*.config"
 			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll"
 			if($framework -ieq "mono-2.0")
 			{
