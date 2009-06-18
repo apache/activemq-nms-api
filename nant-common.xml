@@ -502,6 +502,7 @@
     <delete dir="build" if="${directory::exists('build')}" />
     <delete dir="obj" if="${directory::exists('obj')}" />
     <delete dir="lib" if="${directory::exists('lib')}" />
+    <delete dir="package" if="${directory::exists('package')}" />
   </target>
 
   <target name="doc" depends="compile">

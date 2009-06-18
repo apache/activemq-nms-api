@@ -18,71 +18,44 @@ $pkgver = "1.1.0"
 $configurations = "release", "debug"
 $frameworks = "mono-2.0", "net-1.1", "net-2.0", "net-3.5", "netcf-2.0"
 
-function package-legalfiles($zipfile)
-{
-	zip -9 -u -j "$zipfile" ..\LICENSE.txt
-	zip -9 -u -j "$zipfile" ..\NOTICE.txt
-}
-
 write-progress "Creating package directory." "Initializing..."
 if(!(test-path package))
 {
 	md package
 }
 
-pushd build
-
-$pkgdir = "..\package"
-
-write-progress "Packaging Application files." "Scanning..."
-foreach($configuration in $configurations)
+if(test-path build)
 {
-	$zipfile = "$pkgdir\$pkgname-$pkgver-bin-$configuration.zip"
-	package-legalfiles $zipfile
-	foreach($framework in $frameworks)
-	{
-		zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll"
-	}
-}
+	pushd build
 
-write-progress "Packaging PDB files." "Scanning..."
-foreach($configuration in $configurations)
-{
-	$zipfile = "$pkgdir\$pkgname-$pkgver-PDBs-$configuration.zip"
-	package-legalfiles $zipfile
-	foreach($framework in $frameworks)
+	$pkgdir = "..\package"
+
+	write-progress "Packaging Application files." "Scanning..."
+	$zipfile = "$pkgdir\$pkgname-$pkgver-bin.zip"
+	zip -9 -u -j "$zipfile" ..\LICENSE.txt
+	zip -9 -u -j "$zipfile" ..\NOTICE.txt
+	foreach($configuration in $configurations)
 	{
-		if($framework -ieq "mono-2.0")
+		foreach($framework in $frameworks)
 		{
-			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll.mdb"
-		}
-		else
-		{
-			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.pdb"
+			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll"
+			zip -9 -u "$zipfile" "$framework\$configuration\nmsprovider*.config"
+			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll"
+			if($framework -ieq "mono-2.0")
+			{
+				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll.mdb"
+				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll.mdb"
+			}
+			else
+			{
+				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.pdb"
+				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.pdb"
+			}
 		}
 	}
-}
 
-write-progress "Packaging Unit test files." "Scanning..."
-foreach($configuration in $configurations)
-{
-	$zipfile = "$pkgdir\$pkgname-$pkgver-UnitTests-$configuration.zip"
-	package-legalfiles $zipfile
-	foreach($framework in $frameworks)
-	{
-		zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll"
-		if($framework -ieq "mono-2.0")
-		{
-			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll.mdb"
-		}
-		else
-		{
-			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.pdb"
-		}
-	}
+	popd
 }
-
-popd
 
 write-progress "Packaging Source code files." "Scanning..."
 $pkgdir = "package"
@@ -91,4 +64,4 @@ $zipfile = "$pkgdir\$pkgname-$pkgver-src.zip"
 zip -9 -u "$zipfile" LICENSE.txt NOTICE.txt nant-common.xml nant.build package.ps1 vs2008-nms-test.csproj vs2008-nms.csproj vs2008-nms.sln
 zip -9 -u -r "$zipfile" keyfile src
 
-write-progress "Packaging" "Complete."
+write-progress -Completed "Packaging" "Complete."
