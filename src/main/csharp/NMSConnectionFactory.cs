@@ -69,7 +69,9 @@ namespace Apache.NMS
 				if(factoryType != null)
 				{
 #if NETCF
+					// Compact framework does not allow the activator ta pass parameters to a constructor.
 					connectionFactory = (IConnectionFactory) Activator.CreateInstance(factoryType);
+					connectionFactory.BrokerUri = uriProvider;
 #else
 					object[] parameters = MakeParameterArray(uriProvider, constructorParams);
 					connectionFactory = (IConnectionFactory) Activator.CreateInstance(factoryType, parameters);
@@ -274,6 +276,15 @@ namespace Apache.NMS
 		public IConnection CreateConnection(string userName, string password)
 		{
 			return this.factory.CreateConnection(userName, password);
+		}
+
+		/// <summary>
+		/// Get/or set the broker Uri.
+		/// </summary>
+		public Uri BrokerUri
+		{
+			get { return ConnectionFactory.BrokerUri; }
+			set { ConnectionFactory.BrokerUri = value; }
 		}
 
 		/// <summary>

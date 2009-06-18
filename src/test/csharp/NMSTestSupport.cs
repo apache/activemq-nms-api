@@ -120,15 +120,15 @@ namespace Apache.NMS.Test
 				clientId = ReplaceEnvVar(GetNodeValueAttribute(uriNode, "clientId", "NMSTestClientId"));
 				userName = ReplaceEnvVar(GetNodeValueAttribute(uriNode, "userName", "guest"));
 				passWord = ReplaceEnvVar(GetNodeValueAttribute(uriNode, "passWord", "guest"));
+			}
 
-				if(null == factoryParams)
-				{
-					NMSFactory = new Apache.NMS.NMSConnectionFactory(brokerUri);
-				}
-				else
-				{
-					NMSFactory = new Apache.NMS.NMSConnectionFactory(brokerUri, factoryParams);
-				}
+			if(null == factoryParams)
+			{
+				NMSFactory = new Apache.NMS.NMSConnectionFactory(brokerUri);
+			}
+			else
+			{
+				NMSFactory = new Apache.NMS.NMSConnectionFactory(brokerUri, factoryParams);
 			}
 
 			return (null != NMSFactory);
