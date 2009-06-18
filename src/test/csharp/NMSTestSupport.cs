@@ -216,7 +216,7 @@ namespace Apache.NMS.Test
 			// names that can be pulled from the environment.  Currently, we only support limited
 			// hard-coded variable names.
 
-			string defaultBroker = GetEnvVar("NMSTestBroker", "localhost");
+			string defaultBroker = GetEnvVar("NMSTestBroker", "activemqhost");
 
 			srcText = ReplaceEnvVar(srcText, "ActiveMQHost", defaultBroker);
 			srcText = ReplaceEnvVar(srcText, "ActiveMQBackupHost", defaultBroker);
