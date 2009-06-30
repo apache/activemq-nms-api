@@ -73,7 +73,7 @@
             unless="${property::exists('nant.local.repo')}"/>
   <property name="nant.local.repo" value="${user.home}/.nant/repository/local"
             unless="${property::exists('nant.local.repo')}"/>
-			
+
   <!-- Figure out the keyfile location -->
   <property name="snk.file"  value="${environment::get-variable('ACTIVEMQ_DOTNET_SNK')}"
             if="${environment::variable-exists('ACTIVEMQ_DOTNET_SNK')}"
@@ -117,7 +117,7 @@
     </if>
 
    <property name="current.build.keysign" value="${current.build.framework.sign}"/>
-   <property name="build.bin.dir" value="${basedir}/build/${nant.settings.currentframework}/${current.build.config}" />
+   <property name="build.bin.dir" value="${build.dir}/${nant.settings.currentframework}/${current.build.config}" />
     <if test="${not(build.skip)}">
        <echo message="Doing ${if(current.build.keysign,'a signed','an unsigned')} ${current.build.config} build for the ${current.build.framework.name} framework" />
        <mkdir dir="${build.bin.dir}"/>
@@ -271,7 +271,7 @@
   </target>
 
   <target name="compile-target" depends="init, conditional-compile"/>
-  
+
   <target name="conditional-compile" depends="init" unless="${build.skip or compile.skip}"
       description="Conditionaly compiles all the modules if build framework and type are supported">
     <call target="compile" />
@@ -495,12 +495,12 @@
 	<property name="current.build.config" value="debug"/>
     <call target="test-frameworks" />
   </target>
-  
+
   <target name="test-release" depends="" description="Test release build configurations for all runtime configurations">
 	<property name="current.build.config" value="release"/>
     <call target="test-frameworks" />
   </target>
-  
+
   <target name="test-frameworks">
     <foreach item="String" in="${build.framework.strings}" delim="," property="current.build.framework">
       <call target="init" />
@@ -520,7 +520,7 @@
 
   <target name="build" depends="default" description="Build the project." />
   <target name="rebuild" depends="clean,build" description="Rebuild the project." />
-  
+
   <target name="clean" description="Deletes build">
     <if test="${target::exists('clean-init')}">
       <call target="clean-init"/>
@@ -531,7 +531,7 @@
     <delete dir="package" if="${directory::exists('package')}" />
   </target>
 
-  <target name="doc" depends="compile">
+  <target name="doc" depends="build">
     <mkdir dir="${doc.dir}"/>
     <ndoc failonerror="false">
       <assemblies basedir="${build.bin.dir}">
@@ -561,12 +561,92 @@
           <property name="DocumentProtected" value="True" />
           <property name="DocumentPrivates" value="False" />
           <property name="DocumentEmptyNamespaces" value="False" />
-          <property name="IncludeAssemblyVersion" value="False" />
+          <property name="IncludeAssemblyVersion" value="True" />
           <property name="CopyrightText" value="" />
           <property name="CopyrightHref" value="" />
         </documenter>
       </documenters>
     </ndoc>
+  </target>
+
+  <target name="sandcastle" depends="set-net-2.0-framework-configuration,set-release-configuration,init">
+    <!-- Directories -->
+    <property name="sandcastle.style" value="vs2005" unless="${property::exists('sandcastle.style')}"/>
+    <property name="documentation.dir" value="${build.bin.dir}" />
+    <property name="bin.intern.dir" value="${build.bin.dir}" />
+    <property name="bin.extern.dir" value="${basedir}\vendor\NUnit\net-2.0" />
+    <property name="sandcastle.dir" value="${environment::get-variable('DXROOT')}" />
+    <property name="sandcastle.workingdir"  value="${build.dir}\doc\${sandcastle.style}" />
+    <property name="sandcastle.output.dir" value="${sandcastle.workingdir}\Output" />
+    <!-- Executables -->
+    <property name="sandcastle.mrefbuilder.exe" value="${sandcastle.dir}\productiontools\mrefbuilder.exe" />
+    <property name="sandcastle.buildassembler.exe" value="${sandcastle.dir}\productiontools\buildassembler.exe" />
+    <property name="sandcastle.xsltransform.exe" value="${sandcastle.dir}\productiontools\xsltransform.exe" />
+    <property name="sandcastle.productiontransforms.dir" value="${sandcastle.dir}\ProductionTransforms" />
+
+    <!-- Create or Cleanup Working Directory -->
+    <mkdir dir="${sandcastle.workingdir}"
+        if="${not directory::exists(sandcastle.workingdir)}" />
+    <delete>
+       <fileset basedir="${sandcastle.workingdir}">
+          <include name="**\*" />
+       </fileset>
+    </delete>
+
+    <!-- Copy configuration file, and hard code references -->
+    <copy file="${sandcastle.dir}/Presentation/${sandcastle.style}/Configuration/Sandcastle.config"
+          tofile="${sandcastle.workingdir}/Sandcastle.config">
+       <filterchain>
+          <replacestring from="&quot;..\..\" to="&quot;${sandcastle.dir}\" />
+          <replacestring from="&quot;..\" to="&quot;${sandcastle.dir}\Examples\" />
+          <replacestring from="&quot;.\comments.xml" to="&quot;${documentation.dir}\*.xml" />
+       </filterchain>
+    </copy>
+
+    <!-- Run MRefBuilder (introspection on assemblies) to create basic Reflection XML -->
+    <exec program="${sandcastle.mrefbuilder.exe}" workingdir="${sandcastle.workingdir}">
+       <arg value="${bin.intern.dir}/*.dll" />
+       <arg value="/out:reflection.int.xml" />
+       <arg value="/dep:${bin.extern.dir}\*.dll" />
+    </exec>
+
+    <!-- Create Reflection XML -->
+    <exec program="${sandcastle.xsltransform.exe}" workingdir="${sandcastle.workingdir}">
+       <arg value="/xsl:&quot;${sandcastle.productiontransforms.dir}\ApplyVSDocModel.xsl&quot;" if="${sandcastle.style != 'prototype'}" />
+       <arg value="/xsl:&quot;${sandcastle.productiontransforms.dir}\ApplyPrototypeDocModel.xsl&quot;" if="${sandcastle.style == 'prototype'}" />
+       <arg value="/xsl:&quot;${sandcastle.productiontransforms.dir}\AddFriendlyFilenames.xsl&quot;" /> <!-- if="${sandcastle.style != 'prototype'}" /> -->
+       <arg value="/xsl:&quot;${sandcastle.productiontransforms.dir}\AddGuidFilenames.xsl&quot;" if="${sandcastle.style == 'disabled'}" />
+       <arg value="reflection.int.xml" />
+       <arg value="/out:reflection.xml" />
+       <arg value="/arg:IncludeAllMembersTopic=true" />
+       <arg value="/arg:IncludeInheritedOverloadTopics=true" />
+    </exec>
+
+    <!-- Create Manifest (list of Topics) -->
+    <exec program="${sandcastle.xsltransform.exe}" workingdir="${sandcastle.workingdir}">
+       <arg value="/xsl:&quot;${sandcastle.productiontransforms.dir}\ReflectionToManifest.xsl&quot;" />
+       <arg value="reflection.xml" />
+       <arg value="/out:manifest.xml" />
+    </exec>
+
+    <!-- Create Output Environment -->
+    <mkdir dir="${sandcastle.output.dir}" />
+    <mkdir dir="${sandcastle.output.dir}/html" />
+    <copy todir="${sandcastle.output.dir}">
+        <fileset basedir="${sandcastle.dir}/Presentation/${sandcastle.style}">
+            <include name="icons/*" />
+            <include name="media/*" />
+            <include name="scripts/*" />
+            <include name="styles/*" />
+        </fileset>
+    </copy>
+
+    <!-- Run BuildAssembler (create html topic files) -->
+    <exec program="${sandcastle.buildassembler.exe}" workingdir="${sandcastle.workingdir}" >
+       <arg value="/config:Sandcastle.config" />
+       <arg value="manifest.xml" />
+    </exec>
+
   </target>
 
 </project>
