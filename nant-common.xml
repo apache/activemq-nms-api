@@ -569,7 +569,7 @@
     </ndoc>
   </target>
 
-  <target name="sandcastle" depends="set-net-2.0-framework-configuration,set-release-configuration,init">
+  <target name="sandcastle" depends="set-release-configuration, init, conditional-compile">
     <!-- Directories -->
     <property name="sandcastle.style" value="vs2005" unless="${property::exists('sandcastle.style')}"/>
     <property name="documentation.dir" value="${build.bin.dir}" />
@@ -599,13 +599,14 @@
        <filterchain>
           <replacestring from="&quot;..\..\" to="&quot;${sandcastle.dir}\" />
           <replacestring from="&quot;..\" to="&quot;${sandcastle.dir}\Examples\" />
-          <replacestring from="&quot;.\comments.xml" to="&quot;${documentation.dir}\*.xml" />
+          <replacestring from="&quot;.\comments.xml" to="&quot;${documentation.dir}\${project.name}.xml" />
+          <replacestring from="&quot;%DXROOT%\Presentation\${sandcastle.style}\content\feedback_content.xml&quot;" to="&quot;${basedir}/src/main/sandcastle/feedback_content.xml&quot;" />
        </filterchain>
     </copy>
 
     <!-- Run MRefBuilder (introspection on assemblies) to create basic Reflection XML -->
     <exec program="${sandcastle.mrefbuilder.exe}" workingdir="${sandcastle.workingdir}">
-       <arg value="${bin.intern.dir}/*.dll" />
+       <arg value="${bin.intern.dir}/${project.name}.dll" />
        <arg value="/out:reflection.int.xml" />
        <arg value="/dep:${bin.extern.dir}\*.dll" />
     </exec>
@@ -649,4 +650,9 @@
 
   </target>
 
+  <target name="sandcastle-all" description="Generate all formats of the Sandcastle documentation files.">
+    <foreach item="String" in="vs2005,prototype,hana" delim="," property="sandcastle.style">
+      <call target="sandcastle" />
+    </foreach>
+  </target>
 </project>
