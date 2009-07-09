@@ -22,7 +22,6 @@ namespace Apache.NMS
 	/// <summary>
 	/// Represents a NMS exception
 	/// </summary>
-	[Serializable]
 	public class NMSException : System.Exception
 	{
 		protected string exceptionErrorCode;

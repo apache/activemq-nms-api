@@ -21,7 +21,6 @@ using System;
 
 namespace Apache.NMS
 {
-	[Serializable]
 	public class InvalidSelectorException : NMSException
 	{
 		public InvalidSelectorException()

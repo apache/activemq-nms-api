@@ -21,7 +21,6 @@ using System;
 
 namespace Apache.NMS
 {
-	[Serializable]
 	public class TransactionInProgressException : NMSException
 	{
 		public TransactionInProgressException()

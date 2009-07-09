@@ -21,7 +21,6 @@ using System;
 
 namespace Apache.NMS
 {
-	[Serializable]
 	public class ResourceAllocationException : NMSException
 	{
 		public ResourceAllocationException()

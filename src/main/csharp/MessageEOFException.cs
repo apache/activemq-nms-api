@@ -21,7 +21,6 @@ using System;
 
 namespace Apache.NMS
 {
-	[Serializable]
 	public class MessageEOFException : NMSException
 	{
 		public MessageEOFException()

@@ -21,7 +21,6 @@ using System;
 
 namespace Apache.NMS
 {
-	[Serializable]
 	public class MessageNotReadableException : NMSException
 	{
 		public MessageNotReadableException()
