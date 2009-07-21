@@ -339,6 +339,11 @@
             Creates a new connection with the given user name and password
             </summary>
         </member>
+        <member name="P:Apache.NMS.IConnectionFactory.BrokerUri">
+            <summary>
+            Get/or set the broker Uri.
+            </summary>
+        </member>
         <member name="T:Apache.NMS.DestinationType">
             <summary>
             Represents the type of the destination such as a queue or topic.
@@ -745,6 +750,11 @@
             <param name="userName">The username to use when establishing the connection.</param>
             <param name="password">The password to use when establishing the connection.</param>
             <returns>An <see cref="T:Apache.NMS.IConnection"/> created by the requested ConnectionFactory.</returns>
+        </member>
+        <member name="P:Apache.NMS.NMSConnectionFactory.BrokerUri">
+            <summary>
+            Get/or set the broker Uri.
+            </summary>
         </member>
         <member name="P:Apache.NMS.NMSConnectionFactory.ConnectionFactory">
             <summary>

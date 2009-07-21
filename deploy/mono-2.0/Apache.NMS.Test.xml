@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>D:\Hudson\jobs\Apache.NMS Trunk\workspace\build\mono-2.0\release\Apache.NMS.Test</name>
+        <name>C:\dev\NMS\build\mono-2.0\release\Apache.NMS.Test</name>
     </assembly>
     <members>
         <member name="M:Apache.NMS.Test.BytesMessageTest.AssertBytesMessageEqual(Apache.NMS.IMessage,Apache.NMS.IMessage)">

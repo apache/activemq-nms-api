@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>D:\Hudson\jobs\Apache.NMS Trunk\workspace\build\mono-2.0\release\Apache.NMS</name>
+        <name>C:\dev\NMS\build\mono-2.0\release\Apache.NMS</name>
     </assembly>
     <members>
         <member name="M:Apache.NMS.Util.NMSConvert.ToAcknowledgementMode(System.String)">
@@ -230,6 +230,11 @@
         <member name="T:Apache.NMS.IConnectionFactory">
             <summary>
             A Factory of IConnection objects
+            </summary>
+        </member>
+        <member name="P:Apache.NMS.IConnectionFactory.BrokerUri">
+            <summary>
+            Get/or set the broker Uri.
             </summary>
         </member>
         <member name="M:Apache.NMS.IConnectionFactory.CreateConnection">
@@ -638,6 +643,11 @@
             </summary>
             <param name="uriProvider">The URI for the ActiveMQ provider.</param>
             <param name="constructorParams">Optional parameters to use when creating the ConnectionFactory.</param>
+        </member>
+        <member name="P:Apache.NMS.NMSConnectionFactory.BrokerUri">
+            <summary>
+            Get/or set the broker Uri.
+            </summary>
         </member>
         <member name="P:Apache.NMS.NMSConnectionFactory.ConnectionFactory">
             <summary>
