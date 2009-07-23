@@ -505,10 +505,10 @@
     <foreach item="String" in="${build.framework.strings}" delim="," property="current.build.framework">
       <call target="init" />
 	  <if test="${not build.skip}">
-	    <exec program="nunit-console" failonerror="true" workingdir="build/${current.build.framework}/${current.build.config}">
+	    <exec program="nunit-console2" failonerror="true" workingdir="build/${current.build.framework}/${current.build.config}">
 	      <arg value="${NUnit.Projectfile}"/>
-	      <arg value="/labels"/>
-	      <arg value="/xml=Nunit.TestOutput.xml"/>
+	      <arg value="-labels"/>
+	      <arg value="-xml=Nunit.TestOutput.xml"/>
 	    </exec>
 	  </if>
     </foreach>
