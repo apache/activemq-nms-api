@@ -20,6 +20,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Xml;
+using System.Reflection;
 using System.Collections;
 using System.Text.RegularExpressions;
 
@@ -103,10 +104,26 @@ namespace Apache.NMS.Test
 		protected bool CreateNMSFactory(string nameTestURI)
 		{
 			Uri brokerUri = null;
+			string[] paths = GetConfigSearchPaths();
 			object[] factoryParams = null;
 			string connectionConfigFileName = GetConnectionConfigFileName();
+			bool configFound = false;
 
-			Assert.IsTrue(File.Exists(connectionConfigFileName), "Connection configuration file does not exist.");
+			foreach(string path in paths)
+			{
+				string fullpath = Path.Combine(path, connectionConfigFileName);
+				Tracer.Debug("\tScanning folder: " + path);
+
+				if(File.Exists(fullpath))
+				{
+					Tracer.Debug("\tAssembly found!");
+					connectionConfigFileName = fullpath;
+					configFound = true;
+					break;
+				}
+			}			
+			
+			Assert.IsTrue(configFound, "Connection configuration file does not exist.");
 			XmlDocument configDoc = new XmlDocument();
 
 			configDoc.Load(connectionConfigFileName);
@@ -134,6 +151,31 @@ namespace Apache.NMS.Test
 			return (null != NMSFactory);
 		}
 
+		private static string[] GetConfigSearchPaths()
+		{
+			ArrayList pathList = new ArrayList();
+
+			// Check the current folder first.
+			pathList.Add("");
+#if !NETCF
+			AppDomain currentDomain = AppDomain.CurrentDomain;
+
+			// Check the folder the assembly is located in.
+			pathList.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+			if(null != currentDomain.BaseDirectory)
+			{
+				pathList.Add(currentDomain.BaseDirectory);
+			}
+
+			if(null != currentDomain.RelativeSearchPath)
+			{
+				pathList.Add(currentDomain.RelativeSearchPath);
+			}
+#endif
+
+			return (string[]) pathList.ToArray(typeof(string));
+		}
+		
 		/// <summary>
 		/// Get the parameters for the ConnectionFactory from the configuration file.
 		/// </summary>
