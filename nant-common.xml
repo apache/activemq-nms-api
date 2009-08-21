@@ -125,25 +125,28 @@
 		<call target="dependency-init" />
 	</target>
 
+	<!-- Generate four-digit build number -->
 	<target name="generate-build-number">
-		<script language="C#">
-			<imports>
-				<import namespace="System.Globalization" />
-				<import namespace="System.Threading" />
-			</imports>
-			<code>
-				<!-- Format for assembly revision is the number of days from the year the project 'started', property project.startyear.  -->
-				<![CDATA[
-					public static void ScriptMain(Project project)
-					{
-						int startYear = Convert.ToInt32(project.Properties["project.startyear"]);
-						DateTime start = new DateTime(startYear, 1, 1);
-						TimeSpan ts = DateTime.Now - start;
-						project.Properties["project.version.numeric"] = project.Properties["project.version"].ToString() + "." + ts.Days.ToString();
-					}
-				]]>
-			</code>
-		</script>
+		<if test="${not property::exists('project.version.numeric')}">
+			<script language="C#">
+				<imports>
+					<import namespace="System.Globalization" />
+					<import namespace="System.Threading" />
+				</imports>
+				<code>
+					<!-- Format for assembly revision is the number of days from the year the project 'started', property project.startyear.  -->
+					<![CDATA[
+						public static void ScriptMain(Project project)
+						{
+							int startYear = Convert.ToInt32(project.Properties["project.startyear"]);
+							DateTime start = new DateTime(startYear, 1, 1);
+							TimeSpan ts = DateTime.Now - start;
+							project.Properties["project.version.numeric"] = project.Properties["project.version"].ToString() + "." + ts.Days.ToString();
+						}
+					]]>
+				</code>
+			</script>
+		</if>
 	</target>
 
 	<!-- Generate assemblyinfo.cs files -->
