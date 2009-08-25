@@ -100,12 +100,26 @@ namespace Apache.NMS.Util
 															| BindingFlags.Instance
 															| BindingFlags.IgnoreCase);
 
-					if(null == prop)
+					if(null != prop)
 					{
-						throw new NMSException(string.Format("no such property: {0} on class: {1}", bareKey, target.GetType().Name));
+						prop.SetValue(target, Convert.ChangeType(map[key], prop.PropertyType, CultureInfo.InvariantCulture), null);
 					}
-
-					prop.SetValue(target, Convert.ChangeType(map[key], prop.PropertyType, CultureInfo.InvariantCulture), null);
+					else
+					{
+						FieldInfo field = type.GetField(bareKey,
+															BindingFlags.FlattenHierarchy
+															| BindingFlags.Public
+															| BindingFlags.Instance
+															| BindingFlags.IgnoreCase);
+						if(null != field)
+						{
+							field.SetValue(target, Convert.ChangeType(map[key], field.FieldType, CultureInfo.InvariantCulture));
+						}
+						else
+						{
+							throw new NMSException(string.Format("No such property or field: {0} on class: {1}", bareKey, target.GetType().Name));
+						}
+					}
 				}
 			}
 		}
@@ -299,9 +313,9 @@ namespace Apache.NMS.Util
 
 			// Start with original URI
 #if NET_1_0 || NET_1_1
-            String ssp = uri.AbsoluteUri.Trim();
+			String ssp = uri.AbsoluteUri.Trim();
 #else
-            String ssp = uri.OriginalString.Trim();
+			String ssp = uri.OriginalString.Trim();
 #endif
 
 			ssp = stripPrefix(ssp, "failover:");
