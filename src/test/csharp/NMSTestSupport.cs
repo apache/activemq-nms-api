@@ -41,7 +41,7 @@ namespace Apache.NMS.Test
 		{
 			Apache.NMS.Tracer.Trace = new NmsTracer();
 		}
-		
+
 		public NMSTestSupport()
 		{
 		}
@@ -121,8 +121,8 @@ namespace Apache.NMS.Test
 					configFound = true;
 					break;
 				}
-			}			
-			
+			}
+
 			Assert.IsTrue(configFound, "Connection configuration file does not exist.");
 			XmlDocument configDoc = new XmlDocument();
 
@@ -175,7 +175,7 @@ namespace Apache.NMS.Test
 
 			return (string[]) pathList.ToArray(typeof(string));
 		}
-		
+
 		/// <summary>
 		/// Get the parameters for the ConnectionFactory from the configuration file.
 		/// </summary>
@@ -201,11 +201,11 @@ namespace Apache.NMS.Test
 						{
 						case "string":
 							factoryParams.Add(paramValue);
-						break;
+							break;
 
 						case "int":
 							factoryParams.Add(int.Parse(paramValue));
-						break;
+							break;
 
 						// TODO: Add more parameter types
 						}

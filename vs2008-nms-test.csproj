@@ -84,6 +84,9 @@
     <Compile Include="src\test\csharp\DurableTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\test\csharp\EndianBinaryReaderTest.cs" />
+    <Compile Include="src\test\csharp\EndianBinaryWriterTest.cs" />
+    <Compile Include="src\test\csharp\EndianTest.cs" />
     <Compile Include="src\test\csharp\NMSPropertyTest.cs" />
     <Compile Include="src\test\csharp\NMSTestSupport.cs">
       <SubType>Code</SubType>
@@ -96,6 +99,7 @@
     </Compile>
     <Compile Include="src\test\csharp\MessageSelectorTest.cs" />
     <Compile Include="src\test\csharp\NmsTracer.cs" />
+    <Compile Include="src\test\csharp\PrimitiveMapTest.cs" />
     <Compile Include="src\test\csharp\TempDestinationDeletionTest.cs" />
     <Compile Include="src\test\csharp\TextMessage.cs">
       <SubType>Code</SubType>
