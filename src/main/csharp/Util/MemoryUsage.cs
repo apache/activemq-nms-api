@@ -19,147 +19,156 @@ using System.Threading;
 
 namespace Apache.NMS.Util
 {
-	/// <summary>
-	/// Utility class for Tracking Memory Usage with an imposed limit on the amount
-	/// available.  Provides methods for objects to wait on more space to become
-	/// available if the memory limit is reached.
-	/// </summary>
-	public class MemoryUsage
-	{
-		private long limit = 0;
-		private long usage = 0;
-		private readonly object myLock = new object();
+    /// <summary>
+    /// Utility class for Tracking Memory Usage with an imposed limit on the amount
+    /// available.  Provides methods for objects to wait on more space to become
+    /// available if the memory limit is reached.
+    /// </summary>
+    public class MemoryUsage
+    {
+        private long limit = 0;
+        private long usage = 0;
+        private readonly object myLock = new object();
 
-		public MemoryUsage()
-		{
-		}
+        public MemoryUsage()
+        {
+        }
 
-		public MemoryUsage( long limit )
-		{
-			this.limit = limit;
-		}
+        public MemoryUsage( long limit )
+        {
+            this.limit = limit;
+        }
 
-		#region Property Accessors
+        #region Property Accessors
 
-		public long Limit
-		{
-			get { return limit; }
-			set { limit = value; }
-		}
+        public long Limit
+        {
+            get { return limit; }
+            set { limit = value; }
+        }
 
-		public long Usage
-		{
-			get { return usage; }
-			set { usage = value; }
-		}
+        public long Usage
+        {
+            get { return usage; }
+            set { usage = value; }
+        }
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// If no space is available then this method blocks until more becomes available.
-		/// </summary>
-		public void WaitForSpace()
-		{
-			TimeSpan indefiniteWait = TimeSpan.FromMilliseconds(Timeout.Infinite);
-			this.WaitForSpace(indefiniteWait);
-		}
+        /// <summary>
+        /// If no space is available then this method blocks until more becomes available.
+        /// </summary>
+        public void WaitForSpace()
+        {
+            TimeSpan indefiniteWait = TimeSpan.FromMilliseconds(Timeout.Infinite);
+            this.WaitForSpace(indefiniteWait);
+        }
 
-		/// <summary>
-		/// If no space is available then this method blocks until more becomes available
-		/// or until the specified timeout expires.
-		/// </summary>
-		/// <param name="timeout">
-		/// A <see cref="System.TimeSpan"/>
-		/// </param>
-		public void WaitForSpace( TimeSpan timeout )
-		{
-			lock(this.myLock)
-			{
-				while(this.IsFull())
-				{
+        /// <summary>
+        /// If no space is available then this method blocks until more becomes available
+        /// or until the specified timeout expires.
+        /// </summary>
+        /// <param name="timeout">
+        /// A <see cref="System.TimeSpan"/>
+        /// </param>
+        public void WaitForSpace( TimeSpan timeout )
+        {
+            lock(this.myLock)
+            {
+                while(this.IsFull())
+                {
 #if !NETCF
-					if( !Monitor.Wait(this.myLock, timeout ) )
+                    if( !Monitor.Wait(this.myLock, timeout ) )
 #endif
-					{
-						return;
-					}
-				}
-			}
-		}
+                    {
+                        return;
+                    }
+                }
+            }
+        }
 
-		/// <summary>
-		/// Attempts to increase the amount of Memory Used, if non is available to fill
-		/// then this method blocks until more is freed.
-		/// </summary>
-		/// <param name="usage">
-		/// A <see cref="System.Int64"/>
-		/// </param>
-		public void EnqueueUsage( long usage )
-		{
-			this.WaitForSpace();
-			this.IncreaseUsage(usage);
-		}
+        /// <summary>
+        /// Attempts to increase the amount of Memory Used, if non is available to fill
+        /// then this method blocks until more is freed.
+        /// </summary>
+        /// <param name="usage">
+        /// A <see cref="System.Int64"/>
+        /// </param>
+        public void EnqueueUsage( long usage )
+        {
+            this.WaitForSpace();
+            this.IncreaseUsage(usage);
+        }
 
-		/// <summary>
-		/// Increase the level of Usage.
-		/// </summary>
-		/// <param name="value">
-		/// A <see cref="System.Int64"/>
-		/// </param>
-		public void IncreaseUsage( long value )
-		{
-			if(value == 0)
-			{
-				return;
-			}
+        /// <summary>
+        /// Increase the level of Usage.
+        /// </summary>
+        /// <param name="value">
+        /// A <see cref="System.Int64"/>
+        /// </param>
+        public void IncreaseUsage( long value )
+        {
+            if(value == 0)
+            {
+                return;
+            }
 
-			lock(this.myLock)
-			{
-				this.Usage += value;
-			}
-		}
+            lock(this.myLock)
+            {
+                this.Usage += value;
+            }
+        }
 
-		/// <summary>
-		/// Decrease the level of Usage.
-		/// </summary>
-		/// <param name="value">
-		/// A <see cref="System.Int64"/>
-		/// </param>
-		public void DecreaseUsage( long value )
-		{
-			if(value == 0)
-			{
-				return;
-			}
+        /// <summary>
+        /// Decrease the level of Usage.
+        /// </summary>
+        /// <param name="value">
+        /// A <see cref="System.Int64"/>
+        /// </param>
+        public void DecreaseUsage( long value )
+        {
+            if(value == 0)
+            {
+                return;
+            }
 
-			lock(this.myLock)
-			{
-				if( value > this.Usage )
-				{
-					this.Usage = 0;
-				}
-				else
-				{
-					this.Usage -= value;
-				}
+            lock(this.myLock)
+            {
+                if( value > this.Usage )
+                {
+                    this.Usage = 0;
+                }
+                else
+                {
+                    this.Usage -= value;
+                }
 
 #if !NETCF
-				Monitor.PulseAll(this.myLock);
+                Monitor.PulseAll(this.myLock);
 #endif
-			}
-		}
+            }
+        }
 
-		public bool IsFull()
-		{
-			bool result = false;
+        public bool IsFull()
+        {
+            bool result = false;
 
-			lock(this.myLock)
-			{
-				result = this.Usage >= this.Limit;
-			}
+            lock(this.myLock)
+            {
+                result = this.Usage >= this.Limit;
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-	}
+        public void Stop()
+        {
+            lock(this.myLock)
+            {
+#if !NETCF
+                Monitor.PulseAll(this.myLock);
+#endif
+            }
+        }
+    }
 }
