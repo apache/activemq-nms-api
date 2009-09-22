@@ -32,7 +32,6 @@ namespace Apache.NMS.Test
 		protected const string TEMP_TOPIC_DESTINATION_NAME = "temp-topic://AutoDeleteTempTopic";
 		protected const string TEST_CLIENT_ID = "TempDestinationClientId";
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent, QUEUE_DESTINATION_NAME)]
 		[Row(MsgDeliveryMode.NonPersistent, QUEUE_DESTINATION_NAME)]
@@ -43,7 +42,6 @@ namespace Apache.NMS.Test
 		[Row(MsgDeliveryMode.NonPersistent, TEMP_QUEUE_DESTINATION_NAME)]
 		[Row(MsgDeliveryMode.Persistent, TEMP_TOPIC_DESTINATION_NAME)]
 		[Row(MsgDeliveryMode.NonPersistent, TEMP_TOPIC_DESTINATION_NAME)]
-#endif
 		public void TempDestinationDeletionTest(MsgDeliveryMode deliveryMode, string destinationName)
 		{
 			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))

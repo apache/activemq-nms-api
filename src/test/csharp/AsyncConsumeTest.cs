@@ -48,11 +48,9 @@ namespace Apache.NMS.Test
 			base.TearDown();
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestAsynchronousConsume(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -80,11 +78,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestCreateConsumerAfterSend(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -114,11 +110,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestCreateConsumerBeforeSendAddListenerAfterSend(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -147,11 +141,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestAsynchronousTextMessageConsume(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -186,11 +178,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestTemporaryQueueAsynchronousConsume(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))

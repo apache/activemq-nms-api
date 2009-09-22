@@ -27,84 +27,83 @@ namespace Apache.NMS.Test
 	public class MemoryUsageTest : NMSTestSupport
 	{
 
-        [Test]
-        public void TestConstructors()
-        {
-            MemoryUsage usage = new MemoryUsage();
-            
-            Assert.That(usage.Limit == 0);
-            Assert.That(usage.Usage == 0);
+		[Test]
+		public void TestConstructors()
+		{
+			MemoryUsage usage = new MemoryUsage();
 
-            usage = new MemoryUsage(1024);
-            
-            Assert.That(usage.Limit == 1024);
-            Assert.That(usage.Usage == 0);        
-        }
-        
-        [Test]
-        public void TestUsage() {
-        
-            MemoryUsage usage1 = new MemoryUsage( 2048 );
-        
-            Assert.That( !usage1.IsFull() );
-            Assert.That( usage1.Usage == 0 );
-        
-            usage1.IncreaseUsage( 1024 );
-        
-            Assert.That( !usage1.IsFull() );
-            Assert.That( usage1.Usage == 1024 );
-        
-            usage1.DecreaseUsage( 512 );
-        
-            Assert.That( !usage1.IsFull() );
-            Assert.That( usage1.Usage == 512 );
-        
-            usage1.Usage = 2048;
-        
-            Assert.That( usage1.IsFull() );
-            Assert.That( usage1.Usage == 2048 );
-        
-            usage1.IncreaseUsage( 1024 );
-            Assert.That( usage1.IsFull() );
-            Assert.That( usage1.Usage == 3072 );
-        }
-        
-        [Test]
-        public void TestTimedWait() {
-        
-            MemoryUsage usage = new MemoryUsage( 2048 );
-            usage.IncreaseUsage( 5072 );
-        
-            DateTime start = DateTime.Now;
-        
-            usage.WaitForSpace( TimeSpan.FromMilliseconds(150) );
-        
-            DateTime end = DateTime.Now;
-            
-            TimeSpan timePassed = end - start;
-        
-            Assert.That( timePassed.TotalMilliseconds >= 125 );
-        }
-        
-        [Test]
-        public void TestWait() {
-        
-            MemoryUsage usage = new MemoryUsage( 2048 );
-            usage.IncreaseUsage( 5072 );
+			Assert.That(usage.Limit == 0);
+			Assert.That(usage.Usage == 0);
 
-            Thread thread1 = new Thread(() =>
-            {
-                Thread.Sleep( 100 );
-                usage.DecreaseUsage( usage.Usage );
-            });
+			usage = new MemoryUsage(1024);
 
-            thread1.Start();
-        
-            usage.WaitForSpace();
-            Assert.That( usage.Usage == 0 );
-        
-            thread1.Join();
-        
-        }        
+			Assert.That(usage.Limit == 1024);
+			Assert.That(usage.Usage == 0);
+		}
+
+		[Test]
+		public void TestUsage()
+		{
+			MemoryUsage usage1 = new MemoryUsage( 2048 );
+
+			Assert.That( !usage1.IsFull() );
+			Assert.That( usage1.Usage == 0 );
+
+			usage1.IncreaseUsage( 1024 );
+
+			Assert.That( !usage1.IsFull() );
+			Assert.That( usage1.Usage == 1024 );
+
+			usage1.DecreaseUsage( 512 );
+
+			Assert.That( !usage1.IsFull() );
+			Assert.That( usage1.Usage == 512 );
+
+			usage1.Usage = 2048;
+
+			Assert.That( usage1.IsFull() );
+			Assert.That( usage1.Usage == 2048 );
+
+			usage1.IncreaseUsage( 1024 );
+			Assert.That( usage1.IsFull() );
+			Assert.That( usage1.Usage == 3072 );
+		}
+
+		[Test]
+		public void TestTimedWait()
+		{
+			MemoryUsage usage = new MemoryUsage( 2048 );
+			usage.IncreaseUsage( 5072 );
+
+			DateTime start = DateTime.Now;
+
+			usage.WaitForSpace( TimeSpan.FromMilliseconds(150) );
+
+			DateTime end = DateTime.Now;
+
+			TimeSpan timePassed = end - start;
+
+			Assert.That( timePassed.TotalMilliseconds >= 125 );
+		}
+
+		[Test]
+		public void TestWait()
+		{
+			MemoryUsage usage = new MemoryUsage( 2048 );
+			usage.IncreaseUsage( 5072 );
+
+			Thread thread1 = new Thread(delegate ()
+			{
+				Thread.Sleep( 100 );
+				usage.DecreaseUsage( usage.Usage );
+			});
+
+			thread1.Start();
+
+			usage.WaitForSpace();
+			Assert.That( usage.Usage == 0 );
+
+			thread1.Join();
+		}
 	}
 }

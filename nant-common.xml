@@ -41,7 +41,7 @@
 	<property name="current.build.config"    value="${if(project.release.type == 'release', 'release', 'debug')}" overwrite="false" />
 	<property name="current.build.framework" value="${framework::get-target-framework()}" overwrite="false" />
 	<property name="current.build.defines"   value="${build.defines}" />
-	<property name="build.framework.strings" value="net-1.1,net-2.0,net-3.5,mono-2.0,netcf-2.0" />
+	<property name="build.framework.strings" value="net-2.0,net-3.5,mono-2.0,netcf-2.0" />
 	<property name="current.build.framework.assembly.dir" value="${framework::get-assembly-directory(framework::get-target-framework())}" dynamic="true" />
 
 	<if test="${build.skip.release}">
@@ -197,18 +197,6 @@
 		<property name="current.build.config.debug" value="false" />
 		<property name="csc.debug" value="Full" />
 		<property name="csc.optimize" value="true" />
-	</target>
-
-	<target name="set-net-1.1-framework-configuration">
-		<property name="current.build.framework" value="net-1.1" />
-		<property name="current.build.framework.name" value=".NET 1.1" />
-		<property name="current.build.defines" value="${build.defines}NET,NET_1_1" dynamic="true" />
-		<property name="current.build.framework.sign" value="true" />
-		<property name="link.sdkdoc.version" value="SDK_v1_1" />
-		<property name="link.sdkdoc.web" value="true" />
-		<if test="${framework::exists(current.build.framework)}">
-			<property name="nant.settings.currentframework" value="${current.build.framework}" />
-		</if>
 	</target>
 
 	<target name="set-net-2.0-framework-configuration">

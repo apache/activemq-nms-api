@@ -43,13 +43,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(true)]
 		[Row(false)]
-#endif
 		public void CreateAndDisposeWithConsumer(bool disposeConsumer)
-        {
+		{
 			using(IConnection connection = CreateConnection("DisposalTestConnection"))
 			{
 				connection.Start();
@@ -66,15 +64,13 @@ namespace Apache.NMS.Test
 					}
 				}
 			}
-        }
+		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(true)]
 		[Row(false)]
-#endif
 		public void CreateAndDisposeWithProducer(bool disposeProducer)
-        {
+		{
 			using(IConnection connection = CreateConnection("DisposalTestConnection"))
 			{
 				connection.Start();
@@ -91,6 +87,6 @@ namespace Apache.NMS.Test
 					}
 				}
 			}
-        }
+		}
 	}
 }

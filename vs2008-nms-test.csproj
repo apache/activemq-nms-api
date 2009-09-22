@@ -87,6 +87,7 @@
     <Compile Include="src\test\csharp\EndianBinaryReaderTest.cs" />
     <Compile Include="src\test\csharp\EndianBinaryWriterTest.cs" />
     <Compile Include="src\test\csharp\EndianTest.cs" />
+    <Compile Include="src\test\csharp\MemoryUsageTest.cs" />
     <Compile Include="src\test\csharp\NMSPropertyTest.cs" />
     <Compile Include="src\test\csharp\NMSTestSupport.cs">
       <SubType>Code</SubType>

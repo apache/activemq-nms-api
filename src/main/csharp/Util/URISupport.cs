@@ -312,11 +312,7 @@ namespace Apache.NMS.Util
 			// balanced parenthesis
 
 			// Start with original URI
-#if NET_1_0 || NET_1_1
-			String ssp = uri.AbsoluteUri.Trim();
-#else
 			String ssp = uri.OriginalString.Trim();
-#endif
 
 			ssp = stripPrefix(ssp, "failover:");
 

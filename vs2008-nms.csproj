@@ -84,14 +84,13 @@
     <Compile Include="src\main\csharp\TransactionInProgressException.cs" />
     <Compile Include="src\main\csharp\TransactionRolledBackException.cs" />
     <Compile Include="src\main\csharp\Util\Atomic.cs" />
-    <Compile Include="src\main\csharp\Util\AtomicBoolean.cs" />
-    <Compile Include="src\main\csharp\Util\AtomicReference.cs" />
     <Compile Include="src\main\csharp\Util\Convert.cs" />
     <Compile Include="src\main\csharp\Util\CountDownLatch.cs" />
     <Compile Include="src\main\csharp\Util\DateUtils.cs" />
     <Compile Include="src\main\csharp\Util\EndianBinaryReader.cs" />
     <Compile Include="src\main\csharp\Util\EndianBinaryWriter.cs" />
     <Compile Include="src\main\csharp\Util\EndianSupport.cs" />
+    <Compile Include="src\main\csharp\Util\MemoryUsage.cs" />
     <Compile Include="src\main\csharp\Util\MessagePropertyHelper.cs" />
     <Compile Include="src\main\csharp\Util\PrimitiveMap.cs" />
     <Compile Include="src\main\csharp\Util\SessionUtils.cs" />

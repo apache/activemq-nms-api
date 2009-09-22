@@ -30,11 +30,9 @@ namespace Apache.NMS.Test
 		protected static string TEST_CLIENT_ID = "TransactionTestClientId";
 		protected static string TEST_CLIENT_ID2 = "TransactionTestClientId2";
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestSendRollback(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -75,11 +73,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestSendSessionClose(MsgDeliveryMode deliveryMode)
 		{
 			ITextMessage firstMsgSend;
@@ -148,11 +144,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestReceiveRollback(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -193,11 +187,9 @@ namespace Apache.NMS.Test
 		}
 
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestReceiveTwoThenRollback(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -239,13 +231,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.Persistent)]
 		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.NonPersistent)]
 		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.Persistent)]
 		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestSendCommitNonTransaction(AcknowledgementMode ackMode, MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -274,13 +264,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.Persistent)]
 		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.NonPersistent)]
 		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.Persistent)]
 		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestReceiveCommitNonTransaction(AcknowledgementMode ackMode, MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -319,13 +307,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.Persistent)]
 		[Row(AcknowledgementMode.AutoAcknowledge, MsgDeliveryMode.NonPersistent)]
 		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.Persistent)]
 		[Row(AcknowledgementMode.ClientAcknowledge, MsgDeliveryMode.NonPersistent)]
-#endif
 		public void TestReceiveRollbackNonTransaction(AcknowledgementMode ackMode, MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))

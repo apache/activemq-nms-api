@@ -31,13 +31,11 @@ namespace Apache.NMS.Test
 		protected static string CONSUMER_ID = "TestDurableConsumerConsumerId";
 		protected static string DURABLE_SELECTOR = "2 > 1";
 
-#if !NET_1_1
 		[RowTest]
 		[Row(AcknowledgementMode.AutoAcknowledge)]
 		[Row(AcknowledgementMode.ClientAcknowledge)]
 		[Row(AcknowledgementMode.DupsOkAcknowledge)]
 		[Row(AcknowledgementMode.Transactional)]
-#endif
 		public void TestDurableConsumerSelectorChange(AcknowledgementMode ackMode)
 		{
 			try
@@ -113,13 +111,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(AcknowledgementMode.AutoAcknowledge)]
 		[Row(AcknowledgementMode.ClientAcknowledge)]
 		[Row(AcknowledgementMode.DupsOkAcknowledge)]
 		[Row(AcknowledgementMode.Transactional)]
-#endif
 		public void TestDurableConsumer(AcknowledgementMode ackMode)
 		{
 			try

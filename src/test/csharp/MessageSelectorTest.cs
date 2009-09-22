@@ -36,13 +36,11 @@ namespace Apache.NMS.Test
 		private int receivedNonIgnoredMsgCount = 0;
 		private int receivedIgnoredMsgCount = 0;
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent, QUEUE_DESTINATION_NAME)]
 		[Row(MsgDeliveryMode.NonPersistent, QUEUE_DESTINATION_NAME)]
 		[Row(MsgDeliveryMode.Persistent, TOPIC_DESTINATION_NAME)]
 		[Row(MsgDeliveryMode.NonPersistent, TOPIC_DESTINATION_NAME)]
-#endif
 		public void FilterIgnoredMessagesTest(MsgDeliveryMode deliveryMode, string destinationName)
 		{
 			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))

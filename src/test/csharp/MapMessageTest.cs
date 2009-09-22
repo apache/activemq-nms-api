@@ -44,11 +44,9 @@ namespace Apache.NMS.Test
 		protected float m = 2.1F;
 		protected double n = 2.3;
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void SendReceiveMapMessage(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
@@ -121,11 +119,9 @@ namespace Apache.NMS.Test
 			}
 		}
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void SendReceiveNestedMapMessage(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))

@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using System.Text;
 
 namespace Apache.NMS.Util
 {
-#if !NET_1_0 && !NET_1_1
-	public class Atomic<T> where T : IComparable
+	public class AtomicReference<T>
 	{
-		private T atomicValue;
+		protected T atomicValue;
 
 		public T Value
 		{
@@ -42,9 +41,35 @@ namespace Apache.NMS.Util
 			}
 		}
 
-		public Atomic(T defaultValue)
+		public AtomicReference()
+		{
+			atomicValue = default(T);
+		}
+
+		public AtomicReference(T defaultValue)
 		{
 			atomicValue = defaultValue;
+		}
+
+		public T GetAndSet(T value)
+		{
+			lock(this)
+			{
+				T ret = atomicValue;
+				atomicValue = value;
+				return ret;
+			}
+		}
+	}
+
+	public class Atomic<T> : AtomicReference<T> where T : IComparable
+	{
+		public Atomic() : base()
+		{
+		}
+
+		public Atomic(T defaultValue) : base(defaultValue)
+		{
 		}
 
 		public bool CompareAndSet(T expected, T newValue)
@@ -61,5 +86,4 @@ namespace Apache.NMS.Util
 			}
 		}
 	}
-#endif
 }

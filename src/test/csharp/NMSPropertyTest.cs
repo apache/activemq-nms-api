@@ -36,11 +36,9 @@ namespace Apache.NMS.Test
 		protected String groupID = "BarGroup";
 		protected int groupSeq = 1;
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void SendReceiveNMSProperties(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))

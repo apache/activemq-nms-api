@@ -28,11 +28,9 @@ namespace Apache.NMS.Test
 		protected static string TEST_CLIENT_ID = "BytesMessageClientId";
 		protected byte[] msgContent = {1, 2, 3, 4, 5, 6, 7, 8};
 
-#if !NET_1_1
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
 		[Row(MsgDeliveryMode.NonPersistent)]
-#endif
 		public void SendReceiveBytesMessage(MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
