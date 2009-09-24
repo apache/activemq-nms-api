@@ -26,9 +26,11 @@ namespace Apache.NMS.Util
     /// </summary>
     public class MemoryUsage
     {
+        private readonly Atomic<bool> stopped = new Atomic<bool>(false);
         private long limit = 0;
         private long usage = 0;
-        private readonly object myLock = new object();
+        private readonly object mutex = new object();
+        AutoResetEvent waitHandle = new AutoResetEvent(false);
 
         public MemoryUsage()
         {
@@ -73,16 +75,11 @@ namespace Apache.NMS.Util
         /// </param>
         public void WaitForSpace( TimeSpan timeout )
         {
-            lock(this.myLock)
+            while(this.IsFull() && !stopped.Value)
             {
-                while(this.IsFull())
+                if( !waitHandle.WaitOne( (int)timeout.TotalMilliseconds, false ) )
                 {
-#if !NETCF
-                    if( !Monitor.Wait(this.myLock, timeout ) )
-#endif
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
         }
@@ -113,7 +110,7 @@ namespace Apache.NMS.Util
                 return;
             }
 
-            lock(this.myLock)
+            lock(this.mutex)
             {
                 this.Usage += value;
             }
@@ -125,14 +122,14 @@ namespace Apache.NMS.Util
         /// <param name="value">
         /// A <see cref="System.Int64"/>
         /// </param>
-        public void DecreaseUsage( long value )
+        public void DecreaseUsage(long value)
         {
             if(value == 0)
             {
                 return;
             }
 
-            lock(this.myLock)
+            lock(this.mutex)
             {
                 if( value > this.Usage )
                 {
@@ -142,18 +139,23 @@ namespace Apache.NMS.Util
                 {
                     this.Usage -= value;
                 }
-
-#if !NETCF
-                Monitor.PulseAll(this.myLock);
-#endif
             }
+            
+            waitHandle.Set();            
         }
 
+        /// <summary>
+        /// Checks if the Usage Windows has become full, is so returns true
+        /// otherwise returns false.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.Boolean"/>
+        /// </returns>
         public bool IsFull()
         {
             bool result = false;
 
-            lock(this.myLock)
+            lock(this.mutex)
             {
                 result = this.Usage >= this.Limit;
             }
@@ -163,12 +165,8 @@ namespace Apache.NMS.Util
 
         public void Stop()
         {
-            lock(this.myLock)
-            {
-#if !NETCF
-                Monitor.PulseAll(this.myLock);
-#endif
-            }
+            this.stopped.Value = true;
+            this.waitHandle.Set();
         }
     }
 }
