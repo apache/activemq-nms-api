@@ -16,7 +16,7 @@
 $pkgname = "Apache.NMS"
 $pkgver = "1.2.0"
 $configurations = "release", "debug"
-$frameworks = "mono-2.0", "net-1.1", "net-2.0", "net-3.5", "netcf-2.0"
+$frameworks = "mono-2.0", "net-2.0", "net-3.5", "netcf-2.0"
 
 write-progress "Creating package directory." "Initializing..."
 if(!(test-path package))
@@ -39,7 +39,6 @@ if(test-path build)
 		foreach($framework in $frameworks)
 		{
 			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll"
-			# zip -9 -u "$zipfile" "$framework\$configuration\nmsprovider*.config"
 			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll"
 			if($framework -ieq "mono-2.0")
 			{
