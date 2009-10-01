@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace Apache.NMS.Util
@@ -29,21 +30,42 @@ namespace Apache.NMS.Util
 	{
 		public static string Serialize(object obj)
 		{
-			XmlSerializer serializer = new XmlSerializer(obj.GetType());
-			StringWriter writer = new StringWriter(new StringBuilder(4096));
+			return Serialize(obj, Encoding.UTF8);
+		}
 
-			/*
-			 * If the XML document has been altered with unknown 
-			 * nodes or attributes, handle them with the 
-			 * UnknownNode and UnknownAttribute events.
-			 */
-			serializer.UnknownNode += new XmlNodeEventHandler(serializer_UnknownNode);
-			serializer.UnknownAttribute += new XmlAttributeEventHandler(serializer_UnknownAttribute);
-			serializer.Serialize(writer, obj);
-			return writer.ToString();
+		public static string Serialize(object obj, Encoding encoding)
+		{
+			try
+			{
+				MemoryStream memoryStream = new MemoryStream();
+				XmlSerializer serializer = new XmlSerializer(obj.GetType());
+				XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, encoding);
+
+				/*
+				 * If the XML document has been altered with unknown
+				 * nodes or attributes, handle them with the
+				 * UnknownNode and UnknownAttribute events.
+				 */
+				serializer.UnknownNode += new XmlNodeEventHandler(serializer_UnknownNode);
+				serializer.UnknownAttribute += new XmlAttributeEventHandler(serializer_UnknownAttribute);
+				serializer.Serialize(xmlTextWriter, obj);
+				memoryStream = (MemoryStream) xmlTextWriter.BaseStream;
+				byte[] encodedBytes = memoryStream.ToArray();
+				return encoding.GetString(encodedBytes, 0, encodedBytes.Length);
+			}
+			catch(Exception e)
+			{
+				Tracer.Error(e.Message);
+				return null;
+			}
 		}
 
 		public static object Deserialize(Type objType, string text)
+		{
+			return Deserialize(objType, text, Encoding.UTF8);
+		}
+
+		public static object Deserialize(Type objType, string text, Encoding encoding)
 		{
 			if(null == text)
 			{
@@ -51,14 +73,16 @@ namespace Apache.NMS.Util
 			}
 
 			XmlSerializer serializer = new XmlSerializer(objType);
+			MemoryStream memoryStream = new MemoryStream(encoding.GetBytes(text));
+
 			/*
-			 * If the XML document has been altered with unknown 
-			 * nodes or attributes, handle them with the 
+			 * If the XML document has been altered with unknown
+			 * nodes or attributes, handle them with the
 			 * UnknownNode and UnknownAttribute events.
 			 */
 			serializer.UnknownNode += new XmlNodeEventHandler(serializer_UnknownNode);
 			serializer.UnknownAttribute += new XmlAttributeEventHandler(serializer_UnknownAttribute);
-			return serializer.Deserialize(new StringReader(text));
+			return serializer.Deserialize(memoryStream);
 		}
 
 		private static void serializer_UnknownNode(object sender, XmlNodeEventArgs e)
@@ -70,7 +94,5 @@ namespace Apache.NMS.Util
 		{
 			Tracer.ErrorFormat("Unknown attribute: {0}='{1}'", e.Attr.Name, e.Attr.Value);
 		}
-
 	}
 }
-
