@@ -60,6 +60,38 @@ namespace Apache.NMS
 		/// <param name="name">Name of the durable consumer</param>
 		void DeleteDurableConsumer(string name);
 
+        /// <summary>
+        /// Creates a QueueBrowser object to peek at the messages on the specified queue.
+        /// </summary>
+        /// <param name="queue">
+        /// A <see cref="IQueue"/>
+        /// </param>
+        /// <returns>
+        /// A <see cref="IQueueBrowser"/>
+        /// </returns>
+        /// <exception cref="System.NotSupportedException">
+        /// If the Prodiver does not support creation of Queue Browsers.
+        /// </exception>
+        IQueueBrowser CreateBrowser(IQueue queue);
+        
+        /// <summary>
+        /// Creates a QueueBrowser object to peek at the messages on the specified queue 
+        /// using a message selector.
+        /// </summary>
+        /// <param name="queue">
+        /// A <see cref="IQueue"/>
+        /// </param>
+        /// <param name="selector">
+        /// A <see cref="System.String"/>
+        /// </param>
+        /// <returns>
+        /// A <see cref="IQueueBrowser"/>
+        /// </returns>
+        /// <exception cref="System.NotSupportedException">
+        /// If the Prodiver does not support creation of Queue Browsers.
+        /// </exception>
+        IQueueBrowser CreateBrowser(IQueue queue, string selector);
+        
 		/// <summary>
 		/// Returns the queue for the given name
 		/// </summary>
