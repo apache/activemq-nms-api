@@ -28,6 +28,22 @@ namespace Apache.NMS
 		/// message has been processed correctly.
 		/// </summary>
 		void Acknowledge();
+        
+        /// <summary>
+        /// Clears out the message body. Clearing a message's body does not clear its header 
+        /// values or property entries.
+        /// 
+        /// If this message body was read-only, calling this method leaves the message body in 
+        /// the same state as an empty body in a newly created message.
+        /// </summary>
+        void ClearBody();
+        
+        /// <summary>
+        /// Clears a message's properties.
+        /// 
+        /// The message's header fields and body are not cleared.
+        /// </summary>
+        void ClearProperties();
 		
 		/// <summary>
 		/// Provides access to the message properties (headers).

@@ -49,12 +49,82 @@ namespace Apache.NMS.Test
 
 						IMessage message = consumer.Receive(receiveTimeout);
 						AssertBytesMessageEqual(request, message);
+                        AssertMessageIsReadOnly(message);
 						Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
+
 					}
 				}
 			}
 		}
 
+        [RowTest]
+        [Row(MsgDeliveryMode.Persistent)]
+        [Row(MsgDeliveryMode.NonPersistent)]
+        public void SendReceiveBytesMessageContentTest(MsgDeliveryMode deliveryMode)
+        {
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {
+                connection.Start();
+                using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                {
+                    IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    {
+                        producer.DeliveryMode = deliveryMode;
+                        producer.RequestTimeout = receiveTimeout;
+                        IBytesMessage request = session.CreateBytesMessage();
+                        
+                        request.WriteBoolean(true);
+                        request.WriteByte((byte) 1);
+                        request.WriteBytes(new byte[1]);
+                        request.WriteBytes(new byte[3], 0, 2);
+                        request.WriteChar('a');
+                        request.WriteDouble(1.5);
+                        request.WriteSingle((float) 1.5);
+                        request.WriteInt32(1);
+                        request.WriteInt64(1);
+                        request.WriteObject("stringobj");
+                        request.WriteInt16((short) 1);
+                        request.WriteString("utfstring");
+                        
+                        producer.Send(request);
+
+                        IMessage message = consumer.Receive(receiveTimeout);
+                        AssertBytesMessageEqual(request, message);
+                        AssertMessageIsReadOnly(message);
+                        Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
+
+                    }
+                }
+            }
+        }
+        
+        protected void AssertMessageIsReadOnly(IMessage message)
+        {
+            IBytesMessage theMessage = message as IBytesMessage;
+            Assert.IsNotNull(theMessage);
+            try
+            {
+                theMessage.WriteBoolean(true);
+                theMessage.WriteByte((byte) 1);
+                theMessage.WriteBytes(new byte[1]);
+                theMessage.WriteBytes(new byte[3], 0, 2);
+                theMessage.WriteChar('a');
+                theMessage.WriteDouble(1.5);
+                theMessage.WriteSingle((float) 1.5);
+                theMessage.WriteInt32(1);
+                theMessage.WriteInt64(1);
+                theMessage.WriteObject("stringobj");
+                theMessage.WriteInt16((short) 1);
+                theMessage.WriteString("utfstring");
+                Assert.Fail("Message should not have been Writable");
+            }
+            catch(MessageNotWriteableException)
+            {
+            }
+        }
+        
 		/// <summary>
 		/// Assert that two messages are IBytesMessages and their contents are equal.
 		/// </summary>
