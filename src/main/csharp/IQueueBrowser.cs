@@ -57,7 +57,7 @@ namespace Apache.NMS
         /// If NMS Provider fails to retrieve the IQueue associated with the Browser
         /// doe to some internal error.
         /// </exception>
-        IQueue Qeuue { get; }
+        IQueue Queue { get; }
 
     }
 }
