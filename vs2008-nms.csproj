@@ -66,6 +66,7 @@
     <Compile Include="src\main\csharp\ISession.cs" />
     <Compile Include="src\main\csharp\IStartable.cs" />
     <Compile Include="src\main\csharp\IStoppable.cs" />
+    <Compile Include="src\main\csharp\IStreamMessage.cs" />
     <Compile Include="src\main\csharp\ITemporaryQueue.cs" />
     <Compile Include="src\main\csharp\ITemporaryTopic.cs" />
     <Compile Include="src\main\csharp\ITextMessage.cs" />
