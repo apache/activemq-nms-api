@@ -155,6 +155,11 @@ namespace Apache.NMS
 		IBytesMessage CreateBytesMessage(byte[] body);
 
 		/// <summary>
+		/// Creates a new stream message
+		/// </summary>
+		IStreamMessage CreateStreamMessage();
+
+		/// <summary>
 		/// Closes the session.  There is no need to close the producers and consumers
 		/// of a closed session.
 		/// </summary>

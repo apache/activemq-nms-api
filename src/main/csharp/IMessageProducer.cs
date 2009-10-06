@@ -97,6 +97,11 @@ namespace Apache.NMS
 		/// </summary>
 		IBytesMessage CreateBytesMessage(byte[] body);
 
+		/// <summary>
+		/// Creates a new stream message
+		/// </summary>
+		IStreamMessage CreateStreamMessage();
+
 		#endregion
 	}
 }
