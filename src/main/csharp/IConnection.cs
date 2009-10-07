@@ -103,11 +103,11 @@ namespace Apache.NMS
 		/// </summary>
 		string ClientId { get; set; }
 
-        /// <summary>
-        /// Gets the Meta Data for the NMS Connection instance.
-        /// </summary>
-        IConnectionMetaData MetaData{ get; }
-        
+		/// <summary>
+		/// Gets the Meta Data for the NMS Connection instance.
+		/// </summary>
+		IConnectionMetaData MetaData{ get; }
+
 		#endregion
 	}
 }
