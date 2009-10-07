@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -23,11 +25,41 @@ using System.Xml;
 namespace Apache.NMS
 {
 	/// <summary>
+	/// Provider implementation mapping class.
+	/// </summary>
+	public class ProviderFactoryInfo
+	{
+		public string assemblyFileName;
+		public string factoryClassName;
+
+		public ProviderFactoryInfo(string aFileName, string fClassName)
+		{
+			assemblyFileName = aFileName;
+			factoryClassName = fClassName;
+		}
+	}
+
+	/// <summary>
 	/// Implementation of a factory for <see cref="IConnection" /> instances.
 	/// </summary>
 	public class NMSConnectionFactory : IConnectionFactory
 	{
 		protected readonly IConnectionFactory factory;
+		protected static readonly Dictionary<string, ProviderFactoryInfo> schemaProviderFactoryMap;
+
+		/// <summary>
+		/// Static class constructor
+		/// </summary>
+		static NMSConnectionFactory()
+		{
+			schemaProviderFactoryMap = new Dictionary<string, ProviderFactoryInfo>();
+			schemaProviderFactoryMap["activemq"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ.dll", "Apache.NMS.ActiveMQ.ConnectionFactory");
+			schemaProviderFactoryMap["tcp"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ.dll", "Apache.NMS.ActiveMQ.ConnectionFactory");
+			schemaProviderFactoryMap["ems"] = new ProviderFactoryInfo("Apache.NMS.EMS.dll", "Apache.NMS.EMS.ConnectionFactory");
+			schemaProviderFactoryMap["msmq"] = new ProviderFactoryInfo("Apache.NMS.MSMQ.dll", "Apache.NMS.MSMQ.ConnectionFactory");
+			schemaProviderFactoryMap["stomp"] = new ProviderFactoryInfo("Apache.NMS.Stomp.dll", "Apache.NMS.Stomp.ConnectionFactory");
+			schemaProviderFactoryMap["xms"] = new ProviderFactoryInfo("Apache.NMS.XMS.dll", "Apache.NMS.XMS.ConnectionFactory");
+		}
 
 		/// <summary>
 		/// The ConnectionFactory object must define a constructor that takes as a minimum a Uri object.
@@ -166,42 +198,59 @@ namespace Apache.NMS
 		/// be found; otherwise, <c>false</c>.</returns>
 		private static bool LookupConnectionFactoryInfo(string[] paths, string scheme, out string assemblyFileName, out string factoryClassName)
 		{
-			string configFileName = String.Format("nmsprovider-{0}.config", scheme.ToLower());
 			bool foundFactory = false;
+			string schemeLower = scheme.ToLower();
+			ProviderFactoryInfo pfi;
 
-			assemblyFileName = String.Empty;
-			factoryClassName = String.Empty;
-
-			Tracer.Debug("Attempting to locate provider configuration: " + configFileName);
-			foreach(string path in paths)
+			// Check for standard provider implementations.
+			if(schemaProviderFactoryMap.TryGetValue(schemeLower, out pfi))
 			{
-				string fullpath = Path.Combine(path, configFileName);
-				Tracer.Debug("\tScanning folder: " + path);
+				assemblyFileName = pfi.assemblyFileName;
+				factoryClassName = pfi.factoryClassName;
+				foundFactory = true;
+				Tracer.DebugFormat("Selected standard provider for {0}: {1}, {2}", schemeLower, assemblyFileName, factoryClassName);
+			}
+			else
+			{
+				// Look for a custom configuration to handle this scheme.
+				string configFileName = String.Format("nmsprovider-{0}.config", schemeLower);
 
-				try
+				assemblyFileName = String.Empty;
+				factoryClassName = String.Empty;
+
+				Tracer.DebugFormat("Attempting to locate provider configuration: {0}", configFileName);
+				foreach(string path in paths)
 				{
-					if(File.Exists(fullpath))
+					string fullpath = Path.Combine(path, configFileName);
+					Tracer.DebugFormat("\tScanning folder: {0}", path);
+
+					try
 					{
-						Tracer.Debug("\tConfiguration file found!");
-						XmlDocument configDoc = new XmlDocument();
-
-						configDoc.Load(fullpath);
-						XmlElement providerNode = (XmlElement) configDoc.SelectSingleNode("/configuration/provider");
-
-						if(null != providerNode)
+						if(File.Exists(fullpath))
 						{
-							assemblyFileName = providerNode.GetAttribute("assembly");
-							factoryClassName = providerNode.GetAttribute("classFactory");
-							if(String.Empty != assemblyFileName && String.Empty != factoryClassName)
+							Tracer.DebugFormat("\tConfiguration file found in {0}", fullpath);
+							XmlDocument configDoc = new XmlDocument();
+
+							configDoc.Load(fullpath);
+							XmlElement providerNode = (XmlElement) configDoc.SelectSingleNode("/configuration/provider");
+
+							if(null != providerNode)
 							{
-								foundFactory = true;
-								break;
+								assemblyFileName = providerNode.GetAttribute("assembly");
+								factoryClassName = providerNode.GetAttribute("classFactory");
+								if(String.Empty != assemblyFileName && String.Empty != factoryClassName)
+								{
+									foundFactory = true;
+									Tracer.DebugFormat("Selected custom provider for {0}: {1}, {2}", schemeLower, assemblyFileName, factoryClassName);
+									break;
+								}
 							}
 						}
 					}
-				}
-				catch
-				{
+					catch(Exception ex)
+					{
+						Tracer.DebugFormat("Exception while scanning {0}: {1}", fullpath, ex.Message);
+					}
 				}
 			}
 
