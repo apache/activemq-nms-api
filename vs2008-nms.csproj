@@ -50,6 +50,7 @@
     <Compile Include="src\main\csharp\IBytesMessage.cs" />
     <Compile Include="src\main\csharp\IConnection.cs" />
     <Compile Include="src\main\csharp\IConnectionFactory.cs" />
+    <Compile Include="src\main\csharp\IConnectionMetaData.cs" />
     <Compile Include="src\main\csharp\IDestination.cs" />
     <Compile Include="src\main\csharp\IllegalStateException.cs" />
     <Compile Include="src\main\csharp\IMapMessage.cs" />
