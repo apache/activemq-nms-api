@@ -144,90 +144,7 @@ namespace Apache.NMS.Util
 		/// <returns>A string</returns>
 		public override String ReadString()
 		{
-			short utflen = ReadInt16();
-			if(utflen > -1)
-			{
-				StringBuilder str = new StringBuilder(utflen);
-
-				byte[] bytearr = new byte[utflen];
-				int bytesRead = 0;
-				while(bytesRead < utflen)
-				{
-					int rc = Read(bytearr, bytesRead, utflen - bytesRead);
-					if(rc == 0)
-					{
-						throw new IOException("premature end of stream");
-					}
-
-					bytesRead += rc;
-				}
-
-				int c, char2, char3;
-				int count = 0;
-
-				while(count < utflen)
-				{
-					c = bytearr[count] & 0xff;
-					switch(c >> 4)
-					{
-					case 0:
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-					case 6:
-					case 7:
-						/* 0xxxxxxx */
-						count++;
-						str.Append((char) c);
-						break;
-					case 12:
-					case 13:
-						/* 110x xxxx 10xx xxxx */
-						count += 2;
-						if(count > utflen)
-						{
-							throw CreateDataFormatException();
-						}
-
-						char2 = bytearr[count - 1];
-						if((char2 & 0xC0) != 0x80)
-						{
-							throw CreateDataFormatException();
-						}
-
-						str.Append((char) (((c & 0x1F) << 6) | (char2 & 0x3F)));
-						break;
-					case 14:
-						/* 1110 xxxx 10xx xxxx 10xx xxxx */
-						count += 3;
-						if(count > utflen)
-						{
-							throw CreateDataFormatException();
-						}
-
-						char2 = bytearr[count - 2];
-						char3 = bytearr[count - 1];
-						if(((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80))
-						{
-							throw CreateDataFormatException();
-						}
-
-						str.Append((char) (((c & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0)));
-						break;
-					default:
-						/* 10xx xxxx, 1111 xxxx */
-						throw CreateDataFormatException();
-					}
-				}
-				// The number of chars produced may be less than utflen
-				return str.ToString();
-			}
-			else
-			{
-				return null;
-			}
+            return ReadString16();
 		}
 
 		/// <summary>
@@ -239,75 +156,16 @@ namespace Apache.NMS.Util
 		{
 			int utfLength = ReadUInt16();
 
-			if(utfLength <= 0)
+			if(utfLength < 0)
 			{
-				return "";
-			}
+				return null;
+			} 
+            else if(utfLength == 0)
+            {
+                return "";
+            }
 
-			char[] result = new char[utfLength];
-			byte[] buffer = new byte[utfLength];
-
-			int bytesRead = 0;
-			while(bytesRead < utfLength)
-			{
-				int rc = Read(buffer, bytesRead, utfLength - bytesRead);
-				if(rc == 0)
-				{
-					throw new IOException("premature end of stream");
-				}
-
-				bytesRead += rc;
-			}
-
-			int count = 0;
-			int index = 0;
-			byte a = 0;
-
-			while(count < utfLength)
-			{
-				if((result[index] = (char) buffer[count++]) < 0x80)
-				{
-					index++;
-				}
-				else if(((a = (byte) result[index]) & 0xE0) == 0xC0)
-				{
-					if(count >= utfLength)
-					{
-						throw new IOException("Invalid UTF-8 encoding found, start of two byte char found at end.");
-					}
-
-					byte b = buffer[count++];
-					if((b & 0xC0) != 0x80)
-					{
-						throw new IOException("Invalid UTF-8 encoding found, byte two does not start with 0x80.");
-					}
-
-					result[index++] = (char) (((a & 0x1F) << 6) | (b & 0x3F));
-				}
-				else if((a & 0xF0) == 0xE0)
-				{
-					if(count + 1 >= utfLength)
-					{
-						throw new IOException("Invalid UTF-8 encoding found, start of three byte char found at end.");
-					}
-
-					byte b = buffer[count++];
-					byte c = buffer[count++];
-					if(((b & 0xC0) != 0x80) || ((c & 0xC0) != 0x80))
-					{
-						throw new IOException("Invalid UTF-8 encoding found, byte two does not start with 0x80.");
-					}
-
-					result[index++] = (char) (((a & 0x0F) << 12) |
-											  ((b & 0x3F) << 6) | (c & 0x3F));
-				}
-				else
-				{
-					throw new IOException("Invalid UTF-8 encoding found, aborting.");
-				}
-			}
-
-			return new String(result, 0, index);
+            return doReadString(utfLength);
 		}
 
 		/// <summary>
@@ -319,77 +177,86 @@ namespace Apache.NMS.Util
 		{
 			int utfLength = ReadInt32();
 
-			if(utfLength <= 0)
-			{
-				return "";
-			}
+            if(utfLength < 0)
+            {
+                return null;
+            } 
+            else if(utfLength == 0)
+            {
+                return "";
+            }
 
-			char[] result = new char[utfLength];
-			byte[] buffer = new byte[utfLength];
-
-			int bytesRead = 0;
-			while(bytesRead < utfLength)
-			{
-				int rc = Read(buffer, bytesRead, utfLength - bytesRead);
-				if(rc == 0)
-				{
-					throw new IOException("premature end of stream");
-				}
-
-				bytesRead += rc;
-			}
-
-			int count = 0;
-			int index = 0;
-			byte a = 0;
-
-			while(count < utfLength)
-			{
-				if((result[index] = (char) buffer[count++]) < 0x80)
-				{
-					index++;
-				}
-				else if(((a = (byte) result[index]) & 0xE0) == 0xC0)
-				{
-					if(count >= utfLength)
-					{
-						throw new IOException("Invalid UTF-8 encoding found, start of two byte char found at end.");
-					}
-
-					byte b = buffer[count++];
-					if((b & 0xC0) != 0x80)
-					{
-						throw new IOException("Invalid UTF-8 encoding found, byte two does not start with 0x80.");
-					}
-
-					result[index++] = (char) (((a & 0x1F) << 6) | (b & 0x3F));
-				}
-				else if((a & 0xF0) == 0xE0)
-				{
-
-					if(count + 1 >= utfLength)
-					{
-						throw new IOException("Invalid UTF-8 encoding found, start of three byte char found at end.");
-					}
-
-					byte b = buffer[count++];
-					byte c = buffer[count++];
-					if(((b & 0xC0) != 0x80) || ((c & 0xC0) != 0x80))
-					{
-						throw new IOException("Invalid UTF-8 encoding found, byte two does not start with 0x80.");
-					}
-
-					result[index++] = (char) (((a & 0x0F) << 12) |
-											  ((b & 0x3F) << 6) | (c & 0x3F));
-				}
-				else
-				{
-					throw new IOException("Invalid UTF-8 encoding found, aborting.");
-				}
-			}
-
-			return new String(result, 0, index);
+            return doReadString(utfLength);
 		}
+
+        private string doReadString(int utfLength)
+        {
+            char[] result = new char[utfLength];
+            byte[] buffer = new byte[utfLength];
+
+            int bytesRead = 0;
+            while(bytesRead < utfLength)
+            {
+                int rc = Read(buffer, bytesRead, utfLength - bytesRead);
+                if(rc == 0)
+                {
+                    throw new IOException("premature end of stream");
+                }
+
+                bytesRead += rc;
+            }
+
+            int count = 0;
+            int index = 0;
+            byte a = 0;
+
+            while(count < utfLength)
+            {
+                if((result[index] = (char) buffer[count++]) < 0x80)
+                {
+                    index++;
+                }
+                else if(((a = (byte) result[index]) & 0xE0) == 0xC0)
+                {
+                    if(count >= utfLength)
+                    {
+                        throw new IOException("Invalid UTF-8 encoding found, start of two byte char found at end.");
+                    }
+
+                    byte b = buffer[count++];
+                    if((b & 0xC0) != 0x80)
+                    {
+                        throw new IOException("Invalid UTF-8 encoding found, byte two does not start with 0x80.");
+                    }
+
+                    result[index++] = (char) (((a & 0x1F) << 6) | (b & 0x3F));
+                }
+                else if((a & 0xF0) == 0xE0)
+                {
+
+                    if(count + 1 >= utfLength)
+                    {
+                        throw new IOException("Invalid UTF-8 encoding found, start of three byte char found at end.");
+                    }
+
+                    byte b = buffer[count++];
+                    byte c = buffer[count++];
+                    if(((b & 0xC0) != 0x80) || ((c & 0xC0) != 0x80))
+                    {
+                        throw new IOException("Invalid UTF-8 encoding found, byte two does not start with 0x80.");
+                    }
+
+                    result[index++] = (char) (((a & 0x0F) << 12) |
+                                              ((b & 0x3F) << 6) | (c & 0x3F));
+                }
+                else
+                {
+                    throw new IOException("Invalid UTF-8 encoding found, aborting.");
+                }
+            }
+
+            return new String(result, 0, index);            
+        }
 
 		public override float ReadSingle()
 		{
