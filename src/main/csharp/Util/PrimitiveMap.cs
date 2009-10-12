@@ -248,7 +248,9 @@ namespace Apache.NMS.Util
 			if(value != null && !(value is IList) && !(value is IDictionary))
 			{
 				Type type = value.GetType();
-				if(!type.IsPrimitive && !type.IsValueType && !type.IsAssignableFrom(typeof(string)))
+
+				if(type.IsInstanceOfType(typeof(Object)) || 
+                   (!type.IsPrimitive && !type.IsValueType && !type.IsAssignableFrom(typeof(string))))
 				{
 					throw new NMSException("Invalid type: " + type.Name + " for value: " + value);
 				}
