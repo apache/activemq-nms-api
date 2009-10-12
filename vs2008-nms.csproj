@@ -93,9 +93,10 @@
     <Compile Include="src\main\csharp\Util\EndianBinaryReader.cs" />
     <Compile Include="src\main\csharp\Util\EndianBinaryWriter.cs" />
     <Compile Include="src\main\csharp\Util\EndianSupport.cs" />
-    <Compile Include="src\main\csharp\Util\MessagePropertyHelper.cs" />
+    <Compile Include="src\main\csharp\Util\MessagePropertyIntercepter.cs" />
     <Compile Include="src\main\csharp\Util\NMSExceptionSupport.cs" />
     <Compile Include="src\main\csharp\Util\PrimitiveMap.cs" />
+    <Compile Include="src\main\csharp\Util\PrimitiveMapInterceptor.cs" />
     <Compile Include="src\main\csharp\Util\SessionUtils.cs" />
     <Compile Include="src\main\csharp\Util\URISupport.cs">
       <SubType>Code</SubType>
