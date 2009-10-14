@@ -59,7 +59,18 @@ namespace Apache.NMS
 	/// </summary>
 	public delegate void ExceptionListener(Exception exception);
 
+    /// <summary>
+    /// A delegate that is used by Fault tolerant NMS Implementation to notify their
+    /// clients that the Connection is not currently active to due some error.  
+    /// </summary>
+    public delegate void ConnectionInterruptedListener();
 
+    /// <summary>
+    /// A delegate that is used by Fault tolerant NMS Implementation to notify their
+    /// clients that the Connection that was interrupted has now been restored.  
+    /// </summary>
+    public delegate void ConnectionResumedListener();
+    
 	/// <summary>
 	/// Represents a connection with a message broker
 	/// </summary>
@@ -85,6 +96,18 @@ namespace Apache.NMS
 		/// </summary>
 		event ExceptionListener ExceptionListener;
 
+        /// <summary>
+        /// An asynchronous listener that is notified when a Fault tolerant connection
+        /// has been interrupted.
+        /// </summary>
+        event ConnectionInterruptedListener ConnectionInterruptedListener;
+
+        /// <summary>
+        /// An asynchronous listener that is notified when a Fault tolerant connection
+        /// has been resumed.
+        /// </summary>
+        event ConnectionResumedListener ConnectionResumedListener;
+        
 		#region Attributes
 
 		/// <summary>
