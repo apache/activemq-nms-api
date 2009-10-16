@@ -17,7 +17,7 @@
 
 using System;
 
-namespace Apache.NMS
+namespace Apache.NMS.Util
 {    
     public sealed class NMSExceptionSupport
     {
@@ -25,19 +25,19 @@ namespace Apache.NMS
         {            
         }
         
-        public static NMSException create(string message, string errorCode, Exception cause)
+        public static NMSException Create(string message, string errorCode, Exception cause)
         {
             NMSException exception = new NMSException(message, errorCode, cause);
             return exception;
         }
                 
-        public static NMSException create(string message, Exception cause)
+        public static NMSException Create(string message, Exception cause)
         {
             NMSException exception = new NMSException(message, cause);
             return exception;
         }
         
-        public static NMSException create(Exception cause)
+        public static NMSException Create(Exception cause)
         {
             if(cause is NMSException) 
             {
@@ -52,7 +52,7 @@ namespace Apache.NMS
             return exception;
         }
     
-        public static MessageEOFException createMessageEOFException(Exception cause) 
+        public static MessageEOFException CreateMessageEOFException(Exception cause) 
         {
             string msg = cause.Message;
             if (msg == null || msg.Length == 0) 
@@ -63,7 +63,7 @@ namespace Apache.NMS
             return exception;
         }
     
-        public static MessageFormatException createMessageFormatException(Exception cause) 
+        public static MessageFormatException CreateMessageFormatException(Exception cause) 
         {
             string msg = cause.Message;
             if (msg == null || msg.Length == 0) 
