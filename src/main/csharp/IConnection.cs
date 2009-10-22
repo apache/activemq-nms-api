@@ -45,13 +45,23 @@ namespace Apache.NMS
 		/// <summary>
 		/// With this acknowledgment mode, the client acknowledges a
 		/// consumed message by calling the message's acknowledge method.
+        /// This acknowledgement acknowledges the given message and all
+        /// unacknowedged messages that have preceeded it.
 		/// </summary>
-		ClientAcknowledge,
+		ClientAcknowledge,        
 
 		/// <summary>
 		/// Messages will be consumed when the transaction commits.
 		/// </summary>
-		Transactional
+		Transactional,
+
+        /// <summary>
+        /// With this acknowledgment mode, the client acknowledges a
+        /// consumed message by calling the message's acknowledge method.
+        /// This acknowledgement mode allows the client to acknowledge a
+        /// single message.
+        /// </summary>
+        IndividualAcknowledge
 	}
 
 	/// <summary>
