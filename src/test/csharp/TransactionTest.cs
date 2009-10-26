@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading;
 using System.Collections;
 using Apache.NMS.Util;
 using NUnit.Framework;
@@ -363,7 +364,86 @@ namespace Apache.NMS.Test
 			ITextMessage actualTextMsg = actual as ITextMessage;
 			Assert.IsNotNull(actualTextMsg, "'actual' message not a text message");
 			Assert.AreEqual(expectedTextMsg.Text, actualTextMsg.Text, message);
-		}
+		}     
+
+        [RowTest]
+        [Row(MsgDeliveryMode.Persistent)]
+        [Row(MsgDeliveryMode.NonPersistent)]
+        public void TestRedispatchOfRolledbackTx(MsgDeliveryMode deliveryMode)
+        {
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {
+                connection.Start();
+                ISession session = connection.CreateSession(AcknowledgementMode.Transactional);
+                IQueue destination = session.GetQueue("TestRedispatchOfRolledbackTx:"+Guid.NewGuid());
+                
+                SendMessages(connection, destination, deliveryMode, 2);
+                
+                IMessageConsumer consumer = session.CreateConsumer(destination);
+                Assert.IsNotNull(consumer.Receive(TimeSpan.FromMilliseconds(1000)));
+                Assert.IsNotNull(consumer.Receive(TimeSpan.FromMilliseconds(1000)));
+                
+                // install another consumer while message dispatch is unacked/uncommitted
+                ISession redispatchSession = connection.CreateSession(AcknowledgementMode.Transactional);
+                IMessageConsumer redispatchConsumer = redispatchSession.CreateConsumer(destination);
+        
+                session.Rollback();
+                session.Close();
+                        
+                IMessage msg = redispatchConsumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(msg);
+                Assert.IsTrue(msg.NMSRedelivered);
+                Assert.AreEqual(2, msg.Properties.GetLong("NMSXDeliveryCount"));
+                msg = redispatchConsumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(msg);
+                Assert.IsTrue(msg.NMSRedelivered);
+                Assert.AreEqual(2, msg.Properties.GetLong("NMSXDeliveryCount"));
+                redispatchSession.Commit();
+                
+                Assert.IsNull(redispatchConsumer.Receive(TimeSpan.FromMilliseconds(500)));
+                redispatchSession.Close();
+            }            
+        }
+
+        [RowTest]
+        [Row(MsgDeliveryMode.Persistent)]
+        [Row(MsgDeliveryMode.NonPersistent)]        
+        public void TestRedispatchOfUncommittedTx(MsgDeliveryMode deliveryMode)
+        {    
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {
+                connection.Start();
+                ISession session = connection.CreateSession(AcknowledgementMode.Transactional);
+                IQueue destination = session.GetQueue("TestRedispatchOfUncommittedTx:"+Guid.NewGuid());
+                
+                SendMessages(connection, destination, deliveryMode, 2);
+                
+                IMessageConsumer consumer = session.CreateConsumer(destination);
+                Assert.IsNotNull(consumer.Receive(TimeSpan.FromMilliseconds(1000)));
+                Assert.IsNotNull(consumer.Receive(TimeSpan.FromMilliseconds(1000)));
+                
+                // install another consumer while message dispatch is unacked/uncommitted
+                ISession redispatchSession = connection.CreateSession(AcknowledgementMode.Transactional);
+                IMessageConsumer redispatchConsumer = redispatchSession.CreateConsumer(destination);
+        
+                // no commit so will auto rollback and get re-dispatched to redisptachConsumer
+                session.Close();
+                        
+                IMessage msg = redispatchConsumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(msg);
+                Assert.IsTrue(msg.NMSRedelivered);
+                Assert.AreEqual(2, msg.Properties.GetLong("NMSXDeliveryCount"));
+                
+                msg = redispatchConsumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(msg);
+                Assert.IsTrue(msg.NMSRedelivered);
+                Assert.AreEqual(2, msg.Properties.GetLong("NMSXDeliveryCount"));
+                redispatchSession.Commit();
+                
+                Assert.IsNull(redispatchConsumer.Receive(TimeSpan.FromMilliseconds(500)));
+                redispatchSession.Close();
+            }
+        }        
 	}
 }
 

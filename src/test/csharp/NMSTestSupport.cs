@@ -390,5 +390,50 @@ namespace Apache.NMS.Test
 		{
 			return String.Format("{0:x}", value);
 		}
+
+        public void SendMessages(IDestination destination, MsgDeliveryMode deliveryMode, int count) 
+        {
+            IConnection connection = CreateConnection();
+            connection.Start();
+            SendMessages(connection, destination, deliveryMode, count);
+            connection.Close();
+        }
+    
+        public void SendMessages(IConnection connection, IDestination destination, MsgDeliveryMode deliveryMode, int count) 
+        {
+            ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge);
+            SendMessages(session, destination, deliveryMode, count);
+            session.Close();
+        }
+    
+        public void SendMessages(ISession session, IDestination destination, MsgDeliveryMode deliveryMode, int count)
+        {
+            IMessageProducer producer = session.CreateProducer(destination);
+            producer.DeliveryMode = deliveryMode;
+            for(int i = 0; i < count; i++)
+            {
+                producer.Send(session.CreateTextMessage("" + i));
+            }
+            producer.Close();
+        }
+
+        public IDestination CreateDestination(ISession session, DestinationType type)
+        {            
+            string name = "TEST." + this.GetType().Name + "." + Guid.NewGuid();
+            
+            switch(type) 
+            {
+            case DestinationType.Queue:
+                return session.GetQueue(name);
+            case DestinationType.Topic:
+                return session.GetTopic(name);
+            case DestinationType.TemporaryQueue:
+                return session.CreateTemporaryQueue();
+            case DestinationType.TemporaryTopic:
+                return session.CreateTemporaryTopic();
+            default:
+                throw new ArgumentException("type: " + type);
+            }
+        }        
 	}
 }

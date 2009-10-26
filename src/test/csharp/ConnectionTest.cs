@@ -25,6 +25,8 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class ConnectionTest : NMSTestSupport
 	{
+        protected static string TEST_CLIENT_ID = "ConnectionTestClientId";
+        
         IConnection startedConnection = null;
         IConnection stoppedConnection = null;
         
@@ -112,6 +114,31 @@ namespace Apache.NMS.Test
 			}
 		}
 
+        [RowTest]
+        [Row(MsgDeliveryMode.Persistent, DestinationType.Queue)]
+        [Row(MsgDeliveryMode.Persistent, DestinationType.Topic)]
+        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Queue)]        
+        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Topic)]        
+        public void TestStartAfterSend(MsgDeliveryMode deliveryMode, DestinationType destinationType)
+        {
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {            
+                ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge);
+                IDestination destination = CreateDestination(session, destinationType);
+                IMessageConsumer consumer = session.CreateConsumer(destination);
+        
+                // Send the messages
+                SendMessages(session, destination, deliveryMode, 1);
+        
+                // Start the conncection after the message was sent.
+                connection.Start();
+        
+                // Make sure only 1 message was delivered.
+                Assert.IsNotNull(consumer.Receive(TimeSpan.FromMilliseconds(1000)));
+                Assert.IsNull(consumer.ReceiveNoWait());
+            }
+        }
+        
         /// <summary>
         /// Tests if the consumer receives the messages that were sent before the
         /// connection was started. 

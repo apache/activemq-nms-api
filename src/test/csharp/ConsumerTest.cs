@@ -17,6 +17,7 @@
 
 using System;
 using System.Threading;
+using Apache.NMS;
 using Apache.NMS.Util;
 using NUnit.Framework;
 using NUnit.Framework.Extensions;
@@ -189,6 +190,25 @@ namespace Apache.NMS.Test
             }
         }
 
+        [RowTest]
+        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Queue)]        
+        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Topic)]             
+        public void TestDontStart(MsgDeliveryMode deliveryMode, DestinationType destinationType )
+        {
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {
+                ISession session = connection.CreateSession();
+                IDestination destination = CreateDestination(session, destinationType);
+                IMessageConsumer consumer = session.CreateConsumer(destination);
+        
+                // Send the messages
+                SendMessages(session, destination, deliveryMode, 1);
+        
+                // Make sure no messages were delivered.
+                Assert.IsNull(consumer.Receive(TimeSpan.FromMilliseconds(1000)));
+            }
+        }
+        
 #endif
 
 	}
