@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading;
 using NUnit.Framework;
 using NUnit.Framework.Extensions;
 
@@ -24,6 +25,28 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class ConnectionTest : NMSTestSupport
 	{
+        IConnection startedConnection = null;
+        IConnection stoppedConnection = null;
+        
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
+
+            startedConnection = CreateConnection(null);
+            startedConnection.Start();
+            stoppedConnection = CreateConnection(null);
+        }
+
+        [TearDown]
+        public override void TearDown()
+        {
+            startedConnection.Close();
+            stoppedConnection.Close();
+            
+            base.TearDown();            
+        }
+        
 		/// <summary>
 		/// Verify that it is possible to create multiple connections to the broker.
 		/// There was a bug in the connection factory which set the clientId member which made
@@ -88,5 +111,54 @@ namespace Apache.NMS.Test
 				}
 			}
 		}
+
+        /// <summary>
+        /// Tests if the consumer receives the messages that were sent before the
+        /// connection was started. 
+        /// </summary>
+        [Test]
+        public void TestStoppedConsumerHoldsMessagesTillStarted()
+        {
+            ISession startedSession = startedConnection.CreateSession(AcknowledgementMode.AutoAcknowledge);
+            ISession stoppedSession = stoppedConnection.CreateSession(AcknowledgementMode.AutoAcknowledge);
+    
+            // Setup the consumers.
+            ITopic topic = startedSession.GetTopic("ConnectionTestTopic");
+            IMessageConsumer startedConsumer = startedSession.CreateConsumer(topic);
+            IMessageConsumer stoppedConsumer = stoppedSession.CreateConsumer(topic);
+    
+            // Send the message.
+            IMessageProducer producer = startedSession.CreateProducer(topic);
+            ITextMessage message = startedSession.CreateTextMessage("Hello");
+            producer.Send(message);
+    
+            // Test the assertions.
+            IMessage m = startedConsumer.Receive(TimeSpan.FromMilliseconds(1000));
+            Assert.IsNotNull(m);
+    
+            m = stoppedConsumer.Receive(TimeSpan.FromMilliseconds(1000));
+            Assert.IsNull(m);
+    
+            stoppedConnection.Start();
+            m = stoppedConsumer.Receive(TimeSpan.FromMilliseconds(5000));
+            Assert.IsNotNull(m);
+    
+            startedSession.Close();
+            stoppedSession.Close();
+        }
+    
+        /// <summary>
+        /// Tests if the consumer is able to receive messages eveb when the
+        /// connecction restarts multiple times.
+        /// </summary>
+        [Test]
+        public void TestMultipleConnectionStops()
+        {
+            TestStoppedConsumerHoldsMessagesTillStarted();
+            stoppedConnection.Stop();
+            TestStoppedConsumerHoldsMessagesTillStarted();
+            stoppedConnection.Stop();
+            TestStoppedConsumerHoldsMessagesTillStarted();
+        }        
 	}
 }
