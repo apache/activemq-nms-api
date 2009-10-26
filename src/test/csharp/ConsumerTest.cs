@@ -126,6 +126,69 @@ namespace Apache.NMS.Test
 				}
 			}
 		}
+
+        internal class ThreadArg
+        {
+            internal IConnection connection = null;
+            internal ISession session = null;
+            internal IDestination destination = null;
+        }
+
+        protected void DelayedProducerThreadProc(Object arg)
+        {
+            try
+            {
+                ThreadArg args = arg as ThreadArg;
+
+                using(ISession session = args.connection.CreateSession())
+                {
+                    using(IMessageProducer producer = session.CreateProducer(args.destination))
+                    {
+                        // Give the consumer time to enter the receive.
+                        Thread.Sleep(5000);
+        
+                        producer.Send(args.session.CreateTextMessage("Hello World"));
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                // Some other exception occurred.
+                Assert.Fail("Test failed with exception: " + e.Message);
+            }
+        }
+        
+        [RowTest]
+        [Row(AcknowledgementMode.AutoAcknowledge)]
+        [Row(AcknowledgementMode.ClientAcknowledge)]
+        [Row(AcknowledgementMode.DupsOkAcknowledge)]
+        [Row(AcknowledgementMode.Transactional)]
+        public void TestConsumerReceiveBeforeMessageDispatched(AcknowledgementMode ackMode)
+        {
+            // Launch a thread to perform a delayed send.
+            Thread sendThread = new Thread(DelayedProducerThreadProc);
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {
+                connection.Start();
+                using(ISession session = connection.CreateSession(ackMode))
+                {
+                    ITemporaryQueue queue = session.CreateTemporaryQueue();
+                    using(IMessageConsumer consumer = session.CreateConsumer(queue))
+                    {
+                        ThreadArg arg = new ThreadArg();
+
+                        arg.connection = connection;
+                        arg.session = session;
+                        arg.destination = queue;
+                        
+                        sendThread.Start(arg);
+                        IMessage message = consumer.Receive(TimeSpan.FromMinutes(1));
+                        Assert.IsNotNull(message);
+                    }
+                }
+            }
+        }
+
 #endif
 
 	}
