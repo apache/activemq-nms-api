@@ -258,7 +258,104 @@ namespace Apache.NMS.Test
                 Assert.IsNull(consumer.ReceiveNoWait());
             }
         }
-            
+
+        [Test]
+        public void TestAckedMessageAreConsumed()
+        {
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {            
+                connection.Start();
+                ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
+                IQueue queue = session.GetQueue(Guid.NewGuid().ToString());
+                IMessageProducer producer = session.CreateProducer(queue);
+                producer.Send(session.CreateTextMessage("Hello"));
+        
+                // Consume the message...
+                IMessageConsumer consumer = session.CreateConsumer(queue);
+                IMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(msg);
+                msg.Acknowledge();
+        
+                // Reset the session.
+                session.Close();
+                session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
+        
+                // Attempt to Consume the message...
+                consumer = session.CreateConsumer(queue);
+                msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNull(msg);
+        
+                session.Close();
+            }
+        }
+
+        [Test]
+        public void TestLastMessageAcked()
+        {
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {            
+                connection.Start();
+                ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
+                IQueue queue = session.GetQueue(Guid.NewGuid().ToString());
+                IMessageProducer producer = session.CreateProducer(queue);
+                producer.Send(session.CreateTextMessage("Hello"));
+                producer.Send(session.CreateTextMessage("Hello2"));
+                producer.Send(session.CreateTextMessage("Hello3"));
+        
+                // Consume the message...
+                IMessageConsumer consumer = session.CreateConsumer(queue);
+                IMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(msg);
+                msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(msg);        
+                msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(msg);
+                msg.Acknowledge();
+        
+                // Reset the session.
+                session.Close();
+                session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
+        
+                // Attempt to Consume the message...
+                consumer = session.CreateConsumer(queue);
+                msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNull(msg);
+        
+                session.Close();
+            }
+        }
+
+        [Test]
+        public void TestUnAckedMessageAreNotConsumedOnSessionClose() 
+        {
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {            
+                connection.Start();
+                ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
+                IQueue queue = session.GetQueue(Guid.NewGuid().ToString());
+                IMessageProducer producer = session.CreateProducer(queue);
+                producer.Send(session.CreateTextMessage("Hello"));
+        
+                // Consume the message...
+                IMessageConsumer consumer = session.CreateConsumer(queue);
+                IMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(msg);        
+                // Don't ack the message.
+                
+                // Reset the session.  This should cause the unacknowledged message to be re-delivered.
+                session.Close();
+                session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
+                        
+                // Attempt to Consume the message...
+                consumer = session.CreateConsumer(queue);
+                msg = consumer.Receive(TimeSpan.FromMilliseconds(2000));
+                Assert.IsNotNull(msg);        
+                msg.Acknowledge();
+                
+                session.Close();
+            }
+        }
+
 #endif
 
 	}
