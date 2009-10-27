@@ -208,7 +208,57 @@ namespace Apache.NMS.Test
                 Assert.IsNull(consumer.Receive(TimeSpan.FromMilliseconds(1000)));
             }
         }
+
+        [RowTest]
+        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Queue)]        
+        [Row(MsgDeliveryMode.Persistent, DestinationType.Queue)]        
+        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Topic)]            
+        [Row(MsgDeliveryMode.Persistent, DestinationType.Topic)]            
+        [Row(MsgDeliveryMode.NonPersistent, DestinationType.TemporaryQueue)]        
+        [Row(MsgDeliveryMode.Persistent, DestinationType.TemporaryQueue)]        
+        [Row(MsgDeliveryMode.NonPersistent, DestinationType.TemporaryTopic)]            
+        [Row(MsgDeliveryMode.Persistent, DestinationType.TemporaryTopic)]            
+        public void TestSendReceiveTransacted(MsgDeliveryMode deliveryMode, DestinationType destinationType) 
+        {
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {
+                // Send a message to the broker.
+                connection.Start();
+                ISession session = connection.CreateSession(AcknowledgementMode.Transactional);
+                IDestination destination = CreateDestination(session, destinationType);
+                IMessageConsumer consumer = session.CreateConsumer(destination);
+                IMessageProducer producer = session.CreateProducer(destination);
+
+                producer.DeliveryMode = deliveryMode;
+                producer.Send(session.CreateTextMessage("Test"));
         
+                // Message should not be delivered until commit.
+                Thread.Sleep(1000);
+                Assert.IsNull(consumer.ReceiveNoWait());
+                session.Commit();
+        
+                // Make sure only 1 message was delivered.
+                IMessage message = consumer.Receive(TimeSpan.FromMilliseconds(1000));
+                Assert.IsNotNull(message);
+                Assert.IsFalse(message.NMSRedelivered);
+                Assert.IsNull(consumer.ReceiveNoWait());
+        
+                // Message should be redelivered is rollback is used.
+                session.Rollback();
+        
+                // Make sure only 1 message was delivered.
+                message = consumer.Receive(TimeSpan.FromMilliseconds(2000));
+                Assert.IsNotNull(message);
+                Assert.IsTrue(message.NMSRedelivered);
+                Assert.IsNull(consumer.ReceiveNoWait());
+        
+                // If we commit now, the message should not be redelivered.
+                session.Commit();
+                Thread.Sleep(1000);
+                Assert.IsNull(consumer.ReceiveNoWait());
+            }
+        }
+            
 #endif
 
 	}
