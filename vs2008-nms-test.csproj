@@ -102,6 +102,7 @@
     <Compile Include="src\test\csharp\PrimitiveMapTest.cs" />
     <Compile Include="src\test\csharp\StreamMessageTest.cs" />
     <Compile Include="src\test\csharp\TempDestinationDeletionTest.cs" />
+    <Compile Include="src\test\csharp\TempDestinationTest.cs" />
     <Compile Include="src\test\csharp\TextMessage.cs">
       <SubType>Code</SubType>
     </Compile>
