@@ -13,8 +13,11 @@ namespace Apache.NMS.Test
         [Test]
         public void Executes_redelivery_policy_with_backoff_enabled_correctly()
         {
-            RedeliveryPolicy policy = new RedeliveryPolicy
-                             {BackOffMultiplier = 2, InitialRedeliveryDelay = 5, UseExponentialBackOff = true};
+            RedeliveryPolicy policy = new RedeliveryPolicy();
+
+            policy.BackOffMultiplier = 2;
+            policy.InitialRedeliveryDelay = 5;
+            policy.UseExponentialBackOff = true;
 
             // simulate a retry of 10 times
             Assert.IsTrue(policy.RedeliveryDelay(0) == 5, "redelivery delay not 5 is " + policy.RedeliveryDelay(0));
@@ -32,7 +35,11 @@ namespace Apache.NMS.Test
         [Test]
         public void Executes_redelivery_policy_with_backoff_of_3_enabled_correctly()
         {
-            RedeliveryPolicy policy = new RedeliveryPolicy { BackOffMultiplier = 3, InitialRedeliveryDelay = 3, UseExponentialBackOff = true };
+            RedeliveryPolicy policy = new RedeliveryPolicy();
+
+            policy.BackOffMultiplier = 3;
+            policy.InitialRedeliveryDelay = 3;
+            policy.UseExponentialBackOff = true;
 
             // simulate a retry of 10 times
             Assert.IsTrue(policy.RedeliveryDelay(0) == 3, "redelivery delay not 5 is " + policy.RedeliveryDelay(0));
@@ -50,7 +57,9 @@ namespace Apache.NMS.Test
         [Test]
         public void Executes_redelivery_policy_without_backoff_enabled_correctly()
         {
-            RedeliveryPolicy policy = new RedeliveryPolicy { InitialRedeliveryDelay = 5 };
+            RedeliveryPolicy policy = new RedeliveryPolicy();
+
+            policy.InitialRedeliveryDelay = 5;
 
             // simulate a retry of 10 times
             Assert.IsTrue(policy.RedeliveryDelay(0) == 5, "redelivery delay not 5 is " + policy.RedeliveryDelay(0));
@@ -78,7 +87,13 @@ namespace Apache.NMS.Test
         [Test]
         public void Executes_redelivery_policy_with_collision_enabled_correctly()
         {
-            RedeliveryPolicy policy = new RedeliveryPolicy { BackOffMultiplier = 2, InitialRedeliveryDelay = 5, UseExponentialBackOff = true, UseCollisionAvoidance = true, CollisionAvoidancePercent = 10 };
+            RedeliveryPolicy policy = new RedeliveryPolicy();
+
+            policy.BackOffMultiplier = 2;
+            policy.InitialRedeliveryDelay = 5;
+            policy.UseExponentialBackOff = true;
+            policy.UseCollisionAvoidance = true;
+            policy.CollisionAvoidancePercent = 10;
 
             // simulate a retry of 10 times
             var delay = policy.RedeliveryDelay(0);
