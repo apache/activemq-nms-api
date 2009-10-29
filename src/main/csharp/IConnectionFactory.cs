@@ -38,5 +38,11 @@ namespace Apache.NMS
 		/// Get/or set the broker Uri.
 		/// </summary>
 		Uri BrokerUri { get; set; }
+
+        /// <summary>
+        /// Get/or set the redelivery policy that new IConnection objects are
+        /// assigned upon creation.
+        /// </summary>
+        IRedeliveryPolicy RedeliveryPolicy{ get; set; }
 	}
 }

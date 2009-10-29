@@ -344,5 +344,16 @@ namespace Apache.NMS
 		{
 			get { return factory; }
 		}
+
+        /// <summary>
+        /// Get/or Set the IRedeliveryPolicy instance using the IConnectionFactory implementation
+        /// that is being used.
+        /// </summary>
+        public IRedeliveryPolicy RedeliveryPolicy
+        {
+            get { return this.factory.RedeliveryPolicy; }
+            set { this.factory.RedeliveryPolicy = value; }
+        }
+        
 	}
 }
