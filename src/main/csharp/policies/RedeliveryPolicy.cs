@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-﻿using System;
+using System;
 
 namespace Apache.NMS.Policies
 {
@@ -78,7 +78,7 @@ namespace Apache.NMS.Policies
             if(UseCollisionAvoidance)
             {
                 Random random = RandomNumberGenerator;
-                double variance = (NextBool ? collisionAvoidanceFactor : collisionAvoidanceFactor *= -1)*random.NextDouble();
+                double variance = (NextBool ? collisionAvoidanceFactor : collisionAvoidanceFactor *= -1) * random.NextDouble();
                 delay += Convert.ToInt32(Convert.ToDouble(delay) * variance);
             }
 
