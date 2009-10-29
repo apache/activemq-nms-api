@@ -27,14 +27,14 @@ namespace Apache.NMS.Policies
     public class RedeliveryPolicy : IRedeliveryPolicy
     {
         private static readonly object syncObject = new object();
-        
+
         private double collisionAvoidanceFactor = .15;
         private int initialRedeliveryDelay = 1000;
         private int maximumRedeliveries = 6;
         private int backOffMultiplier = 5;
         private bool useCollisionAvoidance = false;
         private bool useExponentialBackOff = false;
-        
+
         private static Random randomNumberGenerator;
         private static bool nextBool = false;
 
@@ -67,10 +67,10 @@ namespace Apache.NMS.Policies
         public int RedeliveryDelay(int redeliveredCounter)
         {
             int delay = 0;
-            
+
             if(UseExponentialBackOff && BackOffMultiplier > 1)
             {
-                delay = Convert.ToInt32(initialRedeliveryDelay * (Math.Pow(BackOffMultiplier, redeliveredCounter)));    
+                delay = Convert.ToInt32(initialRedeliveryDelay * (Math.Pow(BackOffMultiplier, redeliveredCounter)));
             }
             else
             {
@@ -80,7 +80,7 @@ namespace Apache.NMS.Policies
             if(UseCollisionAvoidance)
             {
                 Random random = RandomNumberGenerator;
-                var variance = (NextBool ? collisionAvoidanceFactor : collisionAvoidanceFactor *= -1)*random.NextDouble();
+                double variance = (NextBool ? collisionAvoidanceFactor : collisionAvoidanceFactor *= -1)*random.NextDouble();
                 delay += Convert.ToInt32(Convert.ToDouble(delay) * variance);
             }
 
@@ -92,7 +92,7 @@ namespace Apache.NMS.Policies
             get { return this.useExponentialBackOff; }
             set { this.useExponentialBackOff = value; }
         }
-       
+
         public int BackOffMultiplier
         {
             get { return backOffMultiplier; }
@@ -151,6 +151,6 @@ namespace Apache.NMS.Policies
             // this method is an override.
             return this.MemberwiseClone();
         }
-        
+
     }
 }
