@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Apache.NMS;
 using Apache.NMS.Policies;
@@ -73,7 +72,7 @@ namespace Apache.NMS.Test
 
             policy.CollisionAvoidancePercent = 45;
 
-            Assert.IsTrue(policy.CollisionAvoidancePercent == 45);            
+            Assert.IsTrue(policy.CollisionAvoidancePercent == 45);
         }
 
         [Test]
