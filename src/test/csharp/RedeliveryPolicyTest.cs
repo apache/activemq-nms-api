@@ -96,7 +96,7 @@ namespace Apache.NMS.Test
             policy.CollisionAvoidancePercent = 10;
 
             // simulate a retry of 10 times
-            var delay = policy.RedeliveryDelay(0);
+            int delay = policy.RedeliveryDelay(0);
             Assert.IsTrue(delay >= 4.5 && delay <= 5.5, "not delay >= 4.5 && delay <= 5.5 is " + policy.RedeliveryDelay(0));
             delay = policy.RedeliveryDelay(1);
             Assert.IsTrue(delay >= 9 && delay <= 11, "not delay >= 9 && delay <= 11 is " + policy.RedeliveryDelay(1));
