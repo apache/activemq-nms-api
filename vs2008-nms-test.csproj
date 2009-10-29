@@ -100,6 +100,7 @@
     <Compile Include="src\test\csharp\MessageSelectorTest.cs" />
     <Compile Include="src\test\csharp\NmsTracer.cs" />
     <Compile Include="src\test\csharp\PrimitiveMapTest.cs" />
+    <Compile Include="src\test\csharp\RedeliveryPolicyTest.cs" />
     <Compile Include="src\test\csharp\StreamMessageTest.cs" />
     <Compile Include="src\test\csharp\TempDestinationDeletionTest.cs" />
     <Compile Include="src\test\csharp\TempDestinationTest.cs" />

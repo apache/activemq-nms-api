@@ -64,6 +64,7 @@
     <Compile Include="src\main\csharp\IPrimitiveMap.cs" />
     <Compile Include="src\main\csharp\IQueue.cs" />
     <Compile Include="src\main\csharp\IQueueBrowser.cs" />
+    <Compile Include="src\main\csharp\IRedeliveryPolicy.cs" />
     <Compile Include="src\main\csharp\ISession.cs" />
     <Compile Include="src\main\csharp\IStartable.cs" />
     <Compile Include="src\main\csharp\IStoppable.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="src\main\csharp\NMSException.cs" />
     <Compile Include="src\main\csharp\NMSConnectionFactory.cs" />
     <Compile Include="src\main\csharp\NMSSecurityException.cs" />
+    <Compile Include="src\main\csharp\policies\RedeliveryPolicy.cs" />
     <Compile Include="src\main\csharp\ResourceAllocationException.cs" />
     <Compile Include="src\main\csharp\Tracer.cs" />
     <Compile Include="src\main\csharp\TransactionInProgressException.cs" />
