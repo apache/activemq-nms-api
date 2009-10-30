@@ -419,7 +419,15 @@ namespace Apache.NMS.Test
 
         public IDestination CreateDestination(ISession session, DestinationType type)
         {
-            string name = "TEST." + this.GetType().Name + "." + Guid.NewGuid();
+            return CreateDestination(session, type, "");
+        }
+        
+        public IDestination CreateDestination(ISession session, DestinationType type, string name)
+        {
+            if(name == "")
+            {
+                name = "TEST." + this.GetType().Name + "." + Guid.NewGuid();
+            }
 
             switch(type)
             {
@@ -433,6 +441,67 @@ namespace Apache.NMS.Test
                 return session.CreateTemporaryTopic();
             default:
                 throw new ArgumentException("type: " + type);
+            }
+        }
+
+        protected void AssertTextMessagesEqual(IMessage[] firstSet, IMessage[] secondSet) 
+        {
+            AssertTextMessagesEqual(firstSet, secondSet, "");
+        }
+    
+        protected void AssertTextMessagesEqual(IMessage[] firstSet, IMessage[] secondSet, string messsage) 
+        {
+            Assert.AreEqual(firstSet.Length, secondSet.Length, "Message count does not match: " + messsage);
+    
+            for(int i = 0; i < secondSet.Length; i++)
+            {
+                ITextMessage m1 = firstSet[i] as ITextMessage;
+                ITextMessage m2 = secondSet[i] as ITextMessage;
+                
+                AssertTextMessageEqual(m1, m2, "Message " + (i + 1) + " did not match : ");
+            }
+        }
+    
+        protected void AssertEquals(ITextMessage m1, ITextMessage m2) 
+        {
+            AssertEquals(m1, m2, "");
+        }
+    
+        protected void AssertTextMessageEqual(ITextMessage m1, ITextMessage m2, string message) 
+        {
+            Assert.IsFalse(m1 == null ^ m2 == null, message + ": expected {" + m1 + "}, but was {" + m2 + "}");
+    
+            if(m1 == null) 
+            {
+                return;
+            }
+    
+            Assert.AreEqual(m1.Text, m2.Text, message);
+        }
+    
+        protected void AssertEquals(IMessage m1, IMessage m2)
+        {
+            AssertEquals(m1, m2, "");
+        }
+    
+        protected void AssertEquals(IMessage m1, IMessage m2, string message)
+        {
+            Assert.IsFalse(m1 == null ^ m2 == null, message + ": expected {" + m1 + "}, but was {" + m2 + "}");
+    
+            if(m1 == null)
+            {
+                return;
+            }
+    
+            Assert.IsTrue(m1.GetType() == m2.GetType(), message + ": expected {" + m1 + "}, but was {" + m2 + "}");
+    
+            if(m1 is ITextMessage) 
+            {
+                AssertTextMessageEqual((ITextMessage)m1, (ITextMessage)m2, message);
+            } 
+            else
+            {
+                Assert.AreEqual(m1, m2, message);
             }
         }
     }
