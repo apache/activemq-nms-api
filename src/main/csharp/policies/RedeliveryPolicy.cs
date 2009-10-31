@@ -65,10 +65,16 @@ namespace Apache.NMS.Policies
         public int RedeliveryDelay(int redeliveredCounter)
         {
             int delay = 0;
+            
+            if(redeliveredCounter == 0)
+            {
+                // The first time through there is no delay, the Rollback should be immediate.
+                return 0;
+            }
 
             if(UseExponentialBackOff && BackOffMultiplier > 1)
             {
-                delay = Convert.ToInt32(initialRedeliveryDelay * (Math.Pow(BackOffMultiplier, redeliveredCounter)));
+                delay = initialRedeliveryDelay * Convert.ToInt32(Math.Pow(BackOffMultiplier, redeliveredCounter - 1));
             }
             else
             {
