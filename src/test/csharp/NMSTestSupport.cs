@@ -96,6 +96,47 @@ namespace Apache.NMS.Test
         }
 
         /// <summary>
+        /// Return the configured URI String.  This function loads the connection 
+        /// settings from the configuration file.
+        /// </summary>
+        /// <returns></returns>
+        protected string GetConfiguredConnectionURI()
+        {
+            Uri brokerUri = null;
+            string[] paths = GetConfigSearchPaths();
+            string connectionConfigFileName = GetConnectionConfigFileName();
+            bool configFound = false;
+
+            foreach(string path in paths)
+            {
+                string fullpath = Path.Combine(path, connectionConfigFileName);
+                Tracer.Debug("\tScanning folder: " + path);
+
+                if(File.Exists(fullpath))
+                {
+                    Tracer.Debug("\tAssembly found!");
+                    connectionConfigFileName = fullpath;
+                    configFound = true;
+                    break;
+                }
+            }
+
+            Assert.IsTrue(configFound, "Connection configuration file does not exist.");
+            XmlDocument configDoc = new XmlDocument();
+
+            configDoc.Load(connectionConfigFileName);
+            XmlElement uriNode = (XmlElement) configDoc.SelectSingleNode(String.Format("/configuration/{0}", GetNameTestURI()));
+
+            if(null != uriNode)
+            {
+                // Replace any environment variables embedded inside the string.
+                brokerUri = new Uri(ReplaceEnvVar(uriNode.GetAttribute("value")));
+            }
+
+			return brokerUri.ToString();
+        }
+		
+        /// <summary>
         /// Create the NMS Factory that can create NMS Connections.  This function loads the
         /// connection settings from the configuration file.
         /// </summary>
