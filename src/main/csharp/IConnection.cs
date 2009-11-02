@@ -139,7 +139,12 @@ namespace Apache.NMS
         /// </summary>
         string ClientId { get; set; }
 
-        /// <summary>
+		/// <summary>
+		/// Get/or set the redelivery policy for this connection.
+		/// </summary>
+		IRedeliveryPolicy RedeliveryPolicy { get; set; }
+		
+		/// <summary>
         /// Gets the Meta Data for the NMS Connection instance.
         /// </summary>
         IConnectionMetaData MetaData{ get; }
