@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading;
 using NUnit.Framework;
 using NUnit.Framework.Extensions;
 using Apache.NMS.Util;
@@ -31,6 +32,66 @@ namespace Apache.NMS.Test
 		protected static string CONSUMER_ID = "TestDurableConsumerConsumerId";
 		protected static string DURABLE_SELECTOR = "2 > 1";
 
+		[RowTest]
+		[Row(AcknowledgementMode.AutoAcknowledge)]
+		[Row(AcknowledgementMode.ClientAcknowledge)]
+		[Row(AcknowledgementMode.DupsOkAcknowledge)]
+		[Row(AcknowledgementMode.Transactional)]
+		public void TestSendWhileClosed(AcknowledgementMode ackMode)
+		{
+			try
+			{				
+		        using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+				{
+			        connection.Start();
+					
+					using(ISession session = connection.CreateSession(ackMode))
+					{
+						ITopic topic = session.GetTopic(DURABLE_TOPIC);
+						IMessageProducer producer = session.CreateProducer(topic);
+
+						producer.DeliveryMode = MsgDeliveryMode.Persistent;
+										
+				        ISession consumeSession = connection.CreateSession(ackMode);
+				        IMessageConsumer consumer = consumeSession.CreateDurableConsumer(topic, CONSUMER_ID, null, false);
+				        Thread.Sleep(1000);
+				        consumer.Dispose();
+						consumer = null;
+				        
+						ITextMessage message = session.CreateTextMessage("DurableTest-TestSendWhileClosed");
+				        message.Properties.SetString("test", "test");
+				        message.NMSType = "test";
+				        producer.Send(message);
+						if(AcknowledgementMode.Transactional == ackMode)
+						{
+							session.Commit();
+						}
+										        
+						consumer = consumeSession.CreateDurableConsumer(topic, CONSUMER_ID, null, false);
+				        ITextMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(1000)) as ITextMessage;
+						msg.Acknowledge();
+						if(AcknowledgementMode.Transactional == ackMode)
+						{
+							consumeSession.Commit();
+						}
+						
+						Assert.IsNotNull(msg);
+				        Assert.AreEqual(msg.Text, "DurableTest-TestSendWhileClosed");
+				        Assert.AreEqual(msg.NMSType, "test");
+				        Assert.AreEqual(msg.Properties.GetString("test"), "test");
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				Assert.Fail(ex.Message);
+			}
+			finally
+			{
+				UnregisterDurableConsumer(TEST_CLIENT_ID, CONSUMER_ID);
+			}			
+	    }		
+		
 		[RowTest]
 		[Row(AcknowledgementMode.AutoAcknowledge)]
 		[Row(AcknowledgementMode.ClientAcknowledge)]
