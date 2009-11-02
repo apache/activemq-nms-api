@@ -28,6 +28,8 @@ namespace Apache.NMS.Test
 	public class ConsumerTest : NMSTestSupport
 	{
 		protected static string TEST_CLIENT_ID = "TestConsumerClientId";
+		protected const int COUNT = 25;
+        protected const string VALUE_NAME = "value";
 
         private bool dontAck;
 
@@ -161,6 +163,59 @@ namespace Apache.NMS.Test
             }
         }
         
+        [RowTest]
+        [Row(AcknowledgementMode.AutoAcknowledge)]
+        [Row(AcknowledgementMode.ClientAcknowledge)]
+        [Row(AcknowledgementMode.DupsOkAcknowledge)]
+        [Row(AcknowledgementMode.Transactional)]
+        public void TestDoChangeSentMessage(AcknowledgementMode ackMode)
+        {
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {
+                connection.Start();
+                using(ISession session = connection.CreateSession(ackMode))
+                {
+                    ITemporaryQueue queue = session.CreateTemporaryQueue();
+                    using(IMessageConsumer consumer = session.CreateConsumer(queue))
+                    {
+						IMessageProducer producer = session.CreateProducer(queue);
+						ITextMessage message = session.CreateTextMessage();
+						
+						string prefix = "ConsumerTest - TestDoChangeSentMessage: ";
+						
+				        for(int i = 0; i < COUNT; i++) 
+						{
+							message.Properties[VALUE_NAME] = i;
+							message.Text = prefix + Convert.ToString(i);
+				            
+							producer.Send(message);	
+							
+							message.ClearBody();
+							message.ClearProperties();
+				        }
+						
+						if(ackMode == AcknowledgementMode.Transactional)
+						{
+							session.Commit();
+						}
+						
+				        for(int i = 0; i < COUNT; i++)
+						{
+				            ITextMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(2000)) as ITextMessage;
+							Assert.AreEqual(msg.Text, prefix + Convert.ToString(i));
+							Assert.AreEqual(msg.Properties[VALUE_NAME], i);
+				        }
+						
+						if(ackMode == AcknowledgementMode.Transactional)
+						{
+							session.Commit();
+						}
+						
+                    }
+                }
+            }
+        }
+		
         [RowTest]
         [Row(AcknowledgementMode.AutoAcknowledge)]
         [Row(AcknowledgementMode.ClientAcknowledge)]
