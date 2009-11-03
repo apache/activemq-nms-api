@@ -80,7 +80,7 @@
 		</fileset>
 	</target>
 
-	<target name="default" depends="download-vendor-all, install-all" />
+	<target name="default" depends="install-all" />
 
 	<!-- Load the common target definitions  -->
 	<include buildfile="${basedir}/nant-common.xml" />

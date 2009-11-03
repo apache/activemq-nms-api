@@ -44,12 +44,7 @@
 	<property name="build.framework.strings" value="net-2.0,net-3.5,mono-2.0,netcf-2.0" unless="${property::exists('build.framework.strings')}"/>
 	<property name="current.build.framework.assembly.dir" value="${framework::get-assembly-directory(framework::get-target-framework())}" dynamic="true" />
 
-	<if test="${build.skip.release}">
-		<property name="build.config.strings" value="debug" />
-	</if>
-	<if test="${not(build.skip.release)}">
-		<property name="build.config.strings" value="debug,release" />
-	</if>
+	<property name="build.config.strings"    value="${if(property::exists('configuration'), configuration, if(build.skip.release == 'true', 'debug', 'debug,release'))}" dynamic="true" />
 
 	<!-- Figure out the user's HOME directory -->
 	<property name="user.home" value="${environment::get-variable('HOME')}"
@@ -279,7 +274,7 @@
 		<call target="compile" />
 	</target>
 
-	<target name="compile" description="Compile everything">
+	<target name="compile" depends="download-vendor" description="Compile everything">
 		<call target="compile-main" cascade="false" />
 		<call target="compile-test" cascade="false" />
 	</target>
@@ -396,8 +391,8 @@
 
 	<target name="download-vendor-all" description="Download vendor files for all runtime configurations">
 		<echo message="Downloading vendor files for all runtime configurations." />
-		<property name="vendor.build.config" value="release" />
-		<foreach item="String" in="${build.framework.strings}" delim="," property="vendor.build.framework">
+		<property name="current.build.config" value="release" />
+		<foreach item="String" in="${build.framework.strings}" delim="," property="current.build.framework">
 			<call target="download-vendor" />
 		</foreach>
 	</target>
@@ -413,9 +408,8 @@
 			<property name="vendor.group" value="${property::get-value(current.vendor + '.group')}" />
 			<property name="vendor.version" value="${property::get-value(current.vendor + '.version')}" />
 			<property name="vendor.filenames" value="${property::get-value(current.vendor + '.filenames')}" />
-			<property name="local.repo.vendor.path" value="${nant.local.repo}/${vendor.group}/${vendor.name}/${vendor.version}/${vendor.build.framework}/${vendor.build.config}" />
-			<property name="vendor.path" value="vendor/${vendor.name}/${vendor.build.framework}" />
-			<property name="lib.path" value="lib/${vendor.name}/${vendor.build.framework}" />
+			<property name="local.repo.vendor.path" value="${nant.local.repo}/${vendor.group}/${vendor.name}/${vendor.version}/${current.build.framework}/${current.build.config}" />
+			<property name="lib.path" value="lib/${vendor.name}/${current.build.framework}" />
 			<!--
 			Update the LIB folder with the latest version of the file.  By default, the file from the
 			VENDOR folder will be used.  However, if there is a newer version installed in the local
@@ -424,12 +418,8 @@
 			<foreach item="String" in="${vendor.filenames}" delim="," property="repo.task.artifact">
 				<property name="lib.task.dest" value="${lib.path}/${repo.task.artifact}" />
 				<mkdir dir="${directory::get-parent-directory(lib.task.dest)}" />
-				<property name="vendor.task.src" value="${vendor.path}/${repo.task.artifact}" />
 				<property name="repo.task.src" value="${local.repo.vendor.path}/${repo.task.artifact}" />
 				<copy file="${repo.task.src}" tofile="${lib.task.dest}" if="${file::exists(repo.task.src)}" />
-				<if test="${not file::exists(repo.task.src)}">
-					<copy file="${vendor.task.src}" tofile="${lib.task.dest}" if="${file::exists(vendor.task.src)}" />
-				</if>
 			</foreach>
 		</foreach>
 	</target>
