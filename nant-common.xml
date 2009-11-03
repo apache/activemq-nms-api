@@ -423,47 +423,6 @@
 	</target>
 
 	<!-- ============================================================================================ -->
-	<!--      D E P L O Y     T A R G E T S                                                           -->
-	<!-- ============================================================================================ -->
-
-	<target name="deploy-all" depends="generate-build-number" description="Deploy all build configurations for all runtime configurations">
-		<echo message="Deploying release configurations for all runtime configurations." />
-		<call target="set-release-configuration" />
-		<foreach item="String" in="${build.framework.strings}" delim="," property="current.build.framework">
-			<call target="deploy-target" />
-		</foreach>
-
-		<!-- Commit the deployed files to repository.  This completes the deployment. -->
-		<exec program="svn" failonerror="false">
-			<arg value="commit" />
-			<arg value="deploy" />
-			<arg value="-m" />
-			<arg value="Deploy ${project.name} ${project.version.numeric}" />
-		</exec>
-	</target>
-
-	<target name="deploy-target" depends="init, conditional-deploy" />
-
-	<target name="conditional-deploy" depends="init" unless="${build.skip}"
-				description="Conditionaly deploy all the modules if build framework and type are supported">
-		<call target="deploy" />
-	</target>
-
-	<!-- Deploy the modules to the global repo -->
-	<target name="deploy" description="Deploy the artifacts into the subversion repo">
-		<property name="repo.dir" value="deploy/${current.build.framework}" />
-		<foreach item="File" property="deploy.filename">
-			<in>
-				<items refid="deploy.filenames" />
-			</in>
-			<do>
-				<property name="repo.task.dest" value="${path::get-file-name(deploy.filename)}" />
-				<copy file="${deploy.filename}" todir="${repo.dir}" unless="${file::up-to-date(deploy.filename, '${repo.dir}/${repo.task.dest}')}" />
-			</do>
-		</foreach>
-	</target>
-
-	<!-- ============================================================================================ -->
 	<!--      T E S T     T A R G E T S                                                               -->
 	<!-- ============================================================================================ -->
 
