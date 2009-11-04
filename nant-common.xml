@@ -411,12 +411,11 @@
 			<property name="local.repo.vendor.path" value="${nant.local.repo}/${vendor.group}/${vendor.name}/${vendor.version}/${current.build.framework}/${current.build.config}" />
 			<property name="lib.path" value="lib/${vendor.name}/${current.build.framework}" />
 			<!--
-			Update the LIB folder with the latest version of the file.  By default, the file from the
-			VENDOR folder will be used.  However, if there is a newer version installed in the local
-			repository, then that version will be copied into the LIB folder.
+			Update the LIB folder with the latest version of the file.  If there is a newer version
+			installed in the local repository, then that version will be copied into the LIB folder.
 			-->
 			<if test="${not directory::exists(local.repo.vendor.path)}">
-				<echo message="${lib.task.dest} assembly for ${current.build.framework.name} is not available. Build skipped." />
+				<echo message="Required dependent assemblies from ${vendor.name} for ${current.build.framework.name} are not available. Build skipped." />
 				<property name="build.skip" value="true" />
 			</if>
 
