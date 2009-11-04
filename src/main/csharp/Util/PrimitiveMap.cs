@@ -294,6 +294,24 @@ namespace Apache.NMS.Util
 			return answer;
 		}
 
+		/// <summary>
+		/// Unmarshals a PrimitiveMap directly from a Stream object.  This 
+		/// allows for clients to read PrimitiveMaps from Compressed or other
+		/// wise encoded streams without this class needing to know about it.
+		/// </summary>
+		/// <param name="source">
+		/// A <see cref="Stream"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="PrimitiveMap"/>
+		/// </returns>
+		public static PrimitiveMap Unmarshal(Stream source)
+		{
+			PrimitiveMap answer = new PrimitiveMap();
+			answer.dictionary = UnmarshalPrimitiveMap(source);
+			return answer;
+		}
+
 		public byte[] Marshal()
 		{
 			lock(dictionary.SyncRoot)
@@ -302,6 +320,23 @@ namespace Apache.NMS.Util
 			}
 		}
 
+		/// <summary>
+		/// Marshals a PrimitiveMap directly to a Stream object.  This
+		/// allows a client to write a PrimitiveMap in a compressed or 
+		/// otherwise encoded form without this class needing to know 
+		/// about it.
+		/// </summary>
+		/// <param name="destination">
+		/// A <see cref="Stream"/>
+		/// </param>
+		public void Marshal(Stream destination)
+		{
+			lock(dictionary.SyncRoot)
+			{
+				MarshalPrimitiveMap(dictionary, destination);
+			}
+		}
+				
 		/// <summary>
 		/// Marshals the primitive type map to a byte array
 		/// </summary>
@@ -321,6 +356,17 @@ namespace Apache.NMS.Util
 			return memoryStream.GetBuffer();
 		}
 
+		public static void MarshalPrimitiveMap(IDictionary map, Stream stream)
+		{
+			if(map != null)
+			{
+				lock(map.SyncRoot)
+				{
+					MarshalPrimitiveMap(map, new EndianBinaryWriter(stream));
+				}
+			}
+		}		
+		
 		public static void MarshalPrimitiveMap(IDictionary map, BinaryWriter dataOut)
 		{
 			if(map == null)
@@ -357,6 +403,11 @@ namespace Apache.NMS.Util
 				return UnmarshalPrimitiveMap(new EndianBinaryReader(new MemoryStream(data)));
 			}
 		}
+		
+		public static IDictionary UnmarshalPrimitiveMap(Stream source)
+		{
+			return UnmarshalPrimitiveMap(new EndianBinaryReader(source));
+		}		
 
 		public static IDictionary UnmarshalPrimitiveMap(BinaryReader dataIn)
 		{
