@@ -133,6 +133,7 @@ namespace Apache.NMS.Test
 		protected void AssertBytesMessageEqual(IMessage expected, IMessage actual)
 		{
 			IBytesMessage expectedBytesMsg = expected as IBytesMessage;
+			expectedBytesMsg.Reset();
 			Assert.IsNotNull(expectedBytesMsg, "'expected' message not a bytes message");
 			IBytesMessage actualBytesMsg = actual as IBytesMessage;
 			Assert.IsNotNull(actualBytesMsg, "'actual' message not a bytes message");
