@@ -414,16 +414,15 @@
 			Update the LIB folder with the latest version of the file.  If there is a newer version
 			installed in the local repository, then that version will be copied into the LIB folder.
 			-->
-			<if test="${not directory::exists(local.repo.vendor.path)}">
-				<echo message="Required dependent assemblies from ${vendor.name} for ${current.build.framework.name} are not available. Build skipped." />
-				<property name="build.skip" value="true" />
-			</if>
-
 			<foreach item="String" in="${vendor.filenames}" delim="," property="repo.task.artifact">
 				<property name="lib.task.dest" value="${lib.path}/${repo.task.artifact}" />
 				<mkdir dir="${directory::get-parent-directory(lib.task.dest)}" />
 				<property name="repo.task.src" value="${local.repo.vendor.path}/${repo.task.artifact}" />
 				<copy file="${repo.task.src}" tofile="${lib.task.dest}" if="${file::exists(repo.task.src)}" />
+				<if test="${not file::exists(lib.task.dest)}">
+					<echo message="Required dependent assembly ${repo.task.artifact} from ${vendor.name} for ${current.build.framework.name} is not available. Build skipped." />
+					<property name="build.skip" value="true" />
+				</if>
 			</foreach>
 		</foreach>
 	</target>
@@ -473,7 +472,6 @@
 		</if>
 		<delete dir="build" if="${directory::exists('build')}" />
 		<delete dir="obj" if="${directory::exists('obj')}" />
-		<delete dir="lib" if="${directory::exists('lib')}" />
 		<delete dir="package" if="${directory::exists('package')}" />
 	</target>
 
