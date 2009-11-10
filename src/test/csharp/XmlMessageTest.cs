@@ -71,6 +71,61 @@ namespace Apache.NMS.Test
 		protected static string DESTINATION_NAME = "XmlMessageDestination";
 		protected static string TEST_CLIENT_ID = "XmlMessageClientId";
 
+#if NET_3_5 || MONO
+		[Test]
+		public void SendReceiveXmlMessage()
+		{
+			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			{
+				connection.Start();
+				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+				{
+					IDestination destination = session.GetDestination(DESTINATION_NAME);
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					using(IMessageProducer producer = session.CreateProducer(destination))
+					{
+						producer.RequestTimeout = receiveTimeout;
+
+						NMSTestXmlType1 srcIntObject = new NMSTestXmlType1();
+						srcIntObject.crcCheck = 0xbadf00d;
+						srcIntObject.checkType = CheckType.command;
+						producer.Send(srcIntObject);
+
+						NMSTestXmlType2 srcStringObject = new NMSTestXmlType2();
+						srcStringObject.stringCheck = "BadFood";
+						producer.Send(srcStringObject);
+
+						// Demonstrate the ability to generically handle multiple object types
+						// sent to the same consumer.  If only one object type is ever sent to
+						// the destination, then a simple inline cast is all that is necessary
+						// when calling the NMSConvert.FromXmlMessage() function.
+
+						for(int index = 0; index < 2; index++)
+						{
+							object receivedObject = consumer.Receive(receiveTimeout).ToObject();
+							Assert.IsNotNull(receivedObject, "Failed to retrieve XML message object.");
+
+							if(receivedObject is NMSTestXmlType1)
+							{
+								NMSTestXmlType1 destObject = (NMSTestXmlType1) receivedObject;
+								Assert.AreEqual(srcIntObject.crcCheck, destObject.crcCheck, "CRC integer mis-match.");
+								Assert.AreEqual(srcIntObject.checkType, destObject.checkType, "Check type mis-match.");
+							}
+							else if(receivedObject is NMSTestXmlType2)
+							{
+								NMSTestXmlType2 destObject = (NMSTestXmlType2) receivedObject;
+								Assert.AreEqual(srcStringObject.stringCheck, destObject.stringCheck, "CRC string mis-match.");
+							}
+							else
+							{
+								Assert.Fail("Invalid object type.");
+							}
+						}
+					}
+				}
+			}
+		}
+#else
 		[Test]
 		public void SendReceiveXmlMessage()
 		{
@@ -124,5 +179,6 @@ namespace Apache.NMS.Test
 				}
 			}
 		}
+#endif
 	}
 }

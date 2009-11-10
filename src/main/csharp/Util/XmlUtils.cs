@@ -30,7 +30,7 @@ namespace Apache.NMS.Util
 	{
 		public static string Serialize(object obj)
 		{
-			return Serialize(obj, Encoding.UTF8);
+			return Serialize(obj, Encoding.Unicode);
 		}
 
 		public static string Serialize(object obj, Encoding encoding)

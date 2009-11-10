@@ -14,116 +14,167 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Reflection;
+using System.Text;
 
 namespace Apache.NMS.Util
 {
-    public class NMSConvert
-    {
-        /// <summary>
-        /// Convert the acknowledgment mode string into AcknowledgementMode enum.
-        /// </summary>
-        /// <param name="ackText"></param>
-        /// <returns>Equivalent enum value.  If unknown string is encounted, it will default to AutoAcknowledge.</returns>
-        public static AcknowledgementMode ToAcknowledgementMode(string ackText)
-        {
-            if(String.Compare(ackText, "AutoAcknowledge", true) == 0)
-            {
-                return AcknowledgementMode.AutoAcknowledge;
-            }
-            else if(String.Compare(ackText, "ClientAcknowledge", true) == 0)
-            {
-                return AcknowledgementMode.ClientAcknowledge;
-            }
-            else if(String.Compare(ackText, "IndividualAcknowledge", true) == 0)
-            {
-                return AcknowledgementMode.IndividualAcknowledge;
-            }
-            else if(String.Compare(ackText, "DupsOkAcknowledge", true) == 0)
-            {
-                return AcknowledgementMode.DupsOkAcknowledge;
-            }
-            else if(String.Compare(ackText, "Transactional", true) == 0)
-            {
-                return AcknowledgementMode.Transactional;
-            }
-            else
-            {
-                return AcknowledgementMode.AutoAcknowledge;
-            }
-        }
+	public class NMSConvert
+	{
+		/// <summary>
+		/// Convert the acknowledgment mode string into AcknowledgementMode enum.
+		/// </summary>
+		/// <param name="ackText"></param>
+		/// <returns>Equivalent enum value.  If unknown string is encounted, it will default to AutoAcknowledge.</returns>
+		public static AcknowledgementMode ToAcknowledgementMode(string ackText)
+		{
+			if(String.Compare(ackText, "AutoAcknowledge", true) == 0)
+			{
+				return AcknowledgementMode.AutoAcknowledge;
+			}
+			else if(String.Compare(ackText, "ClientAcknowledge", true) == 0)
+			{
+				return AcknowledgementMode.ClientAcknowledge;
+			}
+			else if(String.Compare(ackText, "IndividualAcknowledge", true) == 0)
+			{
+				return AcknowledgementMode.IndividualAcknowledge;
+			}
+			else if(String.Compare(ackText, "DupsOkAcknowledge", true) == 0)
+			{
+				return AcknowledgementMode.DupsOkAcknowledge;
+			}
+			else if(String.Compare(ackText, "Transactional", true) == 0)
+			{
+				return AcknowledgementMode.Transactional;
+			}
+			else
+			{
+				return AcknowledgementMode.AutoAcknowledge;
+			}
+		}
 
-        /// <summary>
-        /// Convert an object into a text message.  The object must be serializable to XML.
-        /// </summary>
-        public static ITextMessage ToXmlMessage(IMessageProducer producer, object obj)
-        {
-            ITextMessage message = producer.CreateTextMessage(XmlUtil.Serialize(obj));
+		/// <summary>
+		/// Convert an object into a text message.  The object must be serializable to XML.
+		/// </summary>
+#if NET_3_5 || MONO
+		[Obsolete]
+#endif
+		public static ITextMessage ToXmlMessage(IMessageProducer producer, object obj)
+		{
+			return ToXmlMessage(producer, obj, Encoding.Unicode);
+		}
 
-            // Embed the type into the message
-            message.NMSType = obj.GetType().FullName;
-            return message;
-        }
+		/// <summary>
+		/// Convert an object into a text message.  The object must be serializable to XML.
+		/// </summary>
+#if NET_3_5 || MONO
+		[Obsolete]
+#endif
+		public static ITextMessage ToXmlMessage(IMessageProducer producer, object obj, Encoding encoding)
+		{
+			return SerializeObjToMessage(producer.CreateTextMessage(), obj, encoding);
+		}
 
-        /// <summary>
-        /// Convert an object into a text message.  The object must be serializable to XML.
-        /// </summary>
-        public static ITextMessage ToXmlMessage(ISession session, object obj)
-        {
-            ITextMessage message = session.CreateTextMessage(XmlUtil.Serialize(obj));
+		/// <summary>
+		/// Convert an object into a text message.  The object must be serializable to XML.
+		/// </summary>
+#if NET_3_5 || MONO
+		[Obsolete]
+#endif
+		public static ITextMessage ToXmlMessage(ISession session, object obj)
+		{
+			return ToXmlMessage(session, obj, Encoding.Unicode);
+		}
 
-            // Embed the type into the message
-            message.NMSType = obj.GetType().FullName;
-            return message;
-        }
+		/// <summary>
+		/// Convert an object into a text message.  The object must be serializable to XML.
+		/// </summary>
+#if NET_3_5 || MONO
+		[Obsolete]
+#endif
+		public static ITextMessage ToXmlMessage(ISession session, object obj, Encoding encoding)
+		{
+			return SerializeObjToMessage(session.CreateTextMessage(), obj, encoding);
+		}
 
-        /// <summary>
-        /// Convert a text message into an object.  The object must be serializable from XML.
-        /// </summary>
-        public static object FromXmlMessage(IMessage message)
-        {
-            ITextMessage textMessage = message as ITextMessage;
+		/// <summary>
+		/// Convert a text message into an object.  The object must be serializable from XML.
+		/// </summary>
+#if NET_3_5 || MONO
+		[Obsolete]
+#endif
+		public static object FromXmlMessage(IMessage message)
+		{
+			return DeserializeObjFromMessage(message);
+		}
 
-            if(null == textMessage)
-            {
-                return null;
-            }
+		/// <summary>
+		/// Serialize the object as XML into the Text body of the message.
+		/// Set the NMSType to the full name of the object type.
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="obj"></param>
+		/// <param name="encoding"></param>
+		/// <returns></returns>
+		internal static ITextMessage SerializeObjToMessage(ITextMessage message, object obj, Encoding encoding)
+		{
+			// Embed the type into the message
+			message.NMSType = obj.GetType().FullName;
+			message.Text = XmlUtil.Serialize(obj, encoding);
+			return message;
+		}
 
-            Type objType = GetRuntimeType(textMessage.NMSType);
-            if(null == objType)
-            {
-                Tracer.ErrorFormat("Could not load type for {0} while deserializing XML object.", textMessage.NMSType);
-                return null;
-            }
+		/// <summary>
+		/// Deserialize the object from the text message.  The object must be serializable from XML.
+		/// </summary>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		internal static object DeserializeObjFromMessage(IMessage message)
+		{
+			ITextMessage textMessage = message as ITextMessage;
 
-            return XmlUtil.Deserialize(objType, textMessage.Text);
-        }
+			if(null == textMessage)
+			{
+				return null;
+			}
 
-        /// <summary>
-        /// Get the runtime type for the class name.  This routine will search all loaded
-        /// assemblies in the current App Domain to find the type.
-        /// </summary>
-        /// <param name="typeName">Full name of the type.</param>
-        /// <returns>Type object if found, or null if not found.</returns>
-        private static Type GetRuntimeType(string typeName)
-        {
-            Type objType = null;
+			Type objType = GetRuntimeType(textMessage.NMSType);
+			if(null == objType)
+			{
+				Tracer.ErrorFormat("Could not load type for {0} while deserializing XML object.", textMessage.NMSType);
+				return null;
+			}
+
+			return XmlUtil.Deserialize(objType, textMessage.Text);
+		}
+
+		/// <summary>
+		/// Get the runtime type for the class name.  This routine will search all loaded
+		/// assemblies in the current App Domain to find the type.
+		/// </summary>
+		/// <param name="typeName">Full name of the type.</param>
+		/// <returns>Type object if found, or null if not found.</returns>
+		private static Type GetRuntimeType(string typeName)
+		{
+			Type objType = null;
 
 #if NETCF
-            objType = Assembly.GetCallingAssembly().GetType(typeName, false);
+			objType = Assembly.GetCallingAssembly().GetType(typeName, false);
 #else
-            foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                objType = assembly.GetType(typeName, false, true);
-                if(null != objType)
-                {
-                    break;
-                }
-            }
+			foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				objType = assembly.GetType(typeName, false, true);
+				if(null != objType)
+				{
+					break;
+				}
+			}
 #endif
 
-            return objType;
-        }
-    }
+			return objType;
+		}
+	}
 }
