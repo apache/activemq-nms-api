@@ -108,7 +108,7 @@ namespace Apache.NMS.Util
 #endif
 		public static object FromXmlMessage(IMessage message)
 		{
-			return DeserializeObjFromMessage(message);
+			return DeserializeObjFromMessage(message, Encoding.Unicode);
 		}
 
 		/// <summary>
@@ -131,13 +131,20 @@ namespace Apache.NMS.Util
 		/// Deserialize the object from the text message.  The object must be serializable from XML.
 		/// </summary>
 		/// <param name="message"></param>
+		/// <param name="encoding"></param>
 		/// <returns></returns>
-		internal static object DeserializeObjFromMessage(IMessage message)
+		internal static object DeserializeObjFromMessage(IMessage message, Encoding encoding)
 		{
 			ITextMessage textMessage = message as ITextMessage;
 
 			if(null == textMessage)
 			{
+				return null;
+			}
+
+			if(null == textMessage.NMSType || textMessage.NMSType.Length < 1)
+			{
+				Tracer.ErrorFormat("NMSType not set on message.  Could not deserializing XML object.");
 				return null;
 			}
 
@@ -148,7 +155,7 @@ namespace Apache.NMS.Util
 				return null;
 			}
 
-			return XmlUtil.Deserialize(objType, textMessage.Text);
+			return XmlUtil.Deserialize(objType, textMessage.Text, encoding);
 		}
 
 		/// <summary>

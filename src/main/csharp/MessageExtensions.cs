@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Text;
 using Apache.NMS.Util;
 
 namespace Apache.NMS
@@ -28,12 +29,15 @@ namespace Apache.NMS
 		/// </summary>
 		public static object ToObject(this IMessage message)
 		{
-			if(null != message)
-			{
-				return NMSConvert.DeserializeObjFromMessage(message);
-			}
-			
-			return null;
+			return ToObject<object>(message);
+		}
+
+		/// <summary>
+		/// Deserializes the object from Xml, and returns it.
+		/// </summary>
+		public static object ToObject(this IMessage message, Encoding encoding)
+		{
+			return ToObject<object>(message, encoding);
 		}
 
 		/// <summary>
@@ -41,11 +45,26 @@ namespace Apache.NMS
 		/// </summary>
 		public static T ToObject<T>(this IMessage message) where T : class
 		{
-			if(null != message)
+			return ToObject<T>(message, Encoding.Unicode);
+		}
+
+		/// <summary>
+		/// Deserializes the object from Xml, and returns it.
+		/// </summary>
+		public static T ToObject<T>(this IMessage message, Encoding encoding) where T : class
+		{
+			try
 			{
-				return (T) NMSConvert.DeserializeObjFromMessage(message);
+				if(null != message)
+				{
+					return (T) NMSConvert.DeserializeObjFromMessage(message, encoding);
+				}
 			}
-			
+			catch(Exception ex)
+			{
+				Tracer.ErrorFormat("Error converting message to object: {0}", ex.Message);
+			}
+
 			return null;
 		}
 	}
