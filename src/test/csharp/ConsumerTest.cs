@@ -477,6 +477,25 @@ namespace Apache.NMS.Test
                 session.Close();
             }
         }
+		
+		[Test]
+		public void TestAddRemoveAsnycMessageListener()
+		{
+            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            {
+				connection.Start();
+				
+                ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
+                ITemporaryTopic topic = session.CreateTemporaryTopic();
+                IMessageConsumer consumer = session.CreateConsumer(topic);
+
+				consumer.Listener += OnMessage;
+				consumer.Listener -= OnMessage;
+				consumer.Listener += OnMessage;
+				
+				consumer.Close();
+			}
+		}
     
         public void OnMessage(IMessage message) 
         {
