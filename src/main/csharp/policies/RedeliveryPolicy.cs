@@ -62,10 +62,10 @@ namespace Apache.NMS.Policies
             set { this.maximumRedeliveries = value; }
         }
 
-        public int RedeliveryDelay(int redeliveredCounter)
+        public virtual int RedeliveryDelay(int redeliveredCounter)
         {
             int delay = 0;
-            
+
             if(redeliveredCounter == 0)
             {
                 // The first time through there is no delay, the Rollback should be immediate.
