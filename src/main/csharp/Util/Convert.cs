@@ -64,18 +64,7 @@ namespace Apache.NMS.Util
 #endif
 		public static ITextMessage ToXmlMessage(IMessageProducer producer, object obj)
 		{
-			return ToXmlMessage(producer, obj, Encoding.Unicode);
-		}
-
-		/// <summary>
-		/// Convert an object into a text message.  The object must be serializable to XML.
-		/// </summary>
-#if NET_3_5 || MONO
-		[Obsolete]
-#endif
-		public static ITextMessage ToXmlMessage(IMessageProducer producer, object obj, Encoding encoding)
-		{
-			return SerializeObjToMessage(producer.CreateTextMessage(), obj, encoding);
+			return SerializeObjToMessage(producer.CreateTextMessage(), obj);
 		}
 
 		/// <summary>
@@ -86,18 +75,7 @@ namespace Apache.NMS.Util
 #endif
 		public static ITextMessage ToXmlMessage(ISession session, object obj)
 		{
-			return ToXmlMessage(session, obj, Encoding.Unicode);
-		}
-
-		/// <summary>
-		/// Convert an object into a text message.  The object must be serializable to XML.
-		/// </summary>
-#if NET_3_5 || MONO
-		[Obsolete]
-#endif
-		public static ITextMessage ToXmlMessage(ISession session, object obj, Encoding encoding)
-		{
-			return SerializeObjToMessage(session.CreateTextMessage(), obj, encoding);
+			return SerializeObjToMessage(session.CreateTextMessage(), obj);
 		}
 
 		/// <summary>
@@ -108,7 +86,7 @@ namespace Apache.NMS.Util
 #endif
 		public static object FromXmlMessage(IMessage message)
 		{
-			return DeserializeObjFromMessage(message, Encoding.Unicode);
+			return DeserializeObjFromMessage(message);
 		}
 
 		/// <summary>
@@ -117,13 +95,12 @@ namespace Apache.NMS.Util
 		/// </summary>
 		/// <param name="message"></param>
 		/// <param name="obj"></param>
-		/// <param name="encoding"></param>
 		/// <returns></returns>
-		internal static ITextMessage SerializeObjToMessage(ITextMessage message, object obj, Encoding encoding)
+		internal static ITextMessage SerializeObjToMessage(ITextMessage message, object obj)
 		{
 			// Embed the type into the message
 			message.NMSType = obj.GetType().FullName;
-			message.Text = XmlUtil.Serialize(obj, encoding);
+			message.Text = XmlUtil.Serialize(obj);
 			return message;
 		}
 
@@ -131,9 +108,8 @@ namespace Apache.NMS.Util
 		/// Deserialize the object from the text message.  The object must be serializable from XML.
 		/// </summary>
 		/// <param name="message"></param>
-		/// <param name="encoding"></param>
 		/// <returns></returns>
-		internal static object DeserializeObjFromMessage(IMessage message, Encoding encoding)
+		internal static object DeserializeObjFromMessage(IMessage message)
 		{
 			ITextMessage textMessage = message as ITextMessage;
 
@@ -155,7 +131,7 @@ namespace Apache.NMS.Util
 				return null;
 			}
 
-			return XmlUtil.Deserialize(objType, textMessage.Text, encoding);
+			return XmlUtil.Deserialize(objType, textMessage.Text);
 		}
 
 		/// <summary>
