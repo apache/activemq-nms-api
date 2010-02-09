@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,15 +29,7 @@ namespace Apache.NMS
 		/// </summary>
 		public static ITextMessage CreateXmlMessage(this IMessageProducer producer, object obj)
 		{
-			return CreateXmlMessage(producer, obj, Encoding.Unicode);
-		}
-
-		/// <summary>
-		/// Extension function to create a text message from an object.  The object must be serializable to XML.
-		/// </summary>
-		public static ITextMessage CreateXmlMessage(this IMessageProducer producer, object obj, Encoding encoding)
-		{
-			return NMSConvert.SerializeObjToMessage(producer.CreateTextMessage(), obj, encoding);
+			return NMSConvert.SerializeObjToMessage(producer.CreateTextMessage(), obj);
 		}
 
 		/// <summary>
@@ -49,27 +41,11 @@ namespace Apache.NMS
 		}
 
 		/// <summary>
-		/// Sends the message to the default destination for this producer.  The object must be serializable to XML.
-		/// </summary>
-		public static void Send(this IMessageProducer producer, object objMessage, Encoding encoding)
-		{
-			producer.Send(producer.CreateXmlMessage(objMessage, encoding));
-		}
-
-		/// <summary>
 		/// Sends the message to the default destination with the explicit QoS configuration.  The object must be serializable to XML.
 		/// </summary>
 		public static void Send(this IMessageProducer producer, object objMessage, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive)
 		{
 			producer.Send(producer.CreateXmlMessage(objMessage), deliveryMode, priority, timeToLive);
-		}
-
-		/// <summary>
-		/// Sends the message to the default destination with the explicit QoS configuration.  The object must be serializable to XML.
-		/// </summary>
-		public static void Send(this IMessageProducer producer, object objMessage, Encoding encoding, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive)
-		{
-			producer.Send(producer.CreateXmlMessage(objMessage, encoding), deliveryMode, priority, timeToLive);
 		}
 
 		/// <summary>
@@ -81,27 +57,11 @@ namespace Apache.NMS
 		}
 
 		/// <summary>
-		/// Sends the message to the given destination
-		/// </summary>
-		public static void Send(this IMessageProducer producer, IDestination destination, object objMessage, Encoding encoding)
-		{
-			producer.Send(destination, producer.CreateXmlMessage(objMessage, encoding));
-		}
-
-		/// <summary>
 		/// Sends the message to the given destination with the explicit QoS configuration.  The object must be serializable to XML.
 		/// </summary>
 		public static void Send(this IMessageProducer producer, IDestination destination, object objMessage, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive)
 		{
 			producer.Send(destination, producer.CreateXmlMessage(objMessage), deliveryMode, priority, timeToLive);
-		}
-
-		/// <summary>
-		/// Sends the message to the given destination with the explicit QoS configuration.  The object must be serializable to XML.
-		/// </summary>
-		public static void Send(this IMessageProducer producer, IDestination destination, object objMessage, Encoding encoding, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive)
-		{
-			producer.Send(destination, producer.CreateXmlMessage(objMessage, encoding), deliveryMode, priority, timeToLive);
 		}
 	}
 #endif

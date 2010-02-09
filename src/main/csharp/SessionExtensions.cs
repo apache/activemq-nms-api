@@ -28,15 +28,7 @@ namespace Apache.NMS
 		/// </summary>
 		public static ITextMessage CreateXmlMessage(this ISession session, object obj)
 		{
-			return CreateXmlMessage(session, obj, Encoding.Unicode);
-		}
-
-		/// <summary>
-		/// Extension function to create a text message from an object.  The object must be serializable to XML.
-		/// </summary>
-		public static ITextMessage CreateXmlMessage(this ISession session, object obj, Encoding encoding)
-		{
-			return NMSConvert.SerializeObjToMessage(session.CreateTextMessage(), obj, encoding);
+			return NMSConvert.SerializeObjToMessage(session.CreateTextMessage(), obj);
 		}
 
 		/// <summary>

@@ -20,6 +20,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Apache.NMS.Util
 {
@@ -30,28 +31,18 @@ namespace Apache.NMS.Util
 	{
 		public static string Serialize(object obj)
 		{
-			return Serialize(obj, Encoding.Unicode);
-		}
-
-		public static string Serialize(object obj, Encoding encoding)
-		{
 			try
 			{
-				MemoryStream memoryStream = new MemoryStream();
+				StringBuilder outputStringBuilder = new StringBuilder();
 				XmlSerializer serializer = new XmlSerializer(obj.GetType());
-				XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, encoding);
+				XmlWriter xmlWriter = XmlWriter.Create(outputStringBuilder);
 
-				/*
-				 * If the XML document has been altered with unknown
-				 * nodes or attributes, handle them with the
-				 * UnknownNode and UnknownAttribute events.
-				 */
-				serializer.UnknownNode += new XmlNodeEventHandler(serializer_UnknownNode);
-				serializer.UnknownAttribute += new XmlAttributeEventHandler(serializer_UnknownAttribute);
-				serializer.Serialize(xmlTextWriter, obj);
-				memoryStream = (MemoryStream) xmlTextWriter.BaseStream;
-				byte[] encodedBytes = memoryStream.ToArray();
-				return encoding.GetString(encodedBytes, 0, encodedBytes.Length);
+				// Set the error handlers.
+				serializer.UnknownNode += serializer_UnknownNode;
+				serializer.UnknownElement += serializer_UnknownElement;
+				serializer.UnknownAttribute += serializer_UnknownAttribute;
+				serializer.Serialize(xmlWriter, obj);
+				return outputStringBuilder.ToString();
 			}
 			catch(Exception ex)
 			{
@@ -62,11 +53,6 @@ namespace Apache.NMS.Util
 
 		public static object Deserialize(Type objType, string text)
 		{
-			return Deserialize(objType, text, Encoding.Unicode);
-		}
-
-		public static object Deserialize(Type objType, string text, Encoding encoding)
-		{
 			if(null == text)
 			{
 				return null;
@@ -75,16 +61,12 @@ namespace Apache.NMS.Util
 			try
 			{
 				XmlSerializer serializer = new XmlSerializer(objType);
-				MemoryStream memoryStream = new MemoryStream(encoding.GetBytes(text));
 
-				/*
-				 * If the XML document has been altered with unknown
-				 * nodes or attributes, handle them with the
-				 * UnknownNode and UnknownAttribute events.
-				 */
-				serializer.UnknownNode += new XmlNodeEventHandler(serializer_UnknownNode);
-				serializer.UnknownAttribute += new XmlAttributeEventHandler(serializer_UnknownAttribute);
-				return serializer.Deserialize(memoryStream);
+				// Set the error handlers.
+				serializer.UnknownNode += serializer_UnknownNode;
+				serializer.UnknownElement += serializer_UnknownElement;
+				serializer.UnknownAttribute += serializer_UnknownAttribute;
+				return serializer.Deserialize(new StringReader(text));
 			}
 			catch(Exception ex)
 			{
@@ -93,9 +75,32 @@ namespace Apache.NMS.Util
 			}
 		}
 
+		/// <summary>
+		/// From xml spec valid chars:
+		/// #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]    
+		/// any Unicode character, excluding the surrogate blocks, FFFE, and FFFF.
+		/// </summary>
+		private static string invalidXMLMatch = @"[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD\x10000-x10FFFF]";
+		private static Regex regexInvalidXMLChars = new Regex(invalidXMLMatch);
+
+		/// <summary>
+		/// This removes characters that are invalid for xml encoding
+		/// </summary>
+		/// <param name="text">Text to be encoded.</param>
+		/// <returns>Text with invalid xml characters removed.</returns>
+		public static string CleanInvalidXmlChars(string text)
+		{
+			return regexInvalidXMLChars.Replace(text, "");
+		}
+
 		private static void serializer_UnknownNode(object sender, XmlNodeEventArgs e)
 		{
 			Tracer.ErrorFormat("Unknown Node: {0}\t{1}", e.Name, e.Text);
+		}
+
+		private static void serializer_UnknownElement(object sender, XmlElementEventArgs e)
+		{
+			Tracer.ErrorFormat("Unknown Element: {0}\t{1}", e.Element.Name, e.Element.Value);
 		}
 
 		private static void serializer_UnknownAttribute(object sender, XmlAttributeEventArgs e)

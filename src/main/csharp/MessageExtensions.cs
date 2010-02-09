@@ -35,29 +35,13 @@ namespace Apache.NMS
 		/// <summary>
 		/// Deserializes the object from Xml, and returns it.
 		/// </summary>
-		public static object ToObject(this IMessage message, Encoding encoding)
-		{
-			return ToObject<object>(message, encoding);
-		}
-
-		/// <summary>
-		/// Deserializes the object from Xml, and returns it.
-		/// </summary>
 		public static T ToObject<T>(this IMessage message) where T : class
-		{
-			return ToObject<T>(message, Encoding.Unicode);
-		}
-
-		/// <summary>
-		/// Deserializes the object from Xml, and returns it.
-		/// </summary>
-		public static T ToObject<T>(this IMessage message, Encoding encoding) where T : class
 		{
 			try
 			{
 				if(null != message)
 				{
-					return (T) NMSConvert.DeserializeObjFromMessage(message, encoding);
+					return (T) NMSConvert.DeserializeObjFromMessage(message);
 				}
 			}
 			catch(Exception ex)
