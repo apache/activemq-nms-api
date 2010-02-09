@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Runtime.Serialization;
 
 namespace Apache.NMS
 {
@@ -51,6 +50,7 @@ namespace Apache.NMS
 		}
 
 		#region ISerializable interface implementation
+#if !NETCF
 
 		/// <summary>
 		/// Initializes a new instance of the InvalidSelectorException class with serialized data.
@@ -59,11 +59,12 @@ namespace Apache.NMS
 		/// </summary>
 		/// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
 		/// <param name="context">The StreamingContext that contains contextual information about the source or destination.</param>
-		protected InvalidSelectorException(SerializationInfo info, StreamingContext context)
+		protected InvalidSelectorException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 			: base(info, context)
 		{
 		}
 
+#endif
 		#endregion
 	}
 }
