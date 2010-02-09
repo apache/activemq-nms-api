@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Apache.NMS;
+using System;
+using System.Collections;
+using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Xml;
 using Apache.NMS.Util;
 using NUnit.Framework;
-using System;
-using System.IO;
-using System.Xml;
-using System.Reflection;
-using System.Collections;
-using System.Text.RegularExpressions;
 
 namespace Apache.NMS.Test
 {

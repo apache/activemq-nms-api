@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Apache.NMS;
 using Apache.NMS.Policies;
 using NUnit.Framework;
 

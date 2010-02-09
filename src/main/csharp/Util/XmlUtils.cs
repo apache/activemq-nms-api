@@ -18,9 +18,9 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Text.RegularExpressions;
 
 namespace Apache.NMS.Util
 {
