@@ -29,20 +29,43 @@ namespace Apache.NMS.Util
 	/// </summary>
 	public class XmlUtil
 	{
+		private static XmlWriterSettings xmlWriterSettings;
+
+		/// <summary>
+		/// Static class constructor.
+		/// </summary>
+		static XmlUtil()
+		{
+			xmlWriterSettings = new XmlWriterSettings();
+			xmlWriterSettings.Encoding = new UTF8Encoding(false, false);
+		}
+
+		/// <summary>
+		/// Serialize the object to XML format.  The XML encoding will be UTF-8.  A Byte Order Mark (BOM)
+		/// will NOT be placed at the beginning of the string.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public static string Serialize(object obj)
 		{
 			try
 			{
-				StringBuilder outputStringBuilder = new StringBuilder();
-				XmlSerializer serializer = new XmlSerializer(obj.GetType());
-				XmlWriter xmlWriter = XmlWriter.Create(outputStringBuilder);
+				byte[] encodedBytes;
 
-				// Set the error handlers.
-				serializer.UnknownNode += serializer_UnknownNode;
-				serializer.UnknownElement += serializer_UnknownElement;
-				serializer.UnknownAttribute += serializer_UnknownAttribute;
-				serializer.Serialize(xmlWriter, obj);
-				return outputStringBuilder.ToString();
+				using(MemoryStream outputStream = new MemoryStream())
+				using(XmlWriter xmlWriter = XmlWriter.Create(outputStream, xmlWriterSettings))
+				{
+					XmlSerializer serializer = new XmlSerializer(obj.GetType());
+
+					// Set the error handlers.
+					serializer.UnknownNode += serializer_UnknownNode;
+					serializer.UnknownElement += serializer_UnknownElement;
+					serializer.UnknownAttribute += serializer_UnknownAttribute;
+					serializer.Serialize(xmlWriter, obj);
+					encodedBytes = outputStream.ToArray();
+				}
+
+				return xmlWriterSettings.Encoding.GetString(encodedBytes, 0, encodedBytes.Length);
 			}
 			catch(Exception ex)
 			{
