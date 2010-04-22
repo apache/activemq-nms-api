@@ -74,6 +74,7 @@
     <Compile Include="src\main\csharp\ITextMessage.cs" />
     <Compile Include="src\main\csharp\ITopic.cs" />
     <Compile Include="src\main\csharp\ITrace.cs" />
+    <Compile Include="src\main\csharp\MessageConsumerExtensions.cs" />
     <Compile Include="src\main\csharp\MessageExtensions.cs" />
     <Compile Include="src\main\csharp\MessageEOFException.cs" />
     <Compile Include="src\main\csharp\MessageFormatException.cs" />
