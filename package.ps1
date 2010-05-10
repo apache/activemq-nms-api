@@ -14,7 +14,7 @@
 # limitations under the License.
 
 $pkgname = "Apache.NMS"
-$pkgver = "1.3-RC1"
+$pkgver = "1.3.1-SNAPSHOT"
 $configurations = "release", "debug"
 $frameworks = "mono-2.0", "net-2.0", "net-3.5", "netcf-2.0", "netcf-3.5"
 
