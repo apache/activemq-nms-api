@@ -14,48 +14,48 @@
 # limitations under the License.
 
 $pkgname = "Apache.NMS"
-$pkgver = "1.3-SNAPSHOT"
+$pkgver = "1.4-SNAPSHOT"
 $configurations = "release", "debug"
 $frameworks = "mono-2.0", "net-2.0", "net-3.5", "netcf-2.0", "netcf-3.5"
 
 write-progress "Creating package directory." "Initializing..."
 if(!(test-path package))
 {
-	md package
+    md package
 }
 
 if(test-path build)
 {
-	pushd build
+    pushd build
 
-	$pkgdir = "..\package"
+    $pkgdir = "..\package"
 
-	write-progress "Packaging Application files." "Scanning..."
-	$zipfile = "$pkgdir\$pkgname-$pkgver-bin.zip"
-	zip -9 -u -j "$zipfile" ..\LICENSE.txt
-	zip -9 -u -j "$zipfile" ..\NOTICE.txt
-	foreach($configuration in $configurations)
-	{
-		foreach($framework in $frameworks)
-		{
-			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll"
-			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.xml"
-			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll"
-			zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.xml"
-			if($framework -ieq "mono-2.0")
-			{
-				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll.mdb"
-				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll.mdb"
-			}
-			else
-			{
-				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.pdb"
-				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.pdb"
-			}
-		}
-	}
+    write-progress "Packaging Application files." "Scanning..."
+    $zipfile = "$pkgdir\$pkgname-$pkgver-bin.zip"
+    zip -9 -u -j "$zipfile" ..\LICENSE.txt
+    zip -9 -u -j "$zipfile" ..\NOTICE.txt
+    foreach($configuration in $configurations)
+    {
+        foreach($framework in $frameworks)
+        {
+            zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll"
+            zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.xml"
+            zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll"
+            zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.xml"
+            if($framework -ieq "mono-2.0")
+            {
+                zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll.mdb"
+                zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll.mdb"
+            }
+            else
+            {
+                zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.pdb"
+                zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.pdb"
+            }
+        }
+    }
 
-	popd
+    popd
 }
 
 write-progress "Packaging Source code files." "Scanning..."
