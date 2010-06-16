@@ -31,6 +31,24 @@
     <property name="nunit.dll" value="${basedir}/lib/NUnit/${current.build.framework}/nunit.framework.dll" dynamic="true" />
     <property name="nunit.extensions.dll" value="${basedir}/lib/NUnit/${current.build.framework}/nunit.framework.extensions.dll" dynamic="true" />
 
+    <zipfileset id="src.package.contents" basedir="${basedir}">
+        <include name="LICENSE.txt" />
+        <include name="NOTICE.txt" />
+        <include name="nant-common.xml" />
+        <include name="nant.build" />
+        <include name="vs2008-nms-test.csproj" />
+        <include name="vs2008-nms.csproj" />
+        <include name="vs2008-nms.sln" />
+        <include name="keyfile/*" />
+        <include name="src/**/*.cs" />
+    </zipfileset>
+
+    <zipfileset id="bin.package.contents" basedir="${basedir}/build">
+        <include name="../LICENSE.txt" />
+        <include name="../NOTICE.txt" />
+        <include name="**/${project.name}*" />
+    </zipfileset>
+
     <target name="vendor-init" description="Initializes Vendor library from local repository.">
         <!--
              Vendor specific info.  The prefix of 'vendor.apache.org' is taken from the property
