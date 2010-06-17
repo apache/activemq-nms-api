@@ -36,9 +36,11 @@
         <include name="NOTICE.txt" />
         <include name="nant-common.xml" />
         <include name="nant.build" />
-        <include name="vs2008-nms-test.csproj" />
-        <include name="vs2008-nms.csproj" />
-        <include name="vs2008-nms.sln" />
+        <include name="nant.build" />
+        <include name="nmsprovider*.config" />
+        <include name="vs2008-nms*.csproj" />
+        <include name="vs2008-nms*.csproj" />
+        <include name="vs2008-nms*.sln" />
         <include name="keyfile/*" />
         <include name="src/**/*.cs" />
     </zipfileset>
