@@ -43,6 +43,7 @@ namespace Apache.NMS.Test
 		protected long l = -0x1234567812345678;
 		protected float m = 2.1F;
 		protected double n = 2.3;
+		protected byte[] o = {1, 2, 3, 4, 5};
 
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
@@ -75,6 +76,7 @@ namespace Apache.NMS.Test
 						request.Body["l"] = l;
 						request.Body["m"] = m;
 						request.Body["n"] = n;
+						request.Body["o"] = o;
 						producer.Send(request);
 
 						IMapMessage message = consumer.Receive(receiveTimeout) as IMapMessage;
@@ -98,7 +100,8 @@ namespace Apache.NMS.Test
 						Assert.AreEqual(l, message.Body["l"], "generic map entry: l");
 						Assert.AreEqual(m, message.Body["m"], "generic map entry: m");
 						Assert.AreEqual(n, message.Body["n"], "generic map entry: n");
-
+						Assert.AreEqual(o, message.Body["o"], "generic map entry: o");
+						
 						// use type safe APIs
 						Assert.AreEqual(a, message.Body.GetBool("a"), "map entry: a");
 						Assert.AreEqual(b, message.Body.GetByte("b"), "map entry: b");
@@ -114,6 +117,7 @@ namespace Apache.NMS.Test
 						Assert.AreEqual(l, message.Body.GetLong("l"), "map entry: l");
 						Assert.AreEqual(m, message.Body.GetFloat("m"), "map entry: m");
 						Assert.AreEqual(n, message.Body.GetDouble("n"), "map entry: n");
+						Assert.AreEqual(o, message.Body.GetBytes("o"), "map entry: o");
 					}
 				}
 			}

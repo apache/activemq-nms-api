@@ -67,6 +67,10 @@ namespace Apache.NMS
 
 		IList GetList(string key);
 		void SetList(string key, IList list);
+		
+		void SetBytes(string key, byte[] value);
+		void SetBytes(string key, byte[] value, int offset, int length);
+		byte[] GetBytes(string key);
 
 		IDictionary GetDictionary(string key);
 		void SetDictionary(string key, IDictionary dictionary);

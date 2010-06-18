@@ -203,13 +203,35 @@ namespace Apache.NMS.Util
 				throw new NMSException("Property: " + key + " is not an IList but is: " + value);
 			}
 			return (IList) value;
-		}
-
+		}		
+		
 		public void SetList(String key, IList value)
 		{
 			SetValue(key, value);
 		}
 
+		public void SetBytes(String key, byte[] value) 
+		{
+			this.SetBytes(key, value, 0, value.Length);
+		}
+		
+		public void SetBytes(String key, byte[] value, int offset, int length)
+		{
+			byte[] copy = new byte[length];
+			Array.Copy(value, offset, copy, 0, length);
+			SetValue(key, copy);
+		}
+		
+		public byte[] GetBytes(string key)
+		{
+			Object value = GetValue(key);
+			if(value != null && !(value is Byte[]))
+			{
+				throw new NMSException("Property: " + key + " is not an byte[] but is: " + value);
+			}
+			return (byte[]) value;
+		}
+		
 		public IDictionary GetDictionary(String key)
 		{
 			Object value = GetValue(key);

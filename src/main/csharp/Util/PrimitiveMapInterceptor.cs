@@ -29,8 +29,8 @@ namespace Apache.NMS.Util
     /// Be default this class enforces the standard conversion policy for primitive
     /// types in NMS shown in the table below:
     ///
-    ///   |        | boolean byte short char int long float double String
-    ///   |--------------------------------------------------------------
+    ///   |        | boolean byte short char int long float double String byte[]
+    ///   |----------------------------------------------------------------------
     ///   |boolean |    X                                            X
     ///   |byte    |          X     X         X   X                  X
     ///   |short   |                X         X   X                  X
@@ -40,7 +40,8 @@ namespace Apache.NMS.Util
     ///   |float   |                                    X     X      X
     ///   |double  |                                          X      X
     ///   |String  |    X     X     X         X   X     X     X      X
-    ///   |--------------------------------------------------------------
+    ///   |byte[]  |                                                       X
+    ///   |----------------------------------------------------------------------
     ///
     /// </summary>
     public class PrimitiveMapInterceptor : IPrimitiveMap
@@ -48,6 +49,7 @@ namespace Apache.NMS.Util
         protected IMessage message;
         protected IPrimitiveMap properties;
         private bool readOnly = false;
+		private bool allowByteArrays = true;
 
         public PrimitiveMapInterceptor(IMessage message, IPrimitiveMap properties)
         {
@@ -62,6 +64,14 @@ namespace Apache.NMS.Util
             this.readOnly = readOnly;
         }
         
+        public PrimitiveMapInterceptor(IMessage message, IPrimitiveMap properties, bool readOnly, bool allowByteArrays)
+        {
+            this.message = message;
+            this.properties = properties;
+            this.readOnly = readOnly;
+			this.allowByteArrays = allowByteArrays;
+        }
+		
         protected virtual object GetObjectProperty(string name)
         {
             return this.properties[name];
@@ -73,6 +83,11 @@ namespace Apache.NMS.Util
 
             try
             {
+				if(!this.allowByteArrays && (value is byte[]))
+				{
+					throw new NotSupportedException("Byte Arrays not allowed in this PrimitiveMap");
+				}
+				
                 this.properties[name] = value;
             }
             catch(Exception ex)
@@ -378,6 +393,39 @@ namespace Apache.NMS.Util
             SetObjectProperty(key, value);
         }
 
+		public void SetBytes(String key, byte[] value) 
+		{
+			this.SetBytes(key, value, 0, value.Length);
+		}
+		
+		public void SetBytes(String key, byte[] value, int offset, int length)
+		{
+			byte[] copy = new byte[length];
+			Array.Copy(value, offset, copy, 0, length);
+            SetObjectProperty(key, value);
+		}
+		
+		public byte[] GetBytes(string key)
+		{
+            Object value = GetObjectProperty(key);
+			
+            try
+            {
+                if(value is Byte[])
+                {
+                    return (byte[]) value;
+                }
+                else
+                {
+                    throw new MessageFormatException(" cannot read a byte[] from " + value.GetType().Name);
+                }
+            }
+            catch(FormatException ex)
+            {
+                throw NMSExceptionSupport.CreateMessageFormatException(ex);
+            }
+		}
+		
         public System.Collections.IList GetList(string key)
         {
             return (System.Collections.IList) GetObjectProperty(key);
@@ -406,6 +454,12 @@ namespace Apache.NMS.Util
             set{ this.readOnly = value; }
         }
 
+        public bool AllowByteArrays
+        {
+            get{ return this.allowByteArrays; }
+            set{ this.allowByteArrays = value; }
+        }
+		
         protected virtual void FailIfReadOnly()
         {
             if(this.ReadOnly == true)

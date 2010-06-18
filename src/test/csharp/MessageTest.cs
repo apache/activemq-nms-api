@@ -41,6 +41,7 @@ namespace Apache.NMS.Test
 		protected long		l = -0x1234567812345678;
 		protected float		m = 2.1F;
 		protected double	n = 2.3;
+		protected byte[]    o = {1, 2, 3, 4, 5};
 
 		[RowTest]
 		[Row(MsgDeliveryMode.Persistent)]
@@ -73,6 +74,27 @@ namespace Apache.NMS.Test
 						request.Properties["l"] = l;
 						request.Properties["m"] = m;
 						request.Properties["n"] = n;
+						
+						try
+						{
+							request.Properties["o"] = o;
+							Assert.Fail("Should not be able to add a Byte[] to the Properties of a Message.");
+						}
+						catch
+						{
+							// Expected
+						}
+						
+						try
+						{
+							request.Properties.SetBytes("o", o);
+							Assert.Fail("Should not be able to add a Byte[] to the Properties of a Message.");
+						}
+						catch
+						{
+							// Expected
+						}						
+						
 						producer.Send(request);
 
 						IMessage message = consumer.Receive(receiveTimeout);
