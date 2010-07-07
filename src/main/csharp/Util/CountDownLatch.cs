@@ -29,11 +29,6 @@ namespace Apache.NMS.Util
 			remaining = i;
 		}
 
-		public int Count
-		{
-			get{ return this.remaining; }
-		}
-		
 		public void countDown()
 		{
 			lock(mutex)
