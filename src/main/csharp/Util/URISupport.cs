@@ -27,12 +27,12 @@ using System.Web;
 
 namespace Apache.NMS.Util
 {
-	/// <summary>
-	/// Class to provide support for Uri query parameters which uses .Net reflection
-	/// to identify and set properties.
-	/// </summary>
-	public class URISupport
-	{
+    /// <summary>
+    /// Class to provide support for Uri query parameters which uses .Net reflection
+    /// to identify and set properties.
+    /// </summary>
+    public class URISupport
+    {
         /// <summary>
         /// Given a string that could be a Composite Uri that uses syntax not compatible
         /// with the .NET Uri class such as an ActiveMQ failover Uri formatted as
@@ -50,186 +50,186 @@ namespace Apache.NMS.Util
             return new Uri(sanitized);
         }
 
-		/// <summary>
-		/// Parse a Uri query string of the form ?x=y&amp;z=0
-		/// into a map of name/value pairs.
-		/// </summary>
-		/// <param name="query">The query string to parse. This string should not contain
-		/// Uri escape characters.</param>
-		public static StringDictionary ParseQuery(string query)
-		{
-			StringDictionary map = new StringDictionary();
+        /// <summary>
+        /// Parse a Uri query string of the form ?x=y&amp;z=0
+        /// into a map of name/value pairs.
+        /// </summary>
+        /// <param name="query">The query string to parse. This string should not contain
+        /// Uri escape characters.</param>
+        public static StringDictionary ParseQuery(string query)
+        {
+            StringDictionary map = new StringDictionary();
 
-			// strip the initial "?"
-			if(query.StartsWith("?"))
-			{
-				query = query.Substring(1);
-			}
+            // strip the initial "?"
+            if(query.StartsWith("?"))
+            {
+                query = query.Substring(1);
+            }
 
-			// split the query into parameters
-			string[] parameters = query.Split('&');
-			foreach(string pair in parameters)
-			{
-				if(pair.Length > 0)
-				{
-					string[] nameValue = pair.Split('=');
+            // split the query into parameters
+            string[] parameters = query.Split('&');
+            foreach(string pair in parameters)
+            {
+                if(pair.Length > 0)
+                {
+                    string[] nameValue = pair.Split('=');
 
-					if(nameValue.Length != 2)
-					{
-						throw new NMSException(string.Format("Invalid Uri parameter: {0}", query));
-					}
+                    if(nameValue.Length != 2)
+                    {
+                        throw new NMSException(string.Format("Invalid Uri parameter: {0}", query));
+                    }
 
-					map[nameValue[0]] = nameValue[1];
-				}
-			}
+                    map[nameValue[0]] = nameValue[1];
+                }
+            }
 
-			return map;
-		}
+            return map;
+        }
 
-		public static StringDictionary ParseParameters(Uri uri)
-		{
-			return (uri.Query == null
-					? EmptyMap
-					: ParseQuery(StripPrefix(uri.Query, "?")));
-		}
+        public static StringDictionary ParseParameters(Uri uri)
+        {
+            return (uri.Query == null
+                    ? EmptyMap
+                    : ParseQuery(StripPrefix(uri.Query, "?")));
+        }
 
-		/// <summary>
-		/// Sets the public properties of a target object using a string map.
-		/// This method uses .Net reflection to identify public properties of
-		/// the target object matching the keys from the passed map.
-		/// </summary>
-		/// <param name="target">The object whose properties will be set.</param>
-		/// <param name="map">Map of key/value pairs.</param>
-		/// <param name="prefix">Key value prefix.  This is prepended to the property name
-		/// before searching for a matching key value.</param>
-		public static void SetProperties(object target, StringDictionary map, string prefix)
-		{
-			Type type = target.GetType();
-			
-			List<String> matches = new List<String>();
+        /// <summary>
+        /// Sets the public properties of a target object using a string map.
+        /// This method uses .Net reflection to identify public properties of
+        /// the target object matching the keys from the passed map.
+        /// </summary>
+        /// <param name="target">The object whose properties will be set.</param>
+        /// <param name="map">Map of key/value pairs.</param>
+        /// <param name="prefix">Key value prefix.  This is prepended to the property name
+        /// before searching for a matching key value.</param>
+        public static void SetProperties(object target, StringDictionary map, string prefix)
+        {
+            Type type = target.GetType();
 
-			foreach(string key in map.Keys)
-			{
-				if(key.ToLower().StartsWith(prefix.ToLower()))
-				{
-					string bareKey = key.Substring(prefix.Length);
-					PropertyInfo prop = type.GetProperty(bareKey,
-															BindingFlags.FlattenHierarchy
-															| BindingFlags.Public
-															| BindingFlags.Instance
-															| BindingFlags.IgnoreCase);
+            List<String> matches = new List<String>();
 
-					if(null != prop)
-					{
-						prop.SetValue(target, Convert.ChangeType(map[key], prop.PropertyType, CultureInfo.InvariantCulture), null);
-					}
-					else
-					{
-						FieldInfo field = type.GetField(bareKey,
-															BindingFlags.FlattenHierarchy
-															| BindingFlags.Public
-															| BindingFlags.Instance
-															| BindingFlags.IgnoreCase);
-						if(null != field)
-						{
-							field.SetValue(target, Convert.ChangeType(map[key], field.FieldType, CultureInfo.InvariantCulture));
-						}
-						else
-						{
-							throw new NMSException(string.Format("No such property or field: {0} on class: {1}", bareKey, target.GetType().Name));
-						}
-					}
-					
-					// store for later removal.
-					matches.Add(key);
-				}
-			}
-			
-			// Remove all the properties we set so they are used again later.
-			foreach(string match in matches)
-			{
-				map.Remove(match);
-			}
-		}
+            foreach(string key in map.Keys)
+            {
+                if(key.ToLower().StartsWith(prefix.ToLower()))
+                {
+                    string bareKey = key.Substring(prefix.Length);
+                    PropertyInfo prop = type.GetProperty(bareKey,
+                                                            BindingFlags.FlattenHierarchy
+                                                            | BindingFlags.Public
+                                                            | BindingFlags.Instance
+                                                            | BindingFlags.IgnoreCase);
 
-	    public static StringDictionary ExtractProperties(StringDictionary props, string prefix) {
-	        
-			if(props == null) 
-			{
-	            throw new Exception("Properties Object was null");
-	        }
-			
-			StringDictionary result = new StringDictionary();
-			List<String> matches = new List<String>();
-		
-			foreach(string key in props.Keys)
-			{
-				if(key.StartsWith(prefix))
-				{
-					String value = props[key];
-					result[key] = value;
-					matches.Add(key);
-				}
-			}
-			
-			foreach(string match in matches)
-			{
-				props.Remove(match);
-			}
-					
-	        return result;
-	    }
-		
-		public static String UrlDecode(String s)
-		{
+                    if(null != prop)
+                    {
+                        prop.SetValue(target, Convert.ChangeType(map[key], prop.PropertyType, CultureInfo.InvariantCulture), null);
+                    }
+                    else
+                    {
+                        FieldInfo field = type.GetField(bareKey,
+                                                            BindingFlags.FlattenHierarchy
+                                                            | BindingFlags.Public
+                                                            | BindingFlags.Instance
+                                                            | BindingFlags.IgnoreCase);
+                        if(null != field)
+                        {
+                            field.SetValue(target, Convert.ChangeType(map[key], field.FieldType, CultureInfo.InvariantCulture));
+                        }
+                        else
+                        {
+                            throw new NMSException(string.Format("No such property or field: {0} on class: {1}", bareKey, target.GetType().Name));
+                        }
+                    }
+
+                    // store for later removal.
+                    matches.Add(key);
+                }
+            }
+
+            // Remove all the properties we set so they are used again later.
+            foreach(string match in matches)
+            {
+                map.Remove(match);
+            }
+        }
+
+        public static StringDictionary ExtractProperties(StringDictionary props, string prefix) {
+
+            if(props == null)
+            {
+                throw new Exception("Properties Object was null");
+            }
+
+            StringDictionary result = new StringDictionary();
+            List<String> matches = new List<String>();
+
+            foreach(string key in props.Keys)
+            {
+                if(key.StartsWith(prefix))
+                {
+                    String value = props[key];
+                    result[key] = value;
+                    matches.Add(key);
+                }
+            }
+
+            foreach(string match in matches)
+            {
+                props.Remove(match);
+            }
+
+            return result;
+        }
+
+        public static String UrlDecode(String s)
+        {
 #if !NETCF
-			return HttpUtility.HtmlDecode(s);
+            return HttpUtility.HtmlDecode(s);
 #else
-			return Uri.UnescapeDataString(s);
+            return Uri.UnescapeDataString(s);
 #endif
-		}
+        }
 
-		public static String UrlEncode(String s)
-		{
+        public static String UrlEncode(String s)
+        {
 #if !NETCF
-			return HttpUtility.HtmlEncode(s);
+            return HttpUtility.HtmlEncode(s);
 #else
-			return Uri.EscapeUriString(s);
+            return Uri.EscapeUriString(s);
 #endif
-		}
+        }
 
-		public static String CreateQueryString(StringDictionary options)
-		{
-			if(options != null && options.Count > 0)
-			{
-				StringBuilder rc = new StringBuilder();
-				bool first = true;
+        public static String CreateQueryString(StringDictionary options)
+        {
+            if(options != null && options.Count > 0)
+            {
+                StringBuilder rc = new StringBuilder();
+                bool first = true;
 
-				foreach(String key in options.Keys)
-				{
-					string value = options[key];
+                foreach(String key in options.Keys)
+                {
+                    string value = options[key];
 
-					if(first)
-					{
-						first = false;
-					}
-					else
-					{
-						rc.Append("&");
-					}
+                    if(first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        rc.Append("&");
+                    }
 
-					rc.Append(UrlEncode(key));
-					rc.Append("=");
-					rc.Append(UrlEncode(value));
-				}
+                    rc.Append(UrlEncode(key));
+                    rc.Append("=");
+                    rc.Append(UrlEncode(value));
+                }
 
-				return rc.ToString();
-			}
-			else
-			{
-				return "";
-			}
-		}
+                return rc.ToString();
+            }
+            else
+            {
+                return "";
+            }
+        }
 
         public static Uri CreateRemainingUri(Uri originalUri, StringDictionary parameters)
         {
@@ -243,63 +243,66 @@ namespace Apache.NMS.Util
             return CreateUriWithQuery(originalUri, s);
         }
 
-		public class CompositeData
-		{
-			private String host;
-			private String scheme;
-			private String path;
-			private Uri[] components;
-			private StringDictionary parameters;
-			private String fragment;
+        public class CompositeData
+        {
+            private String host;
+            private String scheme;
+            private String path;
+            private Uri[] components;
+            private StringDictionary parameters;
+            private String fragment;
 
-			public Uri[] Components
-			{
-				get { return components; }
-				set { components = value; }
-			}
+            public Uri[] Components
+            {
+                get { return components; }
+                set { components = value; }
+            }
 
-			public String Fragment
-			{
-				get { return fragment; }
-				set { fragment = value; }
-			}
+            public String Fragment
+            {
+                get { return fragment; }
+                set { fragment = value; }
+            }
 
-			public StringDictionary Parameters
-			{
-				get { return parameters; }
-				set { parameters = value; }
-			}
+            public StringDictionary Parameters
+            {
+                get { return parameters; }
+                set { parameters = value; }
+            }
 
-			public String Scheme
-			{
-				get { return scheme; }
-				set { scheme = value; }
-			}
+            public String Scheme
+            {
+                get { return scheme; }
+                set { scheme = value; }
+            }
 
-			public String Path
-			{
-				get { return path; }
-				set { path = value; }
-			}
+            public String Path
+            {
+                get { return path; }
+                set { path = value; }
+            }
 
-			public String Host
-			{
-				get { return host; }
-				set { host = value; }
-			}
+            public String Host
+            {
+                get { return host; }
+                set { host = value; }
+            }
 
-			public Uri toUri()
-			{
-                UriBuilder builder = new UriBuilder();
-
-                builder.Scheme = scheme;
-                builder.Host = host;
-                builder.Fragment = fragment;
-
-                if(components.Length > 0)
+            public Uri toUri()
+            {
+                StringBuilder sb = new StringBuilder();
+                if(scheme != null)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    sb.Append(scheme);
+                    sb.Append(':');
+                }
 
+                if(host != null && host.Length != 0)
+                {
+                    sb.Append(host);
+                }
+                else
+                {
                     sb.Append('(');
                     for(int i = 0; i < components.Length; i++)
                     {
@@ -310,38 +313,39 @@ namespace Apache.NMS.Util
                         sb.Append(components[i].ToString());
                     }
                     sb.Append(')');
-
-                    if(path != null)
-                    {
-                        sb.Append('/');
-                        sb.Append(path);
-                    }
-
-                    builder.Path = sb.ToString();
                 }
-                else
+
+                if(path != null)
                 {
-                    builder.Path = path;
+                    sb.Append('/');
+                    sb.Append(path);
                 }
 
-                if(parameters.Count > 0)
+                if(parameters.Count != 0)
                 {
-                    builder.Query = CreateQueryString(parameters);
+                    sb.Append("?");
+                    sb.Append(CreateQueryString(parameters));
                 }
 
-				return builder.Uri;
-			}
-		}
+                if(fragment != null)
+                {
+                    sb.Append("#");
+                    sb.Append(fragment);
+                }
 
-		public static String StripPrefix(String value, String prefix)
-		{
-			if(value.StartsWith(prefix))
-			{
-				return value.Substring(prefix.Length);
-			}
+                return new Uri(sb.ToString());
+            }
+        }
 
-			return value;
-		}
+        public static String StripPrefix(String value, String prefix)
+        {
+            if(value.StartsWith(prefix))
+            {
+                return value.Substring(prefix.Length);
+            }
+
+            return value;
+        }
 
         public static Uri CreateUriWithQuery(Uri uri, string query)
         {
@@ -380,13 +384,13 @@ namespace Apache.NMS.Util
             return CreateUriWithQuery(original, null);
         }
 
-		public static CompositeData ParseComposite(Uri uri)
-		{
-			CompositeData rc = new CompositeData();
-			rc.Scheme = uri.Scheme;
+        public static CompositeData ParseComposite(Uri uri)
+        {
+            CompositeData rc = new CompositeData();
+            rc.Scheme = uri.Scheme;
 
-			// Start with original URI
-			//String ssp = uri.Authority + uri.PathAndQuery;
+            // Start with original URI
+            //String ssp = uri.Authority + uri.PathAndQuery;
             String ssp = uri.OriginalString;
 
             ssp = StripPrefix(ssp, rc.Scheme + ":");
@@ -407,172 +411,172 @@ namespace Apache.NMS.Util
             // the authority as a hostname with, ':(' which is valid.
             ssp = ssp.Replace("://(", ":(");
 
-			// Handle the composite components
-			ParseComposite(uri, rc, ssp);
-			return rc;
-		}
+            // Handle the composite components
+            ParseComposite(uri, rc, ssp);
+            return rc;
+        }
 
-		/// <summary>
-		/// </summary>
-		/// <param name="uri"></param>
-		/// <param name="rc"></param>
-		/// <param name="ssp"></param>
-		private static void ParseComposite(Uri uri, CompositeData rc, String ssp)
-		{
-			String componentString;
-			String parms;
+        /// <summary>
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="rc"></param>
+        /// <param name="ssp"></param>
+        private static void ParseComposite(Uri uri, CompositeData rc, String ssp)
+        {
+            String componentString;
+            String parms;
 
-			if(!CheckParenthesis(ssp))
-			{
-				throw new NMSException(uri.ToString() + ": Not a matching number of '(' and ')' parenthesis");
-			}
+            if(!CheckParenthesis(ssp))
+            {
+                throw new NMSException(uri.ToString() + ": Not a matching number of '(' and ')' parenthesis");
+            }
 
-			int p;
-			int intialParen = ssp.IndexOf("(");
+            int p;
+            int intialParen = ssp.IndexOf("(");
 
-			if(intialParen >= 0)
-			{
-				rc.Host = ssp.Substring(0, intialParen);
-				p = rc.Host.IndexOf("/");
-				if(p >= 0)
-				{
-					rc.Path = rc.Host.Substring(p);
-					rc.Host = rc.Host.Substring(0, p);
-				}
-
-				p = ssp.LastIndexOf(")");
-				int start = intialParen + 1;
-				int len = p - start;
-				componentString = ssp.Substring(start, len);
-				parms = ssp.Substring(p + 1).Trim();
-			}
-			else
-			{
-			    componentString = ssp;
-				parms = "";
-			}
-
-			String[] components = SplitComponents(componentString);
-			rc.Components = new Uri[components.Length];
-			for(int i = 0; i < components.Length; i++)
-			{
-                if(components.Length == 1 && components[0] == ssp)
+            if(intialParen >= 0)
+            {
+                rc.Host = ssp.Substring(0, intialParen);
+                p = rc.Host.IndexOf("/");
+                if(p >= 0)
                 {
-                    String[] parts = components[0].Split('?');
-                    UriBuilder builder = new UriBuilder();
-                    builder.Path = parts[0];
-                    if(parts.Length == 2)
+                    rc.Path = rc.Host.Substring(p);
+                    rc.Host = rc.Host.Substring(0, p);
+                }
+
+                p = ssp.LastIndexOf(")");
+                int start = intialParen + 1;
+                int len = p - start;
+                componentString = ssp.Substring(start, len);
+                parms = ssp.Substring(p + 1).Trim();
+            }
+            else
+            {
+                componentString = ssp;
+                parms = "";
+            }
+
+            String[] components = SplitComponents(componentString);
+            rc.Components = new Uri[components.Length];
+            for(int i = 0; i < components.Length; i++)
+            {
+//                if(components.Length == 1 && components[0] == ssp)
+//                {
+//                    String[] parts = components[0].Split('?');
+//                    UriBuilder builder = new UriBuilder();
+//                    builder.Path = parts[0];
+//                    if(parts.Length == 2)
+//                    {
+//                        builder.Query = parts[1];
+//                    }
+//                    rc.Components[i] = builder.Uri;
+//                }
+//                else
+//                {
+                    rc.Components[i] = new Uri(components[i].Trim());
+//                }
+            }
+
+            p = parms.IndexOf("?");
+            if(p >= 0)
+            {
+                if(p > 0)
+                {
+                    rc.Path = StripPrefix(parms.Substring(0, p), "/");
+                }
+
+                rc.Parameters = ParseQuery(parms.Substring(p + 1));
+            }
+            else
+            {
+                if(parms.Length > 0)
+                {
+                    rc.Path = StripPrefix(parms, "/");
+                }
+
+                rc.Parameters = EmptyMap;
+            }
+        }
+
+        private static StringDictionary EmptyMap
+        {
+            get { return new StringDictionary(); }
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="componentString"></param>
+        private static String[] SplitComponents(String componentString)
+        {
+            ArrayList l = new ArrayList();
+
+            int last = 0;
+            int depth = 0;
+            char[] chars = componentString.ToCharArray();
+            for(int i = 0; i < chars.Length; i++)
+            {
+                switch(chars[i])
+                {
+                case '(':
+                    depth++;
+                    break;
+
+                case ')':
+                    depth--;
+                    break;
+
+                case ',':
+                    if(depth == 0)
                     {
-                        builder.Query = parts[1];
+                        String s = componentString.Substring(last, i - last);
+                        l.Add(s);
+                        last = i + 1;
                     }
-                    rc.Components[i] = builder.Uri;
+                    break;
+
+                default:
+                    break;
                 }
-                else
+            }
+
+            String ending = componentString.Substring(last);
+            if(ending.Length != 0)
+            {
+                l.Add(ending);
+            }
+
+            String[] rc = new String[l.Count];
+            l.CopyTo(rc);
+            return rc;
+        }
+
+        public static bool CheckParenthesis(String str)
+        {
+            bool result = true;
+
+            if(str != null)
+            {
+                int open = 0;
+                int closed = 0;
+
+                int i = 0;
+                while((i = str.IndexOf('(', i)) >= 0)
                 {
-				    rc.Components[i] = new Uri(components[i].Trim());
+                    i++;
+                    open++;
                 }
-			}
 
-			p = parms.IndexOf("?");
-			if(p >= 0)
-			{
-				if(p > 0)
-				{
-					rc.Path = StripPrefix(parms.Substring(0, p), "/");
-				}
+                i = 0;
+                while((i = str.IndexOf(')', i)) >= 0)
+                {
+                    i++;
+                    closed++;
+                }
 
-				rc.Parameters = ParseQuery(parms.Substring(p + 1));
-			}
-			else
-			{
-				if(parms.Length > 0)
-				{
-					rc.Path = StripPrefix(parms, "/");
-				}
+                result = (open == closed);
+            }
 
-				rc.Parameters = EmptyMap;
-			}
-		}
-
-		private static StringDictionary EmptyMap
-		{
-			get { return new StringDictionary(); }
-		}
-
-		/// <summary>
-		/// </summary>
-		/// <param name="componentString"></param>
-		private static String[] SplitComponents(String componentString)
-		{
-			ArrayList l = new ArrayList();
-
-			int last = 0;
-			int depth = 0;
-			char[] chars = componentString.ToCharArray();
-			for(int i = 0; i < chars.Length; i++)
-			{
-				switch(chars[i])
-				{
-				case '(':
-					depth++;
-					break;
-
-				case ')':
-					depth--;
-					break;
-
-				case ',':
-					if(depth == 0)
-					{
-						String s = componentString.Substring(last, i - last);
-						l.Add(s);
-						last = i + 1;
-					}
-					break;
-
-				default:
-					break;
-				}
-			}
-
-			String ending = componentString.Substring(last);
-			if(ending.Length != 0)
-			{
-				l.Add(ending);
-			}
-
-			String[] rc = new String[l.Count];
-			l.CopyTo(rc);
-			return rc;
-		}
-
-		public static bool CheckParenthesis(String str)
-		{
-			bool result = true;
-
-			if(str != null)
-			{
-				int open = 0;
-				int closed = 0;
-
-				int i = 0;
-				while((i = str.IndexOf('(', i)) >= 0)
-				{
-					i++;
-					open++;
-				}
-
-				i = 0;
-				while((i = str.IndexOf(')', i)) >= 0)
-				{
-					i++;
-					closed++;
-				}
-
-				result = (open == closed);
-			}
-
-			return result;
-		}
-	}
+            return result;
+        }
+    }
 }
