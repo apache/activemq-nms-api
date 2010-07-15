@@ -53,12 +53,12 @@ namespace Apache.NMS
 		static NMSConnectionFactory()
 		{
 			schemaProviderFactoryMap = new Dictionary<string, ProviderFactoryInfo>();
-			schemaProviderFactoryMap["activemq"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ.dll", "Apache.NMS.ActiveMQ.ConnectionFactory");
-			schemaProviderFactoryMap["tcp"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ.dll", "Apache.NMS.ActiveMQ.ConnectionFactory");
-			schemaProviderFactoryMap["ems"] = new ProviderFactoryInfo("Apache.NMS.EMS.dll", "Apache.NMS.EMS.ConnectionFactory");
-			schemaProviderFactoryMap["msmq"] = new ProviderFactoryInfo("Apache.NMS.MSMQ.dll", "Apache.NMS.MSMQ.ConnectionFactory");
-			schemaProviderFactoryMap["stomp"] = new ProviderFactoryInfo("Apache.NMS.Stomp.dll", "Apache.NMS.Stomp.ConnectionFactory");
-			schemaProviderFactoryMap["xms"] = new ProviderFactoryInfo("Apache.NMS.XMS.dll", "Apache.NMS.XMS.ConnectionFactory");
+			schemaProviderFactoryMap["activemq"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ", "Apache.NMS.ActiveMQ.ConnectionFactory");
+			schemaProviderFactoryMap["tcp"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ", "Apache.NMS.ActiveMQ.ConnectionFactory");
+			schemaProviderFactoryMap["ems"] = new ProviderFactoryInfo("Apache.NMS.EMS", "Apache.NMS.EMS.ConnectionFactory");
+			schemaProviderFactoryMap["msmq"] = new ProviderFactoryInfo("Apache.NMS.MSMQ", "Apache.NMS.MSMQ.ConnectionFactory");
+			schemaProviderFactoryMap["stomp"] = new ProviderFactoryInfo("Apache.NMS.Stomp", "Apache.NMS.Stomp.ConnectionFactory");
+			schemaProviderFactoryMap["xms"] = new ProviderFactoryInfo("Apache.NMS.XMS", "Apache.NMS.XMS.ConnectionFactory");
 		}
 
 		/// <summary>
@@ -140,23 +140,54 @@ namespace Apache.NMS
 			string factoryClassName;
 			Type factoryType = null;
 
-			Tracer.Debug("Locating provider for scheme: " + scheme);
-
+			Tracer.DebugFormat("Locating provider for scheme: {0}", scheme);
 			if(LookupConnectionFactoryInfo(paths, scheme, out assemblyFileName, out factoryClassName))
 			{
 				Assembly assembly = null;
 
-				Tracer.Debug("Attempting to locate provider assembly: " + assemblyFileName);
-				foreach(string path in paths)
+				Tracer.DebugFormat("Attempting to load provider assembly: {0}", assemblyFileName);
+				try
 				{
-					string fullpath = Path.Combine(path, assemblyFileName);
-					Tracer.Debug("\tScanning folder: " + path);
-
-					if(File.Exists(fullpath))
+					assembly = Assembly.Load(assemblyFileName);
+					if(null != assembly)
 					{
-						Tracer.Debug("\tAssembly found!");
-						assembly = Assembly.LoadFrom(fullpath);
-						break;
+						Tracer.Debug("Succesfully loaded provider.");
+					}
+				}
+				catch(Exception ex)
+				{
+					Tracer.ErrorFormat("Exception loading assembly failed: {0}", ex.Message);
+					assembly = null;
+				}
+
+				if(null == assembly)
+				{
+					foreach(string path in paths)
+					{
+						string fullpath = Path.Combine(path, assemblyFileName) + ".dll";
+
+						Tracer.DebugFormat("Looking for: {0}", fullpath);
+						if(File.Exists(fullpath))
+						{
+							Tracer.Debug("\tAssembly found!  Attempting to load...");
+							try
+							{
+								assembly = Assembly.LoadFrom(fullpath);
+							}
+							catch(Exception ex)
+							{
+								Tracer.ErrorFormat("Exception loading assembly failed: {0}", ex.Message);
+								assembly = null;
+							}
+
+							if(null != assembly)
+							{
+								Tracer.Debug("Successfully loaded provider.");
+								break;
+							}
+
+							Tracer.Debug("Failed to load provider.  Continuing search...");
+						}
 					}
 				}
 
@@ -167,6 +198,14 @@ namespace Apache.NMS
 #else
 					factoryType = assembly.GetType(factoryClassName, true, true);
 #endif
+					if(null == factoryType)
+					{
+						Tracer.Fatal("Failed to load class factory from provider.");
+					}
+				}
+				else
+				{
+					Tracer.Fatal("Failed to load provider assembly.");
 				}
 			}
 
@@ -222,7 +261,7 @@ namespace Apache.NMS
 				foreach(string path in paths)
 				{
 					string fullpath = Path.Combine(path, configFileName);
-					Tracer.DebugFormat("\tScanning folder: {0}", path);
+					Tracer.DebugFormat("Looking for: {0}", fullpath);
 
 					try
 					{
@@ -345,15 +384,15 @@ namespace Apache.NMS
 			get { return factory; }
 		}
 
-        /// <summary>
-        /// Get/or Set the IRedeliveryPolicy instance using the IConnectionFactory implementation
-        /// that is being used.
-        /// </summary>
-        public IRedeliveryPolicy RedeliveryPolicy
-        {
-            get { return this.factory.RedeliveryPolicy; }
-            set { this.factory.RedeliveryPolicy = value; }
-        }
-        
+		/// <summary>
+		/// Get/or Set the IRedeliveryPolicy instance using the IConnectionFactory implementation
+		/// that is being used.
+		/// </summary>
+		public IRedeliveryPolicy RedeliveryPolicy
+		{
+			get { return this.factory.RedeliveryPolicy; }
+			set { this.factory.RedeliveryPolicy = value; }
+		}
+
 	}
 }
