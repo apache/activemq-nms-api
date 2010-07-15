@@ -16,6 +16,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
@@ -32,6 +33,23 @@ namespace Apache.NMS.Util
 	/// </summary>
 	public class URISupport
 	{
+        /// <summary>
+        /// Given a string that could be a Composite Uri that uses syntax not compatible
+        /// with the .NET Uri class such as an ActiveMQ failover Uri formatted as
+        /// "failover://(tcp://localhost:61616)", the initial '://' must be changed
+        /// to ':(' so that the Uri class doesn't attempt to parse the '(tcp:' as
+        /// the Uri's Authority as that is not a valid host name.
+        /// </summary>
+        /// <param name="uriString">
+        /// A string that could be a Composite Uri that uses syntax not compatible
+        /// with the .NET Uri class
+        /// </param>
+        public static Uri CreateCompatibleUri(string uriString)
+        {
+            string sanitized = uriString.Replace("://(", ":(");
+            return new Uri(sanitized);
+        }
+
 		/// <summary>
 		/// Parse a Uri query string of the form ?x=y&amp;z=0
 		/// into a map of name/value pairs.
@@ -71,8 +89,8 @@ namespace Apache.NMS.Util
 		public static StringDictionary ParseParameters(Uri uri)
 		{
 			return (uri.Query == null
-					? emptyMap
-					: ParseQuery(stripPrefix(uri.Query, "?")));
+					? EmptyMap
+					: ParseQuery(StripPrefix(uri.Query, "?")));
 		}
 
 		/// <summary>
@@ -87,6 +105,8 @@ namespace Apache.NMS.Util
 		public static void SetProperties(object target, StringDictionary map, string prefix)
 		{
 			Type type = target.GetType();
+			
+			List<String> matches = new List<String>();
 
 			foreach(string key in map.Keys)
 			{
@@ -119,10 +139,47 @@ namespace Apache.NMS.Util
 							throw new NMSException(string.Format("No such property or field: {0} on class: {1}", bareKey, target.GetType().Name));
 						}
 					}
+					
+					// store for later removal.
+					matches.Add(key);
 				}
+			}
+			
+			// Remove all the properties we set so they are used again later.
+			foreach(string match in matches)
+			{
+				map.Remove(match);
 			}
 		}
 
+	    public static StringDictionary ExtractProperties(StringDictionary props, string prefix) {
+	        
+			if(props == null) 
+			{
+	            throw new Exception("Properties Object was null");
+	        }
+			
+			StringDictionary result = new StringDictionary();
+			List<String> matches = new List<String>();
+		
+			foreach(string key in props.Keys)
+			{
+				if(key.StartsWith(prefix))
+				{
+					String value = props[key];
+					result[key] = value;
+					matches.Add(key);
+				}
+			}
+			
+			foreach(string match in matches)
+			{
+				props.Remove(match);
+			}
+					
+	        return result;
+	    }
+		
 		public static String UrlDecode(String s)
 		{
 #if !NETCF
@@ -141,9 +198,9 @@ namespace Apache.NMS.Util
 #endif
 		}
 
-		public static String createQueryString(StringDictionary options)
+		public static String CreateQueryString(StringDictionary options)
 		{
-			if(options.Count > 0)
+			if(options != null && options.Count > 0)
 			{
 				StringBuilder rc = new StringBuilder();
 				bool first = true;
@@ -173,6 +230,18 @@ namespace Apache.NMS.Util
 				return "";
 			}
 		}
+
+        public static Uri CreateRemainingUri(Uri originalUri, StringDictionary parameters)
+        {
+            string s = CreateQueryString(parameters);
+
+            if(String.IsNullOrEmpty(s))
+            {
+                s = null;
+            }
+
+            return CreateUriWithQuery(originalUri, s);
+        }
 
 		public class CompositeData
 		{
@@ -221,54 +290,50 @@ namespace Apache.NMS.Util
 
 			public Uri toUri()
 			{
-				StringBuilder sb = new StringBuilder();
-				if(scheme != null)
-				{
-					sb.Append(scheme);
-					sb.Append(':');
-				}
+                UriBuilder builder = new UriBuilder();
 
-				if(host != null && host.Length != 0)
-				{
-					sb.Append(host);
-				}
-				else
-				{
-					sb.Append('(');
-					for(int i = 0; i < components.Length; i++)
-					{
-						if(i != 0)
-						{
-							sb.Append(',');
-						}
-						sb.Append(components[i].ToString());
-					}
-					sb.Append(')');
-				}
+                builder.Scheme = scheme;
+                builder.Host = host;
+                builder.Fragment = fragment;
 
-				if(path != null)
-				{
-					sb.Append('/');
-					sb.Append(path);
-				}
+                if(components.Length > 0)
+                {
+                    StringBuilder sb = new StringBuilder();
 
-				if(parameters.Count != 0)
-				{
-					sb.Append("?");
-					sb.Append(createQueryString(parameters));
-				}
+                    sb.Append('(');
+                    for(int i = 0; i < components.Length; i++)
+                    {
+                        if(i != 0)
+                        {
+                            sb.Append(',');
+                        }
+                        sb.Append(components[i].ToString());
+                    }
+                    sb.Append(')');
 
-				if(fragment != null)
-				{
-					sb.Append("#");
-					sb.Append(fragment);
-				}
+                    if(path != null)
+                    {
+                        sb.Append('/');
+                        sb.Append(path);
+                    }
 
-				return new Uri(sb.ToString());
+                    builder.Path = sb.ToString();
+                }
+                else
+                {
+                    builder.Path = path;
+                }
+
+                if(parameters.Count > 0)
+                {
+                    builder.Query = CreateQueryString(parameters);
+                }
+
+				return builder.Uri;
 			}
 		}
 
-		public static String stripPrefix(String value, String prefix)
+		public static String StripPrefix(String value, String prefix)
 		{
 			if(value.StartsWith(prefix))
 			{
@@ -278,46 +343,72 @@ namespace Apache.NMS.Util
 			return value;
 		}
 
-		public static CompositeData parseComposite(Uri uri)
+        public static Uri CreateUriWithQuery(Uri uri, string query)
+        {
+            if(!String.IsNullOrEmpty(query) && !query.StartsWith("?"))
+            {
+                query = "?" + query;
+            }
+
+            if(String.IsNullOrEmpty(uri.Query))
+            {
+                return new Uri(uri.OriginalString + query);
+            }
+            else
+            {
+                string originalUri = uri.OriginalString;
+
+                int queryDelimPos = originalUri.LastIndexOf('?');
+                int compositeDelimPos = originalUri.LastIndexOf(')');
+
+                if(queryDelimPos <= compositeDelimPos)
+                {
+                    // No Query or the Query is part of an inner Composite.
+                    return new Uri(originalUri + query);
+                }
+                else
+                {
+                    // Outer Uri has a Query or not a Composite Uri with a Query
+                    string strippedUri = originalUri.Substring(0, queryDelimPos);
+                    return new Uri(strippedUri + query);
+                }
+            }
+        }
+
+        public static Uri RemoveQuery(Uri original)
+        {
+            return CreateUriWithQuery(original, null);
+        }
+
+		public static CompositeData ParseComposite(Uri uri)
 		{
 			CompositeData rc = new CompositeData();
 			rc.Scheme = uri.Scheme;
 
-			// URI is one of these formats:
-			//     scheme://host:port/path?query
-			//     scheme://host/path(URI_1,URI_2,...,URI_N)?query
-			// where URI_x can be any valid URI (including a composite one).
-			// Host and port and path are optional.
-			// This does mean that a URI containing balanced parenthesis are considered
-			// to be composite. This can be a problem if parenthesis are used in another context.
-			//
-			// This routine constructs CompositeData reflecting either of
-			// these forms. Each of the URI_x are stored into the components
-			// of the CompositeData.
-			//
-			// Sample valid URI that should be accepted:
-			//
-			// tcp://192.168.1.1
-			// tcp://192.168.1.1/
-			// tcp://192.168.1.1:61616
-			// tcp://192.168.1.1:61616/
-			// tcp://machine:61616
-			// tcp://host:61616/
-			// failover:(tcp://192.168.1.1:61616?trace=true,tcp://machine:61616?trace=false)?random=true
-
-			// If this is a composite URI, then strip the scheme
-			// and break up the URI into components. If not, then pass the URI directly.
-			// We detect "compositeness" by the existence of a "(" in the URI containing
-			// balanced parenthesis
-
 			// Start with original URI
-			String ssp = uri.OriginalString.Trim();
+			//String ssp = uri.Authority + uri.PathAndQuery;
+            String ssp = uri.OriginalString;
 
-			ssp = stripPrefix(ssp, "failover:");
+            ssp = StripPrefix(ssp, rc.Scheme + ":");
+            ssp = StripPrefix(ssp, "//");
+
+            int lastPoundPos = ssp.LastIndexOf("#");
+            int lastParendPos = ssp.LastIndexOf(")");
+
+            // Only include a Fragment that's outside any Composte sections.
+            if(lastPoundPos > lastParendPos)
+            {
+                rc.Fragment = ssp.Substring(lastPoundPos);
+                ssp = ssp.Substring(0, lastPoundPos);
+            }
+
+            // Ensure any embedded URIs don't have malformed authority's by changing
+            // them from '://(' which would cause the .NET Uri class to attempt to validate
+            // the authority as a hostname with, ':(' which is valid.
+            ssp = ssp.Replace("://(", ":(");
 
 			// Handle the composite components
-			parseComposite(uri, rc, ssp);
-			rc.Fragment = uri.Fragment;
+			ParseComposite(uri, rc, ssp);
 			return rc;
 		}
 
@@ -326,12 +417,12 @@ namespace Apache.NMS.Util
 		/// <param name="uri"></param>
 		/// <param name="rc"></param>
 		/// <param name="ssp"></param>
-		private static void parseComposite(Uri uri, CompositeData rc, String ssp)
+		private static void ParseComposite(Uri uri, CompositeData rc, String ssp)
 		{
 			String componentString;
 			String parms;
 
-			if(!checkParenthesis(ssp))
+			if(!CheckParenthesis(ssp))
 			{
 				throw new NMSException(uri.ToString() + ": Not a matching number of '(' and ')' parenthesis");
 			}
@@ -357,24 +448,29 @@ namespace Apache.NMS.Util
 			}
 			else
 			{
-				p = ssp.IndexOf("?");
-				if(p >= 0)
-				{
-					componentString = ssp.Substring(0, p);
-					parms = ssp.Substring(p);
-				}
-				else
-				{
-					componentString = ssp;
-					parms = "";
-				}
+			    componentString = ssp;
+				parms = "";
 			}
 
-			String[] components = splitComponents(componentString);
+			String[] components = SplitComponents(componentString);
 			rc.Components = new Uri[components.Length];
 			for(int i = 0; i < components.Length; i++)
 			{
-				rc.Components[i] = new Uri(components[i].Trim());
+                if(components.Length == 1 && components[0] == ssp)
+                {
+                    String[] parts = components[0].Split('?');
+                    UriBuilder builder = new UriBuilder();
+                    builder.Path = parts[0];
+                    if(parts.Length == 2)
+                    {
+                        builder.Query = parts[1];
+                    }
+                    rc.Components[i] = builder.Uri;
+                }
+                else
+                {
+				    rc.Components[i] = new Uri(components[i].Trim());
+                }
 			}
 
 			p = parms.IndexOf("?");
@@ -382,7 +478,7 @@ namespace Apache.NMS.Util
 			{
 				if(p > 0)
 				{
-					rc.Path = stripPrefix(parms.Substring(0, p), "/");
+					rc.Path = StripPrefix(parms.Substring(0, p), "/");
 				}
 
 				rc.Parameters = ParseQuery(parms.Substring(p + 1));
@@ -391,14 +487,14 @@ namespace Apache.NMS.Util
 			{
 				if(parms.Length > 0)
 				{
-					rc.Path = stripPrefix(parms, "/");
+					rc.Path = StripPrefix(parms, "/");
 				}
 
-				rc.Parameters = emptyMap;
+				rc.Parameters = EmptyMap;
 			}
 		}
 
-		private static StringDictionary emptyMap
+		private static StringDictionary EmptyMap
 		{
 			get { return new StringDictionary(); }
 		}
@@ -406,7 +502,7 @@ namespace Apache.NMS.Util
 		/// <summary>
 		/// </summary>
 		/// <param name="componentString"></param>
-		private static String[] splitComponents(String componentString)
+		private static String[] SplitComponents(String componentString)
 		{
 			ArrayList l = new ArrayList();
 
@@ -450,7 +546,7 @@ namespace Apache.NMS.Util
 			return rc;
 		}
 
-		public static bool checkParenthesis(String str)
+		public static bool CheckParenthesis(String str)
 		{
 			bool result = true;
 

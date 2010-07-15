@@ -33,8 +33,6 @@ namespace Apache.NMS.Test
                 connection.Start();
                 using(ISession session = connection.CreateSession())
                 {
-                    IDestination unusedDest = session.CreateTemporaryQueue();
-
                     IMessageProducer producer = session.CreateProducer(null);
 
                     try

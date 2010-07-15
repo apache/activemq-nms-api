@@ -22,6 +22,8 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 
+using Apache.NMS.Util;
+
 namespace Apache.NMS
 {
 	/// <summary>
@@ -68,7 +70,7 @@ namespace Apache.NMS
 		/// <param name="providerURI">The URI for the ActiveMQ provider.</param>
 		/// <param name="constructorParams">Optional parameters to use when creating the ConnectionFactory.</param>
 		public NMSConnectionFactory(string providerURI, params object[] constructorParams)
-			: this(new Uri(providerURI), constructorParams)
+			: this(URISupport.CreateCompatibleUri(providerURI), constructorParams)
 		{
 		}
 
