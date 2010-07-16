@@ -17,7 +17,6 @@
 
 using Apache.NMS.Util;
 using NUnit.Framework;
-using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -43,10 +42,10 @@ namespace Apache.NMS.Test
 		protected double	n = 2.3;
 		protected byte[]    o = {1, 2, 3, 4, 5};
 
-		[RowTest]
-		[Row(MsgDeliveryMode.Persistent)]
-		[Row(MsgDeliveryMode.NonPersistent)]
-		public void SendReceiveMessageProperties(MsgDeliveryMode deliveryMode)
+		[Test]
+		public void SendReceiveMessageProperties(
+			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+			MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{

@@ -21,7 +21,6 @@ using System.Collections.Specialized;
 using Apache.NMS.Util;
 
 using NUnit.Framework;
-using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -33,16 +32,17 @@ namespace Apache.NMS.Test
 	        Assert.AreEqual(expected, map[key], "Map key: " + key);
 	    }
 
-        [RowTest]
-        [Row("tcp://127.0.0.1:61616")]
-        [Row("tcp:127.0.0.1:61616")]
-        [Row("failover:tcp://127.0.0.1:61616")]
-        [Row("failover:(tcp://127.0.0.1:61616)")]
-        [Row("failover://(tcp://127.0.0.1:61616)")]
-        [Row("failover://(tcp://127.0.0.1:61616,tcp:192.168.0.1:61616)")]
-        [Row("activemq:failover:(tcp://localhost:61616)")]
-        [Row("activemq:failover:(tcp://${activemqhost}:61616)")]
-        public void TestCreateSupportedUriVariations(string uriString)
+        [Test]
+        public void TestCreateSupportedUriVariations(
+            [Values("tcp://127.0.0.1:61616",
+                    "tcp:127.0.0.1:61616",
+                    "failover:tcp://127.0.0.1:61616",
+                    "failover:(tcp://127.0.0.1:61616)",
+                    "failover://(tcp://127.0.0.1:61616)",
+                    "failover://(tcp://127.0.0.1:61616,tcp:192.168.0.1:61616)",
+                    "activemq:failover:(tcp://localhost:61616)",
+                    "activemq:failover:(tcp://${activemqhost}:61616)")]
+        	string uriString)
         {
             Uri result = URISupport.CreateCompatibleUri(NMSTestSupport.ReplaceEnvVar(uriString));
 

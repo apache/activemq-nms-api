@@ -17,7 +17,6 @@
 
 using Apache.NMS.Util;
 using NUnit.Framework;
-using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -28,10 +27,10 @@ namespace Apache.NMS.Test
 		protected static string TEST_CLIENT_ID = "BytesMessageClientId";
 		protected byte[] msgContent = {1, 2, 3, 4, 5, 6, 7, 8};
 
-		[RowTest]
-		[Row(MsgDeliveryMode.Persistent)]
-		[Row(MsgDeliveryMode.NonPersistent)]
-		public void SendReceiveBytesMessage(MsgDeliveryMode deliveryMode)
+		[Test]
+		public void SendReceiveBytesMessage(
+			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+			MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -57,10 +56,10 @@ namespace Apache.NMS.Test
 			}
 		}
 
-        [RowTest]
-        [Row(MsgDeliveryMode.Persistent)]
-        [Row(MsgDeliveryMode.NonPersistent)]
-        public void SendReceiveBytesMessageContentTest(MsgDeliveryMode deliveryMode)
+        [Test]
+        public void SendReceiveBytesMessageContentTest(
+			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+			MsgDeliveryMode deliveryMode)
         {
             using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
             {

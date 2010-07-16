@@ -19,7 +19,6 @@ using System;
 using System.Threading;
 using Apache.NMS.Util;
 using NUnit.Framework;
-using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -36,12 +35,12 @@ namespace Apache.NMS.Test
 		private int receivedNonIgnoredMsgCount = 0;
 		private int receivedIgnoredMsgCount = 0;
 
-		[RowTest]
-		[Row(MsgDeliveryMode.Persistent, QUEUE_DESTINATION_NAME)]
-		[Row(MsgDeliveryMode.NonPersistent, QUEUE_DESTINATION_NAME)]
-		[Row(MsgDeliveryMode.Persistent, TOPIC_DESTINATION_NAME)]
-		[Row(MsgDeliveryMode.NonPersistent, TOPIC_DESTINATION_NAME)]
-		public void FilterIgnoredMessagesTest(MsgDeliveryMode deliveryMode, string destinationName)
+		[Test]
+		public void FilterIgnoredMessagesTest(
+			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+			MsgDeliveryMode deliveryMode,
+			[Values(QUEUE_DESTINATION_NAME, TOPIC_DESTINATION_NAME)]
+			string destinationName)
 		{
 			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))
 			using(IConnection connection2 = CreateConnection(TEST_CLIENT_ID2))

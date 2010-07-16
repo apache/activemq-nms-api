@@ -17,7 +17,6 @@
 
 using System;
 using NUnit.Framework;
-using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -67,10 +66,10 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[RowTest]
-		[Row(true)]
-		[Row(false)]
-		public void CreateAndDisposeWithConsumer(bool disposeConsumer)
+		[Test]
+		public void CreateAndDisposeWithConsumer(
+			[Values(true, false)]
+			bool disposeConsumer)
 		{
 			using(IConnection connection = CreateConnection("DisposalTestConnection"))
 			{
@@ -90,10 +89,10 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[RowTest]
-		[Row(true)]
-		[Row(false)]
-		public void CreateAndDisposeWithProducer(bool disposeProducer)
+		[Test]
+		public void CreateAndDisposeWithProducer(
+			[Values(true, false)]
+			bool disposeProducer)
 		{
 			using(IConnection connection = CreateConnection("DisposalTestConnection"))
 			{
@@ -113,12 +112,12 @@ namespace Apache.NMS.Test
 			}
 		}
 
-        [RowTest]
-        [Row(MsgDeliveryMode.Persistent, DestinationType.Queue)]
-        [Row(MsgDeliveryMode.Persistent, DestinationType.Topic)]
-        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Queue)]        
-        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Topic)]        
-        public void TestStartAfterSend(MsgDeliveryMode deliveryMode, DestinationType destinationType)
+        [Test]
+        public void TestStartAfterSend(
+			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+			MsgDeliveryMode deliveryMode,
+			[Values(DestinationType.Queue, DestinationType.Topic)]
+			DestinationType destinationType)
         {
             using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
             {            

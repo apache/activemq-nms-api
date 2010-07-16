@@ -323,6 +323,7 @@
                 output="${build.bin.dir}/${project.name}.Test.dll" doc="${build.bin.dir}/${project.name}.Test.xml">
             <nowarn>
                 <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+                <warning number="3016" /> <!-- do not report warnings for array parameters  -->
             </nowarn>
             <sources failonempty="true">
                 <include name="src/test/csharp/**.cs" />
@@ -334,6 +335,7 @@
                 output="${build.bin.dir}/${project.name}.Test.dll" doc="${build.bin.dir}/${project.name}.Test.xml">
             <nowarn>
                 <warning number="1591" /> <!-- do not report warnings for missing XML comments -->
+                <warning number="3016" /> <!-- do not report warnings for array parameters  -->
             </nowarn>
             <sources failonempty="true">
                 <include name="src/test/csharp/**.cs" />

@@ -17,7 +17,6 @@
 
 using Apache.NMS.Util;
 using NUnit.Framework;
-using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -30,17 +29,12 @@ namespace Apache.NMS.Test
 		protected const string TEMP_TOPIC_DESTINATION_NAME = "temp-topic://AutoDeleteTempTopic";
 		protected const string TEST_CLIENT_ID = "TempDestinationClientId";
 
-		[RowTest]
-		[Row(MsgDeliveryMode.Persistent, QUEUE_DESTINATION_NAME)]
-		[Row(MsgDeliveryMode.NonPersistent, QUEUE_DESTINATION_NAME)]
-		[Row(MsgDeliveryMode.Persistent, TOPIC_DESTINATION_NAME)]
-		[Row(MsgDeliveryMode.NonPersistent, TOPIC_DESTINATION_NAME)]
-
-		[Row(MsgDeliveryMode.Persistent, TEMP_QUEUE_DESTINATION_NAME)]
-		[Row(MsgDeliveryMode.NonPersistent, TEMP_QUEUE_DESTINATION_NAME)]
-		[Row(MsgDeliveryMode.Persistent, TEMP_TOPIC_DESTINATION_NAME)]
-		[Row(MsgDeliveryMode.NonPersistent, TEMP_TOPIC_DESTINATION_NAME)]
-		public void TempDestinationDeletionTest(MsgDeliveryMode deliveryMode, string destinationName)
+		[Test]
+		public void TempDestinationDeletionTest(
+			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+			MsgDeliveryMode deliveryMode,
+			[Values(QUEUE_DESTINATION_NAME, TOPIC_DESTINATION_NAME, TEMP_QUEUE_DESTINATION_NAME, TEMP_TOPIC_DESTINATION_NAME)]
+			string destinationName)
 		{
 			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))
 			{

@@ -18,7 +18,6 @@
 using System;
 using System.Threading;
 using NUnit.Framework;
-using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -33,12 +32,11 @@ namespace Apache.NMS.Test
 
 // The .NET CF does not have the ability to interrupt threads, so this test is impossible.
 #if !NETCF
-		[RowTest]
-		[Row(AcknowledgementMode.AutoAcknowledge)]
-		[Row(AcknowledgementMode.ClientAcknowledge)]
-		[Row(AcknowledgementMode.DupsOkAcknowledge)]
-		[Row(AcknowledgementMode.Transactional)]
-		public void TestNoTimeoutConsumer(AcknowledgementMode ackMode)
+		[Test]
+		public void TestNoTimeoutConsumer(
+			[Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge,
+				AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
+			AcknowledgementMode ackMode)
 		{
 			// Launch a thread to perform IMessageConsumer.Receive().
 			// If it doesn't fail in less than three seconds, no exception was thrown.
@@ -90,12 +88,11 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[RowTest]
-		[Row(AcknowledgementMode.AutoAcknowledge)]
-		[Row(AcknowledgementMode.ClientAcknowledge)]
-		[Row(AcknowledgementMode.DupsOkAcknowledge)]
-		[Row(AcknowledgementMode.Transactional)]
-		public void TestSyncReceiveConsumerClose(AcknowledgementMode ackMode)
+		[Test]
+		public void TestSyncReceiveConsumerClose(
+			[Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge,
+				AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
+			AcknowledgementMode ackMode)
 		{
 			// Launch a thread to perform IMessageConsumer.Receive().
 			// If it doesn't fail in less than three seconds, no exception was thrown.
@@ -161,12 +158,11 @@ namespace Apache.NMS.Test
             }
         }
         
-        [RowTest]
-        [Row(AcknowledgementMode.AutoAcknowledge)]
-        [Row(AcknowledgementMode.ClientAcknowledge)]
-        [Row(AcknowledgementMode.DupsOkAcknowledge)]
-        [Row(AcknowledgementMode.Transactional)]
-        public void TestDoChangeSentMessage(AcknowledgementMode ackMode)
+        [Test]
+        public void TestDoChangeSentMessage(
+			[Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge,
+				AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
+			AcknowledgementMode ackMode)
         {
             using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
             {
@@ -214,12 +210,11 @@ namespace Apache.NMS.Test
             }
         }
 		
-        [RowTest]
-        [Row(AcknowledgementMode.AutoAcknowledge)]
-        [Row(AcknowledgementMode.ClientAcknowledge)]
-        [Row(AcknowledgementMode.DupsOkAcknowledge)]
-        [Row(AcknowledgementMode.Transactional)]
-        public void TestConsumerReceiveBeforeMessageDispatched(AcknowledgementMode ackMode)
+        [Test]
+        public void TestConsumerReceiveBeforeMessageDispatched(
+			[Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge,
+				AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
+			AcknowledgementMode ackMode)
         {
             // Launch a thread to perform a delayed send.
             Thread sendThread = new Thread(DelayedProducerThreadProc);
@@ -245,10 +240,12 @@ namespace Apache.NMS.Test
             }
         }
 
-        [RowTest]
-        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Queue)]        
-        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Topic)]             
-        public void TestDontStart(MsgDeliveryMode deliveryMode, DestinationType destinationType )
+        [Test]
+        public void TestDontStart(
+			[Values(MsgDeliveryMode.NonPersistent)]
+			MsgDeliveryMode deliveryMode,
+			[Values(DestinationType.Queue, DestinationType.Topic)]
+			DestinationType destinationType )
         {
             using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
             {
@@ -264,16 +261,12 @@ namespace Apache.NMS.Test
             }
         }
 
-        [RowTest]
-        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Queue)]        
-        [Row(MsgDeliveryMode.Persistent, DestinationType.Queue)]        
-        [Row(MsgDeliveryMode.NonPersistent, DestinationType.Topic)]            
-        [Row(MsgDeliveryMode.Persistent, DestinationType.Topic)]            
-        [Row(MsgDeliveryMode.NonPersistent, DestinationType.TemporaryQueue)]        
-        [Row(MsgDeliveryMode.Persistent, DestinationType.TemporaryQueue)]        
-        [Row(MsgDeliveryMode.NonPersistent, DestinationType.TemporaryTopic)]            
-        [Row(MsgDeliveryMode.Persistent, DestinationType.TemporaryTopic)]            
-        public void TestSendReceiveTransacted(MsgDeliveryMode deliveryMode, DestinationType destinationType) 
+        [Test]
+        public void TestSendReceiveTransacted(
+			[Values(MsgDeliveryMode.NonPersistent, MsgDeliveryMode.Persistent)]
+			MsgDeliveryMode deliveryMode,
+			[Values(DestinationType.Queue, DestinationType.Topic, DestinationType.TemporaryQueue, DestinationType.TemporaryTopic)]
+			DestinationType destinationType) 
         {
             using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
             {

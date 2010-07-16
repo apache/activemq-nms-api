@@ -19,7 +19,6 @@ using System;
 using System.Collections;
 using Apache.NMS.Util;
 using NUnit.Framework;
-using NUnit.Framework.Extensions;
 
 namespace Apache.NMS.Test
 {
@@ -45,10 +44,10 @@ namespace Apache.NMS.Test
 		protected double n = 2.3;
 		protected byte[] o = {1, 2, 3, 4, 5};
 
-		[RowTest]
-		[Row(MsgDeliveryMode.Persistent)]
-		[Row(MsgDeliveryMode.NonPersistent)]
-		public void SendReceiveMapMessage(MsgDeliveryMode deliveryMode)
+		[Test]
+		public void SendReceiveMapMessage(
+			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+			MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -123,10 +122,10 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		[RowTest]
-		[Row(MsgDeliveryMode.Persistent)]
-		[Row(MsgDeliveryMode.NonPersistent)]
-		public void SendReceiveNestedMapMessage(MsgDeliveryMode deliveryMode)
+		[Test]
+		public void SendReceiveNestedMapMessage(
+			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+			MsgDeliveryMode deliveryMode)
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{

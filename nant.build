@@ -29,7 +29,6 @@
     <property name="project.description" value="Apache NMS (.Net Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers" />
     <property name="project.cls.compliant" value="true" />
     <property name="nunit.dll" value="${basedir}/lib/NUnit/${current.build.framework}/nunit.framework.dll" dynamic="true" />
-    <property name="nunit.extensions.dll" value="${basedir}/lib/NUnit/${current.build.framework}/nunit.framework.extensions.dll" dynamic="true" />
 
     <zipfileset id="src.package.contents" basedir="${basedir}">
         <include name="LICENSE.txt" />
@@ -62,8 +61,8 @@
         <!-- Property grouping for 'vendor.nunit.org' -->
         <property name="vendor.nunit.org.name" value="NUnit" />
         <property name="vendor.nunit.org.group" value="org.nunit" />
-        <property name="vendor.nunit.org.version" value="2.4.8" />
-        <property name="vendor.nunit.org.filenames" value="nunit.framework.dll,nunit.framework.extensions.dll" />
+        <property name="vendor.nunit.org.version" value="2.5.5" />
+        <property name="vendor.nunit.org.filenames" value="nunit.framework.dll" />
     </target>
 
     <target name="dependency-init" description="Initializes build dependencies">
@@ -91,7 +90,6 @@
             <include name="${current.build.framework.assembly.dir}/System.Xml.dll" />
             <include name="${build.bin.dir}/${project.name}.dll" />
             <include name="${nunit.dll}" />
-            <include name="${nunit.extensions.dll}" />
         </assemblyfileset>
 
         <fileset id="content.filenames">
