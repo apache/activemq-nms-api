@@ -156,14 +156,14 @@ namespace Apache.NMS.Test
 		{
 	        URISupport.CompositeData data = URISupport.ParseComposite(new Uri("test:(test:path)/path"));
 	        Assert.AreEqual("path", data.Path);
-	        data = URISupport.ParseComposite(new Uri("test:path"));
+	        data = URISupport.ParseComposite(new Uri("test:test:path"));
 	        Assert.IsNull(data.Path);
 	    }
 
 		[Test]
 	    public void TestSimpleComposite()
 		{
-	        URISupport.CompositeData data = URISupport.ParseComposite(new Uri("test:part1"));
+	        URISupport.CompositeData data = URISupport.ParseComposite(new Uri("test:tcp://part1"));
 	        Assert.AreEqual(1, data.Components.Length);
 	    }
 

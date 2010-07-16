@@ -460,21 +460,7 @@ namespace Apache.NMS.Util
             rc.Components = new Uri[components.Length];
             for(int i = 0; i < components.Length; i++)
             {
-//                if(components.Length == 1 && components[0] == ssp)
-//                {
-//                    String[] parts = components[0].Split('?');
-//                    UriBuilder builder = new UriBuilder();
-//                    builder.Path = parts[0];
-//                    if(parts.Length == 2)
-//                    {
-//                        builder.Query = parts[1];
-//                    }
-//                    rc.Components[i] = builder.Uri;
-//                }
-//                else
-//                {
-                    rc.Components[i] = new Uri(components[i].Trim());
-//                }
+                rc.Components[i] = new Uri(components[i].Trim());
             }
 
             p = parms.IndexOf("?");
