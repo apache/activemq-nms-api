@@ -56,10 +56,15 @@ namespace Apache.NMS.Util
         /// </summary>
         /// <param name="query">The query string to parse. This string should not contain
         /// Uri escape characters.</param>
-        public static StringDictionary ParseQuery(string query)
+        public static StringDictionary ParseQuery(String query)
         {
             StringDictionary map = new StringDictionary();
 
+            if(String.IsNullOrEmpty(query))
+            {
+                return EmptyMap;
+            }
+			
             // strip the initial "?"
             if(query.StartsWith("?"))
             {
