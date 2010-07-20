@@ -105,6 +105,48 @@ namespace Apache.NMS.Util
         /// </summary>
         /// <param name="target">The object whose properties will be set.</param>
         /// <param name="map">Map of key/value pairs.</param>
+        public static void SetProperties(object target, StringDictionary map)
+        {
+            Type type = target.GetType();
+
+            foreach(string key in map.Keys)
+            {
+                PropertyInfo prop = type.GetProperty(key,
+                                                        BindingFlags.FlattenHierarchy
+                                                        | BindingFlags.Public
+                                                        | BindingFlags.Instance
+                                                        | BindingFlags.IgnoreCase);
+
+                if(null != prop)
+                {
+                    prop.SetValue(target, Convert.ChangeType(map[key], prop.PropertyType, CultureInfo.InvariantCulture), null);
+                }
+                else
+                {
+                    FieldInfo field = type.GetField(key,
+                                                        BindingFlags.FlattenHierarchy
+                                                        | BindingFlags.Public
+                                                        | BindingFlags.Instance
+                                                        | BindingFlags.IgnoreCase);
+                    if(null != field)
+                    {
+                        field.SetValue(target, Convert.ChangeType(map[key], field.FieldType, CultureInfo.InvariantCulture));
+                    }
+                    else
+                    {
+                        throw new NMSException(string.Format("No such property or field: {0} on class: {1}", key, target.GetType().Name));
+                    }
+                }
+            }
+        }
+		
+        /// <summary>
+        /// Sets the public properties of a target object using a string map.
+        /// This method uses .Net reflection to identify public properties of
+        /// the target object matching the keys from the passed map.
+        /// </summary>
+        /// <param name="target">The object whose properties will be set.</param>
+        /// <param name="map">Map of key/value pairs.</param>
         /// <param name="prefix">Key value prefix.  This is prepended to the property name
         /// before searching for a matching key value.</param>
         public static void SetProperties(object target, StringDictionary map, string prefix)
@@ -157,6 +199,28 @@ namespace Apache.NMS.Util
             }
         }
 
+        public static StringDictionary GetProperties(StringDictionary props, string prefix) {
+
+            if(props == null)
+            {
+                throw new Exception("Properties Object was null");
+            }
+
+            StringDictionary result = new StringDictionary();
+
+            foreach(string key in props.Keys)
+            {
+                if(key.StartsWith(prefix))
+                {
+                    string bareKey = key.Substring(prefix.Length);					
+                    String value = props[key];
+                    result[bareKey] = value;
+                }
+            }
+
+            return result;
+        }
+		
         public static StringDictionary ExtractProperties(StringDictionary props, string prefix) {
 
             if(props == null)
