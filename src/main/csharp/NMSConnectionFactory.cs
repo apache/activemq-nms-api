@@ -243,55 +243,56 @@ namespace Apache.NMS
 			string schemeLower = scheme.ToLower();
 			ProviderFactoryInfo pfi;
 
-			// Check for standard provider implementations.
-			if(schemaProviderFactoryMap.TryGetValue(schemeLower, out pfi))
-			{
-				assemblyFileName = pfi.assemblyFileName;
-				factoryClassName = pfi.factoryClassName;
-				foundFactory = true;
-				Tracer.DebugFormat("Selected standard provider for {0}: {1}, {2}", schemeLower, assemblyFileName, factoryClassName);
-			}
-			else
-			{
-				// Look for a custom configuration to handle this scheme.
-				string configFileName = String.Format("nmsprovider-{0}.config", schemeLower);
+			// Look for a custom configuration to handle this scheme.
+			string configFileName = String.Format("nmsprovider-{0}.config", schemeLower);
 
-				assemblyFileName = String.Empty;
-				factoryClassName = String.Empty;
+			assemblyFileName = String.Empty;
+			factoryClassName = String.Empty;
 
-				Tracer.DebugFormat("Attempting to locate provider configuration: {0}", configFileName);
-				foreach(string path in paths)
+			Tracer.DebugFormat("Attempting to locate provider configuration: {0}", configFileName);
+			foreach(string path in paths)
+			{
+				string fullpath = Path.Combine(path, configFileName);
+				Tracer.DebugFormat("Looking for: {0}", fullpath);
+
+				try
 				{
-					string fullpath = Path.Combine(path, configFileName);
-					Tracer.DebugFormat("Looking for: {0}", fullpath);
-
-					try
+					if(File.Exists(fullpath))
 					{
-						if(File.Exists(fullpath))
+						Tracer.DebugFormat("\tConfiguration file found in {0}", fullpath);
+						XmlDocument configDoc = new XmlDocument();
+
+						configDoc.Load(fullpath);
+						XmlElement providerNode = (XmlElement) configDoc.SelectSingleNode("/configuration/provider");
+
+						if(null != providerNode)
 						{
-							Tracer.DebugFormat("\tConfiguration file found in {0}", fullpath);
-							XmlDocument configDoc = new XmlDocument();
-
-							configDoc.Load(fullpath);
-							XmlElement providerNode = (XmlElement) configDoc.SelectSingleNode("/configuration/provider");
-
-							if(null != providerNode)
+							assemblyFileName = providerNode.GetAttribute("assembly");
+							factoryClassName = providerNode.GetAttribute("classFactory");
+							if(!String.IsNullOrEmpty(assemblyFileName) && !String.IsNullOrEmpty(factoryClassName))
 							{
-								assemblyFileName = providerNode.GetAttribute("assembly");
-								factoryClassName = providerNode.GetAttribute("classFactory");
-								if(String.Empty != assemblyFileName && String.Empty != factoryClassName)
-								{
-									foundFactory = true;
-									Tracer.DebugFormat("Selected custom provider for {0}: {1}, {2}", schemeLower, assemblyFileName, factoryClassName);
-									break;
-								}
+								foundFactory = true;
+								Tracer.DebugFormat("Selected custom provider for {0}: {1}, {2}", schemeLower, assemblyFileName, factoryClassName);
+								break;
 							}
 						}
 					}
-					catch(Exception ex)
-					{
-						Tracer.DebugFormat("Exception while scanning {0}: {1}", fullpath, ex.Message);
-					}
+				}
+				catch(Exception ex)
+				{
+					Tracer.DebugFormat("Exception while scanning {0}: {1}", fullpath, ex.Message);
+				}
+			}
+
+			if(!foundFactory)
+			{
+				// Check for standard provider implementations.
+				if(schemaProviderFactoryMap.TryGetValue(schemeLower, out pfi))
+				{
+					assemblyFileName = pfi.assemblyFileName;
+					factoryClassName = pfi.factoryClassName;
+					foundFactory = true;
+					Tracer.DebugFormat("Selected standard provider for {0}: {1}, {2}", schemeLower, assemblyFileName, factoryClassName);
 				}
 			}
 
