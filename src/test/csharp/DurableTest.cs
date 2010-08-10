@@ -177,7 +177,7 @@ namespace Apache.NMS.Test
 		{
 			try
 			{
-				RegisterDurableConsumer(TEST_CLIENT_ID, DURABLE_TOPIC, CONSUMER_ID, DURABLE_SELECTOR, false);
+				RegisterDurableConsumer(TEST_CLIENT_ID, DURABLE_TOPIC, CONSUMER_ID, null, false);
 				RunTestDurableConsumer(ackMode);
 				if(AcknowledgementMode.Transactional == ackMode)
 				{
@@ -193,19 +193,19 @@ namespace Apache.NMS.Test
 		protected void RunTestDurableConsumer(AcknowledgementMode ackMode)
 		{
 			SendDurableMessage();
+			SendDurableMessage();
 
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
 				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
+				using(ISession session = connection.CreateSession(ackMode))
 				{
 					ITopic topic = SessionUtil.GetTopic(session, DURABLE_TOPIC);
-					using(IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, DURABLE_SELECTOR, false))
+					using(IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, null, false))
 					{
 						IMessage msg = consumer.Receive(receiveTimeout);
 						Assert.IsNotNull(msg, "Did not receive first durable message.");
 						msg.Acknowledge();
-						SendDurableMessage();
 
 						msg = consumer.Receive(receiveTimeout);
 						Assert.IsNotNull(msg, "Did not receive second durable message.");
@@ -225,7 +225,7 @@ namespace Apache.NMS.Test
 			using(IConnection connection = CreateConnection(SEND_CLIENT_ID))
 			{
 				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.DupsOkAcknowledge))
+				using(ISession session = connection.CreateSession())
 				{
 					ITopic topic = SessionUtil.GetTopic(session, DURABLE_TOPIC);
 					using(IMessageProducer producer = session.CreateProducer(topic))
