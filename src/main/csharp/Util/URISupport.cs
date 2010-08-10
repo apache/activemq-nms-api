@@ -233,7 +233,7 @@ namespace Apache.NMS.Util
 
             foreach(string key in props.Keys)
             {
-                if(key.StartsWith(prefix))
+                if(key.StartsWith(prefix, true, CultureInfo.InvariantCulture))
                 {
                     String value = props[key];
                     result[key] = value;
