@@ -64,7 +64,7 @@ namespace Apache.NMS.Util
             {
                 return EmptyMap;
             }
-			
+
             // strip the initial "?"
             if(query.StartsWith("?"))
             {
@@ -139,7 +139,7 @@ namespace Apache.NMS.Util
                 }
             }
         }
-		
+
         /// <summary>
         /// Sets the public properties of a target object using a string map.
         /// This method uses .Net reflection to identify public properties of
@@ -157,7 +157,7 @@ namespace Apache.NMS.Util
 
             foreach(string key in map.Keys)
             {
-                if(key.ToLower().StartsWith(prefix.ToLower()))
+                if(key.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase))
                 {
                     string bareKey = key.Substring(prefix.Length);
                     PropertyInfo prop = type.GetProperty(bareKey,
@@ -210,9 +210,9 @@ namespace Apache.NMS.Util
 
             foreach(string key in props.Keys)
             {
-                if(key.StartsWith(prefix))
+                if(key.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    string bareKey = key.Substring(prefix.Length);					
+                    string bareKey = key.Substring(prefix.Length);
                     String value = props[key];
                     result[bareKey] = value;
                 }
@@ -220,7 +220,7 @@ namespace Apache.NMS.Util
 
             return result;
         }
-		
+
         public static StringDictionary ExtractProperties(StringDictionary props, string prefix) {
 
             if(props == null)
@@ -233,7 +233,7 @@ namespace Apache.NMS.Util
 
             foreach(string key in props.Keys)
             {
-                if(key.StartsWith(prefix, true, CultureInfo.InvariantCulture))
+                if(key.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase))
                 {
                     String value = props[key];
                     result[key] = value;
@@ -408,7 +408,7 @@ namespace Apache.NMS.Util
 
         public static String StripPrefix(String value, String prefix)
         {
-            if(value.StartsWith(prefix))
+            if(value.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase))
             {
                 return value.Substring(prefix.Length);
             }
