@@ -47,8 +47,8 @@ namespace Apache.NMS.Test
 						producer.Send(request);
 
 						IMessage message = consumer.Receive(receiveTimeout);
-						AssertBytesMessageEqual(request, message);
                         AssertMessageIsReadOnly(message);
+						AssertBytesMessageEqual(request, message);
 						Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
 					}
@@ -90,8 +90,8 @@ namespace Apache.NMS.Test
                         producer.Send(request);
 
                         IMessage message = consumer.Receive(receiveTimeout);
-                        AssertBytesMessageEqual(request, message);
                         AssertMessageIsReadOnly(message);
+                        AssertBytesMessageEqual(request, message);
                         Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
                     }
