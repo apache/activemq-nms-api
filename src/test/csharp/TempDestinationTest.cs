@@ -161,6 +161,7 @@ namespace Apache.NMS.Test
                 Assert.AreEqual(i, message2.Properties.GetInt("c"));
                 message = list[i] as IBytesMessage;
                 Assert.IsNotNull(message);
+				message.Reset();
                 message.ReadBytes(data);
                 message2.ReadBytes(data2);
                 Assert.AreEqual(data, data2);
