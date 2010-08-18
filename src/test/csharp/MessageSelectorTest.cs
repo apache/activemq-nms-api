@@ -126,7 +126,7 @@ namespace Apache.NMS.Test
 
 							Assert.IsTrue(waitCount <= 30, String.Format("Timeout waiting for all messages to be delivered. Only {0} of {1} non-ignored messages delivered.  Only {2} of {3} ignored messages delivered.",
 								receivedNonIgnoredMsgCount, numNonIgnoredMsgsSent, receivedIgnoredMsgCount, numIgnoredMsgsSent));
-							Console.WriteLine("Waiting ({0}) to receive all non-ignored messages...", waitCount);
+							//Console.WriteLine("Waiting ({0}) to receive all non-ignored messages...", waitCount);
 							Thread.Sleep(1000);
 						}
 
