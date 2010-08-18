@@ -56,7 +56,6 @@ namespace Apache.NMS.Test
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
-                        producer.RequestTimeout = receiveTimeout;
                         IStreamMessage request = session.CreateStreamMessage();
                         request.WriteBoolean(a);
                         request.WriteByte(b);

@@ -51,7 +51,6 @@ namespace Apache.NMS.Test
 					{
 						producer.Priority = priority;
 						producer.DeliveryMode = deliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 						ITextMessage request = session.CreateTextMessage(expectedText);
 						ITemporaryQueue replyTo = session.CreateTemporaryQueue();
 

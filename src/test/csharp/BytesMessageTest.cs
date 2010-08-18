@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using Apache.NMS.Util;
 using NUnit.Framework;
 
@@ -42,7 +43,6 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.DeliveryMode = deliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 						IMessage request = session.CreateBytesMessage(msgContent);
 						producer.Send(request);
 
@@ -57,7 +57,7 @@ namespace Apache.NMS.Test
 		}
 
         [Test]
-        public void SendReceiveBytesMessageContentTest(
+        public void SendReceiveBytesMessageContent(
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
         {
@@ -71,7 +71,6 @@ namespace Apache.NMS.Test
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
-                        producer.RequestTimeout = receiveTimeout;
                         IBytesMessage request = session.CreateBytesMessage();
                         
                         request.WriteBoolean(true);
@@ -101,28 +100,22 @@ namespace Apache.NMS.Test
         
         protected void AssertMessageIsReadOnly(IMessage message)
         {
-            IBytesMessage theMessage = message as IBytesMessage;
+			Type writeableExceptionType = typeof(MessageNotWriteableException);
+			IBytesMessage theMessage = message as IBytesMessage;
             Assert.IsNotNull(theMessage);
-            try
-            {
-                theMessage.WriteBoolean(true);
-                theMessage.WriteByte((byte) 1);
-                theMessage.WriteBytes(new byte[1]);
-                theMessage.WriteBytes(new byte[3], 0, 2);
-                theMessage.WriteChar('a');
-                theMessage.WriteDouble(1.5);
-                theMessage.WriteSingle((float) 1.5);
-                theMessage.WriteInt32(1);
-                theMessage.WriteInt64(1);
-                theMessage.WriteObject("stringobj");
-                theMessage.WriteInt16((short) 1);
-                theMessage.WriteString("utfstring");
-                Assert.Fail("Message should not have been Writable");
-            }
-            catch(MessageNotWriteableException)
-            {
-            }
-        }
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteBoolean(true); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteByte((byte) 1); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteBytes(new byte[1]); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteBytes(new byte[3], 0, 2); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteChar('a'); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteDouble(1.5); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteSingle((float) 1.5); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteInt32(1); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteInt64(1); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteObject("stringobj"); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteInt16((short) 1); });
+			Assert.Throws(writeableExceptionType, delegate () { theMessage.WriteString("utfstring"); });
+		}
         
 		/// <summary>
 		/// Assert that two messages are IBytesMessages and their contents are equal.

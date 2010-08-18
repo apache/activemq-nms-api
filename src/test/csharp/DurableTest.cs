@@ -233,7 +233,6 @@ namespace Apache.NMS.Test
 						ITextMessage message = session.CreateTextMessage("Durable Hello");
 
 						producer.DeliveryMode = MsgDeliveryMode.Persistent;
-						producer.RequestTimeout = receiveTimeout;
 						producer.Send(message);
 					}
 				}

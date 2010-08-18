@@ -62,7 +62,6 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.DeliveryMode = deliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 						consumer.Listener += new MessageListener(OnMessage);
 
 						IMessage request = session.CreateMessage();
@@ -91,7 +90,6 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.DeliveryMode = deliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 
 						IMessage request = session.CreateMessage();
 						request.NMSCorrelationID = "AsyncConsumeAfterSend";
@@ -124,7 +122,6 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.DeliveryMode = deliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 
 						IMessage request = session.CreateMessage();
 						request.NMSCorrelationID = "AsyncConsumeAfterSendLateListener";
@@ -157,7 +154,6 @@ namespace Apache.NMS.Test
 						using(IMessageProducer producer = session.CreateProducer(destination))
 						{
 							producer.DeliveryMode = deliveryMode;
-							producer.RequestTimeout = receiveTimeout;
 
 							ITextMessage request = session.CreateTextMessage("Hello, World!");
 							request.NMSCorrelationID = "AsyncConsumeTextMessage";
@@ -195,7 +191,6 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.DeliveryMode = deliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 						tempConsumer.Listener += new MessageListener(OnMessage);
 						consumer.Listener += new MessageListener(OnQueueMessage);
 
@@ -223,7 +218,6 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(message.NMSReplyTo))
 					{
 						producer.DeliveryMode = message.NMSDeliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 
 						ITextMessage response = session.CreateTextMessage("Asynchronous Response Message Text");
 						response.NMSCorrelationID = "TempQueueAsyncResponse";

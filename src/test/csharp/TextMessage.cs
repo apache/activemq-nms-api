@@ -41,7 +41,6 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.DeliveryMode = deliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 						IMessage request = session.CreateTextMessage("Hello World!");
 						producer.Send(request);
 

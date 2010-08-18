@@ -363,7 +363,6 @@ namespace Apache.NMS.Test
         {
             IConnection newConnection = Factory.CreateConnection(userName, passWord);
             Assert.IsNotNull(newConnection, "connection not created");
-            newConnection.RequestTimeout = this.receiveTimeout;
             if(newClientId != null)
             {
                 newConnection.ClientId = newClientId;

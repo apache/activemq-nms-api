@@ -59,7 +59,6 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.DeliveryMode = deliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 						IMapMessage request = session.CreateMapMessage();
 						request.Body["a"] = a;
 						request.Body["b"] = b;
@@ -137,7 +136,6 @@ namespace Apache.NMS.Test
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.DeliveryMode = deliveryMode;
-						producer.RequestTimeout = receiveTimeout;
 						IMapMessage request = session.CreateMapMessage();
 						const string textFieldValue = "Nested Map Messages Rule!";
 

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading;
 
 namespace Apache.NMS
 {
@@ -56,7 +57,7 @@ namespace Apache.NMS
 		public const MsgPriority defaultPriority = MsgPriority.Normal;
 		public const MsgDeliveryMode defaultDeliveryMode = MsgDeliveryMode.Persistent;
 		public static readonly TimeSpan defaultTimeToLive = TimeSpan.Zero;
-		public static readonly TimeSpan defaultRequestTimeout = TimeSpan.FromMilliseconds(System.Threading.Timeout.Infinite);
+		public static readonly TimeSpan defaultRequestTimeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 	}
 }
 

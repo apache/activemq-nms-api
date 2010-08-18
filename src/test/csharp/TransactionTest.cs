@@ -43,7 +43,6 @@ namespace Apache.NMS.Test
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
-                        producer.RequestTimeout = receiveTimeout;
                         ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
                         producer.Send(firstMsgSend);
                         session.Commit();
@@ -99,7 +98,6 @@ namespace Apache.NMS.Test
                                 using(IMessageProducer producer = session2.CreateProducer(destination2))
                                 {
                                     producer.DeliveryMode = deliveryMode;
-                                    producer.RequestTimeout = receiveTimeout;
                                     firstMsgSend = session2.CreateTextMessage("First Message");
                                     producer.Send(firstMsgSend);
                                     session2.Commit();
@@ -120,7 +118,6 @@ namespace Apache.NMS.Test
                                 using(IMessageProducer producer = session2.CreateProducer(destination2))
                                 {
                                     producer.DeliveryMode = deliveryMode;
-                                    producer.RequestTimeout = receiveTimeout;
                                     secondMsgSend = session2.CreateTextMessage("Second Message");
                                     producer.Send(secondMsgSend);
                                     session2.Commit();
@@ -157,7 +154,6 @@ namespace Apache.NMS.Test
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
-                        producer.RequestTimeout = receiveTimeout;
                         // Send both messages
                         ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
                         producer.Send(firstMsgSend);
@@ -200,7 +196,6 @@ namespace Apache.NMS.Test
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
-                        producer.RequestTimeout = receiveTimeout;
                         // Send both messages
                         ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
                         producer.Send(firstMsgSend);
@@ -246,7 +241,6 @@ namespace Apache.NMS.Test
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
-                        producer.RequestTimeout = receiveTimeout;
                         ITextMessage firstMsgSend = session.CreateTextMessage("SendCommitNonTransaction Message");
                         producer.Send(firstMsgSend);
                         try
@@ -279,7 +273,6 @@ namespace Apache.NMS.Test
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
-                        producer.RequestTimeout = receiveTimeout;
                         ITextMessage firstMsgSend = session.CreateTextMessage("ReceiveCommitNonTransaction Message");
                         producer.Send(firstMsgSend);
 
@@ -322,7 +315,6 @@ namespace Apache.NMS.Test
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
-                        producer.RequestTimeout = receiveTimeout;
                         ITextMessage firstMsgSend = session.CreateTextMessage("ReceiveCommitNonTransaction Message");
                         producer.Send(firstMsgSend);
 

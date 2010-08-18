@@ -23,7 +23,6 @@ using NUnit.Framework;
 namespace Apache.NMS.Test
 {
 	[TestFixture]
-	[Explicit]
 	public class MessageSelectorTest : NMSTestSupport
 	{
 		protected const string QUEUE_DESTINATION_NAME = "queue://MessageSelectorQueue";
@@ -37,11 +36,12 @@ namespace Apache.NMS.Test
 
 		[Test]
 		public void FilterIgnoredMessagesTest(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode,
 			[Values(QUEUE_DESTINATION_NAME, TOPIC_DESTINATION_NAME)]
 			string destinationName)
 		{
+			TimeSpan ttl = TimeSpan.FromMinutes(30);
+			const int MaxNumRequests = 100000;
+
 			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))
 			using(IConnection connection2 = CreateConnection(TEST_CLIENT_ID2))
 			using(IConnection connection3 = CreateConnection(TEST_CLIENT_ID3))
@@ -55,16 +55,15 @@ namespace Apache.NMS.Test
 				{
 					IDestination destination1 = CreateDestination(session1, destinationName);
 					IDestination destination2 = SessionUtil.GetDestination(session2, destinationName);
+					IDestination destination3 = SessionUtil.GetDestination(session3, destinationName); //jdg + "?consumer.prefetchSize=10000");
 
 					using(IMessageProducer producer = session1.CreateProducer(destination1))
 					using(IMessageConsumer consumer1 = session2.CreateConsumer(destination2, "JMSType NOT LIKE '%IGNORE'"))
 					{
-						const int MaxNumRequests = 100000;
 						int numNonIgnoredMsgsSent = 0;
 						int numIgnoredMsgsSent = 0;
 
-						producer.DeliveryMode = deliveryMode;
-						// producer.RequestTimeout = receiveTimeout;
+						producer.DeliveryMode = MsgDeliveryMode.NonPersistent;
 
 						receivedNonIgnoredMsgCount = 0;
 						receivedIgnoredMsgCount = 0;
@@ -75,7 +74,7 @@ namespace Apache.NMS.Test
 						{
 							IMessage request = session1.CreateTextMessage(String.Format("Hello World! [{0} of {1}]", index, MaxNumRequests));
 
-							// request.NMSTimeToLive = TimeSpan.FromSeconds(10);
+							request.NMSTimeToLive = ttl;
 							if(0 == (index % 2))
 							{
 								request.NMSType = "ACTIVE";
@@ -92,7 +91,14 @@ namespace Apache.NMS.Test
 							if(20000 == index)
 							{
 								// Start the second consumer
-								consumer2 = session3.CreateConsumer(destination2, "JMSType LIKE '%IGNORE'");
+								if(destination3.IsTopic)
+								{
+									// Reset the ignored message sent count, since all previous messages
+									// will not have been consumed on a topic.
+									numIgnoredMsgsSent = 0;
+								}
+
+								consumer2 = session3.CreateConsumer(destination3, "JMSType LIKE '%IGNORE'");
 								consumer2.Listener += new MessageListener(OnIgnoredMessage);
 							}
 						}
@@ -109,23 +115,19 @@ namespace Apache.NMS.Test
 							{
 								// Reset the wait count.
 								waitCount = 0;
-								Console.WriteLine("Reset the wait count while we are still receiving msgs.");
-								Thread.Sleep(2000);
-								continue;
+							}
+							else
+							{
+								waitCount++;
 							}
 
 							lastReceivedINongnoredMsgCount = receivedNonIgnoredMsgCount;
 							lastReceivedIgnoredMsgCount = receivedIgnoredMsgCount;
 
-							if(waitCount > 60)
-							{
-								Assert.Fail(String.Format("Timeout waiting for all messages to be delivered. Only {0} of {1} non-ignored messages delivered.  Only {2} of {3} ignored messages delivered.",
-									receivedNonIgnoredMsgCount, numNonIgnoredMsgsSent, receivedIgnoredMsgCount, numIgnoredMsgsSent));
-							}
-
-							Console.WriteLine("Waiting to receive all non-ignored messages...");
+							Assert.IsTrue(waitCount <= 30, String.Format("Timeout waiting for all messages to be delivered. Only {0} of {1} non-ignored messages delivered.  Only {2} of {3} ignored messages delivered.",
+								receivedNonIgnoredMsgCount, numNonIgnoredMsgsSent, receivedIgnoredMsgCount, numIgnoredMsgsSent));
+							Console.WriteLine("Waiting ({0}) to receive all non-ignored messages...", waitCount);
 							Thread.Sleep(1000);
-							waitCount++;
 						}
 
 						consumer2.Dispose();
@@ -144,7 +146,8 @@ namespace Apache.NMS.Test
 		{
 			receivedIgnoredMsgCount++;
 			Assert.AreEqual(message.NMSType, "ACTIVE.IGNORE");
-			Thread.Sleep(100);
+			// Simulate a slow consumer
+			//Thread.Sleep(10);
 		}
 	}
 }

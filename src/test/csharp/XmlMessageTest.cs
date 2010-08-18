@@ -73,7 +73,7 @@ namespace Apache.NMS.Test
 
 #if NET_3_5 || MONO
 		[Test]
-		public void SendReceiveXmlMessage()
+		public void SendReceiveXmlMessage_Net35()
 		{
 			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
 			{
@@ -84,8 +84,6 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.RequestTimeout = receiveTimeout;
-
 						NMSTestXmlType1 srcIntObject = new NMSTestXmlType1();
 						srcIntObject.crcCheck = 0xbadf00d;
 						srcIntObject.checkType = CheckType.command;
@@ -125,7 +123,8 @@ namespace Apache.NMS.Test
 				}
 			}
 		}
-#else
+#endif
+
 		[Test]
 		public void SendReceiveXmlMessage()
 		{
@@ -138,8 +137,6 @@ namespace Apache.NMS.Test
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
-						producer.RequestTimeout = receiveTimeout;
-
 						NMSTestXmlType1 srcIntObject = new NMSTestXmlType1();
 						srcIntObject.crcCheck = 0xbadf00d;
 						srcIntObject.checkType = CheckType.command;
@@ -179,6 +176,5 @@ namespace Apache.NMS.Test
 				}
 			}
 		}
-#endif
 	}
 }
