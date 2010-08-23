@@ -123,8 +123,10 @@ namespace Apache.NMS.Test
 				}
 			}
 		}
-#endif
 
+#else
+
+		// Test the obsolete API versions until they are completely removed.
 		[Test]
 		public void SendReceiveXmlMessage()
 		{
@@ -176,5 +178,6 @@ namespace Apache.NMS.Test
 				}
 			}
 		}
+#endif
 	}
 }
