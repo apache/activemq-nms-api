@@ -21,6 +21,6 @@ namespace Apache.NMS
 	/// </summary>
 	public interface IObjectMessage : IMessage
 	{
-		object Body { get; }
+		object Body { get; set; }
 	}
 }

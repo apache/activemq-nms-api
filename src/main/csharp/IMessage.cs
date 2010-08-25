@@ -58,7 +58,7 @@ namespace Apache.NMS
 		/// <summary>
 		/// The destination of the message.  This property is set by the IMessageProducer.
 		/// </summary>
-		IDestination NMSDestination { get; }
+		IDestination NMSDestination { get; set; }
 
 		/// <summary>
 		/// The amount of time for which this message is valid.  Zero if this message does not expire.
@@ -68,7 +68,7 @@ namespace Apache.NMS
 		/// <summary>
 		/// The message ID which is set by the provider.
 		/// </summary>
-		string NMSMessageId { get; }
+		string NMSMessageId { get; set; }
 
 		/// <summary>
 		/// Whether or not this message is persistent.
@@ -83,7 +83,7 @@ namespace Apache.NMS
 		/// <summary>
 		/// Returns true if this message has been redelivered to this or another consumer before being acknowledged successfully.
 		/// </summary>
-		bool NMSRedelivered { get; }
+		bool NMSRedelivered { get; set; }
 
 		/// <summary>
 		/// The destination that the consumer of this message should send replies to
@@ -94,7 +94,7 @@ namespace Apache.NMS
 		/// The timestamp of when the message was pubished in UTC time.  If the publisher disables setting
 		/// the timestamp on the message, the time will be set to the start of the UNIX epoc (1970-01-01 00:00:00).
 		/// </summary>
-		DateTime NMSTimestamp { get; }
+		DateTime NMSTimestamp { get; set; }
 
 		/// <summary>
 		/// The type name of this message.
