@@ -23,6 +23,7 @@ using NUnit.Framework;
 namespace Apache.NMS.Test
 {
 	[TestFixture]
+	[Category("LongRunning")]
 	public class MessageSelectorTest : NMSTestSupport
 	{
 		protected const string QUEUE_DESTINATION_NAME = "queue://MessageSelectorQueue";
