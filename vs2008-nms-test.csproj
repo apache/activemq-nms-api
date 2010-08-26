@@ -73,6 +73,18 @@
     <Compile Include="src\test\csharp\BytesMessageTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\test\csharp\Commands\BytesMessage.cs" />
+    <Compile Include="src\test\csharp\Commands\Destination.cs" />
+    <Compile Include="src\test\csharp\Commands\MapMessage.cs" />
+    <Compile Include="src\test\csharp\Commands\Message.cs" />
+    <Compile Include="src\test\csharp\Commands\ObjectMessage.cs" />
+    <Compile Include="src\test\csharp\Commands\Queue.cs" />
+    <Compile Include="src\test\csharp\Commands\StreamMessage.cs" />
+    <Compile Include="src\test\csharp\Commands\TempDestination.cs" />
+    <Compile Include="src\test\csharp\Commands\TempQueue.cs" />
+    <Compile Include="src\test\csharp\Commands\TempTopic.cs" />
+    <Compile Include="src\test\csharp\Commands\TextMessage.cs" />
+    <Compile Include="src\test\csharp\Commands\Topic.cs" />
     <Compile Include="src\test\csharp\CommonAssemblyInfo.cs" />
     <Compile Include="src\test\csharp\ConnectionTest.cs" />
     <Compile Include="src\test\csharp\ConsumerTest.cs">
@@ -84,6 +96,7 @@
     <Compile Include="src\test\csharp\EndianBinaryReaderTest.cs" />
     <Compile Include="src\test\csharp\EndianBinaryWriterTest.cs" />
     <Compile Include="src\test\csharp\EndianTest.cs" />
+    <Compile Include="src\test\csharp\ForgeinMessageTransformationTest.cs" />
     <Compile Include="src\test\csharp\NMSPropertyTest.cs" />
     <Compile Include="src\test\csharp\NMSTestSupport.cs">
       <SubType>Code</SubType>
