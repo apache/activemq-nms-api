@@ -27,8 +27,7 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class ForeignMessageTransformationTest : NMSTestSupport
 	{
-		protected static string DESTINATION_NAME = "MessageTransformationDestination";
-		protected static string TEST_CLIENT_ID = "MessageTransformationClientId";
+		protected static string DESTINATION_NAME = "topic://MessageTransformationDestination";
 		
 		private string propertyName = "Test-Property";
 		private string propertyValue = "Test-Property-Value";
@@ -52,12 +51,12 @@ namespace Apache.NMS.Test
         private float m = 2.1F;
         private double n = 2.3;
 
-		[Test]
+		[Test]		
 		public void SendReceiveForeignMessageTest(
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection())
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -87,12 +86,12 @@ namespace Apache.NMS.Test
 			}
 		}
 		
-		[Test]
+		[Test]		
 		public void SendReceiveForeignTextMessageTest(
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection())
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -131,7 +130,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection())
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -148,7 +147,7 @@ namespace Apache.NMS.Test
 						producer.Send(request);
 
 						IBytesMessage message = consumer.Receive(receiveTimeout) as IBytesMessage;
-						Assert.IsNotNull(message, "No message returned!");
+						Assert.IsNotNull(message, "No message returned!");	
 						Assert.AreEqual(request.Properties.Count, message.Properties.Count, "Invalid number of properties.");
 						Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 						
@@ -172,7 +171,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection())
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -212,7 +211,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection())
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
