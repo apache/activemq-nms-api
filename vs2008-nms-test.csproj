@@ -97,6 +97,7 @@
     <Compile Include="src\test\csharp\EndianBinaryWriterTest.cs" />
     <Compile Include="src\test\csharp\EndianTest.cs" />
     <Compile Include="src\test\csharp\ForgeinMessageTransformationTest.cs" />
+    <Compile Include="src\test\csharp\MessageTransformerTest.cs" />
     <Compile Include="src\test\csharp\NMSPropertyTest.cs" />
     <Compile Include="src\test\csharp\NMSTestSupport.cs">
       <SubType>Code</SubType>
