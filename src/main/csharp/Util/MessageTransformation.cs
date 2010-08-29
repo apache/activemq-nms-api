@@ -122,20 +122,41 @@ namespace Apache.NMS.Util
             }
         }
 
-        /**
-         * Copies the standard JMS and user defined properties from the givem
-         * message to the specified message
-         *
-         * @param fromMessage the message to take the properties from
-         * @param toMessage the message to add the properties to
-         * @throws JMSException
-         */
+        /// <summary>
+        /// Copies the standard NMS and user defined properties from the givem
+        /// message to the specified message, the class version transforms the
+        /// Destination instead of just doing a straight copy.
+        /// </summary>
         public virtual void CopyProperties(IMessage fromMessage, IMessage toMessage)
         {
             toMessage.NMSMessageId = fromMessage.NMSMessageId;
             toMessage.NMSCorrelationID = fromMessage.NMSCorrelationID;
             toMessage.NMSReplyTo = DoTransformDestination(fromMessage.NMSReplyTo);
             toMessage.NMSDestination = DoTransformDestination(fromMessage.NMSDestination);
+            toMessage.NMSDeliveryMode = fromMessage.NMSDeliveryMode;
+            toMessage.NMSRedelivered = fromMessage.NMSRedelivered;
+            toMessage.NMSType = fromMessage.NMSType;
+            toMessage.NMSPriority = fromMessage.NMSPriority;
+            toMessage.NMSTimestamp = fromMessage.NMSTimestamp;
+            toMessage.NMSTimeToLive = fromMessage.NMSTimeToLive;
+
+            foreach(string key in fromMessage.Properties.Keys)
+            {
+                toMessage.Properties[key] = fromMessage.Properties[key];
+            }
+        }
+
+        /// <summary>
+        /// Copies the standard NMS and user defined properties from the givem
+        /// message to the specified message, this method makes no attempt to convert
+        /// the values in the Message to native provider implementations.
+        /// </summary>
+        public static void CopyNMSMessageProperties(IMessage fromMessage, IMessage toMessage)
+        {
+            toMessage.NMSMessageId = fromMessage.NMSMessageId;
+            toMessage.NMSCorrelationID = fromMessage.NMSCorrelationID;
+            toMessage.NMSReplyTo = fromMessage.NMSReplyTo;
+            toMessage.NMSDestination = fromMessage.NMSDestination;
             toMessage.NMSDeliveryMode = fromMessage.NMSDeliveryMode;
             toMessage.NMSRedelivered = fromMessage.NMSRedelivered;
             toMessage.NMSType = fromMessage.NMSType;

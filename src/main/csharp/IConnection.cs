@@ -83,7 +83,7 @@ namespace Apache.NMS
     /// clients that the Connection that was interrupted has now been restored.
     /// </summary>
     public delegate void ConnectionResumedListener();
-
+	
     /// <summary>
     /// Represents a connection with a message broker
     /// </summary>
@@ -120,6 +120,30 @@ namespace Apache.NMS
         /// has been resumed.
         /// </summary>
         event ConnectionResumedListener ConnectionResumedListener;
+		
+        /// <summary>
+        /// A Delegate that is called each time a Message is dispatched to allow the client to do
+        /// any necessary transformations on the received message before it is delivered.  The
+        /// Connection sets the provided delegate instance on each Session it creates which then
+        /// passes that along to the Consumers it creates.
+        /// </summary>
+        ConsumerTransformerDelegate ConsumerTransformer
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// A delegate that is called each time a Message is sent from this Producer which allows
+        /// the application to perform any needed transformations on the Message before it is sent.
+        /// The Connection sets the provided delegate instance on each Session it creates which then
+        /// passes that along to the Producer it creates.
+        /// </summary>
+        ProducerTransformerDelegate ProducerTransformer
+        {
+            get;
+            set;
+        }
 
         #region Attributes
 

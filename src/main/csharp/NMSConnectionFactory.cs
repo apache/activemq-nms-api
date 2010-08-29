@@ -397,5 +397,24 @@ namespace Apache.NMS
 			set { this.factory.RedeliveryPolicy = value; }
 		}
 
+        /// <summary>
+        /// Get/or Set the ConsumerTransformerDelegate using the IConnectionFactory implementation
+        /// that is currently being used.
+        /// </summary>
+        public ConsumerTransformerDelegate ConsumerTransformer
+        {
+            get { return this.factory.ConsumerTransformer; }
+            set { this.factory.ConsumerTransformer = value; }
+        }
+
+        /// <summary>
+        /// Get/or Set the ProducerTransformerDelegate using the IConnectionFactory implementation
+        /// that is currently being used.
+        /// </summary>
+        public ProducerTransformerDelegate ProducerTransformer
+        {
+            get { return this.factory.ProducerTransformer; }
+            set { this.factory.ProducerTransformer = value; }
+        }
 	}
 }
