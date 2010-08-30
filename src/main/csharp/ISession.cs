@@ -23,7 +23,7 @@ namespace Apache.NMS
 	/// So the ISession can be used to perform transactional receive and sends
 	/// </summary>
 	public interface ISession : IDisposable
-	{		
+	{
 		/// <summary>
 		/// Creates a producer of messages
 		/// </summary>
@@ -60,38 +60,38 @@ namespace Apache.NMS
 		/// <param name="name">Name of the durable consumer</param>
 		void DeleteDurableConsumer(string name);
 
-        /// <summary>
-        /// Creates a QueueBrowser object to peek at the messages on the specified queue.
-        /// </summary>
-        /// <param name="queue">
-        /// A <see cref="IQueue"/>
-        /// </param>
-        /// <returns>
-        /// A <see cref="IQueueBrowser"/>
-        /// </returns>
-        /// <exception cref="System.NotSupportedException">
-        /// If the Prodiver does not support creation of Queue Browsers.
-        /// </exception>
-        IQueueBrowser CreateBrowser(IQueue queue);
-        
-        /// <summary>
-        /// Creates a QueueBrowser object to peek at the messages on the specified queue 
-        /// using a message selector.
-        /// </summary>
-        /// <param name="queue">
-        /// A <see cref="IQueue"/>
-        /// </param>
-        /// <param name="selector">
-        /// A <see cref="System.String"/>
-        /// </param>
-        /// <returns>
-        /// A <see cref="IQueueBrowser"/>
-        /// </returns>
-        /// <exception cref="System.NotSupportedException">
-        /// If the Prodiver does not support creation of Queue Browsers.
-        /// </exception>
-        IQueueBrowser CreateBrowser(IQueue queue, string selector);
-        
+		/// <summary>
+		/// Creates a QueueBrowser object to peek at the messages on the specified queue.
+		/// </summary>
+		/// <param name="queue">
+		/// A <see cref="IQueue"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="IQueueBrowser"/>
+		/// </returns>
+		/// <exception cref="System.NotSupportedException">
+		/// If the Prodiver does not support creation of Queue Browsers.
+		/// </exception>
+		IQueueBrowser CreateBrowser(IQueue queue);
+
+		/// <summary>
+		/// Creates a QueueBrowser object to peek at the messages on the specified queue
+		/// using a message selector.
+		/// </summary>
+		/// <param name="queue">
+		/// A <see cref="IQueue"/>
+		/// </param>
+		/// <param name="selector">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="IQueueBrowser"/>
+		/// </returns>
+		/// <exception cref="System.NotSupportedException">
+		/// If the Prodiver does not support creation of Queue Browsers.
+		/// </exception>
+		IQueueBrowser CreateBrowser(IQueue queue, string selector);
+
 		/// <summary>
 		/// Returns the queue for the given name
 		/// </summary>
@@ -165,27 +165,19 @@ namespace Apache.NMS
 		/// </summary>
 		void Close();
 
-        /// <summary>
-        /// A Delegate that is called each time a Message is dispatched to allow the client to do
-        /// any necessary transformations on the received message before it is delivered.
-        /// The Session instance sets the delegate on each Consumer it creates.
-        /// </summary>
-        ConsumerTransformerDelegate ConsumerTransformer
-        {
-            get;
-            set;
-        }
+		/// <summary>
+		/// A Delegate that is called each time a Message is dispatched to allow the client to do
+		/// any necessary transformations on the received message before it is delivered.
+		/// The Session instance sets the delegate on each Consumer it creates.
+		/// </summary>
+		ConsumerTransformerDelegate ConsumerTransformer { get; set; }
 
-        /// <summary>
-        /// A delegate that is called each time a Message is sent from this Producer which allows
-        /// the application to perform any needed transformations on the Message before it is sent.
-        /// The Session instance sets the delegate on each Producer it creates.
-        /// </summary>
-        ProducerTransformerDelegate ProducerTransformer
-        {
-            get;
-            set;
-        }
+		/// <summary>
+		/// A delegate that is called each time a Message is sent from this Producer which allows
+		/// the application to perform any needed transformations on the Message before it is sent.
+		/// The Session instance sets the delegate on each Producer it creates.
+		/// </summary>
+		ProducerTransformerDelegate ProducerTransformer { get; set; }
 
 		#region Transaction methods
 
