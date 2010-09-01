@@ -15,8 +15,6 @@
  * limitations under the License.
 */
 
-using System;
-
 namespace Apache.NMS.Util
 {
     /// <summary>
@@ -25,7 +23,7 @@ namespace Apache.NMS.Util
     /// </summary>
 	public abstract class MessageTransformation
 	{
-		public MessageTransformation()
+        protected MessageTransformation()
 		{
 		}
 

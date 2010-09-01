@@ -23,10 +23,10 @@ namespace Apache.NMS.Util
 	/// </summary>
 	public class SessionUtil
 	{
-		private static string QueuePrefix = "queue://";
-		private static string TopicPrefix = "topic://";
-		private static string TempQueuePrefix = "temp-queue://";
-		private static string TempTopicPrefix = "temp-topic://";
+		private const string QueuePrefix = "queue://";
+		private const string TopicPrefix = "topic://";
+		private const string TempQueuePrefix = "temp-queue://";
+		private const string TempTopicPrefix = "temp-topic://";
 
 		/// <summary>
 		/// Get the destination by parsing the embedded type prefix.  Default is Queue if no prefix is

@@ -241,7 +241,7 @@ namespace Apache.NMS.Util
 			base.Write(EndianSupport.SwitchEndian(value));
 		}
 
-		private uint CountUtf8Bytes(char[] chars)
+		private static uint CountUtf8Bytes(char[] chars)
 		{
 			uint utfLength = 0;
 			int c = 0;
@@ -266,7 +266,7 @@ namespace Apache.NMS.Util
 			return utfLength;
 		}
 
-		private void encodeUTF8toBuffer(char[] chars, byte[] buffer)
+		private static void encodeUTF8toBuffer(char[] chars, byte[] buffer)
 		{
 			int c = 0;
 			int count = 0;

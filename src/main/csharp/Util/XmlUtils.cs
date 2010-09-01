@@ -29,7 +29,7 @@ namespace Apache.NMS.Util
 	/// </summary>
 	public class XmlUtil
 	{
-		private static XmlWriterSettings xmlWriterSettings;
+		private static readonly XmlWriterSettings xmlWriterSettings;
 
 		/// <summary>
 		/// Static class constructor.
@@ -103,8 +103,8 @@ namespace Apache.NMS.Util
 		/// #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]    
 		/// any Unicode character, excluding the surrogate blocks, FFFE, and FFFF.
 		/// </summary>
-		private static string invalidXMLMatch = @"[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD\x10000-x10FFFF]";
-		private static Regex regexInvalidXMLChars = new Regex(invalidXMLMatch);
+		private const string invalidXMLMatch = @"[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD\x10000-x10FFFF]";
+		private static readonly Regex regexInvalidXMLChars = new Regex(invalidXMLMatch);
 
 		/// <summary>
 		/// This removes characters that are invalid for xml encoding

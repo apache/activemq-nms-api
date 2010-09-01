@@ -36,8 +36,8 @@ namespace Apache.NMS.Util
     /// </summary>
 	public class MessagePropertyIntercepter : PrimitiveMapInterceptor
 	{
-		private static BindingFlags publicBinding = BindingFlags.Public | BindingFlags.Instance;
-		private Type messageType;
+		private const BindingFlags publicBinding = BindingFlags.Public | BindingFlags.Instance;
+		private readonly Type messageType;
 
 		public MessagePropertyIntercepter(IMessage message, IPrimitiveMap properties)
             : base(message, properties)

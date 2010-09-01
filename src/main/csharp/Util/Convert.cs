@@ -117,7 +117,7 @@ namespace Apache.NMS.Util
 				return null;
 			}
 
-			if(null == textMessage.NMSType || textMessage.NMSType.Length < 1)
+			if(string.IsNullOrEmpty(textMessage.NMSType))
 			{
 				Tracer.ErrorFormat("NMSType not set on message.  Could not deserializing XML object.");
 				return null;

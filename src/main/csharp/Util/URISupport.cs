@@ -368,7 +368,7 @@ namespace Apache.NMS.Util
 					sb.Append(':');
 				}
 
-				if(host != null && host.Length != 0)
+				if(!string.IsNullOrEmpty(host))
 				{
 					sb.Append(host);
 				}
