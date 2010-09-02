@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using Apache.NMS.Util;
 using NUnit.Framework;
 
@@ -36,7 +37,7 @@ namespace Apache.NMS.Test
 			[Values(QUEUE_DESTINATION_NAME, TOPIC_DESTINATION_NAME, TEMP_QUEUE_DESTINATION_NAME, TEMP_TOPIC_DESTINATION_NAME)]
 			string destinationName)
 		{
-			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID + new System.Random().Next()))
 			{
 				connection1.Start();
 				using(ISession session = connection1.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -56,11 +57,23 @@ namespace Apache.NMS.Test
 
 							request.NMSType = "TEMP_MSG";
 							producer.Send(request);
-							IMessage receivedMsg = consumer.Receive();
+							IMessage receivedMsg = consumer.Receive(TimeSpan.FromMilliseconds(5000));
+							Assert.IsNotNull(receivedMsg);
 							Assert.AreEqual(receivedMsg.NMSType, "TEMP_MSG");
+							
+							// Ensures that Consumer closes out its subscription
+							consumer.Close();
 						}
 
-						session.DeleteDestination(destination);
+						try
+						{
+							session.DeleteDestination(destination);
+						}
+						catch(NotSupportedException)
+						{
+							// Might as well not try this again.
+							break;
+						}
 					}
 				}
 			}
