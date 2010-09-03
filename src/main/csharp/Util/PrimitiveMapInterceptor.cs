@@ -227,10 +227,16 @@ namespace Apache.NMS.Util
                 {
                     return (char) value;
                 }
-                else
-                {
-                    throw new MessageFormatException(" cannot read a char from " + value.GetType().Name);
-                }
+				else if(value is String)
+				{
+					string svalue = value as string;
+					if(svalue.Length == 1)
+					{
+						return svalue.ToCharArray()[0];
+					}
+				}
+
+				throw new MessageFormatException(" cannot read a char from " + value.GetType().Name);
             }
             catch(FormatException ex)
             {
