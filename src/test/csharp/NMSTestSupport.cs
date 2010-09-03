@@ -379,8 +379,24 @@ namespace Apache.NMS.Test
         /// <returns></returns>
         public virtual IDestination CreateDestination(ISession session, string destinationName)
         {
-            SessionUtil.DeleteDestination(session, destinationName);
-            return SessionUtil.GetDestination(session, destinationName);
+			try
+			{
+            	SessionUtil.DeleteDestination(session, destinationName);
+			}
+			catch(Exception)
+			{
+				// Can't delete it, so lets try and purse it.
+				IDestination destination = SessionUtil.GetDestination(session, destinationName);
+				
+				using(IMessageConsumer consumer = session.CreateConsumer(destination))
+				{
+					while(consumer.Receive(TimeSpan.FromMilliseconds(2000)) != null)
+					{
+					}	
+				}
+			}
+
+			return SessionUtil.GetDestination(session, destinationName);
         }
 
         /// <summary>
