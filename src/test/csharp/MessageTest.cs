@@ -105,20 +105,24 @@ namespace Apache.NMS.Test
 						Assert.AreEqual(ToHex(f), ToHex(message.Properties.GetLong("f")), "map entry: f as hex");
 
 						// use generic API to access entries
-						Assert.AreEqual(a, message.Properties["a"], "generic map entry: a");
-						Assert.AreEqual(b, message.Properties["b"], "generic map entry: b");
-						Assert.AreEqual(c, message.Properties["c"], "generic map entry: c");
-						Assert.AreEqual(d, message.Properties["d"], "generic map entry: d");
-						Assert.AreEqual(e, message.Properties["e"], "generic map entry: e");
-						Assert.AreEqual(f, message.Properties["f"], "generic map entry: f");
-						Assert.AreEqual(g, message.Properties["g"], "generic map entry: g");
-						Assert.AreEqual(h, message.Properties["h"], "generic map entry: h");
-						Assert.AreEqual(i, message.Properties["i"], "generic map entry: i");
-						Assert.AreEqual(j, message.Properties["j"], "generic map entry: j");
-						Assert.AreEqual(k, message.Properties["k"], "generic map entry: k");
-						Assert.AreEqual(l, message.Properties["l"], "generic map entry: l");
-						Assert.AreEqual(m, message.Properties["m"], "generic map entry: m");
-						Assert.AreEqual(n, message.Properties["n"], "generic map entry: n");
+						// Perform a string only comparison here since some NMS providers are type limited and
+						// may return only a string instance from the generic [] accessor.  Each provider should
+						// further test this functionality to determine that the correct type is returned if
+						// it is capable of doing so.
+						Assert.AreEqual(a.ToString(), message.Properties["a"].ToString(), "generic map entry: a");
+						Assert.AreEqual(b.ToString(), message.Properties["b"].ToString(), "generic map entry: b");
+						Assert.AreEqual(c.ToString(), message.Properties["c"].ToString(), "generic map entry: c");
+						Assert.AreEqual(d.ToString(), message.Properties["d"].ToString(), "generic map entry: d");
+						Assert.AreEqual(e.ToString(), message.Properties["e"].ToString(), "generic map entry: e");
+						Assert.AreEqual(f.ToString(), message.Properties["f"].ToString(), "generic map entry: f");
+						Assert.AreEqual(g.ToString(), message.Properties["g"].ToString(), "generic map entry: g");
+						Assert.AreEqual(h.ToString(), message.Properties["h"].ToString(), "generic map entry: h");
+						Assert.AreEqual(i.ToString(), message.Properties["i"].ToString(), "generic map entry: i");
+						Assert.AreEqual(j.ToString(), message.Properties["j"].ToString(), "generic map entry: j");
+						Assert.AreEqual(k.ToString(), message.Properties["k"].ToString(), "generic map entry: k");
+						Assert.AreEqual(l.ToString(), message.Properties["l"].ToString(), "generic map entry: l");
+						Assert.AreEqual(m.ToString(), message.Properties["m"].ToString(), "generic map entry: m");
+						Assert.AreEqual(n.ToString(), message.Properties["n"].ToString(), "generic map entry: n");
 
 						// use type safe APIs
 						Assert.AreEqual(a, message.Properties.GetBool("a"),   "map entry: a");
