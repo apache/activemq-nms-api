@@ -52,11 +52,9 @@ namespace Apache.NMS.Test
 						producer.Priority = priority;
 						producer.DeliveryMode = deliveryMode;
 						ITextMessage request = session.CreateTextMessage(expectedText);
-						ITemporaryQueue replyTo = session.CreateTemporaryQueue();
 
 						// Set the headers
 						request.NMSCorrelationID = correlationID;
-						request.NMSReplyTo = replyTo;
 						request.NMSType = type;
 						request.Properties["NMSXGroupID"] = groupID;
 						request.Properties["NMSXGroupSeq"] = groupSeq;
@@ -75,7 +73,6 @@ namespace Apache.NMS.Test
 						Assert.AreEqual(type, message.NMSType, "NMSType does not match");
 						Assert.AreEqual(groupID, message.Properties["NMSXGroupID"], "NMSXGroupID does not match");
 						Assert.AreEqual(groupSeq, message.Properties["NMSXGroupSeq"], "NMSXGroupSeq does not match");
-						Assert.AreEqual(replyTo, message.NMSReplyTo, "NMSReplyTo does not match");
 					}
 				}
 			}
