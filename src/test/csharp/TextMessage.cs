@@ -24,14 +24,13 @@ namespace Apache.NMS.Test
 	public class TextMessageTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "TextMessageDestination";
-		protected static string TEST_CLIENT_ID = "TextMessageClientId";
 
 		[Test]
 		public void SendReceiveTextMessage(
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))

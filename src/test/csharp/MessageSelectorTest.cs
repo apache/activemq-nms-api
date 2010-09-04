@@ -28,9 +28,6 @@ namespace Apache.NMS.Test
 	{
 		protected const string QUEUE_DESTINATION_NAME = "queue://MessageSelectorQueue";
 		protected const string TOPIC_DESTINATION_NAME = "topic://MessageSelectorTopic";
-		protected const string TEST_CLIENT_ID = "MessageSelectorClientId";
-		protected const string TEST_CLIENT_ID2 = "MessageSelectorClientId2";
-		protected const string TEST_CLIENT_ID3 = "MessageSelectorClientId3";
 
 		private int receivedNonIgnoredMsgCount = 0;
 		private int receivedIgnoredMsgCount = 0;
@@ -68,9 +65,9 @@ namespace Apache.NMS.Test
 			TimeSpan ttl = TimeSpan.FromMinutes(30);
 			const int MaxNumRequests = 100000;
 
-			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))
-			using(IConnection connection2 = CreateConnection(TEST_CLIENT_ID2))
-			using(IConnection connection3 = CreateConnection(TEST_CLIENT_ID3))
+			using(IConnection connection1 = CreateConnection(GetTestClientId()))
+			using(IConnection connection2 = CreateConnection(GetTestClientId()))
+			using(IConnection connection3 = CreateConnection(GetTestClientId()))
 			{
 				connection1.Start();
 				connection2.Start();

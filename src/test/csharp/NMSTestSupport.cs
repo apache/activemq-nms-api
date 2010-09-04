@@ -35,6 +35,8 @@ namespace Apache.NMS.Test
         protected string clientId;
         protected string passWord;
         protected string userName;
+        protected int testRun;
+        protected int idCounter;
 
         static NMSTestSupport()
         {
@@ -48,6 +50,7 @@ namespace Apache.NMS.Test
         [SetUp]
         public virtual void SetUp()
         {
+            this.testRun++;
         }
 
         [TearDown]
@@ -95,7 +98,7 @@ namespace Apache.NMS.Test
         }
 
         /// <summary>
-        /// Return the configured URI String.  This function loads the connection 
+        /// Return the configured URI String.  This function loads the connection
         /// settings from the configuration file.
         /// </summary>
         /// <returns></returns>
@@ -132,9 +135,9 @@ namespace Apache.NMS.Test
                 brokerUri = new Uri(ReplaceEnvVar(uriNode.GetAttribute("value")));
             }
 
-			return brokerUri.ToString();
+            return brokerUri.ToString();
         }
-		
+
         /// <summary>
         /// Create the NMS Factory that can create NMS Connections.  This function loads the
         /// connection settings from the configuration file.
@@ -345,6 +348,21 @@ namespace Apache.NMS.Test
             return varValue;
         }
 
+        public virtual string GetTestClientId()
+        {
+
+            System.Text.StringBuilder id = new System.Text.StringBuilder();
+
+            id.Append("ID:");
+            id.Append(this.GetType().Name);
+            id.Append(":");
+            id.Append(this.testRun);
+            id.Append(":");
+            id.Append(++idCounter);
+
+            return id.ToString();
+        }
+
         /// <summary>
         /// Create a new connection to the broker.
         /// </summary>
@@ -379,24 +397,24 @@ namespace Apache.NMS.Test
         /// <returns></returns>
         public virtual IDestination CreateDestination(ISession session, string destinationName)
         {
-			try
-			{
-            	SessionUtil.DeleteDestination(session, destinationName);
-			}
-			catch(Exception)
-			{
-				// Can't delete it, so lets try and purse it.
-				IDestination destination = SessionUtil.GetDestination(session, destinationName);
-				
-				using(IMessageConsumer consumer = session.CreateConsumer(destination))
-				{
-					while(consumer.Receive(TimeSpan.FromMilliseconds(2000)) != null)
-					{
-					}	
-				}
-			}
+            try
+            {
+                SessionUtil.DeleteDestination(session, destinationName);
+            }
+            catch(Exception)
+            {
+                // Can't delete it, so lets try and purse it.
+                IDestination destination = SessionUtil.GetDestination(session, destinationName);
 
-			return SessionUtil.GetDestination(session, destinationName);
+                using(IMessageConsumer consumer = session.CreateConsumer(destination))
+                {
+                    while(consumer.Receive(TimeSpan.FromMilliseconds(750)) != null)
+                    {
+                    }
+                }
+            }
+
+            return SessionUtil.GetDestination(session, destinationName);
         }
 
         /// <summary>
@@ -476,7 +494,7 @@ namespace Apache.NMS.Test
         {
             return CreateDestination(session, type, "");
         }
-        
+
         public IDestination CreateDestination(ISession session, DestinationType type, string name)
         {
             if(name == "")
@@ -499,61 +517,61 @@ namespace Apache.NMS.Test
             }
         }
 
-        protected void AssertTextMessagesEqual(IMessage[] firstSet, IMessage[] secondSet) 
+        protected void AssertTextMessagesEqual(IMessage[] firstSet, IMessage[] secondSet)
         {
             AssertTextMessagesEqual(firstSet, secondSet, "");
         }
-    
-        protected void AssertTextMessagesEqual(IMessage[] firstSet, IMessage[] secondSet, string messsage) 
+
+        protected void AssertTextMessagesEqual(IMessage[] firstSet, IMessage[] secondSet, string messsage)
         {
             Assert.AreEqual(firstSet.Length, secondSet.Length, "Message count does not match: " + messsage);
-    
+
             for(int i = 0; i < secondSet.Length; i++)
             {
                 ITextMessage m1 = firstSet[i] as ITextMessage;
                 ITextMessage m2 = secondSet[i] as ITextMessage;
-                
+
                 AssertTextMessageEqual(m1, m2, "Message " + (i + 1) + " did not match : ");
             }
         }
-    
-        protected void AssertEquals(ITextMessage m1, ITextMessage m2) 
+
+        protected void AssertEquals(ITextMessage m1, ITextMessage m2)
         {
             AssertEquals(m1, m2, "");
         }
-    
-        protected void AssertTextMessageEqual(ITextMessage m1, ITextMessage m2, string message) 
+
+        protected void AssertTextMessageEqual(ITextMessage m1, ITextMessage m2, string message)
         {
             Assert.IsFalse(m1 == null ^ m2 == null, message + ": expected {" + m1 + "}, but was {" + m2 + "}");
-    
-            if(m1 == null) 
-            {
-                return;
-            }
-    
-            Assert.AreEqual(m1.Text, m2.Text, message);
-        }
-    
-        protected void AssertEquals(IMessage m1, IMessage m2)
-        {
-            AssertEquals(m1, m2, "");
-        }
-    
-        protected void AssertEquals(IMessage m1, IMessage m2, string message)
-        {
-            Assert.IsFalse(m1 == null ^ m2 == null, message + ": expected {" + m1 + "}, but was {" + m2 + "}");
-    
+
             if(m1 == null)
             {
                 return;
             }
-    
+
+            Assert.AreEqual(m1.Text, m2.Text, message);
+        }
+
+        protected void AssertEquals(IMessage m1, IMessage m2)
+        {
+            AssertEquals(m1, m2, "");
+        }
+
+        protected void AssertEquals(IMessage m1, IMessage m2, string message)
+        {
+            Assert.IsFalse(m1 == null ^ m2 == null, message + ": expected {" + m1 + "}, but was {" + m2 + "}");
+
+            if(m1 == null)
+            {
+                return;
+            }
+
             Assert.IsTrue(m1.GetType() == m2.GetType(), message + ": expected {" + m1 + "}, but was {" + m2 + "}");
-    
-            if(m1 is ITextMessage) 
+
+            if(m1 is ITextMessage)
             {
                 AssertTextMessageEqual((ITextMessage)m1, (ITextMessage)m2, message);
-            } 
+            }
             else
             {
                 Assert.AreEqual(m1, m2, message);

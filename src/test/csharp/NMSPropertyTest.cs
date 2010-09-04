@@ -25,7 +25,6 @@ namespace Apache.NMS.Test
 	public class NMSPropertyTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "NMSPropsDestination";
-		protected static string TEST_CLIENT_ID = "NMSPropsClientId";
 
 		// standard NMS properties
 		protected string expectedText = "Hey this works!";
@@ -40,7 +39,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))

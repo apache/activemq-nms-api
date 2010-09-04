@@ -22,9 +22,7 @@ namespace Apache.NMS.Test
 {
 	[TestFixture]
 	public class ConnectionTest : NMSTestSupport
-	{
-        protected static string TEST_CLIENT_ID = "ConnectionTestClientId";
-        
+	{        
         IConnection startedConnection = null;
         IConnection stoppedConnection = null;
         
@@ -32,7 +30,7 @@ namespace Apache.NMS.Test
         public override void SetUp()
         {
             base.SetUp();
-
+			
             startedConnection = CreateConnection(null);
             startedConnection.Start();
             stoppedConnection = CreateConnection(null);
@@ -119,7 +117,7 @@ namespace Apache.NMS.Test
 			[Values(DestinationType.Queue, DestinationType.Topic)]
 			DestinationType destinationType)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {            
                 ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge);
                 IDestination destination = CreateDestination(session, destinationType);

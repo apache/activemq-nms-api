@@ -25,8 +25,7 @@ namespace Apache.NMS.Test
 	public class AsyncConsumeTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "AsyncConsumeDestination";
-		protected static string TEST_CLIENT_ID = "AsyncConsumeClientId";
-		protected static string RESPONSE_CLIENT_ID = "AsyncConsumeResponseClientId";
+		protected string RESPONSE_CLIENT_ID;
 		protected AutoResetEvent semaphore;
 		protected bool received;
 		protected IMessage receivedMsg;
@@ -38,6 +37,8 @@ namespace Apache.NMS.Test
 			semaphore = new AutoResetEvent(false);
 			received = false;
 			receivedMsg = null;
+			
+			RESPONSE_CLIENT_ID = GetTestClientId() + ":RESPONSE";
 		}
 
 		[TearDown]
@@ -52,7 +53,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -81,7 +82,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -112,7 +113,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -142,7 +143,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -178,7 +179,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))

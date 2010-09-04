@@ -25,11 +25,20 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class DurableTest : NMSTestSupport
 	{
-		protected static string TEST_CLIENT_ID = "TestDurableConsumerClientId";
-		protected static string SEND_CLIENT_ID = "TestDurableProducerClientId";
 		protected static string DURABLE_TOPIC = "TestDurableConsumerTopic";
-		protected static string CONSUMER_ID = "TestDurableConsumerConsumerId";
 		protected static string DURABLE_SELECTOR = "2 > 1";
+
+		protected string TEST_CLIENT_AND_CONSUMER_ID;
+		protected string SEND_CLIENT_ID;
+		
+		[SetUp]
+		public override void SetUp()
+		{
+			base.SetUp();
+			
+			TEST_CLIENT_AND_CONSUMER_ID = GetTestClientId();
+			SEND_CLIENT_ID = GetTestClientId();
+		}
 
 		[Test]
 		public void TestSendWhileClosed(
@@ -37,21 +46,22 @@ namespace Apache.NMS.Test
 				AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
 			AcknowledgementMode ackMode)
 		{
+			string TEST_DURABLE_TOPIC = DURABLE_TOPIC + ":TestSendWhileClosed";
 			try
 			{				
-		        using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+		        using(IConnection connection = CreateConnection(TEST_CLIENT_AND_CONSUMER_ID))
 				{
 			        connection.Start();
 					
 					using(ISession session = connection.CreateSession(ackMode))
 					{
-						ITopic topic = session.GetTopic(DURABLE_TOPIC);
+						ITopic topic = session.GetTopic(TEST_DURABLE_TOPIC);
 						IMessageProducer producer = session.CreateProducer(topic);
 
 						producer.DeliveryMode = MsgDeliveryMode.Persistent;
 										
 				        ISession consumeSession = connection.CreateSession(ackMode);
-				        IMessageConsumer consumer = consumeSession.CreateDurableConsumer(topic, CONSUMER_ID, null, false);
+				        IMessageConsumer consumer = consumeSession.CreateDurableConsumer(topic, TEST_CLIENT_AND_CONSUMER_ID, null, false);
 				        Thread.Sleep(1000);
 				        consumer.Dispose();
 						consumer = null;
@@ -65,7 +75,8 @@ namespace Apache.NMS.Test
 							session.Commit();
 						}
 										        
-						consumer = consumeSession.CreateDurableConsumer(topic, CONSUMER_ID, null, false);
+				        Thread.Sleep(1000);
+						consumer = consumeSession.CreateDurableConsumer(topic, TEST_CLIENT_AND_CONSUMER_ID, null, false);
 				        ITextMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(1000)) as ITextMessage;
 						msg.Acknowledge();
 						if(AcknowledgementMode.Transactional == ackMode)
@@ -86,7 +97,10 @@ namespace Apache.NMS.Test
 			}
 			finally
 			{
-				UnregisterDurableConsumer(TEST_CLIENT_ID, CONSUMER_ID);
+                // Pause to allow Stomp to unregister at the broker.
+                Thread.Sleep(500);
+
+				UnregisterDurableConsumer(TEST_CLIENT_AND_CONSUMER_ID, TEST_CLIENT_AND_CONSUMER_ID);
 			}			
 	    }		
 		
@@ -96,16 +110,18 @@ namespace Apache.NMS.Test
 				AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
 			AcknowledgementMode ackMode)
 		{
+			string TEST_DURABLE_TOPIC = DURABLE_TOPIC + ":TestDurableConsumerSelectorChange";
+
 			try
 			{
-				using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+				using(IConnection connection = CreateConnection(TEST_CLIENT_AND_CONSUMER_ID))
 				{
 					connection.Start();
 					using(ISession session = connection.CreateSession(ackMode))
 					{
-						ITopic topic = session.GetTopic(DURABLE_TOPIC);
+						ITopic topic = session.GetTopic(TEST_DURABLE_TOPIC);
 						IMessageProducer producer = session.CreateProducer(topic);
-						IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, "color='red'", false);
+						IMessageConsumer consumer = session.CreateDurableConsumer(topic, TEST_CLIENT_AND_CONSUMER_ID, "color='red'", false);
 
 						producer.DeliveryMode = MsgDeliveryMode.Persistent;
 
@@ -128,9 +144,12 @@ namespace Apache.NMS.Test
 							session.Commit();
 						}
 
-						// Change the subscription.
+						// Change the subscription, allowing some time for the Broker to purge the
+						// consumers resources.
 						consumer.Dispose();
-						consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, "color='blue'", false);
+                        Thread.Sleep(1000);
+						
+						consumer = session.CreateDurableConsumer(topic, TEST_CLIENT_AND_CONSUMER_ID, "color='blue'", false);
 
 						sendMessage = session.CreateTextMessage("2nd");
 						sendMessage.Properties["color"] = "red";
@@ -165,7 +184,10 @@ namespace Apache.NMS.Test
 			}
 			finally
 			{
-				UnregisterDurableConsumer(TEST_CLIENT_ID, CONSUMER_ID);
+                // Pause to allow Stomp to unregister at the broker.
+                Thread.Sleep(500);
+
+				UnregisterDurableConsumer(TEST_CLIENT_AND_CONSUMER_ID, TEST_CLIENT_AND_CONSUMER_ID);
 			}
 		}
 
@@ -175,33 +197,38 @@ namespace Apache.NMS.Test
 				AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
 			AcknowledgementMode ackMode)
 		{
+			string TEST_DURABLE_TOPIC = DURABLE_TOPIC + ":TestDurableConsumer";
+
 			try
 			{
-				RegisterDurableConsumer(TEST_CLIENT_ID, DURABLE_TOPIC, CONSUMER_ID, null, false);
-				RunTestDurableConsumer(ackMode);
+				RegisterDurableConsumer(TEST_CLIENT_AND_CONSUMER_ID, TEST_DURABLE_TOPIC, TEST_CLIENT_AND_CONSUMER_ID, null, false);
+				RunTestDurableConsumer(TEST_DURABLE_TOPIC, ackMode);
 				if(AcknowledgementMode.Transactional == ackMode)
 				{
-					RunTestDurableConsumer(ackMode);
+					RunTestDurableConsumer(TEST_DURABLE_TOPIC, ackMode);
 				}
 			}
 			finally
 			{
-				UnregisterDurableConsumer(TEST_CLIENT_ID, CONSUMER_ID);
+                // Pause to allow Stomp to unregister at the broker.
+                Thread.Sleep(500);
+				
+				UnregisterDurableConsumer(TEST_CLIENT_AND_CONSUMER_ID, TEST_CLIENT_AND_CONSUMER_ID);
 			}
 		}
 
-		protected void RunTestDurableConsumer(AcknowledgementMode ackMode)
+		protected void RunTestDurableConsumer(string topicName, AcknowledgementMode ackMode)
 		{
-			SendDurableMessage();
-			SendDurableMessage();
+			SendDurableMessage(topicName);
+			SendDurableMessage(topicName);
 
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(TEST_CLIENT_AND_CONSUMER_ID))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(ackMode))
 				{
-					ITopic topic = SessionUtil.GetTopic(session, DURABLE_TOPIC);
-					using(IMessageConsumer consumer = session.CreateDurableConsumer(topic, CONSUMER_ID, null, false))
+					ITopic topic = SessionUtil.GetTopic(session, topicName);
+					using(IMessageConsumer consumer = session.CreateDurableConsumer(topic, TEST_CLIENT_AND_CONSUMER_ID, null, false))
 					{
 						IMessage msg = consumer.Receive(receiveTimeout);
 						Assert.IsNotNull(msg, "Did not receive first durable message.");
@@ -220,14 +247,14 @@ namespace Apache.NMS.Test
 			}
 		}
 
-		protected void SendDurableMessage()
+		protected void SendDurableMessage(string topicName)
 		{
 			using(IConnection connection = CreateConnection(SEND_CLIENT_ID))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession())
 				{
-					ITopic topic = SessionUtil.GetTopic(session, DURABLE_TOPIC);
+					ITopic topic = SessionUtil.GetTopic(session, topicName);
 					using(IMessageProducer producer = session.CreateProducer(topic))
 					{
 						ITextMessage message = session.CreateTextMessage("Durable Hello");

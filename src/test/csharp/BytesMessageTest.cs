@@ -25,7 +25,6 @@ namespace Apache.NMS.Test
 	public class BytesMessageTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "BytesMessageDestination";
-		protected static string TEST_CLIENT_ID = "BytesMessageClientId";
 		protected byte[] msgContent = {1, 2, 3, 4, 5, 6, 7, 8};
 
 		[Test]
@@ -33,7 +32,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -61,7 +60,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))

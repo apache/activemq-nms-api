@@ -26,7 +26,6 @@ namespace Apache.NMS.Test
     public class MapMessageTest : NMSTestSupport
     {
         protected static string DESTINATION_NAME = "MessagePropsDestination";
-        protected static string TEST_CLIENT_ID = "MessagePropsClientId";
 
         protected bool a = true;
         protected byte b = 123;
@@ -43,13 +42,13 @@ namespace Apache.NMS.Test
         protected float m = 2.1F;
         protected double n = 2.3;
         protected byte[] o = {1, 2, 3, 4, 5};
-
+		
         [Test]
         public void SendReceiveMapMessage(
             [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -126,7 +125,7 @@ namespace Apache.NMS.Test
             [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))

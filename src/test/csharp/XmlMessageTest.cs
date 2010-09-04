@@ -69,13 +69,12 @@ namespace Apache.NMS.Test
 	public class XmlMessageTest : NMSTestSupport
 	{
 		protected static string DESTINATION_NAME = "XmlMessageDestination";
-		protected static string TEST_CLIENT_ID = "XmlMessageClientId";
 
 #if NET_3_5 || MONO
 		[Test]
 		public void SendReceiveXmlMessage_Net35()
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
@@ -130,7 +129,7 @@ namespace Apache.NMS.Test
 		[Test]
 		public void SendReceiveXmlMessage()
 		{
-			using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+			using(IConnection connection = CreateConnection(GetTestClientId()))
 			{
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))

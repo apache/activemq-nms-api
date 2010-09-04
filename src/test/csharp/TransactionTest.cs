@@ -25,15 +25,13 @@ namespace Apache.NMS.Test
     public class TransactionTest : NMSTestSupport
     {
         protected static string DESTINATION_NAME = "TransactionTestDestination";
-        protected static string TEST_CLIENT_ID = "TransactionTestClientId";
-        protected static string TEST_CLIENT_ID2 = "TransactionTestClientId2";
 
         [Test]
         public void TestSendRollback(
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
@@ -78,7 +76,7 @@ namespace Apache.NMS.Test
             ITextMessage firstMsgSend;
             ITextMessage secondMsgSend;
 
-            using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection1 = CreateConnection(GetTestClientId()))
             {
                 connection1.Start();
                 using(ISession session1 = connection1.CreateSession(AcknowledgementMode.Transactional))
@@ -89,7 +87,7 @@ namespace Apache.NMS.Test
                         // First connection session that sends one message, and the
                         // second message is implicitly rolled back as the session is
                         // disposed before Commit() can be called.
-                        using(IConnection connection2 = CreateConnection(TEST_CLIENT_ID2))
+                        using(IConnection connection2 = CreateConnection(GetTestClientId()))
                         {
                             connection2.Start();
                             using(ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
@@ -109,7 +107,7 @@ namespace Apache.NMS.Test
                         }
 
                         // Second connection session that will send one message.
-                        using(IConnection connection2 = CreateConnection(TEST_CLIENT_ID2))
+                        using(IConnection connection2 = CreateConnection(GetTestClientId()))
                         {
                             connection2.Start();
                             using(ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
@@ -144,7 +142,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
@@ -186,7 +184,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
@@ -231,7 +229,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession(ackMode))
@@ -263,7 +261,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession(ackMode))
@@ -305,7 +303,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession(ackMode))
@@ -360,7 +358,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.Transactional);
@@ -399,7 +397,7 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.Transactional);

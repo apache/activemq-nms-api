@@ -23,12 +23,10 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class ProducerTest : NMSTestSupport
 	{
-		protected static string TEST_CLIENT_ID = "TestProducerClientId";
-
         [Test]
         public void TestProducerSendToNullDestinationWithoutDefault()
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession())
@@ -54,7 +52,7 @@ namespace Apache.NMS.Test
         [Test]
         public void TestProducerSendToNullDestinationWithDefault()
         {
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession())
@@ -82,7 +80,7 @@ namespace Apache.NMS.Test
 		[Test]
 		public void TestProducerSendToNonDefaultDestination()
 		{
-            using(IConnection connection = CreateConnection(TEST_CLIENT_ID))
+            using(IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 using(ISession session = connection.CreateSession())

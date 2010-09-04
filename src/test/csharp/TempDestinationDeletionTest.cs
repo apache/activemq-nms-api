@@ -28,7 +28,6 @@ namespace Apache.NMS.Test
 		protected const string TOPIC_DESTINATION_NAME = "topic://AutoDeleteTopic";
 		protected const string TEMP_QUEUE_DESTINATION_NAME = "temp-queue://AutoDeleteTempQueue";
 		protected const string TEMP_TOPIC_DESTINATION_NAME = "temp-topic://AutoDeleteTempTopic";
-		protected const string TEST_CLIENT_ID = "TempDestinationClientId";
 
 		[Test]
 		public void TempDestinationDeletionTest(
@@ -37,7 +36,7 @@ namespace Apache.NMS.Test
 			[Values(QUEUE_DESTINATION_NAME, TOPIC_DESTINATION_NAME, TEMP_QUEUE_DESTINATION_NAME, TEMP_TOPIC_DESTINATION_NAME)]
 			string destinationName)
 		{
-			using(IConnection connection1 = CreateConnection(TEST_CLIENT_ID + new System.Random().Next()))
+			using(IConnection connection1 = CreateConnection(GetTestClientId()))
 			{
 				connection1.Start();
 				using(ISession session = connection1.CreateSession(AcknowledgementMode.AutoAcknowledge))

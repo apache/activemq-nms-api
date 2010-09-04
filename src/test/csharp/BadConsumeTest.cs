@@ -22,14 +22,13 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class BadConsumeTest : NMSTestSupport
 	{
-		protected static string TEST_CLIENT_ID = "BadConsumeTestClientId";
 		protected IConnection connection;
 		protected ISession session;
 
 		[SetUp]
 		public override void SetUp()
 		{
-			connection = CreateConnection(TEST_CLIENT_ID);
+			connection = CreateConnection(GetTestClientId());
 			connection.Start();
 			session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge);
 		}
