@@ -503,6 +503,57 @@ namespace Apache.NMS.Test
             }
         }
 
+        [Test]
+        public void TestReceiveNoWait(
+            [Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge,
+                AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
+            AcknowledgementMode ackMode,
+            [Values(MsgDeliveryMode.NonPersistent, MsgDeliveryMode.Persistent)]
+            MsgDeliveryMode deliveryMode)
+        {
+			const int RETRIES = 20;
+
+			using(IConnection connection = CreateConnection())
+            {
+                connection.Start();
+                using(ISession session = connection.CreateSession(ackMode))
+                {
+                    IDestination destination = session.CreateTemporaryQueue();
+
+                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    {
+						producer.DeliveryMode = deliveryMode;
+						ITextMessage message = session.CreateTextMessage("TEST");
+						producer.Send(message);
+
+                        if(AcknowledgementMode.Transactional == ackMode)
+                        {
+                            session.Commit();
+                        }							
+					}
+										
+					using(IMessageConsumer consumer = session.CreateConsumer(destination))
+					{						
+						IMessage message = null;
+
+						for(int i = 0; i < RETRIES && message == null; ++i)
+						{
+							message = consumer.ReceiveNoWait();
+							Thread.Sleep(100);
+						}
+						
+						Assert.IsNotNull(message);
+						message.Acknowledge();
+						
+                        if(AcknowledgementMode.Transactional == ackMode)
+                        {
+                            session.Commit();
+                        }						
+					}
+				}
+        	}
+		}
+		
 #endif
 
     }
