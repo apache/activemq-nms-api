@@ -29,6 +29,9 @@ namespace Apache.NMS.Util
 			remaining = i;
 		}
 
+        /// <summary>
+        /// Decrement the count, releasing any waiting Threads when the count reaches Zero.
+        /// </summary>
 		public void countDown()
 		{
 			lock(mutex)
@@ -44,6 +47,9 @@ namespace Apache.NMS.Util
 			}
 		}
 
+        /// <summary>
+        /// Gets the current count for this Latch.
+        /// </summary>
 		public int Remaining
 		{
 			get
@@ -55,6 +61,19 @@ namespace Apache.NMS.Util
 			}
 		}
 
+        /// <summary>
+        /// Causes the current Thread to wait for the count to reach zero, unless
+        /// the Thread is interrupted.
+        /// </summary>
+        public void await()
+        {
+            this.await(TimeSpan.FromMilliseconds(Timeout.Infinite));
+        }
+
+        /// <summary>
+        /// Causes the current thread to wait until the latch has counted down to zero, unless
+        /// the thread is interrupted, or the specified waiting time elapses.
+        /// </summary>
 		public bool await(TimeSpan timeout)
 		{
 			return mutex.WaitOne((int) timeout.TotalMilliseconds, false);
