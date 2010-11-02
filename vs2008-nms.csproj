@@ -57,6 +57,9 @@
     <Compile Include="src\main\csharp\IMessage.cs" />
     <Compile Include="src\main\csharp\IMessageConsumer.cs" />
     <Compile Include="src\main\csharp\IMessageProducer.cs" />
+    <Compile Include="src\main\csharp\INetTxConnection.cs" />
+    <Compile Include="src\main\csharp\INetTxConnectionFactory.cs" />
+    <Compile Include="src\main\csharp\INetTxSession.cs" />
     <Compile Include="src\main\csharp\InvalidClientIDException.cs" />
     <Compile Include="src\main\csharp\InvalidDestinationException.cs" />
     <Compile Include="src\main\csharp\InvalidSelectorException.cs" />
