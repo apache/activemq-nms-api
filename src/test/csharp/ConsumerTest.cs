@@ -161,7 +161,8 @@ namespace Apache.NMS.Test
         public void TestDoChangeSentMessage(
             [Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge,
                 AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
-            AcknowledgementMode ackMode)
+            AcknowledgementMode ackMode,
+			[Values(true, false)] bool doClear)
         {
             using(IConnection connection = CreateConnection())
             {
@@ -183,8 +184,11 @@ namespace Apache.NMS.Test
 
                             producer.Send(message);
 
-                            message.ClearBody();
-                            message.ClearProperties();
+							if(doClear)
+							{
+								message.ClearBody();
+								message.ClearProperties();
+							}
                         }
 
                         if(ackMode == AcknowledgementMode.Transactional)
