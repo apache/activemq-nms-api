@@ -61,7 +61,7 @@
         <!-- Property grouping for 'vendor.nunit.org' -->
         <property name="vendor.nunit.org.name" value="NUnit" />
         <property name="vendor.nunit.org.group" value="org.nunit" />
-        <property name="vendor.nunit.org.version" value="2.5.5" />
+        <property name="vendor.nunit.org.version" value="2.5.8" />
         <property name="vendor.nunit.org.filenames" value="nunit.framework.dll" />
     </target>
 
