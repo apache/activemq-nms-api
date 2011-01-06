@@ -545,7 +545,7 @@
         <property name="sandcastle.style" value="vs2005" unless="${property::exists('sandcastle.style')}" />
         <property name="documentation.dir" value="${build.bin.dir}" />
         <property name="bin.intern.dir" value="${build.bin.dir}" />
-        <property name="bin.extern.dir" value="${basedir}\vendor\NUnit\net-2.0" />
+        <property name="bin.extern.dir" value="${basedir}\lib\NUnit\net-2.0" />
         <property name="sandcastle.dir" value="${environment::get-variable('DXROOT')}" />
         <property name="sandcastle.workingdir" value="${build.dir}\doc\${sandcastle.style}" />
         <property name="sandcastle.output.dir" value="${sandcastle.workingdir}\Output" />
