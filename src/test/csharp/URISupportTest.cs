@@ -141,7 +141,7 @@ namespace Apache.NMS.Test
 			Assert.AreEqual(uriStringNoParams, result.OriginalString);
 
 			result = URISupport.CreateRemainingUri(uriWithParams, null);
-			Assert.AreNotEqual(uriStringNoParams, result.OriginalString);
+			Assert.AreEqual(uriStringNoParams, result.OriginalString);
 
 			result = URISupport.CreateRemainingUri(uriNoParams, parameters);
 			isEqual = (0 == string.Compare(uriStringWithParams1, result.OriginalString)
