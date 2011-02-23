@@ -468,6 +468,7 @@
                 <exec program="nunit-console" failonerror="true" workingdir="build/${current.build.framework}/${current.build.config}">
                     <arg value="${NUnit.Projectfile}" />
                     <arg value="-labels" />
+                    <arg value="-exclude=Manual" />
                     <arg value="-xml=Nunit.TestOutput.xml" />
                 </exec>
             </if>
