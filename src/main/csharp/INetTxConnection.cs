@@ -37,7 +37,7 @@ namespace Apache.NMS
 
 #if !NETCF
         /// <summary>
-        /// Creates a INetTxSession object.
+        /// Creates a INetTxSession object and enlists in the specified Transaction.
         /// </summary>
         INetTxSession CreateNetTxSession(Transaction tx);
 #endif
