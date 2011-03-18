@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-using System;
+#if !NETCF
+using System.Transactions;
+#endif
 
 namespace Apache.NMS
 {
@@ -32,6 +34,13 @@ namespace Apache.NMS
         /// Creates a INetTxSession object.
         /// </summary>
         INetTxSession CreateNetTxSession();
+
+#if !NETCF
+        /// <summary>
+        /// Creates a INetTxSession object.
+        /// </summary>
+        INetTxSession CreateNetTxSession(Transaction tx);
+#endif
     }
 }
 

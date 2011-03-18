@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-using System;
+#if !NETCF
+using System.Transactions;
+#endif
 
 namespace Apache.NMS
 {
@@ -38,6 +40,16 @@ namespace Apache.NMS
     /// </summary>
     public interface INetTxSession : ISession
     {
+#if !NETCF
+        /// <summary>
+        /// Enlist the Session in the specified Transaction.
+        /// 
+        /// If the Session is already enlisted in a Transaction or there is an Ambient
+        /// Transaction and the given TX is not that Transaction then an exception should
+        /// be thrown.
+        /// </summary>
+        void Enlist(Transaction tx);
+#endif
     }
 }
 

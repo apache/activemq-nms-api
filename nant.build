@@ -73,6 +73,7 @@
                 <include name="${current.build.framework.assembly.dir}/System.Core.dll" />
                 <include name="${current.build.framework.assembly.dir}/System.Web.dll" />
                 <include name="${current.build.framework.assembly.dir}/System.Xml.dll" />
+                <include name="${current.build.framework.assembly.dir}/System.Transactions.dll" />
             </assemblyfileset>
         </if>
         <if test="${current.build.framework != 'net-3.5' and current.build.framework != 'net-4.0'}">
@@ -81,6 +82,7 @@
                 <include name="${current.build.framework.assembly.dir}/System.dll" />
                 <include name="${current.build.framework.assembly.dir}/System.Web.dll" />
                 <include name="${current.build.framework.assembly.dir}/System.Xml.dll" />
+                <include name="${current.build.framework.assembly.dir}/System.Transactions.dll" />
             </assemblyfileset>
         </if>
 
