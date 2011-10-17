@@ -314,18 +314,34 @@ namespace Apache.NMS
 			// Check the current folder first.
 			pathList.Add("");
 #if !NETCF
-			AppDomain currentDomain = AppDomain.CurrentDomain;
-
-			// Check the folder the assembly is located in.
-			pathList.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-			if(null != currentDomain.BaseDirectory)
+			try
 			{
-				pathList.Add(currentDomain.BaseDirectory);
+				AppDomain currentDomain = AppDomain.CurrentDomain;
+
+				// Check the folder the assembly is located in.
+				Assembly executingAssembly = Assembly.GetExecutingAssembly();
+				try
+				{
+					pathList.Add(Path.GetDirectoryName(executingAssembly.Location));
+				}
+				catch(Exception ex)
+				{
+					Tracer.DebugFormat("Error parsing executing assembly location: {0} : {1}", executingAssembly.Location, ex.Message);
+				}
+
+				if(null != currentDomain.BaseDirectory)
+				{
+					pathList.Add(currentDomain.BaseDirectory);
+				}
+
+				if(null != currentDomain.RelativeSearchPath)
+				{
+					pathList.Add(currentDomain.RelativeSearchPath);
+				}
 			}
-
-			if(null != currentDomain.RelativeSearchPath)
+			catch(Exception ex)
 			{
-				pathList.Add(currentDomain.RelativeSearchPath);
+				Tracer.DebugFormat("Error configuring search paths: {0}", ex.Message);
 			}
 #endif
 
