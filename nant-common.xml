@@ -230,7 +230,9 @@
         <property name="current.build.framework.sign" value="true" />
         <property name="link.sdkdoc.version" value="SDK_v7_0" />
         <property name="link.sdkdoc.web" value="true" />
-        <property name="nant.settings.currentframework" value="${current.build.framework}" />
+        <if test="${framework::exists(current.build.framework)}">
+            <property name="nant.settings.currentframework" value="${current.build.framework}" />
+        </if>
     </target>
 
     <target name="set-netcf-2.0-framework-configuration">
