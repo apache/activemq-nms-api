@@ -55,20 +55,23 @@ namespace Apache.NMS.Util
 		{
 			PropertyInfo propertyInfo = this.messageType.GetProperty(name, publicBinding);
 
-			if(null != propertyInfo && propertyInfo.CanRead)
-			{
-				return propertyInfo.GetValue(this.message, null);
-			}
-			else
-			{
-				FieldInfo fieldInfo = this.messageType.GetField(name, publicBinding);
-
-				if(null != fieldInfo)
+			if(name.StartsWith("NMS"))
+			{			
+				if(null != propertyInfo && propertyInfo.CanRead)
 				{
-					return fieldInfo.GetValue(this.message);
+					return propertyInfo.GetValue(this.message, null);
+				}
+				else
+				{
+					FieldInfo fieldInfo = this.messageType.GetField(name, publicBinding);
+	
+					if(null != fieldInfo)
+					{
+						return fieldInfo.GetValue(this.message);
+					}
 				}
 			}
-
+			
 			return base.GetObjectProperty(name);
 		}
 
@@ -76,7 +79,11 @@ namespace Apache.NMS.Util
 		{
 			PropertyInfo propertyInfo = this.messageType.GetProperty(name, publicBinding);
 
-			if(null != propertyInfo && propertyInfo.CanWrite)
+			if(!name.StartsWith("NMS"))
+			{
+                base.SetObjectProperty(name, value);
+			}			
+			else if(null != propertyInfo && propertyInfo.CanWrite)
 			{
 				propertyInfo.SetValue(this.message, value, null);
 			}
