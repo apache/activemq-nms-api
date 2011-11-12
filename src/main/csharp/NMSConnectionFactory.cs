@@ -55,7 +55,8 @@ namespace Apache.NMS
 		static NMSConnectionFactory()
 		{
 			schemaProviderFactoryMap = new Dictionary<string, ProviderFactoryInfo>();
-			schemaProviderFactoryMap["activemq"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ", "Apache.NMS.ActiveMQ.ConnectionFactory");
+            schemaProviderFactoryMap["activemq"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ", "Apache.NMS.ActiveMQ.ConnectionFactory");
+            schemaProviderFactoryMap["activemqnettx"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ", "Apache.NMS.ActiveMQ.NetTxConnectionFactory");
 			schemaProviderFactoryMap["tcp"] = new ProviderFactoryInfo("Apache.NMS.ActiveMQ", "Apache.NMS.ActiveMQ.ConnectionFactory");
 			schemaProviderFactoryMap["ems"] = new ProviderFactoryInfo("Apache.NMS.EMS", "Apache.NMS.EMS.ConnectionFactory");
 			schemaProviderFactoryMap["msmq"] = new ProviderFactoryInfo("Apache.NMS.MSMQ", "Apache.NMS.MSMQ.ConnectionFactory");
