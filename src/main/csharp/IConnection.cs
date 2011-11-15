@@ -166,5 +166,22 @@ namespace Apache.NMS
 		IConnectionMetaData MetaData{ get; }
 
 		#endregion
+
+        #region Connection Management methods
+
+        /// <summary>
+        /// For a long running Connection that creates many temp destinations
+        /// this method will close and destroy all previously created temp
+        /// destinations to reduce resource consumption.  This can be useful
+        /// when the Connection is pooled or otherwise used for long periods
+        /// of time.  Only locally created temp destinations should be removed
+        /// by this call.
+        /// NOTE: This is an optional operation and for NMS providers that
+        /// do not support this functionality the method should just return
+        /// without throwing any exceptions.
+        /// </summary>
+        void PurgeTempDestinations();
+
+        #endregion
 	}
 }
