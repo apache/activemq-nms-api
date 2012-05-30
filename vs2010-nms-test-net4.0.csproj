@@ -182,7 +182,10 @@ nant -nologo -q install-all -D:compile.skip=true
 
 :installskip
 </PostBuildEvent>
-    <PreBuildEvent>if /i "$(download_skip)" equ "true" (
+    <PreBuildEvent>cd $(ProjectDir)
+nant -nologo -q generate-assemblyinfo -D:assemblyinfo.filename="src/test/csharp/CommonAssemblyInfo.cs"
+
+if /i "$(download_skip)" equ "true" (
    echo Skipping download...
    goto :downloadskip
 )

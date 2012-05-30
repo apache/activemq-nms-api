@@ -177,7 +177,8 @@ nant -nologo -q install-all -D:compile.skip=true
 
 :installskip
 </PostBuildEvent>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>cd $(ProjectDir)
+nant -nologo -q generate-assemblyinfo -D:assemblyinfo.filename="src/main/csharp/CommonAssemblyInfo.cs"
+</PreBuildEvent>
   </PropertyGroup>
 </Project>
