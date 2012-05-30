@@ -49,7 +49,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>build\net-4.0\debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET,NET_4_0</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET,NET_2_0,NET_3_5,NET_4_0</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <NoWarn>3016</NoWarn>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -58,7 +58,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <OutputPath>build\net-4.0\release\</OutputPath>
-    <DefineConstants>TRACE;NET,NET_4_0</DefineConstants>
+    <DefineConstants>TRACE;NET,NET_2_0,NET_3_5,NET_4_0</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <NoWarn>3016</NoWarn>
