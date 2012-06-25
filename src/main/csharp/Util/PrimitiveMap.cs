@@ -375,7 +375,7 @@ namespace Apache.NMS.Util
 				MarshalPrimitiveMap(map, new EndianBinaryWriter(memoryStream));
 			}
 
-			return memoryStream.GetBuffer();
+			return memoryStream.ToArray();
 		}
 
 		public static void MarshalPrimitiveMap(IDictionary map, Stream stream)
