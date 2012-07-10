@@ -23,7 +23,7 @@
     <SccLocalPath>Svn</SccLocalPath>
     <SccAuxPath>Svn</SccAuxPath>
     <SccProvider>SubversionScc</SccProvider>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -166,7 +166,7 @@
   <PropertyGroup>
     <PostBuildEvent>if /i "$(build_extraplatforms)" equ "true" (
     cd $(ProjectDir)
-    nant -nologo -q -D:build.framework.strings="netcf-2.0,netcf-3.5,mono-2.0"
+    nant -nologo -q $(buildtype) -D:build.framework.strings="netcf-2.0,netcf-3.5,mono-2.0"
 )
 
 if /i "$(install_skip)" equ "true" (
