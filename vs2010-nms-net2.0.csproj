@@ -165,8 +165,20 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
   <PropertyGroup>
     <PostBuildEvent>if /i "$(build_extraplatforms)" equ "true" (
+    cd $(ProjectDir)
     nant -nologo -q -D:build.framework.strings="netcf-2.0,netcf-3.5,mono-2.0"
 )
+
+if /i "$(install_skip)" equ "true" (
+   echo Skipping install...
+   goto :installskip
+)
+
+echo Installing $(ConfigurationName) output files...
+cd $(ProjectDir)
+nant -nologo -q install-all -D:compile.skip=true
+
+:installskip
 
 if /i "$(install_skip)" equ "true" (
    echo Skipping install...
