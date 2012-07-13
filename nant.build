@@ -88,6 +88,7 @@
             <include name="${current.build.framework.assembly.dir}/mscorlib.dll" />
             <include name="${current.build.framework.assembly.dir}/System.dll" />
             <include name="${current.build.framework.assembly.dir}/System.Xml.dll" />
+            <include name="${current.build.framework.assembly.dir}/System.Web.dll" />
             <include name="${build.bin.dir}/${project.name}.dll" />
             <include name="${nunit.dll}" />
         </assemblyfileset>

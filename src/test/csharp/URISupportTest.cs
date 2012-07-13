@@ -21,6 +21,9 @@ using System.Collections.Specialized;
 using Apache.NMS.Util;
 
 using NUnit.Framework;
+#if !NETCF
+using System.Web;
+#endif
 
 namespace Apache.NMS.Test
 {
@@ -266,6 +269,28 @@ namespace Apache.NMS.Test
 	        Assert.IsFalse(dest.Query.Equals(source.Query), "same uri, ssp");
 	    }
 
+
+#if !NETCF
+		[Test]
+        public void TestParseQueryEncoding() {
+
+			String paramName = "name";
+            String paramValue = "CN=Test, OU=bla, ..&%/§()%3q743847)/(&%/.. hjUIFHUFH";
+
+            String uriString = "http://someserver.com:1234/?";
+
+            //encoding the param with url encode
+            uriString += paramName + "=" + HttpUtility.UrlEncode(paramValue);
+
+            Uri uri = new Uri(uriString);
+
+            StringDictionary dictionary = URISupport.ParseQuery(uri.Query);
+
+            String value = dictionary[paramName];
+
+            NUnit.Framework.Assert.AreEqual(paramValue, value);
+        }
+#endif
 	}
 }
 
