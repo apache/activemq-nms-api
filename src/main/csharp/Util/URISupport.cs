@@ -84,7 +84,7 @@ namespace Apache.NMS.Util
 						throw new NMSException(string.Format("Invalid Uri parameter: {0}", query));
 					}
 
-					map[nameValue[0]] = nameValue[1];
+					map[UrlDecode(nameValue[0])] = UrlDecode(nameValue[1]);
 				}
 			}
 
@@ -201,7 +201,6 @@ namespace Apache.NMS.Util
 
 		public static StringDictionary GetProperties(StringDictionary props, string prefix)
 		{
-
 			if(props == null)
 			{
 				throw new Exception("Properties Object was null");
@@ -254,7 +253,7 @@ namespace Apache.NMS.Util
 		public static String UrlDecode(String s)
 		{
 #if !NETCF
-			return HttpUtility.HtmlDecode(s);
+			return HttpUtility.UrlDecode(s);
 #else
             return Uri.UnescapeDataString(s);
 #endif
@@ -263,7 +262,7 @@ namespace Apache.NMS.Util
 		public static String UrlEncode(String s)
 		{
 #if !NETCF
-			return HttpUtility.HtmlEncode(s);
+			return HttpUtility.UrlEncode(s);
 #else
             return Uri.EscapeUriString(s);
 #endif
