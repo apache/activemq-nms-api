@@ -46,7 +46,7 @@
     <property name="current.build.config"    value="${if(project.release.type == 'release', 'release', 'debug')}" overwrite="false" />
     <property name="current.build.framework" value="${framework::get-target-framework()}" overwrite="false" />
     <property name="current.build.defines"   value="${build.defines}" />
-    <property name="build.framework.strings" value="net-2.0,net-3.5,net-4.0,mono-2.0,netcf-2.0,netcf-3.5" unless="${property::exists('build.framework.strings')}"/>
+    <property name="build.framework.strings" value="net-2.0,net-3.5,net-4.0,mono-2.0,mono-4.0,netcf-2.0,netcf-3.5" unless="${property::exists('build.framework.strings')}"/>
     <property name="current.build.framework.assembly.dir" value="${framework::get-assembly-directory(framework::get-target-framework())}" dynamic="true" />
 
     <property name="build.config.strings"    value="${if(property::exists('configuration'), configuration, if(build.skip.release == 'true', 'debug', 'debug,release'))}" dynamic="true" />
@@ -264,6 +264,18 @@
         <property name="current.build.framework" value="mono-2.0" />
         <property name="current.build.framework.name" value="Mono 2.0" />
         <property name="current.build.defines" value="${build.defines}MONO,MONO_2_0" dynamic="true" />
+        <property name="current.build.framework.sign" value="true" />
+        <property name="link.sdkdoc.version" value="SDK_v1_1" />
+        <property name="link.sdkdoc.web" value="true" />
+        <if test="${framework::exists(current.build.framework)}">
+            <property name="nant.settings.currentframework" value="${current.build.framework}" />
+        </if>
+    </target>
+
+    <target name="set-mono-4.0-framework-configuration">
+        <property name="current.build.framework" value="mono-4.0" />
+        <property name="current.build.framework.name" value="Mono 4.0" />
+        <property name="current.build.defines" value="${build.defines}MONO,MONO_4_0" dynamic="true" />
         <property name="current.build.framework.sign" value="true" />
         <property name="link.sdkdoc.version" value="SDK_v1_1" />
         <property name="link.sdkdoc.web" value="true" />

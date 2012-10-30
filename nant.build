@@ -66,7 +66,7 @@
     </target>
 
     <target name="dependency-init" description="Initializes build dependencies">
-        <if test="${current.build.framework == 'net-3.5' or current.build.framework == 'net-4.0' or current.build.framework == 'mono-2.0'}">
+        <if test="${current.build.framework == 'net-3.5' or current.build.framework == 'net-4.0' or current.build.framework == 'mono-2.0' or current.build.framework == 'mono-4.0'}">
             <assemblyfileset failonempty="true" id="dependencies">
                 <include name="${current.build.framework.assembly.dir}/mscorlib.dll" />
                 <include name="${current.build.framework.assembly.dir}/System.dll" />
@@ -76,7 +76,7 @@
                 <include name="${current.build.framework.assembly.dir}/System.Transactions.dll" />
             </assemblyfileset>
         </if>
-        <if test="${current.build.framework != 'net-3.5' and current.build.framework != 'net-4.0'}">
+        <if test="${current.build.framework != 'net-3.5' and current.build.framework != 'net-4.0' and current.build.framework != 'mono-4.0'}">
             <assemblyfileset failonempty="true" id="dependencies">
                 <include name="${current.build.framework.assembly.dir}/mscorlib.dll" />
                 <include name="${current.build.framework.assembly.dir}/System.dll" />
