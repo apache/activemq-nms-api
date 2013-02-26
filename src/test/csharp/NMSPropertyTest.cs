@@ -24,8 +24,6 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class NMSPropertyTest : NMSTestSupport
 	{
-		protected static string DESTINATION_NAME = "NMSPropsDestination";
-
 		// standard NMS properties
 		protected string expectedText = "Hey this works!";
 		protected string correlationID = "FooBar";
@@ -44,7 +42,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{

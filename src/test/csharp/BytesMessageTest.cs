@@ -24,7 +24,6 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class BytesMessageTest : NMSTestSupport
 	{
-		protected static string DESTINATION_NAME = "BytesMessageDestination";
 		protected byte[] msgContent = {1, 2, 3, 4, 5, 6, 7, 8};
 
 		[Test]
@@ -37,7 +36,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
@@ -65,7 +64,7 @@ namespace Apache.NMS.Test
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-                    IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
                     using(IMessageConsumer consumer = session.CreateConsumer(destination))
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {

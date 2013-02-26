@@ -27,8 +27,6 @@ namespace Apache.NMS.Test
     [TestFixture]
     public class ForeignMessageTransformationTest : NMSTestSupport
     {
-        protected static string DESTINATION_NAME = "topic://MessageTransformationDestination";
-
         private string propertyName = "Test-Property";
         private string propertyValue = "Test-Property-Value";
         private string mapElementName = "Test-Map-Property";
@@ -61,7 +59,7 @@ namespace Apache.NMS.Test
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-                    IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Topic);
                     using(IMessageConsumer consumer = session.CreateConsumer(destination))
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
@@ -102,7 +100,7 @@ namespace Apache.NMS.Test
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-                    IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Topic);
                     using(IMessageConsumer consumer = session.CreateConsumer(destination))
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
@@ -147,7 +145,7 @@ namespace Apache.NMS.Test
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-                    IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Topic);
                     using(IMessageConsumer consumer = session.CreateConsumer(destination))
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
@@ -194,7 +192,7 @@ namespace Apache.NMS.Test
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-                    IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Topic);
                     using(IMessageConsumer consumer = session.CreateConsumer(destination))
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {
@@ -240,7 +238,7 @@ namespace Apache.NMS.Test
                 connection.Start();
                 using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-                    IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Topic);
                     using(IMessageConsumer consumer = session.CreateConsumer(destination))
                     using(IMessageProducer producer = session.CreateProducer(destination))
                     {

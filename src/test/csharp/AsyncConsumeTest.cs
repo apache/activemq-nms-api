@@ -24,7 +24,6 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class AsyncConsumeTest : NMSTestSupport
 	{
-		protected static string DESTINATION_NAME = "AsyncConsumeDestination";
 		protected string RESPONSE_CLIENT_ID;
 		protected AutoResetEvent semaphore;
 		protected bool received;
@@ -58,7 +57,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
@@ -87,7 +86,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
 						producer.DeliveryMode = deliveryMode;
@@ -118,7 +117,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
@@ -148,7 +147,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					{
 						consumer.Listener += new MessageListener(OnMessage);
@@ -184,7 +183,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					ITemporaryQueue tempReplyDestination = session.CreateTemporaryQueue();
 
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))

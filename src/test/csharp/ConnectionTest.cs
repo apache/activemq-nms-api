@@ -75,8 +75,8 @@ namespace Apache.NMS.Test
 
 				using(ISession session = connection.CreateSession())
 				{
-					IQueue queue = session.GetQueue("DisposalTestQueue");
-					IMessageConsumer consumer = session.CreateConsumer(queue);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
+					IMessageConsumer consumer = session.CreateConsumer(destination);
 
 					connection.Stop();
 					if(disposeConsumer)
@@ -98,8 +98,8 @@ namespace Apache.NMS.Test
 
 				using(ISession session = connection.CreateSession())
 				{
-					IQueue queue = session.GetQueue("DisposalTestQueue");
-					IMessageProducer producer = session.CreateProducer(queue);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
+					IMessageProducer producer = session.CreateProducer(destination);
 
 					connection.Stop();
 					if(disposeProducer)
@@ -146,7 +146,7 @@ namespace Apache.NMS.Test
             ISession stoppedSession = stoppedConnection.CreateSession(AcknowledgementMode.AutoAcknowledge);
     
             // Setup the consumers.
-            ITopic topic = startedSession.GetTopic("ConnectionTestTopic");
+            IDestination topic = CreateDestination(startedSession, DestinationType.Topic);
             IMessageConsumer startedConsumer = startedSession.CreateConsumer(topic);
             IMessageConsumer stoppedConsumer = stoppedSession.CreateConsumer(topic);
     

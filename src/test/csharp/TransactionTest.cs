@@ -24,7 +24,7 @@ namespace Apache.NMS.Test
     [TestFixture]
     public class TransactionTest : NMSTestSupport
     {
-        protected static string DESTINATION_NAME = "TransactionTestDestination";
+        protected static string DESTINATION_NAME = "queue://TEST.TransactionTestDestination";
 
         [Test]
         public void TestSendRollback(
@@ -92,7 +92,7 @@ namespace Apache.NMS.Test
                             connection2.Start();
                             using(ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
                             {
-                                IDestination destination2 = SessionUtil.GetDestination(session2, DESTINATION_NAME);
+                                IDestination destination2 = CreateDestination(session2, DESTINATION_NAME);
                                 using(IMessageProducer producer = session2.CreateProducer(destination2))
                                 {
                                     producer.DeliveryMode = deliveryMode;
@@ -112,7 +112,7 @@ namespace Apache.NMS.Test
                             connection2.Start();
                             using(ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
                             {
-                                IDestination destination2 = SessionUtil.GetDestination(session2, DESTINATION_NAME);
+                                IDestination destination2 = CreateDestination(session2, DESTINATION_NAME);
                                 using(IMessageProducer producer = session2.CreateProducer(destination2))
                                 {
                                     producer.DeliveryMode = deliveryMode;
@@ -362,7 +362,7 @@ namespace Apache.NMS.Test
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.Transactional);
-                IQueue destination = session.GetQueue("TestRedispatchOfRolledbackTx:"+Guid.NewGuid());
+				IDestination destination = CreateDestination(session, DestinationType.Queue);
 
                 SendMessages(connection, destination, deliveryMode, 2);
 
@@ -401,7 +401,7 @@ namespace Apache.NMS.Test
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.Transactional);
-                IQueue destination = session.GetQueue("TestRedispatchOfUncommittedTx:"+Guid.NewGuid());
+				IDestination destination = CreateDestination(session, DestinationType.Queue);
 
                 SendMessages(connection, destination, deliveryMode, 2);
 

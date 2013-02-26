@@ -155,38 +155,6 @@ namespace Apache.NMS.Commands
         }
 
         /// <summary>
-        /// Create a Destination
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="pyhsicalName"></param>
-        /// <returns></returns>
-        public static Destination CreateDestination(int type, String pyhsicalName)
-        {
-            Destination result = null;
-            if(pyhsicalName == null)
-            {
-                return null;
-            }
-            else if(type == TOPIC)
-            {
-                result = new Topic(pyhsicalName);
-            }
-            else if(type == TEMPORARY_TOPIC)
-            {
-                result = new TempTopic(pyhsicalName);
-            }
-            else if(type == QUEUE)
-            {
-                result = new Queue(pyhsicalName);
-            }
-            else
-            {
-                result = new TempQueue(pyhsicalName);
-            }
-            return result;
-        }
-
-        /// <summary>
         /// Create a temporary name from the clientId
         /// </summary>
         /// <param name="clientId"></param>

@@ -26,8 +26,6 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class RequestResponseTest : NMSTestSupport
 	{
-		protected static string DESTINATION_NAME = "RequestDestination";
-		
 		[Test]
 		[Category("RequestResponse")]		
 		public void TestRequestResponseMessaging()
@@ -37,7 +35,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					ITemporaryQueue replyTo = session.CreateTemporaryQueue();
 
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))

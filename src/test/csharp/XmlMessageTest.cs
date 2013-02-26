@@ -68,8 +68,6 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class XmlMessageTest : NMSTestSupport
 	{
-		protected static string DESTINATION_NAME = "XmlMessageDestination";
-
 #if NET_3_5 || MONO
 		[Test]
 		public void SendReceiveXmlMessage_Net35()
@@ -79,7 +77,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = session.GetDestination(DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{
@@ -134,7 +132,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{

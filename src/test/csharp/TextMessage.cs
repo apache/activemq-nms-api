@@ -23,8 +23,6 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class TextMessageTest : NMSTestSupport
 	{
-		protected static string DESTINATION_NAME = "TextMessageDestination";
-
 		[Test]
 		public void SendReceiveTextMessage(
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
@@ -35,7 +33,7 @@ namespace Apache.NMS.Test
 				connection.Start();
 				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
-					IDestination destination = SessionUtil.GetDestination(session, DESTINATION_NAME);
+					IDestination destination = CreateDestination(session, DestinationType.Queue);
 					using(IMessageConsumer consumer = session.CreateConsumer(destination))
 					using(IMessageProducer producer = session.CreateProducer(destination))
 					{

@@ -26,8 +26,8 @@ namespace Apache.NMS.Test
 	[Category("LongRunning")]
 	public class MessageSelectorTest : NMSTestSupport
 	{
-		protected const string QUEUE_DESTINATION_NAME = "queue://MessageSelectorQueue";
-		protected const string TOPIC_DESTINATION_NAME = "topic://MessageSelectorTopic";
+		protected const string QUEUE_DESTINATION_NAME = "queue://TEST.MessageSelectorQueue";
+		protected const string TOPIC_DESTINATION_NAME = "topic://TEST.MessageSelectorTopic";
 
 		private int receivedNonIgnoredMsgCount = 0;
 		private int receivedIgnoredMsgCount = 0;
@@ -77,8 +77,8 @@ namespace Apache.NMS.Test
 				using(ISession session3 = connection3.CreateSession(AcknowledgementMode.AutoAcknowledge))
 				{
 					IDestination destination1 = CreateDestination(session1, destinationName);
-					IDestination destination2 = SessionUtil.GetDestination(session2, destinationName);
-					IDestination destination3 = SessionUtil.GetDestination(session3, destinationName);
+					IDestination destination2 = CreateDestination(session2, destinationName);
+					IDestination destination3 = CreateDestination(session3, destinationName);
 
 					using(IMessageProducer producer = session1.CreateProducer(destination1))
 					using(IMessageConsumer consumer1 = session2.CreateConsumer(destination2, "JMSType NOT LIKE '%IGNORE'"))
@@ -111,7 +111,7 @@ namespace Apache.NMS.Test
 
 							producer.Send(request);
 
-							if(20000 == index)
+							if(2000 == index)
 							{
 								// Start the second consumer
 								if(destination3.IsTopic)

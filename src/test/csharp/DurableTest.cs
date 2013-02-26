@@ -25,7 +25,7 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class DurableTest : NMSTestSupport
 	{
-		protected static string DURABLE_TOPIC = "TestDurableConsumerTopic";
+		protected static string DURABLE_TOPIC = "topic://TEST.DurableConsumerTopic";
 		protected static string DURABLE_SELECTOR = "2 > 1";
 
 		protected string TEST_CLIENT_AND_CONSUMER_ID;
@@ -46,7 +46,6 @@ namespace Apache.NMS.Test
 				AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
 			AcknowledgementMode ackMode)
 		{
-			string TEST_DURABLE_TOPIC = DURABLE_TOPIC + ":TestSendWhileClosed";
 			try
 			{				
 		        using(IConnection connection = CreateConnection(TEST_CLIENT_AND_CONSUMER_ID))
@@ -55,7 +54,7 @@ namespace Apache.NMS.Test
 					
 					using(ISession session = connection.CreateSession(ackMode))
 					{
-						ITopic topic = session.GetTopic(TEST_DURABLE_TOPIC);
+						ITopic topic = (ITopic) CreateDestination(session, DestinationType.Topic);
 						IMessageProducer producer = session.CreateProducer(topic);
 
 						producer.DeliveryMode = MsgDeliveryMode.Persistent;
@@ -110,8 +109,6 @@ namespace Apache.NMS.Test
 				AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
 			AcknowledgementMode ackMode)
 		{
-			string TEST_DURABLE_TOPIC = DURABLE_TOPIC + ":TestDurableConsumerSelectorChange";
-
 			try
 			{
 				using(IConnection connection = CreateConnection(TEST_CLIENT_AND_CONSUMER_ID))
@@ -119,7 +116,7 @@ namespace Apache.NMS.Test
 					connection.Start();
 					using(ISession session = connection.CreateSession(ackMode))
 					{
-						ITopic topic = session.GetTopic(TEST_DURABLE_TOPIC);
+						ITopic topic = (ITopic) CreateDestination(session, DestinationType.Topic);
 						IMessageProducer producer = session.CreateProducer(topic);
 						IMessageConsumer consumer = session.CreateDurableConsumer(topic, TEST_CLIENT_AND_CONSUMER_ID, "color='red'", false);
 

@@ -24,10 +24,10 @@ namespace Apache.NMS.Test
 	[TestFixture]
 	public class TempDestinationTests : NMSTestSupport
 	{
-		protected const string QUEUE_DESTINATION_NAME = "queue://AutoDeleteQueue";
-		protected const string TOPIC_DESTINATION_NAME = "topic://AutoDeleteTopic";
-		protected const string TEMP_QUEUE_DESTINATION_NAME = "temp-queue://AutoDeleteTempQueue";
-		protected const string TEMP_TOPIC_DESTINATION_NAME = "temp-topic://AutoDeleteTempTopic";
+		protected const string QUEUE_DESTINATION_NAME = "queue://TEST.AutoDeleteQueue";
+		protected const string TOPIC_DESTINATION_NAME = "topic://TEST.AutoDeleteTopic";
+		protected const string TEMP_QUEUE_DESTINATION_NAME = "temp-queue://TEST.AutoDeleteTempQueue";
+		protected const string TEMP_TOPIC_DESTINATION_NAME = "temp-topic://TEST.AutoDeleteTempTopic";
 
 		[Test]
 		public void TempDestinationDeletionTest(
@@ -45,7 +45,7 @@ namespace Apache.NMS.Test
 
 					for(int index = 1; index <= MaxNumDestinations; index++)
 					{
-						IDestination destination = SessionUtil.GetDestination(session, destinationName);
+						IDestination destination = CreateDestination(session, destinationName);
 
 						using(IMessageProducer producer = session.CreateProducer(destination))
 						using(IMessageConsumer consumer = session.CreateConsumer(destination))

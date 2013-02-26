@@ -317,12 +317,12 @@ namespace Apache.NMS.Test
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-                IQueue queue = session.GetQueue(Guid.NewGuid().ToString());
-                IMessageProducer producer = session.CreateProducer(queue);
+				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
 
                 // Consume the message...
-                IMessageConsumer consumer = session.CreateConsumer(queue);
+                IMessageConsumer consumer = session.CreateConsumer(destination);
                 IMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
                 Assert.IsNotNull(msg);
                 msg.Acknowledge();
@@ -332,7 +332,7 @@ namespace Apache.NMS.Test
                 session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
 
                 // Attempt to Consume the message...
-                consumer = session.CreateConsumer(queue);
+                consumer = session.CreateConsumer(destination);
                 msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
                 Assert.IsNull(msg);
 
@@ -347,14 +347,14 @@ namespace Apache.NMS.Test
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-                IQueue queue = session.GetQueue(Guid.NewGuid().ToString());
-                IMessageProducer producer = session.CreateProducer(queue);
+				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
                 producer.Send(session.CreateTextMessage("Hello2"));
                 producer.Send(session.CreateTextMessage("Hello3"));
 
                 // Consume the message...
-                IMessageConsumer consumer = session.CreateConsumer(queue);
+                IMessageConsumer consumer = session.CreateConsumer(destination);
                 IMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
                 Assert.IsNotNull(msg);
                 msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
@@ -368,7 +368,7 @@ namespace Apache.NMS.Test
                 session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
 
                 // Attempt to Consume the message...
-                consumer = session.CreateConsumer(queue);
+                consumer = session.CreateConsumer(destination);
                 msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
                 Assert.IsNull(msg);
 
@@ -383,12 +383,12 @@ namespace Apache.NMS.Test
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-                IQueue queue = session.GetQueue(Guid.NewGuid().ToString());
-                IMessageProducer producer = session.CreateProducer(queue);
+				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
 
                 // Consume the message...
-                IMessageConsumer consumer = session.CreateConsumer(queue);
+                IMessageConsumer consumer = session.CreateConsumer(destination);
                 IMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
                 Assert.IsNotNull(msg);
                 // Don't ack the message.
@@ -398,7 +398,7 @@ namespace Apache.NMS.Test
                 session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
 
                 // Attempt to Consume the message...
-                consumer = session.CreateConsumer(queue);
+                consumer = session.CreateConsumer(destination);
                 msg = consumer.Receive(TimeSpan.FromMilliseconds(2000));
                 Assert.IsNotNull(msg);
                 msg.Acknowledge();
@@ -414,12 +414,12 @@ namespace Apache.NMS.Test
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-                IQueue queue = session.GetQueue(Guid.NewGuid().ToString());
-                IMessageProducer producer = session.CreateProducer(queue);
+				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
 
                 // Consume the message...
-                IMessageConsumer consumer = session.CreateConsumer(queue);
+                IMessageConsumer consumer = session.CreateConsumer(destination);
                 consumer.Listener += new MessageListener(OnMessage);
 
                 Thread.Sleep(5000);
@@ -430,7 +430,7 @@ namespace Apache.NMS.Test
                 session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
 
                 // Attempt to Consume the message...
-                consumer = session.CreateConsumer(queue);
+                consumer = session.CreateConsumer(destination);
                 IMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(1000));
                 Assert.IsNull(msg);
 
@@ -447,12 +447,12 @@ namespace Apache.NMS.Test
                 // don't aknowledge message on onMessage() call
                 dontAck = true;
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-                IQueue queue = session.GetQueue("Guid.NewGuid().ToString()");
-                IMessageProducer producer = session.CreateProducer(queue);
+				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
 
                 // Consume the message...
-                IMessageConsumer consumer = session.CreateConsumer(queue);
+                IMessageConsumer consumer = session.CreateConsumer(destination);
                 consumer.Listener += new MessageListener(OnMessage);
                 // Don't ack the message.
 
@@ -463,7 +463,7 @@ namespace Apache.NMS.Test
                 Thread.Sleep(5000);
                 session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
                 // Attempt to Consume the message...
-                consumer = session.CreateConsumer(queue);
+                consumer = session.CreateConsumer(destination);
                 IMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(2000));
                 Assert.IsNotNull(msg);
                 msg.Acknowledge();
