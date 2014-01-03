@@ -51,7 +51,7 @@ namespace Apache.NMS.Test
 		/// Since this test can take a long time to run, it is marked as explicit.
 		/// </summary>
 		/// <param name="destinationName"></param>
-		[Test, Explicit]
+		[Test]
 		public void FilterIgnoredMessagesSlowConsumerTest(
 			[Values(QUEUE_DESTINATION_NAME, TOPIC_DESTINATION_NAME)]
 			string destinationName)
