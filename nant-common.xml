@@ -206,6 +206,9 @@
         <property name="current.build.framework.sign" value="true" />
         <property name="link.sdkdoc.version" value="SDK_v2_0" />
         <property name="link.sdkdoc.web" value="true" />
+        <if test="${framework::exists(current.build.framework)}">
+            <property name="nant.settings.currentframework" value="${current.build.framework}" />
+        </if>
         <!-- Use the .NET 3.5 compiler for improved language features.  Still targets same runtime. -->
         <if test="${framework::exists('net-3.5')}">
             <property name="nant.settings.currentframework" value="net-3.5" />
@@ -452,7 +455,7 @@
                 <property name="repo.task.src" value="${local.repo.vendor.path}/${repo.task.artifact}" />
                 <copy file="${repo.task.src}" tofile="${lib.task.dest}" if="${file::exists(repo.task.src)}" />
                 <if test="${not file::exists(lib.task.dest)}">
-                    <echo message="Required dependent assembly ${repo.task.artifact} from ${vendor.name} for ${current.build.framework.name} is not available. Build skipped." />
+                    <echo message="Required dependent assembly ${repo.task.artifact} from ${vendor.name} for ${current.build.framework} is not available. Build skipped." />
                     <property name="build.skip" value="true" />
                 </if>
             </foreach>
@@ -484,6 +487,7 @@
                 <exec program="nunit-console" failonerror="true" workingdir="build/${current.build.framework}/${current.build.config}">
                     <arg value="${NUnit.Projectfile}" />
                     <arg value="-labels" />
+                    <arg value="-exclude=Manual,LongRunning" />
                     <arg value="-xml=Nunit.TestOutput.xml" />
                 </exec>
             </if>
