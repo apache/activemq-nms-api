@@ -26,23 +26,18 @@ namespace Apache.NMS
 		TemporaryQueue,
 		TemporaryTopic
 	}
-	
-	
+
 	/// <summary>
 	/// A base interface for destinations such as queues or topics
 	/// </summary>
-	public interface IDestination
+	public interface IDestination : System.IDisposable
 	{
-		
 		DestinationType DestinationType { get; }
 		
 		bool IsTopic { get; }
-		
 		bool IsQueue { get; }
-		
 		bool IsTemporary { get; }
 	}
-	
 }
 
 

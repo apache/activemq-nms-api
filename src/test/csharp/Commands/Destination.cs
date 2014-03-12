@@ -49,6 +49,8 @@ namespace Apache.NMS.Commands
         private String physicalName = "";
         private StringDictionary options = null;
 
+		private bool disposed = false;
+
         /// <summary>
         /// The Default Constructor
         /// </summary>
@@ -65,7 +67,47 @@ namespace Apache.NMS.Commands
             setPhysicalName(name);
         }
 
-        public bool IsTopic
+		~Destination()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool disposing)
+		{
+			if(disposed)
+			{
+				return;
+			}
+
+			if(disposing)
+			{
+				try
+				{
+					OnDispose();
+				}
+				catch(Exception ex)
+				{
+					Tracer.ErrorFormat("Exception disposing Destination {0}: {1}", this.physicalName, ex.Message);
+				}
+			}
+
+			disposed = true;
+		}
+
+		/// <summary>
+		/// Child classes can override this method to perform clean-up logic.
+		/// </summary>
+		protected virtual void OnDispose()
+		{
+		}
+
+		public bool IsTopic
         {
             get
             {
