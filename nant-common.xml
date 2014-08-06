@@ -506,9 +506,18 @@
         <if test="${target::exists('clean-init')}">
             <call target="clean-init" />
         </if>
-        <delete dir="build" if="${directory::exists('build')}" />
-        <delete dir="obj" if="${directory::exists('obj')}" />
-        <delete dir="package" if="${directory::exists('package')}" />
+        <foreach item="String" in="${build.framework.strings}" delim="," property="current.build.framework">
+            <foreach item="String" in="${build.config.strings}" delim="," property="current.build.config">
+                <call target="clean-proj" />
+            </foreach>
+        </foreach>
+    </target>
+
+    <target name="clean-proj" depends="init" description="Deletes specific project build">
+        <property name="clean.dir" value="build/${current.build.framework}/${current.build.config}" />
+        <delete dir="${clean.dir}" if="${directory::exists(clean.dir)}" />
+        <property name="clean.dir" value="package/${current.build.config}" />
+        <delete dir="${clean.dir}" if="${directory::exists(clean.dir)}" />
     </target>
 
     <target name="package" description="Bundle the source and binary distributions.">
