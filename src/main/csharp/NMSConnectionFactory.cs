@@ -64,6 +64,7 @@ namespace Apache.NMS
 			schemaProviderFactoryMap["stomp"] = new ProviderFactoryInfo("Apache.NMS.Stomp", "Apache.NMS.Stomp.ConnectionFactory");
 			schemaProviderFactoryMap["xms"] = new ProviderFactoryInfo("Apache.NMS.XMS", "Apache.NMS.XMS.ConnectionFactory");
 			schemaProviderFactoryMap["zmq"] = new ProviderFactoryInfo("Apache.NMS.ZMQ", "Apache.NMS.ZMQ.ConnectionFactory");
+			schemaProviderFactoryMap["amqp"] = new ProviderFactoryInfo("Apache.NMS.AMQP", "Apache.NMS.AMQP.ConnectionFactory");
 		}
 
 		/// <summary>
