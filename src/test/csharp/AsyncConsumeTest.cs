@@ -16,7 +16,6 @@
  */
 
 using System.Threading;
-using Apache.NMS.Util;
 using NUnit.Framework;
 
 namespace Apache.NMS.Test
@@ -52,25 +51,22 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(GetTestClientId()))
+			using(IConnection connection = CreateConnectionAndStart(GetTestClientId()))
+			using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+			using(IDestination destination = CreateDestination(session, DestinationType.Queue))
+			using(IMessageConsumer consumer = session.CreateConsumer(destination))
+			using(IMessageProducer producer = session.CreateProducer(destination))
 			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				using(IDestination destination = CreateDestination(session, DestinationType.Queue))
-				using(IMessageConsumer consumer = session.CreateConsumer(destination))
-				using(IMessageProducer producer = session.CreateProducer(destination))
-				{
-					producer.DeliveryMode = deliveryMode;
-					consumer.Listener += new MessageListener(OnMessage);
+				producer.DeliveryMode = deliveryMode;
+				consumer.Listener += new MessageListener(OnMessage);
 
-					IMessage request = session.CreateMessage();
-					request.NMSCorrelationID = "AsyncConsume";
-					request.NMSType = "Test";
-					producer.Send(request);
+				IMessage request = session.CreateMessage();
+				request.NMSCorrelationID = "AsyncConsume";
+				request.NMSType = "Test";
+				producer.Send(request);
 
-					WaitForMessageToArrive();
-					Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
-				}
+				WaitForMessageToArrive();
+				Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
 			}
 		}
 
@@ -79,26 +75,26 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(GetTestClientId()))
+			using(IConnection connection = CreateConnectionAndStart(GetTestClientId()))
+			using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+			using(IDestination destination = CreateDestination(session, DestinationType.Queue))
 			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				using(IDestination destination = CreateDestination(session, DestinationType.Queue))
+				string correlationId = "AsyncConsumeAfterSend";
+
 				using(IMessageProducer producer = session.CreateProducer(destination))
 				{
 					producer.DeliveryMode = deliveryMode;
-
 					IMessage request = session.CreateMessage();
-					request.NMSCorrelationID = "AsyncConsumeAfterSend";
+					request.NMSCorrelationID = correlationId;
 					request.NMSType = "Test";
 					producer.Send(request);
+				}
 
-					using(IMessageConsumer consumer = session.CreateConsumer(destination))
-					{
-						consumer.Listener += new MessageListener(OnMessage);
-						WaitForMessageToArrive();
-						Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
-					}
+				using(IMessageConsumer consumer = session.CreateConsumer(destination))
+				{
+					consumer.Listener += new MessageListener(OnMessage);
+					WaitForMessageToArrive();
+					Assert.AreEqual(correlationId, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
 				}
 			}
 		}
@@ -108,26 +104,23 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(GetTestClientId()))
+			using(IConnection connection = CreateConnectionAndStart(GetTestClientId()))
+			using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+			using(IDestination destination = CreateDestination(session, DestinationType.Queue))
+			using(IMessageConsumer consumer = session.CreateConsumer(destination))
+			using(IMessageProducer producer = session.CreateProducer(destination))
 			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				using(IDestination destination = CreateDestination(session, DestinationType.Queue))
-				using(IMessageConsumer consumer = session.CreateConsumer(destination))
-				using(IMessageProducer producer = session.CreateProducer(destination))
-				{
-					producer.DeliveryMode = deliveryMode;
+				producer.DeliveryMode = deliveryMode;
 
-					IMessage request = session.CreateMessage();
-					request.NMSCorrelationID = "AsyncConsumeAfterSendLateListener";
-					request.NMSType = "Test";
-					producer.Send(request);
+				IMessage request = session.CreateMessage();
+				request.NMSCorrelationID = "AsyncConsumeAfterSendLateListener";
+				request.NMSType = "Test";
+				producer.Send(request);
 
-					// now lets add the listener
-					consumer.Listener += new MessageListener(OnMessage);
-					WaitForMessageToArrive();
-					Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
-				}
+				// now lets add the listener
+				consumer.Listener += new MessageListener(OnMessage);
+				WaitForMessageToArrive();
+				Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
 			}
 		}
 
@@ -136,32 +129,27 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(GetTestClientId()))
+			using(IConnection connection = CreateConnectionAndStart(GetTestClientId()))
+			using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+			using(IDestination destination = CreateDestination(session, DestinationType.Queue))
+			using(IMessageConsumer consumer = session.CreateConsumer(destination))
+			using(IMessageProducer producer = session.CreateProducer(destination))
 			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				using(IDestination destination = CreateDestination(session, DestinationType.Queue))
-				using(IMessageConsumer consumer = session.CreateConsumer(destination))
-				{
-					consumer.Listener += new MessageListener(OnMessage);
-					using(IMessageProducer producer = session.CreateProducer(destination))
-					{
-						producer.DeliveryMode = deliveryMode;
+				consumer.Listener += new MessageListener(OnMessage);
+				producer.DeliveryMode = deliveryMode;
 
-						ITextMessage request = session.CreateTextMessage("Hello, World!");
-						request.NMSCorrelationID = "AsyncConsumeTextMessage";
-						request.Properties["NMSXGroupID"] = "cheese";
-						request.Properties["myHeader"] = "James";
+				ITextMessage request = session.CreateTextMessage("Hello, World!");
+				request.NMSCorrelationID = "AsyncConsumeTextMessage";
+				request.Properties["NMSXGroupID"] = "cheese";
+				request.Properties["myHeader"] = "James";
 
-						producer.Send(request);
+				producer.Send(request);
 
-						WaitForMessageToArrive();
-						Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
-						Assert.AreEqual(request.Properties["NMSXGroupID"], receivedMsg.Properties["NMSXGroupID"], "Invalid NMSXGroupID.");
-						Assert.AreEqual(request.Properties["myHeader"], receivedMsg.Properties["myHeader"], "Invalid myHeader.");
-						Assert.AreEqual(request.Text, ((ITextMessage) receivedMsg).Text, "Invalid text body.");
-					}
-				}
+				WaitForMessageToArrive();
+				Assert.AreEqual(request.NMSCorrelationID, receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
+				Assert.AreEqual(request.Properties["NMSXGroupID"], receivedMsg.Properties["NMSXGroupID"], "Invalid NMSXGroupID.");
+				Assert.AreEqual(request.Properties["myHeader"], receivedMsg.Properties["myHeader"], "Invalid myHeader.");
+				Assert.AreEqual(request.Text, ((ITextMessage) receivedMsg).Text, "Invalid text body.");
 			}
 		}
 
@@ -170,48 +158,42 @@ namespace Apache.NMS.Test
 			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
 			MsgDeliveryMode deliveryMode)
 		{
-			using(IConnection connection = CreateConnection(GetTestClientId()))
+			using(IConnection connection = CreateConnectionAndStart(GetTestClientId()))
+			using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+			using(ITemporaryQueue tempReplyDestination = session.CreateTemporaryQueue())
+			using(IDestination destination = CreateDestination(session, DestinationType.Queue))
+			using(IMessageConsumer consumer = session.CreateConsumer(destination))
+			using(IMessageConsumer tempConsumer = session.CreateConsumer(tempReplyDestination))
+			using(IMessageProducer producer = session.CreateProducer(destination))
 			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				using(ITemporaryQueue tempReplyDestination = session.CreateTemporaryQueue())
-				using(IDestination destination = CreateDestination(session, DestinationType.Queue))
-				using(IMessageConsumer consumer = session.CreateConsumer(destination))
-				using(IMessageConsumer tempConsumer = session.CreateConsumer(tempReplyDestination))
-				using(IMessageProducer producer = session.CreateProducer(destination))
-				{
-					producer.DeliveryMode = deliveryMode;
-					tempConsumer.Listener += new MessageListener(OnMessage);
-					consumer.Listener += new MessageListener(OnQueueMessage);
+				producer.DeliveryMode = deliveryMode;
+				tempConsumer.Listener += new MessageListener(OnMessage);
+				consumer.Listener += new MessageListener(OnQueueMessage);
 
-					IMessage request = session.CreateMessage();
-					request.NMSCorrelationID = "TemqQueueAsyncConsume";
-					request.NMSType = "Test";
-					request.NMSReplyTo = tempReplyDestination;
-					producer.Send(request);
+				IMessage request = session.CreateMessage();
+				request.NMSCorrelationID = "TemqQueueAsyncConsume";
+				request.NMSType = "Test";
+				request.NMSReplyTo = tempReplyDestination;
+				producer.Send(request);
 
-					WaitForMessageToArrive();
-					Assert.AreEqual("TempQueueAsyncResponse", receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
-				}
+				WaitForMessageToArrive();
+				Assert.AreEqual("TempQueueAsyncResponse", receivedMsg.NMSCorrelationID, "Invalid correlation ID.");
 			}
 		}
 
 		protected void OnQueueMessage(IMessage message)
 		{
 			Assert.AreEqual("TemqQueueAsyncConsume", message.NMSCorrelationID, "Invalid correlation ID.");
-			using(IConnection connection = CreateConnection(RESPONSE_CLIENT_ID))
+			using(IConnection connection = CreateConnectionAndStart(RESPONSE_CLIENT_ID))
+			using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+			using(IMessageProducer producer = session.CreateProducer(message.NMSReplyTo))
 			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				using(IMessageProducer producer = session.CreateProducer(message.NMSReplyTo))
-				{
-					producer.DeliveryMode = message.NMSDeliveryMode;
+				producer.DeliveryMode = message.NMSDeliveryMode;
 
-					ITextMessage response = session.CreateTextMessage("Asynchronous Response Message Text");
-					response.NMSCorrelationID = "TempQueueAsyncResponse";
-					response.NMSType = message.NMSType;
-					producer.Send(response);
-				}
+				ITextMessage response = session.CreateTextMessage("Asynchronous Response Message Text");
+				response.NMSCorrelationID = "TempQueueAsyncResponse";
+				response.NMSType = message.NMSType;
+				producer.Send(response);
 			}
 		}
 

@@ -389,6 +389,18 @@ namespace Apache.NMS.Test
 			return newConnection;
 		}
 
+		/// <summary>
+		/// Create a new connection to the broker, and start it.
+		/// </summary>
+		/// <param name="newClientId">Client ID of the new connection.</param>
+		/// <returns></returns>
+		public virtual IConnection CreateConnectionAndStart(string newClientId = null)
+		{
+			IConnection newConnection = CreateConnection(newClientId);
+			newConnection.Start();
+			return newConnection;
+		}
+
 		public IDestination CreateDestination(ISession session, DestinationType type)
 		{
 			return CreateDestination(session, type, "");
