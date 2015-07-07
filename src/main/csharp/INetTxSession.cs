@@ -29,7 +29,7 @@ namespace Apache.NMS
     /// The NMS Provider implements this interface by participating in the current ambient transaction
     /// as defined by the System.Transactions.Transaction.Current static member.  Whenever a new
     /// Transaction is entered the NMS provider should enlist in that transaction.  When there is no
-    /// ambient transaction then the NMS Prodiver should allow the INetTxSession instance to behave
+    /// ambient transaction then the NMS Provider should allow the INetTxSession instance to behave
     /// as a session that is in Auto Acknowledge mode.
     ///
     /// Calling the Commit or Rollback methods on a INetTxSession instance should throw an exception
@@ -49,6 +49,8 @@ namespace Apache.NMS
         /// be thrown.
         /// </summary>
         void Enlist(Transaction tx);
+
+        bool EnlistsMsDtcNativeResource { get; set; }
 #endif
     }
 }

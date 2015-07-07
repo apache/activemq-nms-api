@@ -40,6 +40,10 @@ namespace Apache.NMS
         /// Creates a INetTxSession object and enlists in the specified Transaction.
         /// </summary>
         INetTxSession CreateNetTxSession(Transaction tx);
+
+        INetTxSession CreateNetTxSession(bool enlistsNativeMsDtcResource);
+
+        INetTxSession CreateNetTxSession(Transaction tx, bool enlistsNativeMsDtcResource);
 #endif
     }
 }
