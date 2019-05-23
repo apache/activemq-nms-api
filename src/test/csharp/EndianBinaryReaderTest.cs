@@ -66,9 +66,13 @@ namespace Apache.NMS.Test
 			readString16Helper(input, expect);
 		}
 
-		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void testReadString16_UTF8Missing2ndByte()
+        [Test]
+        public void testReadString16_UTF8Missing2ndByte()
+        {
+            Assert.Throws<IOException>(_testReadString16_UTF8Missing2ndByte);
+        }
+
+        private void _testReadString16_UTF8Missing2ndByte()
 		{
 			// Test with bad UTF-8 encoding, missing 2nd byte of two byte value
 			byte[] input = { 0x00, 0x0D, 0xC0, 0x80, 0x04, 0xC3, 0x82, 0xC2, 0xC2, 0xC3, 0x83, 0xC0, 0x80, 0xC2, 0xA6 };
@@ -80,8 +84,12 @@ namespace Apache.NMS.Test
 		}
 
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void testReadString16_3byteEncodingMissingLastByte()
+        public void testReadString16_3byteEncodingMissingLastByte()
+        {
+            Assert.Throws<IOException>(_testReadString16_3byteEncodingMissingLastByte);
+        }
+
+        private void _testReadString16_3byteEncodingMissingLastByte()
 		{
 			// Test with three byte encode that's missing a last byte.
 			byte[] input = { 0x00, 0x02, 0xE8, 0xA8 };
@@ -134,12 +142,17 @@ namespace Apache.NMS.Test
 			readString32Helper(input, expect);
 		}
 
-		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void testReadString32_UTF8Missing2ndByte()
+        [Test]
+        public void testReadString32_UTF8Missing2ndByte()
+        {
+            Assert.Throws<IOException>(_testReadString32_UTF8Missing2ndByte);
+        }
+
+        private void _testReadString32_UTF8Missing2ndByte()
 		{
-			// Test with bad UTF-8 encoding, missing 2nd byte of two byte value
-			byte[] input = { 0x00, 0x00, 0x00, 0x0D, 0xC0, 0x80, 0x04, 0xC3, 0x82, 0xC2, 0xC2, 0xC3, 0x83, 0xC0, 0x80, 0xC2, 0xA6 };
+            
+            // Test with bad UTF-8 encoding, missing 2nd byte of two byte value
+            byte[] input = { 0x00, 0x00, 0x00, 0x0D, 0xC0, 0x80, 0x04, 0xC3, 0x82, 0xC2, 0xC2, 0xC3, 0x83, 0xC0, 0x80, 0xC2, 0xA6 };
 
 			MemoryStream stream = new MemoryStream(input);
 			EndianBinaryReader reader = new EndianBinaryReader(stream);
@@ -148,8 +161,12 @@ namespace Apache.NMS.Test
 		}
 
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void testReadString32_3byteEncodingMissingLastByte()
+        public void testReadString32_3byteEncodingMissingLastByte()
+        {
+            Assert.Throws<IOException>(_testReadString32_3byteEncodingMissingLastByte);
+        }
+
+        private void _testReadString32_3byteEncodingMissingLastByte()
 		{
 			// Test with three byte encode that's missing a last byte.
 			byte[] input = { 0x00, 0x00, 0x00, 0x02, 0xE8, 0xA8 };

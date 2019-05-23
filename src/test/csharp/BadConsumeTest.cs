@@ -50,15 +50,9 @@ namespace Apache.NMS.Test
 		}
 
 		[Test]
-		[ExpectedException(Handler="ExceptionValidationCheck")]
 		public void TestBadConsumerException()
 		{
-			session.CreateConsumer(null);
-		}
-
-		public void ExceptionValidationCheck(Exception ex)
-		{
-			Assert.IsNotNull(ex as NMSException, "Invalid exception was thrown.");
-		}
-	}
+            Assert.Throws<NMSException>(() => session.CreateConsumer(null));
+        }
+    }
 }
