@@ -1,0 +1,43 @@
+﻿<Project>
+  <PropertyGroup>
+    <MSBuildProjectExtensionsPath>obj\$(MSBuildProjectName)</MSBuildProjectExtensionsPath>
+    <BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Apache.NMS</PackageId>
+    <Version>1.8.0</Version>
+    <Authors>Apache ActiveMQ</Authors>
+    <Company>Apache Software Foundation</Company>
+    <Product>Apache NMS API</Product>
+    <Description>Apache NMS (.Net Standard Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers</Description>
+    <Copyright>Copyright (C) 2005-2019 Apache Software Foundation</Copyright>
+    <PackageProjectUrl>https://activemq.apache.org/components/nms/</PackageProjectUrl>
+    <PackageLicense>https://github.com/apache/activemq-nms-api/blob/master/LICENSE.txt</PackageLicense>
+    <PackageIconUrl>https://activemq.apache.org/assets/img/activemq_logo_icon.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/apache/activemq-nms-api</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>apache;activemq;nms;api;net;messaging</PackageTags>
+
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>keyfile\NMSKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <Compile Remove="Resources\**" />
+    <Compile Remove="src\test\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <EmbeddedResource Remove="src\test\**" />
+    <None Remove="obj\**" />
+    <None Remove="Resources\**" />
+    <None Remove="src\test\**" />
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

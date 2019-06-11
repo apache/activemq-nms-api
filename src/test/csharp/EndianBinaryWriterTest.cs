@@ -99,8 +99,12 @@ namespace Apache.NMS.Test
 		}
 
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void testWriteString16_stringTooLong()
+        public void testWriteString16_stringTooLong()
+        {
+            Assert.Throws<IOException>(_testWriteString16_stringTooLong);
+        }
+
+        private void _testWriteString16_stringTooLong()
 		{
 			// String of length 65536 of Null Characters.
 			MemoryStream stream = new MemoryStream();
@@ -120,8 +124,12 @@ namespace Apache.NMS.Test
 		}
 
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void testWriteString16_invalidEncodingHeader()
+        public void testWriteString16_invalidEncodingHeader()
+        {
+            Assert.Throws<IOException>(_testWriteString16_invalidEncodingHeader);
+        }
+
+        private void _testWriteString16_invalidEncodingHeader()
 		{
 			// Set one of the 65535 bytes to a value that will result in a 2 byte UTF8 encoded sequence.
 			// This will cause the string of length 65535 to have a utf length of 65536.
