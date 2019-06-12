@@ -3,4 +3,7 @@
 
 bin/
 obj/
+build/
+.idea/
 *.csproj.user
+
