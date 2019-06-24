@@ -15,62 +15,39 @@
 
 $pkgname = "Apache.NMS"
 $pkgver = "1.8-SNAPSHOT"
-$configurations = "release", "debug"
-$frameworks = "mono-2.0", "net-2.0", "net-3.5", "net-4.0", "netcf-2.0", "netcf-3.5", "netstandard2.0"
+$frameworks = "net35", "net40", "netstandard2.0"
 
 write-progress "Creating package directory." "Initializing..."
-if(!(test-path package))
-{
-    md package
+if (!(test-path package)) {
+    mkdir package
 }
 
-if(test-path build)
-{
-    pushd build
+if (test-path build) {
+    Push-Location build
 
     $pkgdir = "..\package"
 
     write-progress "Packaging Application files." "Scanning..."
     $zipfile = "$pkgdir\$pkgname-$pkgver-bin.zip"
-    zip -9 -u -j "$zipfile" ..\LICENSE.txt
-    zip -9 -u -j "$zipfile" ..\NOTICE.txt
-    foreach($configuration in $configurations)
-    {
-        foreach($framework in $frameworks)
-        {
-            zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll"
-			if($framework -ieq "netstandard2.0") {
-				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.xml" 
-			} else {
-				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.deps.json"
-			}
-            zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll"
-			if($framework -ieq "netstandard2.0") {
-				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.xml"
-			} else {
-				zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.deps.json"
-			}
-            if($framework -ieq "mono-2.0")
-            {
-                zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.dll.mdb"
-                zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.dll.mdb"
-            }
-            else
-            {
-                zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.pdb"
-                zip -9 -u "$zipfile" "$framework\$configuration\$pkgname.Test.pdb"
-            }
-        }
+
+    Compress-Archive -Path ..\LICENSE.txt, ..\NOTICE.txt -Update -DestinationPath $zipfile    
+    
+    foreach ($framework in $frameworks) {
+        Compress-Archive -Path $framework -Update -DestinationPath $zipfile
     }
 
-    popd
+    Pop-Location
 }
 
 write-progress "Packaging Source code files." "Scanning..."
 $pkgdir = "package"
 $zipfile = "$pkgdir\$pkgname-$pkgver-src.zip"
 
-zip -9 -u "$zipfile" LICENSE.txt NOTICE.txt nant-common.xml nant.build package.ps1 vs2008-nms-test.csproj vs2008-nms.csproj vs2008-nms.sln
-zip -9 -u -r "$zipfile" keyfile src
+Compress-Archive -Path LICENSE.txt, NOTICE.txt, keyfile, nms.sln, package.ps1 -Update -DestinationPath $zipfile
+
+# clean up debug artifacts if there are any
+Get-ChildItem src, test -Include bin, obj -Recurse | Remove-Item -Recurse
+
+Compress-Archive -Path src, test -Update -DestinationPath $zipfile
 
 write-progress -Completed "Packaging" "Complete."

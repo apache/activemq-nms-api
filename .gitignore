@@ -6,4 +6,8 @@ obj/
 build/
 .idea/
 *.csproj.user
-
+nms.sln.startup.json
+build/
+package/
+nms.sln.DotSettings.user
+tools/
