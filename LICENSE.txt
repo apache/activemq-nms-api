@@ -200,16 +200,3 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
-
-PROTON SUBCOMPONENTS:
-
-Proton includes freegetopt with a separate BSD license.  Your use
-of the source code for freegetopt is subject to the terms and
-conditions of its license in the license file
-c/tools/include/pncompat/internal/LICENSE.txt.
-
-The setup scripts for the python bindings include files derived by
-PyZMQ and are licensed with a separate Modified BSD license.  Use of
-the source code in these setup files are subject to the terms and
-conditions in the license file python/setuputils/PYZMQ_LICENSE.BSD.
