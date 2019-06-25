@@ -20,6 +20,9 @@ $frameworks = "net35", "net40", "netstandard2.0"
 write-progress "Creating package directory." "Initializing..."
 if (!(test-path package)) {
     mkdir package
+} else {
+    # Clean package content if exists
+    Remove-Item package\* -Recurse
 }
 
 if (test-path build) {
@@ -43,11 +46,25 @@ write-progress "Packaging Source code files." "Scanning..."
 $pkgdir = "package"
 $zipfile = "$pkgdir\$pkgname-$pkgver-src.zip"
 
-Compress-Archive -Path LICENSE.txt, NOTICE.txt, keyfile, nms.sln, package.ps1 -Update -DestinationPath $zipfile
+# clean temp dir if exists
+Remove-Item temp -Recurse -ErrorAction Ignore
+
+# copy files to temp dir
+Copy-Item src\* -Destination temp\src -Recurse
+Copy-Item test\* -Destination temp\test -Recurse
 
 # clean up debug artifacts if there are any
-Get-ChildItem src, test -Include bin, obj -Recurse | Remove-Item -Recurse
+Get-ChildItem temp -Include bin, obj -Recurse | Remove-Item -Recurse
 
-Compress-Archive -Path src, test -Update -DestinationPath $zipfile
+Compress-Archive -Path temp\*, LICENSE.txt, NOTICE.txt, keyfile, nms.sln, package.ps1 -Update -DestinationPath $zipfile
+
+write-progress "Removing temp files"
+Remove-Item temp -Recurse
+
+write-progress "Packaging Docs" "Scanning..."
+$pkgdir = "package"
+$zipfile = "$pkgdir\$pkgname-$pkgver-docs.zip"
+
+Compress-Archive -Path "docs\_site\*", "LICENSE.txt", "NOTICE.txt" -Update -DestinationPath $zipfile
 
 write-progress -Completed "Packaging" "Complete."

@@ -44,7 +44,13 @@ with the License.  You may obtain a copy of the License at
     <RepositoryUrl>https://github.com/apache/activemq-nms-api</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>apache;activemq;nms;api;net;messaging</PackageTags>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
+    <None Include="..\..\NOTICE.txt" Pack="true" PackagePath="NOTICE.txt"/>
+  </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
     <Reference Include="System.Transactions" />
