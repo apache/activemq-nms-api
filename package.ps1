@@ -14,7 +14,7 @@
 # limitations under the License.
 
 $pkgname = "Apache.NMS"
-$pkgver = "1.8-SNAPSHOT"
+$pkgver = "1.8.0"
 $frameworks = "net35", "net40", "netstandard2.0"
 
 write-progress "Creating package directory." "Initializing..."
@@ -38,6 +38,10 @@ if (test-path build) {
     foreach ($framework in $frameworks) {
         Compress-Archive -Path $framework -Update -DestinationPath $zipfile
     }
+    
+    $nupkg = "$pkgname.$pkgver.nupkg"
+    $nupkgdestination = "$pkgdir\$nupkg"
+    Copy-Item -Path $nupkg -Destination $nupkgdestination
 
     Pop-Location
 }
