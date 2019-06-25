@@ -44,7 +44,13 @@ with the License.  You may obtain a copy of the License at
     <RepositoryUrl>https://github.com/apache/activemq-nms-api</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>apache;activemq;nms;api;net;test;messaging</PackageTags>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
+    <None Include="..\..\NOTICE.txt" Pack="true" PackagePath="NOTICE.txt"/>
+  </ItemGroup>
 
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -53,6 +59,8 @@ with the License.  You may obtain a copy of the License at
 
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit.Console" Version="3.10.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net35'">
