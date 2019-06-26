@@ -20,7 +20,8 @@ $frameworks = "net35", "net40", "netstandard2.0"
 write-progress "Creating package directory." "Initializing..."
 if (!(test-path package)) {
     mkdir package
-} else {
+}
+else {
     # Clean package content if exists
     Remove-Item package\* -Recurse
 }
@@ -33,15 +34,26 @@ if (test-path build) {
     write-progress "Packaging Application files." "Scanning..."
     $zipfile = "$pkgdir\$pkgname-$pkgver-bin.zip"
 
-    Compress-Archive -Path ..\LICENSE.txt, ..\NOTICE.txt -Update -DestinationPath $zipfile    
+    Compress-Archive -Path ..\LICENSE.txt, ..\NOTICE.txt -Update -DestinationPath $zipfile        
     
+    # clean up temp
+    Remove-Item temp -Recurse -ErrorAction Ignore
+
     foreach ($framework in $frameworks) {
-        Compress-Archive -Path $framework -Update -DestinationPath $zipfile
+        Copy-Item $framework -Destination temp\$framework -Recurse
+
+        # clean up third party binaries
+        Get-ChildItem temp -File -Exclude "*Apache.NMS*" -Recurse | Remove-Item -Recurse
+
+        Compress-Archive -Path "temp\$framework" -Update -DestinationPath $zipfile
     }
     
     $nupkg = "$pkgname.$pkgver.nupkg"
     $nupkgdestination = "$pkgdir\$nupkg"
     Copy-Item -Path $nupkg -Destination $nupkgdestination
+
+    # clean up temp
+    Remove-Item temp -Recurse -ErrorAction Inquire
 
     Pop-Location
 }
@@ -54,8 +66,8 @@ $zipfile = "$pkgdir\$pkgname-$pkgver-src.zip"
 Remove-Item temp -Recurse -ErrorAction Ignore
 
 # copy files to temp dir
-Copy-Item src\* -Destination temp\src -Recurse
-Copy-Item test\* -Destination temp\test -Recurse
+Copy-Item src -Destination temp\src -Recurse
+Copy-Item test -Destination temp\test -Recurse
 
 # clean up debug artifacts if there are any
 Get-ChildItem temp -Include bin, obj -Recurse | Remove-Item -Recurse
