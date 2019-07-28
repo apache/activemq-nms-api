@@ -296,6 +296,39 @@ namespace Apache.NMS.Test
             NUnit.Framework.Assert.AreEqual(paramValue, value);
         }
 #endif
+		
+		[Test]
+		public void TestIsCompositeUriWithQueryNoSlashes()
+		{
+			Uri[] compositeUrIs = { new Uri("test:(part1://host?part1=true)?outside=true"), new Uri("broker:(tcp://localhost:61616)?name=foo") };
+			foreach (Uri uri in compositeUrIs)
+			{
+				Assert.True(URISupport.IsCompositeUri(uri), uri + "must be detected as composite URI");
+			}
+		}
+
+		[Test]
+		public void TestIsCompositeUriNoQueryNoSlashes()
+		{
+			Uri[] compositeUrIs = new Uri[] { new Uri("test:(part1://host,part2://(sub1://part,sube2:part))"), new Uri("test:(path)/path") };
+			foreach (Uri uri in compositeUrIs)
+			{
+				Assert.True(URISupport.IsCompositeUri(uri), uri + "must be detected as composite URI");
+			}
+		}
+
+		[Test]
+		public void TestIsCompositeWhenUriHasUnmatchedParentheses()
+		{
+			Uri uri = new Uri("test:(part1://host,part2://(sub1://part,sube2:part)");
+			Assert.False(URISupport.IsCompositeUri(uri));
+		}
+
+		[Test]
+		public void TestIsCompositeUriNoQueryNoSlashesNoParentheses()
+		{
+			Assert.False(URISupport.IsCompositeUri(new Uri("test:part1")), "test:part1" + " must be detected as non-composite URI");
+		}
 	}
 }
 

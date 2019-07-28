@@ -605,6 +605,23 @@ namespace Apache.NMS.Util
 			l.CopyTo(rc);
 			return rc;
 		}
+		
+		/// <summary>
+		/// Examine a Uri and determine if it is a Composite type or not.
+		/// </summary>
+		/// <param name="uri">The Uri that is to be examined.</param>
+		/// <returns>true if the given URI is a Composite type.</returns>
+		public static bool IsCompositeUri(Uri uri)
+		{
+			string ssp = StripPrefix(uri.PathAndQuery.Trim(), "//").Trim();
+
+			if (ssp.IndexOf('(') == 0 && CheckParenthesis(ssp))
+			{
+				return true;
+			}
+
+			return false;
+		}
 
 		public static bool CheckParenthesis(String str)
 		{
