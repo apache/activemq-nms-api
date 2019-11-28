@@ -20,7 +20,6 @@ using Apache.NMS.Util;
 
 namespace Apache.NMS
 {
-#if NET_3_5 || MONO
 	public static class SessionExtensions
 	{
 		/// <summary>
@@ -97,5 +96,4 @@ namespace Apache.NMS
 			SessionUtil.DeleteDestination(session, topicName);
 		}
 	}
-#endif
 }
