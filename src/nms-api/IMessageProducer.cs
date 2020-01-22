@@ -76,6 +76,8 @@ namespace Apache.NMS
 		bool DisableMessageID { get; set; }
 
 		bool DisableMessageTimestamp { get; set; }
+		
+		TimeSpan DeliveryDelay { get; set; }
 
 		#region Factory methods to create messages
 
