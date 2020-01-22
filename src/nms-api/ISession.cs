@@ -59,6 +59,32 @@ namespace Apache.NMS
 		/// Creates a named durable consumer of messages on a given destination with a selector
 		/// </summary>
 		IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
+		
+		IMessageConsumer CreateDurableConsumer(ITopic destination, string name);
+
+       		IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector);
+
+        	/// <summary>
+    	    	/// Creates a named durable consumer of messages on a given destination with a selector
+        	/// </summary>
+        	IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
+
+        	IMessageConsumer CreateSharedConsumer(ITopic destination, string name);
+
+      		IMessageConsumer CreateSharedConsumer(ITopic destination, string name, string selector);
+
+       		IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name);
+
+       		IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name, string selector);
+
+     	   	/// <summary>
+     	   	/// Deletes a durable consumer created with CreateDurableConsumer().
+    	    	/// </summary>
+    		/// <param name="name">Name of the durable consumer</param>
+      		[Obsolete("should use unsubscribe instead")]
+      		void DeleteDurableConsumer(string name);
+
+      		void Unsubscribe(string name);
 
 		/// <summary>
 		/// Deletes a durable consumer created with CreateDurableConsumer().
