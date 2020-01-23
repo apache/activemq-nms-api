@@ -33,6 +33,27 @@ namespace Apache.NMS
 		/// Creates a new connection with the given user name and password
 		/// </summary>
 		IConnection CreateConnection(string userName, string password);
+		
+		/// <summary>
+		/// Creates a new context
+		/// </summary>
+		INMSContext CreateContext();
+		
+		/// <summary>
+		/// Creates a new context with the given acknowledgement mode.
+		/// </summary>
+		INMSContext CreateContext(AcknowledgementMode acknowledgementMode);
+
+		/// <summary>
+		/// Creates a new context with the given user name and password
+		/// </summary>
+		INMSContext CreateContext(string userName, string password);
+
+		/// <summary>
+		/// Creates a new context with the given user name, password and acknowledgement mode
+		/// </summary>
+		INMSContext CreateContext(string userName, string password, AcknowledgementMode acknowledgementMode);
+		
 
 		/// <summary>
 		/// Get/or set the broker Uri.
