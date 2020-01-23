@@ -221,6 +221,8 @@ namespace Apache.NMS
         /// order.  It is not valid to call this method on a Transacted Session.
         /// </summary>
         void Recover();
+	
+	void Acknowledge();
 
 		#region Transaction methods
 
