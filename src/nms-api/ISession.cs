@@ -82,12 +82,6 @@ namespace Apache.NMS
       		void Unsubscribe(string name);
 
 		/// <summary>
-		/// Deletes a durable consumer created with CreateDurableConsumer().
-		/// </summary>
-		/// <param name="name">Name of the durable consumer</param>
-		void DeleteDurableConsumer(string name);
-
-		/// <summary>
 		/// Creates a QueueBrowser object to peek at the messages on the specified queue.
 		/// </summary>
 		/// <param name="queue">
