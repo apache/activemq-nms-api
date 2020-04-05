@@ -103,14 +103,14 @@ namespace Apache.NMS
 		
 		/// <summary>
 		/// When a message is sent, the NMSDeliveryTime header field is
-	        /// left unassigned. After completion of the send or
-	        /// publish method, it holds the delivery time of the message.
-	        /// This is the the difference, measured in milliseconds, 
-                /// between the delivery time and midnight, January 1, 1970 UTC.
-	        ///
+        /// left unassigned. After completion of the send or
+        /// publish method, it holds the delivery time of the message.
+        /// This is the the difference, measured in milliseconds, 
+        /// between the delivery time and midnight, January 1, 1970 UTC.
+        ///
 		/// A message's delivery time is the earliest time when a JMS provider may
-	        /// deliver the message to a consumer. The provider must not deliver messages
-	        /// before the delivery time has been reached.
+	    /// deliver the message to a consumer. The provider must not deliver messages
+	    /// before the delivery time has been reached.
 		/// <summary>
 		DateTime NMSDeliveryTime { get; set; }
 	}

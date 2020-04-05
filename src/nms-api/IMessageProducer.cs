@@ -58,46 +58,45 @@ namespace Apache.NMS
 		/// </summary>
 		void Send(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
 
-                /// <summary>
-                /// Sends the message to the default destination for this producer
-                /// </summary>
-                void Send(IMessage message, CompletionListener completionListener);
+        /// <summary>
+        /// Sends the message to the default destination for this producer
+        /// </summary>
+        void Send(IMessage message, CompletionListener completionListener);
 
-                /// <summary>
-                /// Sends the message to the default destination with the explicit QoS configuration
-                /// </summary>
-                void Send(IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive, CompletionListener completionListener);
+        /// <summary>
+        /// Sends the message to the default destination with the explicit QoS configuration
+        /// </summary>
+        void Send(IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive, CompletionListener completionListener);
 
-                /// <summary>
-                /// Sends the message to the given destination
-                /// </summary>
-                void Send(IDestination destination, IMessage message, CompletionListener completionListener);
+        /// <summary>
+        /// Sends the message to the given destination
+        /// </summary>
+        void Send(IDestination destination, IMessage message, CompletionListener completionListener);
 
-                /// <summary>
-                /// Sends the message to the given destination with the explicit QoS configuration
-                /// </summary>
-                void Send(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive, CompletionListener completionListener);
+        /// <summary>
+        /// Sends the message to the given destination with the explicit QoS configuration
+        /// </summary>
+        void Send(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive, CompletionListener completionListener);
 
+        /// <summary>
+        /// Sends the message to the default destination for this producer
+        /// </summary>
+        Task SendAsync(IMessage message);
 
-                /// <summary>
-                /// Sends the message to the default destination for this producer
-                /// </summary>
-                Task SendAsync(IMessage message);
+        /// <summary>
+        /// Sends the message to the default destination with the explicit QoS configuration
+        /// </summary>
+        Task SendAsync(IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
 
-                /// <summary>
-                /// Sends the message to the default destination with the explicit QoS configuration
-                /// </summary>
-                Task SendAsync(IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
+        /// <summary>
+        /// Sends the message to the given destination
+        /// </summary>
+        Task SendAsync(IDestination destination, IMessage message);
 
-                /// <summary>
-                /// Sends the message to the given destination
-                /// </summary>
-                Task SendAsync(IDestination destination, IMessage message);
-
-                /// <summary>
-                /// Sends the message to the given destination with the explicit QoS configuration
-                /// </summary>
-                Task SendAsync(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
+        /// <summary>
+        /// Sends the message to the given destination with the explicit QoS configuration
+        /// </summary>
+        Task SendAsync(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
 
 
 		/// <summary>

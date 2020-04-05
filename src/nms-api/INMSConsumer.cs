@@ -15,12 +15,9 @@
  * limitations under the License.
  */
 using System;
-using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
-
-
 
 	/// <summary>
 	/// An object capable of sending messages to some destination
@@ -38,7 +35,7 @@ namespace Apache.NMS
 		/// <summary>
 		/// If a message is available within the timeout duration it is returned otherwise this method returns null
 		/// </summary>
-		IMessage Receive(System.TimeSpan timeout);
+		IMessage Receive(TimeSpan timeout);
 
 		/// <summary>
 		/// Receives the next message if one is immediately available for delivery on the client side
@@ -46,12 +43,12 @@ namespace Apache.NMS
 		/// time of Message availability varies so your client cannot rely on this method to receive a
 		/// message immediately after one has been sent.
 		/// </summary>
-		IMessage ReceiveNoWait(Type t);
+		IMessage ReceiveNoWait();
 
 
 		T ReceiveBody<T>();
 		
-		T ReceiveBody<T>(System.TimeSpan timeout);
+		T ReceiveBody<T>(TimeSpan timeout);
 
 		T ReceiveBodyNoWait<T>();
 		
@@ -65,7 +62,7 @@ namespace Apache.NMS
 		/// Closes the message consumer.
 		/// </summary>
 		/// <remarks>
-		/// Clients should close message consumers them when they are not needed.
+		/// Clients should close message consumers when they are not needed.
 		/// This call blocks until a receive or message listener in progress has completed.
 		/// A blocked message consumer receive call returns null when this message consumer is closed.
 		/// </remarks>

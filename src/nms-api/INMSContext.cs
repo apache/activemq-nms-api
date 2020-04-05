@@ -52,22 +52,22 @@ namespace Apache.NMS
 		/// </summary>
 		INMSConsumer CreateConsumer(IDestination destination, string selector, bool noLocal);
 
-		INMSConsumer CreateDurableConsumer(ITopic destination, string name);
+		INMSConsumer CreateDurableConsumer(ITopic destination, string subscriptionName);
 
-		INMSConsumer CreateDurableConsumer(ITopic destination, string name, string selector);
+		INMSConsumer CreateDurableConsumer(ITopic destination, string subscriptionName, string selector);
 
         /// <summary>
         /// Creates a named durable consumer of messages on a given destination with a selector
         /// </summary>
-        INMSConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
+        INMSConsumer CreateDurableConsumer(ITopic destination, string subscriptionName, string selector, bool noLocal);
 
-        INMSConsumer CreateSharedConsumer(ITopic destination, string name);
+        INMSConsumer CreateSharedConsumer(ITopic destination, string subscriptionName);
 
-        INMSConsumer CreateSharedConsumer(ITopic destination, string name, string selector);
+        INMSConsumer CreateSharedConsumer(ITopic destination, string subscriptionName, string selector);
 
-        INMSConsumer CreateSharedDurableConsumer(ITopic destination, string name);
+        INMSConsumer CreateSharedDurableConsumer(ITopic destination, string subscriptionName);
 
-        INMSConsumer CreateSharedDurableConsumer(ITopic destination, string name, string selector);
+        INMSConsumer CreateSharedDurableConsumer(ITopic destination, string subscriptionName, string selector);
 
 
 
@@ -124,11 +124,6 @@ namespace Apache.NMS
 		/// Creates a temporary topic
 		/// </summary>
 		ITemporaryTopic CreateTemporaryTopic();
-
-		/// <summary>
-		/// Delete a destination (Queue, Topic, Temp Queue, Temp Topic).
-		/// </summary>
-		void DeleteDestination(IDestination destination);
 
 		// Factory methods to create messages
 

@@ -19,7 +19,7 @@ with the License.  You may obtain a copy of the License at
   <PropertyGroup>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net35;net40;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
     <RootNamespace>Apache.NMS</RootNamespace>
     <AssemblyName>Apache.NMS</AssemblyName>
   </PropertyGroup>
@@ -50,11 +50,6 @@ with the License.  You may obtain a copy of the License at
   <ItemGroup>
     <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
     <None Include="..\..\NOTICE.txt" Pack="true" PackagePath="NOTICE.txt"/>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Web" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
