@@ -15,9 +15,13 @@
  * limitations under the License.
  */
 using System;
+using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
+        public delegate void CompletionListener(IMessage message, Exception e);
+
+
 	/// <summary>
 	/// A delegate that a client can register that will be called each time a Producer's send method is
 	/// called to allow the client to Transform a sent message from one type to another, StreamMessage to
@@ -54,6 +58,47 @@ namespace Apache.NMS
 		/// </summary>
 		void Send(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
 
+        /// <summary>
+        /// Sends the message to the default destination for this producer
+        /// </summary>
+        void Send(IMessage message, CompletionListener completionListener);
+
+        /// <summary>
+        /// Sends the message to the default destination with the explicit QoS configuration
+        /// </summary>
+        void Send(IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive, CompletionListener completionListener);
+
+        /// <summary>
+        /// Sends the message to the given destination
+        /// </summary>
+        void Send(IDestination destination, IMessage message, CompletionListener completionListener);
+
+        /// <summary>
+        /// Sends the message to the given destination with the explicit QoS configuration
+        /// </summary>
+        void Send(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive, CompletionListener completionListener);
+
+        /// <summary>
+        /// Sends the message to the default destination for this producer
+        /// </summary>
+        Task SendAsync(IMessage message);
+
+        /// <summary>
+        /// Sends the message to the default destination with the explicit QoS configuration
+        /// </summary>
+        Task SendAsync(IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
+
+        /// <summary>
+        /// Sends the message to the given destination
+        /// </summary>
+        Task SendAsync(IDestination destination, IMessage message);
+
+        /// <summary>
+        /// Sends the message to the given destination with the explicit QoS configuration
+        /// </summary>
+        Task SendAsync(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive);
+
+
 		/// <summary>
 		/// Close the producer.
 		/// </summary>
@@ -76,6 +121,8 @@ namespace Apache.NMS
 		bool DisableMessageID { get; set; }
 
 		bool DisableMessageTimestamp { get; set; }
+		
+		TimeSpan DeliveryDelay { get; set; }
 
 		#region Factory methods to create messages
 
