@@ -388,6 +388,26 @@ namespace Apache.NMS
 		{
 			return this.factory.CreateConnection(userName, password);
 		}
+		
+		public INMSContext CreateContext()
+		{
+			return this.factory.CreateContext();
+		}
+		
+		public INMSContext CreateContext(AcknowledgementMode acknowledgementMode)
+		{
+			return this.factory.CreateContext(acknowledgementMode);
+		}
+		
+		public INMSContext CreateContext(string userName, string password)
+		{
+			return this.factory.CreateContext(userName, password);
+		}
+		
+		public INMSContext CreateContext(string userName, string password, AcknowledgementMode acknowledgementMode)
+		{
+			return this.factory.CreateContext(userName, password, acknowledgementMode);
+		}
 
 		/// <summary>
 		/// Get/or set the broker Uri.

@@ -18,68 +18,60 @@ using System;
 
 namespace Apache.NMS
 {
-    /// <summary>
-    /// A delegate that is notified whenever a Transational evemt occurs for
-    /// the specified session such as TX started, committed or rolled back.
-    /// </summary>
-    public delegate void SessionTxEventDelegate(ISession session);
 
 	/// <summary>
-	/// Represents a single unit of work on an IConnection.
-	/// So the ISession can be used to perform transactional receive and sends
+	/// A INMSContext is the main interface in the simplified NMS API
+	/// introduced for NMS 2.0. This combines in a single object the functionality of
+	/// two separate objects from the NMS 1.x API: an IConnection and an ISession.
+	///
+	/// This is comparable to JMS 2.0 API that extended JMS 1.x API
 	/// </summary>
-	public interface ISession : IDisposable
+	public interface INMSContext : IDisposable, IStartable, IStoppable
 	{
+
+		INMSContext CreateContext(AcknowledgementMode acknowledgementMode);
+		
 		/// <summary>
 		/// Creates a producer of messages
 		/// </summary>
-		IMessageProducer CreateProducer();
-
-		/// <summary>
-		/// Creates a producer of messages on a given destination
-		/// </summary>
-		IMessageProducer CreateProducer(IDestination destination);
-
+		INMSProducer CreateProducer();
+		
+		
 		/// <summary>
 		/// Creates a consumer of messages on a given destination
 		/// </summary>
-		IMessageConsumer CreateConsumer(IDestination destination);
+		INMSConsumer CreateConsumer(IDestination destination);
 
 		/// <summary>
 		/// Creates a consumer of messages on a given destination with a selector
 		/// </summary>
-		IMessageConsumer CreateConsumer(IDestination destination, string selector);
+		INMSConsumer CreateConsumer(IDestination destination, string selector);
 
 		/// <summary>
 		/// Creates a consumer of messages on a given destination with a selector
 		/// </summary>
-		IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal);
-		
-		IMessageConsumer CreateDurableConsumer(ITopic destination, string name);
+		INMSConsumer CreateConsumer(IDestination destination, string selector, bool noLocal);
 
-       		IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector);
+		INMSConsumer CreateDurableConsumer(ITopic destination, string subscriptionName);
 
-        	/// <summary>
-    	    	/// Creates a named durable consumer of messages on a given destination with a selector
-        	/// </summary>
-        	IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
+		INMSConsumer CreateDurableConsumer(ITopic destination, string subscriptionName, string selector);
 
-        	IMessageConsumer CreateSharedConsumer(ITopic destination, string name);
+        /// <summary>
+        /// Creates a named durable consumer of messages on a given destination with a selector
+        /// </summary>
+        INMSConsumer CreateDurableConsumer(ITopic destination, string subscriptionName, string selector, bool noLocal);
 
-      		IMessageConsumer CreateSharedConsumer(ITopic destination, string name, string selector);
+        INMSConsumer CreateSharedConsumer(ITopic destination, string subscriptionName);
 
-       		IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name);
+        INMSConsumer CreateSharedConsumer(ITopic destination, string subscriptionName, string selector);
 
-       		IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name, string selector);
+        INMSConsumer CreateSharedDurableConsumer(ITopic destination, string subscriptionName);
 
-     	   	/// <summary>
-     	   	/// Deletes a durable consumer created with CreateDurableConsumer().
-    	    	/// </summary>
-    		/// <param name="name">Name of the durable consumer</param>
-      		[Obsolete("should use unsubscribe instead")]
-      		void DeleteDurableConsumer(string name);
+        INMSConsumer CreateSharedDurableConsumer(ITopic destination, string subscriptionName, string selector);
 
-      		void Unsubscribe(string name);
+
+
+        void Unsubscribe(string name);
 
 		/// <summary>
 		/// Creates a QueueBrowser object to peek at the messages on the specified queue.
@@ -132,11 +124,6 @@ namespace Apache.NMS
 		/// Creates a temporary topic
 		/// </summary>
 		ITemporaryTopic CreateTemporaryTopic();
-
-		/// <summary>
-		/// Delete a destination (Queue, Topic, Temp Queue, Temp Topic).
-		/// </summary>
-		void DeleteDestination(IDestination destination);
 
 		// Factory methods to create messages
 
@@ -210,8 +197,8 @@ namespace Apache.NMS
         /// order.  It is not valid to call this method on a Transacted Session.
         /// </summary>
         void Recover();
-	
-	void Acknowledge();
+        
+        void Acknowledge();
 
 		#region Transaction methods
 
@@ -235,6 +222,23 @@ namespace Apache.NMS
         event SessionTxEventDelegate TransactionCommittedListener;
         event SessionTxEventDelegate TransactionRolledBackListener;
 
+        /// <summary>
+        /// An asynchronous listener which can be notified if an error occurs
+        /// </summary>
+        event ExceptionListener ExceptionListener;
+
+        /// <summary>
+        /// An asynchronous listener that is notified when a Fault tolerant connection
+        /// has been interrupted.
+        /// </summary>
+        event ConnectionInterruptedListener ConnectionInterruptedListener;
+
+        /// <summary>
+        /// An asynchronous listener that is notified when a Fault tolerant connection
+        /// has been resumed.
+        /// </summary>
+        event ConnectionResumedListener ConnectionResumedListener;
+        
         #endregion
 
 		#region Attributes
@@ -244,7 +248,22 @@ namespace Apache.NMS
 		bool Transacted { get; }
 
 		AcknowledgementMode AcknowledgementMode { get; }
+		
+		String ClientID { get; set; }
 
 		#endregion
+		
+		/// <summary>
+		/// For a long running Connection that creates many temp destinations
+		/// this method will close and destroy all previously created temp
+		/// destinations to reduce resource consumption.  This can be useful
+		/// when the Connection is pooled or otherwise used for long periods
+		/// of time.  Only locally created temp destinations should be removed
+		/// by this call.
+		/// NOTE: This is an optional operation and for NMS providers that
+		/// do not support this functionality the method should just return
+		/// without throwing any exceptions.
+		/// </summary>
+		void PurgeTempDestinations();
 	}
 }
