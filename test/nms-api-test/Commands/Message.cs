@@ -277,6 +277,8 @@ namespace Apache.NMS.Commands
             set { type = value; }
         }
 
+        public DateTime NMSDeliveryTime { get; set; }
+
         #endregion
 
         #region NMS Extension headers
