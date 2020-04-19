@@ -20,7 +20,7 @@ with the License.  You may obtain a copy of the License at
     <PropertyGroup>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
         <OutputType>Library</OutputType>
-        <TargetFrameworks>net35;net40;netstandard2.0</TargetFrameworks>
+        <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
         <RootNamespace>Apache.NMS.Test</RootNamespace>
         <AssemblyName>Apache.NMS.Test</AssemblyName>
     </PropertyGroup>
@@ -33,7 +33,7 @@ with the License.  You may obtain a copy of the License at
     <PropertyGroup>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>Apache.NMS.Test</PackageId>
-        <Version>1.8.0</Version>
+        <Version>2.0.0</Version>
         <Authors>Apache ActiveMQ</Authors>
         <Company>Apache Software Foundation</Company>
         <Product>Apache NMS API</Product>
@@ -62,10 +62,6 @@ with the License.  You may obtain a copy of the License at
         <PackageReference Include="NUnit" Version="3.12.0" />
         <PackageReference Include="NUnit.Console" Version="3.10.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net35'">
-        <Reference Include="System.Web" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net40'">

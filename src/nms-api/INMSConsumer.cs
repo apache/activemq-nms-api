@@ -21,11 +21,10 @@ namespace Apache.NMS
 {
     /// <summary>
     /// An object capable of sending messages to some destination
+    /// https://www.oracle.com/technical-resources/articles/java/jms20.html
     /// </summary>
     public interface INMSConsumer : System.IDisposable
     {
-        string MessageSelector { get; }
-
         /// <summary>
         /// Waits until a message is available and returns it
         /// </summary>
@@ -51,6 +50,7 @@ namespace Apache.NMS
 
         T ReceiveBodyNoWait<T>();
 
+        string MessageSelector { get; }
 
         /// <summary>
         /// An asynchronous listener which can be used to consume messages asynchronously

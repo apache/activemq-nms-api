@@ -16,12 +16,14 @@
  */
 
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
     /// <summary>
     /// An object capable of sending messages to some destination
+    /// https://www.oracle.com/technical-resources/articles/java/jms20.html
     /// </summary>
     public interface INMSProducer : System.IDisposable
     {
@@ -45,9 +47,7 @@ namespace Apache.NMS
 
         Task<INMSProducer> SendAsync(IDestination destination, object body);
 
-        INMSProducer SetAsync(CompletionListener completionListener);
-
-        CompletionListener GetAsync();
+        CompletionListener CompletionListener { get; set; }
 
         /// <summary>
         /// Provides access to the message properties (headers).
@@ -59,13 +59,12 @@ namespace Apache.NMS
         ///
         /// The message's header fields and body are not cleared.
         /// </summary>
-        void ClearProperties();
+        INMSProducer ClearProperties();
 
         /// <summary>
         /// The correlation ID used to correlate messages from conversations or long running business processes.
         /// </summary>
         string NMSCorrelationID { get; set; }
-
 
         /// <summary>
         /// The destination that the consumer of this message should send replies to
@@ -98,6 +97,53 @@ namespace Apache.NMS
         bool DisableMessageID { get; set; }
 
         bool DisableMessageTimestamp { get; set; }
+
+        //Method chaining setters
+        //Allows message delivery options, headers, and properties to be configured using method chaining
+        INMSProducer SetCompletionListener(CompletionListener completionListener);
+
+        INMSProducer SetDeliveryDelay(TimeSpan deliveryDelay);
+
+        INMSProducer SetTimeToLive(TimeSpan timeToLive);
+
+        INMSProducer SetDeliveryMode(MsgDeliveryMode deliveryMode);
+
+        INMSProducer SetDisableMessageID(bool value);
+
+        INMSProducer SetDisableMessageTimestamp(bool value);
+
+        INMSProducer SetNMSCorrelationID(string correlationID);
+
+        INMSProducer SetNMSReplyTo(IDestination replyTo);
+
+        INMSProducer SetNMSType(string type);
+
+        INMSProducer SetPriority(MsgPriority priority);
+
+        INMSProducer SetProperty(string name, bool value);
+
+        INMSProducer SetProperty(string name, byte value);
+
+        INMSProducer SetProperty(string name, double value);
+
+        INMSProducer SetProperty(string name, float value);
+
+        INMSProducer SetProperty(string name, int value);
+
+        INMSProducer SetProperty(string name, long value);
+
+        INMSProducer SetProperty(string name, short value);
+
+        INMSProducer SetProperty(string name, char value);
+
+        INMSProducer SetProperty(string name, string value);
+
+        INMSProducer SetProperty(string name, byte[] value);
+
+        INMSProducer SetProperty(string name, IList value);
+
+        INMSProducer SetProperty(string name, IDictionary value);
+
 
         #region Factory methods to create messages
 

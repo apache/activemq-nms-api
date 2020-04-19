@@ -114,5 +114,9 @@ namespace Apache.NMS
         /// before the delivery time has been reached.
         /// <summary>
         DateTime NMSDeliveryTime { get; set; }
+
+        T Body<T>();
+
+        bool IsBodyAssignableTo(Type type);
     }
 }
