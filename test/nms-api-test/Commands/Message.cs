@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections;
-
 using Apache.NMS.Util;
 
 namespace Apache.NMS.Commands
@@ -28,7 +27,7 @@ namespace Apache.NMS.Commands
         private string transactionId;
         private string messageId;
         private string groupID;
-		private int groupSequence;
+        private int groupSequence;
         private string correlationId;
         private bool persistent;
         private long expiration;
@@ -57,13 +56,13 @@ namespace Apache.NMS.Commands
             // if we had any.
             Message o = (Message) this.MemberwiseClone();
 
-            if(this.messageId != null)
+            if (this.messageId != null)
             {
                 o.NMSMessageId = (string) this.messageId.Clone();
             }
-			
-			return o;
-		}		
+
+            return o;
+        }
 
         ///
         /// <summery>
@@ -74,38 +73,38 @@ namespace Apache.NMS.Commands
         public override string ToString()
         {
             return GetType().Name + "[" +
-                "Destination=" + destination + ", " +
-                "TransactionId=" + transactionId + ", " +
-                "MessageId=" + messageId + ", " +
-                "GroupID=" + groupID + ", " +
-                "GroupSequence=" + groupSequence + ", " +
-                "CorrelationId=" + correlationId + ", " +
-                "Expiration=" + expiration + ", " +
-                "Priority=" + priority + ", " +
-                "ReplyTo=" + replyTo + ", " +
-                "Timestamp=" + timestamp + ", " +
-                "Type=" + type + ", " +
-                "Redelivered=" + redelivered +
-                "]";
+                   "Destination=" + destination + ", " +
+                   "TransactionId=" + transactionId + ", " +
+                   "MessageId=" + messageId + ", " +
+                   "GroupID=" + groupID + ", " +
+                   "GroupSequence=" + groupSequence + ", " +
+                   "CorrelationId=" + correlationId + ", " +
+                   "Expiration=" + expiration + ", " +
+                   "Priority=" + priority + ", " +
+                   "ReplyTo=" + replyTo + ", " +
+                   "Timestamp=" + timestamp + ", " +
+                   "Type=" + type + ", " +
+                   "Redelivered=" + redelivered +
+                   "]";
         }
 
         public void Acknowledge()
         {
         }
-		
+
         public virtual void ClearBody()
         {
-			this.content = null;
+            this.content = null;
         }
 
         public virtual void ClearProperties()
         {
             this.properties.Clear();
         }
-		
+
         protected void FailIfReadOnlyBody()
         {
-            if(ReadOnlyBody == true)
+            if (ReadOnlyBody == true)
             {
                 throw new MessageNotWriteableException("Message is in Read-Only mode.");
             }
@@ -113,26 +112,26 @@ namespace Apache.NMS.Commands
 
         protected void FailIfWriteOnlyBody()
         {
-            if(ReadOnlyBody == false)
+            if (ReadOnlyBody == false)
             {
                 throw new MessageNotReadableException("Message is in Write-Only mode.");
             }
         }
-		
+
         #region Properties
-		
-		public string TransactionId
-		{
-			get { return this.transactionId; }
-			set { this.transactionId = value; }
-		}
+
+        public string TransactionId
+        {
+            get { return this.transactionId; }
+            set { this.transactionId = value; }
+        }
 
         public byte[] Content
         {
             get { return content; }
             set { this.content = value; }
         }
-		
+
         public virtual bool ReadOnlyProperties
         {
             get { return this.readOnlyMsgProperties; }
@@ -144,12 +143,12 @@ namespace Apache.NMS.Commands
             get { return this.readOnlyMsgBody; }
             set { this.readOnlyMsgBody = value; }
         }
-		
+
         public IPrimitiveMap Properties
         {
             get
             {
-                if(null == properties)
+                if (null == properties)
                 {
                     properties = new PrimitiveMap();
                     propertyHelper = new MessagePropertyIntercepter(this, properties, this.ReadOnlyProperties);
@@ -179,6 +178,7 @@ namespace Apache.NMS.Commands
         }
 
         private TimeSpan timeToLive = TimeSpan.FromMilliseconds(0);
+
         /// <summary>
         /// The time in milliseconds that this message should expire in
         /// </summary>
@@ -189,11 +189,11 @@ namespace Apache.NMS.Commands
             set
             {
                 timeToLive = value;
-                if(timeToLive.TotalMilliseconds > 0)
+                if (timeToLive.TotalMilliseconds > 0)
                 {
                     long timeStamp = timestamp;
 
-                    if(timeStamp == 0)
+                    if (timeStamp == 0)
                     {
                         timeStamp = DateUtils.ToJavaTimeUtc(DateTime.UtcNow);
                     }
@@ -216,7 +216,7 @@ namespace Apache.NMS.Commands
             set
             {
                 timestamp = DateUtils.ToJavaTimeUtc(value);
-                if(timeToLive.TotalMilliseconds > 0)
+                if (timeToLive.TotalMilliseconds > 0)
                 {
                     expiration = timestamp + (long) timeToLive.TotalMilliseconds;
                 }
@@ -297,6 +297,7 @@ namespace Apache.NMS.Commands
             get { return groupID; }
             set { groupID = value; }
         }
+
         /// <summary>
         /// The Message Group Sequence counter to indicate the position in a group
         /// </summary>
@@ -313,7 +314,7 @@ namespace Apache.NMS.Commands
         {
             get
             {
-                if(null != transactionId)
+                if (null != transactionId)
                 {
                     return transactionId;
                 }
@@ -323,7 +324,5 @@ namespace Apache.NMS.Commands
         }
 
         #endregion
-
     };
 }
-

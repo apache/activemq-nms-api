@@ -14,44 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-	[TestFixture]
-	public class BadConsumeTest : NMSTestSupport
-	{
-		protected IConnection connection;
-		protected ISession session;
+    [TestFixture]
+    public class BadConsumeTest : NMSTestSupport
+    {
+        protected IConnection connection;
+        protected ISession session;
 
-		[SetUp]
-		public override void SetUp()
-		{
-			connection = CreateConnection(GetTestClientId());
-			connection.Start();
-			session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge);
-		}
+        [SetUp]
+        public override void SetUp()
+        {
+            connection = CreateConnection(GetTestClientId());
+            connection.Start();
+            session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge);
+        }
 
-		[TearDown]
-		public override void TearDown()
-		{
-			if(null != session)
-			{
-				session.Dispose();
-				session = null;
-			}
+        [TearDown]
+        public override void TearDown()
+        {
+            if (null != session)
+            {
+                session.Dispose();
+                session = null;
+            }
 
-			if(null != connection)
-			{
-				connection.Dispose();
-				connection = null;
-			}
-		}
+            if (null != connection)
+            {
+                connection.Dispose();
+                connection = null;
+            }
+        }
 
-		[Test]
-		public void TestBadConsumerException()
-		{
+        [Test]
+        public void TestBadConsumerException()
+        {
             Assert.Throws<NMSException>(() => session.CreateConsumer(null));
         }
     }

@@ -39,7 +39,7 @@ namespace Apache.NMS.Test
         [TearDown]
         public override void TearDown()
         {
-            foreach(IConnection conn in this.connections)
+            foreach (IConnection conn in this.connections)
             {
                 try
                 {
@@ -98,7 +98,8 @@ namespace Apache.NMS.Test
             IMessage message2 = consumer.Receive(TimeSpan.FromMilliseconds(1000));
             Assert.IsNotNull(message2);
             Assert.IsTrue(message2 is ITextMessage, "Expected message to be a ITextMessage");
-            Assert.IsTrue(((ITextMessage)message2).Text == message.Text, "Expected message to be a '" + message.Text + "'");
+            Assert.IsTrue(((ITextMessage) message2).Text == message.Text,
+                "Expected message to be a '" + message.Text + "'");
         }
 
         [Test]
@@ -116,7 +117,8 @@ namespace Apache.NMS.Test
             IMessage message2 = consumer.Receive(TimeSpan.FromMilliseconds(3000));
             Assert.IsNotNull(message2);
             Assert.IsTrue(message2 is ITextMessage, "Expected message to be a ITextMessage");
-            Assert.IsTrue(((ITextMessage)message2).Text == message.Text, "Expected message to be a '" + message.Text + "'");
+            Assert.IsTrue(((ITextMessage) message2).Text == message.Text,
+                "Expected message to be a '" + message.Text + "'");
         }
 
         [Test]
@@ -141,7 +143,7 @@ namespace Apache.NMS.Test
             srcdata[4] = (byte) 'O';
             srcdata[5] = (byte) 'L';
             srcdata[6] = (byte) 'F';
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 message = session.CreateBytesMessage();
                 message.WriteBytes(srcdata);
@@ -154,14 +156,14 @@ namespace Apache.NMS.Test
             byte[] data = new byte[dataSize];
             byte[] data2 = new byte[dataSize];
             IMessageConsumer consumer = session.CreateConsumer(queue);
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 message2 = consumer.Receive(TimeSpan.FromMilliseconds(2000)) as IBytesMessage;
                 Assert.IsNotNull(message2);
                 Assert.AreEqual(i, message2.Properties.GetInt("c"));
                 message = list[i] as IBytesMessage;
                 Assert.IsNotNull(message);
-				message.Reset();
+                message.Reset();
                 message.ReadBytes(data);
                 message2.ReadBytes(data2);
                 Assert.AreEqual(data, data2);

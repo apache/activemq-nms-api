@@ -20,7 +20,7 @@ using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-    [TestFixture]    
+    [TestFixture]
     public class StreamMessageTest : NMSTestSupport
     {
         protected bool a = true;
@@ -40,30 +40,30 @@ namespace Apache.NMS.Test
 
         [Test]
         public void SendReceiveStreamMessage(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-					IDestination destination = CreateDestination(session, DestinationType.Queue);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    IDestination destination = CreateDestination(session, DestinationType.Queue);
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
-						IStreamMessage request;
-						
-						try
-						{
-                        	request = session.CreateStreamMessage();
-						}
-						catch(System.NotSupportedException)
-						{
-							return;
-						}
-							
+                        IStreamMessage request;
+
+                        try
+                        {
+                            request = session.CreateStreamMessage();
+                        }
+                        catch (System.NotSupportedException)
+                        {
+                            return;
+                        }
+
                         request.WriteBoolean(a);
                         request.WriteByte(b);
                         request.WriteChar(c);
@@ -103,6 +103,5 @@ namespace Apache.NMS.Test
                 }
             }
         }
-        
     }
 }

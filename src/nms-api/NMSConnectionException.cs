@@ -19,53 +19,56 @@ using System;
 
 namespace Apache.NMS
 {
-	/// <summary>
-	/// Represents a connection failure.
-	/// </summary>
-	[Serializable]
-	public class NMSConnectionException : NMSException
-	{
-		public NMSConnectionException()
-			: base()
-		{
-		}
+    /// <summary>
+    /// Represents a connection failure.
+    /// </summary>
+    [Serializable]
+    public class NMSConnectionException : NMSException
+    {
+        public NMSConnectionException()
+            : base()
+        {
+        }
 
-		public NMSConnectionException(string message)
-			: base(message)
-		{
-		}
+        public NMSConnectionException(string message)
+            : base(message)
+        {
+        }
 
-		public NMSConnectionException(string message, string errorCode)
-			: base(message, errorCode)
-		{
-		}
+        public NMSConnectionException(string message, string errorCode)
+            : base(message, errorCode)
+        {
+        }
 
-		public NMSConnectionException(string message, Exception innerException)
-			: base(message, innerException)
-		{
-		}
+        public NMSConnectionException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
 
-		public NMSConnectionException(string message, string errorCode, Exception innerException)
-			: base(message, errorCode, innerException)
-		{
-		}
+        public NMSConnectionException(string message, string errorCode, Exception innerException)
+            : base(message, errorCode, innerException)
+        {
+        }
 
-		#region ISerializable interface implementation
+        #region ISerializable interface implementation
+
 #if !NETCF
 
-		/// <summary>
-		/// Initializes a new instance of the NMSConnectionException class with serialized data.
-		/// Throws System.ArgumentNullException if the info parameter is null.
-		/// Throws System.Runtime.Serialization.SerializationException if the class name is null or System.Exception.HResult is zero (0).
-		/// </summary>
-		/// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
-		/// <param name="context">The StreamingContext that contains contextual information about the source or destination.</param>
-		protected NMSConnectionException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			: base(info, context)
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the NMSConnectionException class with serialized data.
+        /// Throws System.ArgumentNullException if the info parameter is null.
+        /// Throws System.Runtime.Serialization.SerializationException if the class name is null or System.Exception.HResult is zero (0).
+        /// </summary>
+        /// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The StreamingContext that contains contextual information about the source or destination.</param>
+        protected NMSConnectionException(System.Runtime.Serialization.SerializationInfo info,
+            System.Runtime.Serialization.StreamingContext context)
+            : base(info, context)
+        {
+        }
 
 #endif
-		#endregion
-	}
+
+        #endregion
+    }
 }

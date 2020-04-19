@@ -14,30 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Apache.NMS
 {
-	/// <summary>
-	/// Represents the type of the destination such as a queue or topic.
-	/// </summary>
-	public enum DestinationType
-	{
-		Queue,
-		Topic,
-		TemporaryQueue,
-		TemporaryTopic
-	}
+    /// <summary>
+    /// Represents the type of the destination such as a queue or topic.
+    /// </summary>
+    public enum DestinationType
+    {
+        Queue,
+        Topic,
+        TemporaryQueue,
+        TemporaryTopic
+    }
 
-	/// <summary>
-	/// A base interface for destinations such as queues or topics
-	/// </summary>
-	public interface IDestination : System.IDisposable
-	{
-		DestinationType DestinationType { get; }
-		
-		bool IsTopic { get; }
-		bool IsQueue { get; }
-		bool IsTemporary { get; }
-	}
+    /// <summary>
+    /// A base interface for destinations such as queues or topics
+    /// </summary>
+    public interface IDestination : System.IDisposable
+    {
+        DestinationType DestinationType { get; }
+
+        bool IsTopic { get; }
+        bool IsQueue { get; }
+        bool IsTemporary { get; }
+    }
 }
-
-

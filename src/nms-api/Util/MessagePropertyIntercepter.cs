@@ -20,7 +20,7 @@ using System.Reflection;
 
 namespace Apache.NMS.Util
 {
-	/// <summary>
+    /// <summary>
     /// Utility class used to set NMS properties via introspection for IMessage derived
     /// instances.  This class allows IMessage classes to define Message specific properties
     /// that can be accessed using the standard property get / set semantics.
@@ -34,72 +34,72 @@ namespace Apache.NMS.Util
     /// read-only therefore there is no exception thrown if the message itself is in the
     /// read-only property mode.
     /// </summary>
-	public class MessagePropertyIntercepter : PrimitiveMapInterceptor
-	{
-		private const BindingFlags publicBinding = BindingFlags.Public | BindingFlags.Instance;
-		private readonly Type messageType;
+    public class MessagePropertyIntercepter : PrimitiveMapInterceptor
+    {
+        private const BindingFlags publicBinding = BindingFlags.Public | BindingFlags.Instance;
+        private readonly Type messageType;
 
-		public MessagePropertyIntercepter(IMessage message, IPrimitiveMap properties)
+        public MessagePropertyIntercepter(IMessage message, IPrimitiveMap properties)
             : base(message, properties)
-		{
-			this.messageType = message.GetType();
-		}
+        {
+            this.messageType = message.GetType();
+        }
 
         public MessagePropertyIntercepter(IMessage message, IPrimitiveMap properties, bool readOnly)
             : base(message, properties, readOnly)
         {
             this.messageType = message.GetType();
         }
-        
-		protected override object GetObjectProperty(string name)
-		{
-			PropertyInfo propertyInfo = this.messageType.GetProperty(name, publicBinding);
 
-			if(name.StartsWith("NMS"))
-			{			
-				if(null != propertyInfo && propertyInfo.CanRead)
-				{
-					return propertyInfo.GetValue(this.message, null);
-				}
-				else
-				{
-					FieldInfo fieldInfo = this.messageType.GetField(name, publicBinding);
-	
-					if(null != fieldInfo)
-					{
-						return fieldInfo.GetValue(this.message);
-					}
-				}
-			}
-			
-			return base.GetObjectProperty(name);
-		}
+        protected override object GetObjectProperty(string name)
+        {
+            PropertyInfo propertyInfo = this.messageType.GetProperty(name, publicBinding);
 
-		protected override void SetObjectProperty(string name, object value)
-		{
-			PropertyInfo propertyInfo = this.messageType.GetProperty(name, publicBinding);
+            if (name.StartsWith("NMS"))
+            {
+                if (null != propertyInfo && propertyInfo.CanRead)
+                {
+                    return propertyInfo.GetValue(this.message, null);
+                }
+                else
+                {
+                    FieldInfo fieldInfo = this.messageType.GetField(name, publicBinding);
 
-			if(!name.StartsWith("NMS"))
-			{
+                    if (null != fieldInfo)
+                    {
+                        return fieldInfo.GetValue(this.message);
+                    }
+                }
+            }
+
+            return base.GetObjectProperty(name);
+        }
+
+        protected override void SetObjectProperty(string name, object value)
+        {
+            PropertyInfo propertyInfo = this.messageType.GetProperty(name, publicBinding);
+
+            if (!name.StartsWith("NMS"))
+            {
                 base.SetObjectProperty(name, value);
-			}			
-			else if(null != propertyInfo && propertyInfo.CanWrite)
-			{
-				propertyInfo.SetValue(this.message, value, null);
-			}
-			else
-			{
-				FieldInfo fieldInfo = this.messageType.GetField(name, publicBinding);
+            }
+            else if (null != propertyInfo && propertyInfo.CanWrite)
+            {
+                propertyInfo.SetValue(this.message, value, null);
+            }
+            else
+            {
+                FieldInfo fieldInfo = this.messageType.GetField(name, publicBinding);
 
-				if(null != fieldInfo && !fieldInfo.IsLiteral && !fieldInfo.IsInitOnly)
-				{
-					fieldInfo.SetValue(this.message, value);
-				}
-				else
-				{
+                if (null != fieldInfo && !fieldInfo.IsLiteral && !fieldInfo.IsInitOnly)
+                {
+                    fieldInfo.SetValue(this.message, value);
+                }
+                else
+                {
                     base.SetObjectProperty(name, value);
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 }

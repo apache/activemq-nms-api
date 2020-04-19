@@ -19,77 +19,81 @@ using System;
 
 namespace Apache.NMS
 {
-	/// <summary>
-	/// Represents an NMS exception
-	/// </summary>
-	[Serializable]
-	public class NMSException : Exception
-	{
-		protected string exceptionErrorCode;
+    /// <summary>
+    /// Represents an NMS exception
+    /// </summary>
+    [Serializable]
+    public class NMSException : Exception
+    {
+        protected string exceptionErrorCode;
 
-		public NMSException()
-			: base()
-		{
-		}
+        public NMSException()
+            : base()
+        {
+        }
 
-		public NMSException(string message)
-			: base(message)
-		{
-		}
+        public NMSException(string message)
+            : base(message)
+        {
+        }
 
-		public NMSException(string message, string errorCode)
-			: this(message)
-		{
-			exceptionErrorCode = errorCode;
-		}
+        public NMSException(string message, string errorCode)
+            : this(message)
+        {
+            exceptionErrorCode = errorCode;
+        }
 
-		public NMSException(string message, Exception innerException)
-			: base(message, innerException)
-		{
-		}
+        public NMSException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
 
-		public NMSException(string message, string errorCode, Exception innerException)
-			: base(message, innerException)
-		{
-			exceptionErrorCode = errorCode;
-		}
+        public NMSException(string message, string errorCode, Exception innerException)
+            : base(message, innerException)
+        {
+            exceptionErrorCode = errorCode;
+        }
 
-		#region ISerializable interface implementation
+        #region ISerializable interface implementation
+
 #if !NETCF
 
-		/// <summary>
-		/// Initializes a new instance of the NMSException class with serialized data.
-		/// Throws System.ArgumentNullException if the info parameter is null.
-		/// Throws System.Runtime.Serialization.SerializationException if the class name is null or System.Exception.HResult is zero (0).
-		/// </summary>
-		/// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
-		/// <param name="context">The StreamingContext that contains contextual information about the source or destination.</param>
-		protected NMSException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			: base(info, context)
-		{
-			exceptionErrorCode = info.GetString("NMSException.exceptionErrorCode");
-		}
+        /// <summary>
+        /// Initializes a new instance of the NMSException class with serialized data.
+        /// Throws System.ArgumentNullException if the info parameter is null.
+        /// Throws System.Runtime.Serialization.SerializationException if the class name is null or System.Exception.HResult is zero (0).
+        /// </summary>
+        /// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The StreamingContext that contains contextual information about the source or destination.</param>
+        protected NMSException(System.Runtime.Serialization.SerializationInfo info,
+            System.Runtime.Serialization.StreamingContext context)
+            : base(info, context)
+        {
+            exceptionErrorCode = info.GetString("NMSException.exceptionErrorCode");
+        }
 
-		/// <summary>
-		/// When overridden in a derived class, sets the SerializationInfo with information about the exception.
-		/// </summary>
-		/// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
-		/// <param name="context">The StreamingContext that contains contextual information about the source or destination.</param>
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			base.GetObjectData(info, context);
-			info.AddValue("NMSException.exceptionErrorCode", exceptionErrorCode);
-		}
+        /// <summary>
+        /// When overridden in a derived class, sets the SerializationInfo with information about the exception.
+        /// </summary>
+        /// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The StreamingContext that contains contextual information about the source or destination.</param>
+        public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info,
+            System.Runtime.Serialization.StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("NMSException.exceptionErrorCode", exceptionErrorCode);
+        }
 
 #endif
-		#endregion
 
-		/// <summary>
-		/// Returns the error code for the exception, if one has been provided.
-		/// </summary>
-		public string ErrorCode
-		{
-			get { return exceptionErrorCode; }
-		}
-	}
+        #endregion
+
+        /// <summary>
+        /// Returns the error code for the exception, if one has been provided.
+        /// </summary>
+        public string ErrorCode
+        {
+            get { return exceptionErrorCode; }
+        }
+    }
 }

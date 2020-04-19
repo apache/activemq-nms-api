@@ -20,47 +20,47 @@ using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-	[TestFixture]
-	public class TextMessageTest : NMSTestSupport
-	{
-		[Test]
-		public void SendReceiveTextMessage(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
-		{
-			using(IConnection connection = CreateConnection(GetTestClientId()))
-			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				{
-					IDestination destination = CreateDestination(session, DestinationType.Queue);
-					using(IMessageConsumer consumer = session.CreateConsumer(destination))
-					using(IMessageProducer producer = session.CreateProducer(destination))
-					{
-						producer.DeliveryMode = deliveryMode;
-						IMessage request = session.CreateTextMessage("Hello World!");
-						producer.Send(request);
+    [TestFixture]
+    public class TextMessageTest : NMSTestSupport
+    {
+        [Test]
+        public void SendReceiveTextMessage(
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
+        {
+            using (IConnection connection = CreateConnection(GetTestClientId()))
+            {
+                connection.Start();
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                {
+                    IDestination destination = CreateDestination(session, DestinationType.Queue);
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
+                    {
+                        producer.DeliveryMode = deliveryMode;
+                        IMessage request = session.CreateTextMessage("Hello World!");
+                        producer.Send(request);
 
-						IMessage message = consumer.Receive(receiveTimeout);
-						AssertTextMessageEqual(request, message);
-						Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
-					}
-				}
-			}
-		}
+                        IMessage message = consumer.Receive(receiveTimeout);
+                        AssertTextMessageEqual(request, message);
+                        Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
+                    }
+                }
+            }
+        }
 
-		/// <summary>
-		/// Assert that two messages are ITextMessages and their text bodies are equal.
-		/// </summary>
-		/// <param name="expected"></param>
-		/// <param name="actual"></param>
-		protected void AssertTextMessageEqual(IMessage expected, IMessage actual)
-		{
-			ITextMessage expectedTextMsg = expected as ITextMessage;
-			Assert.IsNotNull(expectedTextMsg, "'expected' message not a text message");
-			ITextMessage actualTextMsg = actual as ITextMessage;
-			Assert.IsNotNull(actualTextMsg, "'actual' message not a text message");
-			Assert.AreEqual(expectedTextMsg.Text, actualTextMsg.Text, "Text message does not match.");
-		}
-	}
+        /// <summary>
+        /// Assert that two messages are ITextMessages and their text bodies are equal.
+        /// </summary>
+        /// <param name="expected"></param>
+        /// <param name="actual"></param>
+        protected void AssertTextMessageEqual(IMessage expected, IMessage actual)
+        {
+            ITextMessage expectedTextMsg = expected as ITextMessage;
+            Assert.IsNotNull(expectedTextMsg, "'expected' message not a text message");
+            ITextMessage actualTextMsg = actual as ITextMessage;
+            Assert.IsNotNull(actualTextMsg, "'actual' message not a text message");
+            Assert.AreEqual(expectedTextMsg.Text, actualTextMsg.Text, "Text message does not match.");
+        }
+    }
 }

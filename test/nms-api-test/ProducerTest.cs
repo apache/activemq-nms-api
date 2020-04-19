@@ -20,16 +20,16 @@ using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-	[TestFixture]
-	public class ProducerTest : NMSTestSupport
-	{
+    [TestFixture]
+    public class ProducerTest : NMSTestSupport
+    {
         [Test]
         public void TestProducerSendToNullDestinationWithoutDefault()
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession())
+                using (ISession session = connection.CreateSession())
                 {
                     IMessageProducer producer = session.CreateProducer(null);
 
@@ -38,10 +38,10 @@ namespace Apache.NMS.Test
                         producer.Send(null, session.CreateTextMessage("Message"));
                         Assert.Fail("Producer should have thrown an NotSupportedException");
                     }
-                    catch(NotSupportedException)
+                    catch (NotSupportedException)
                     {
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Assert.Fail("Wrong Exception Type Thrown: " + ex.GetType().Name);
                     }
@@ -52,10 +52,10 @@ namespace Apache.NMS.Test
         [Test]
         public void TestProducerSendToNullDestinationWithDefault()
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession())
+                using (ISession session = connection.CreateSession())
                 {
                     IDestination unusedDest = session.CreateTemporaryQueue();
 
@@ -66,10 +66,10 @@ namespace Apache.NMS.Test
                         producer.Send(null, session.CreateTextMessage("Message"));
                         Assert.Fail("Producer should have thrown an InvalidDestinationException");
                     }
-                    catch(InvalidDestinationException)
+                    catch (InvalidDestinationException)
                     {
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Assert.Fail("Wrong Exception Type Thrown: " + ex.GetType().Name);
                     }
@@ -77,33 +77,33 @@ namespace Apache.NMS.Test
             }
         }
 
-		[Test]
-		public void TestProducerSendToNonDefaultDestination()
-		{
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+        [Test]
+        public void TestProducerSendToNonDefaultDestination()
+        {
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession())
+                using (ISession session = connection.CreateSession())
                 {
-					IDestination unusedDest = session.CreateTemporaryQueue();
-					IDestination usedDest = session.CreateTemporaryQueue();
+                    IDestination unusedDest = session.CreateTemporaryQueue();
+                    IDestination usedDest = session.CreateTemporaryQueue();
 
-					IMessageProducer producer = session.CreateProducer(unusedDest);
+                    IMessageProducer producer = session.CreateProducer(unusedDest);
 
                     try
                     {
-					    producer.Send(usedDest, session.CreateTextMessage("Message"));
+                        producer.Send(usedDest, session.CreateTextMessage("Message"));
                         Assert.Fail("Producer should have thrown an NotSupportedException");
                     }
-                    catch(NotSupportedException)
+                    catch (NotSupportedException)
                     {
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Assert.Fail("Wrong Exception Type Thrown: " + ex.GetType().Name);
                     }
-				}
-			}
+                }
+            }
         }
-	}
+    }
 }

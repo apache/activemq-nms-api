@@ -50,7 +50,7 @@ namespace Apache.NMS.Commands
 
             set
             {
-                if(this.typeConverter != null)
+                if (this.typeConverter != null)
                 {
                     this.typeConverter.ReadOnly = true;
                 }
@@ -64,7 +64,7 @@ namespace Apache.NMS.Commands
         {
             get
             {
-                if(this.body == null)
+                if (this.body == null)
                 {
                     this.body = new PrimitiveMap();
                     this.typeConverter = new PrimitiveMapInterceptor(this, this.body);
@@ -76,7 +76,7 @@ namespace Apache.NMS.Commands
             set
             {
                 this.body = value as PrimitiveMap;
-                if(value != null)
+                if (value != null)
                 {
                     this.typeConverter = new PrimitiveMapInterceptor(this, value);
                 }

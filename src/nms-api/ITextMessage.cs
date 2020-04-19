@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Apache.NMS
 {
-	/// <summary>
-	/// Represents a text based message
-	/// </summary>
-	public interface ITextMessage : IMessage
-	{
-		string Text { get; set; }
-	}
+    /// <summary>
+    /// Represents a text based message
+    /// </summary>
+    public interface ITextMessage : IMessage
+    {
+        string Text { get; set; }
+    }
 }
-

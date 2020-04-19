@@ -15,73 +15,74 @@
  * limitations under the License.
  */
 
-#define TRACE	// Force tracing to be enabled for this class
+#define TRACE // Force tracing to be enabled for this class
 
 namespace Apache.NMS.Test
 {
-	public class NmsTracer : Apache.NMS.ITrace
-	{
-		#region ITrace Members
-		public void Debug(string message)
-		{
+    public class NmsTracer : Apache.NMS.ITrace
+    {
+        #region ITrace Members
+
+        public void Debug(string message)
+        {
 #if !NETCF
-			System.Diagnostics.Trace.WriteLine(string.Format("DEBUG: {0}", message));
+            System.Diagnostics.Trace.WriteLine(string.Format("DEBUG: {0}", message));
 #endif
-		}
+        }
 
-		public void Error(string message)
-		{
+        public void Error(string message)
+        {
 #if !NETCF
-			System.Diagnostics.Trace.WriteLine(string.Format("ERROR: {0}", message));
+            System.Diagnostics.Trace.WriteLine(string.Format("ERROR: {0}", message));
 #endif
-		}
+        }
 
-		public void Fatal(string message)
-		{
+        public void Fatal(string message)
+        {
 #if !NETCF
-			System.Diagnostics.Trace.WriteLine(string.Format("FATAL: {0}", message));
+            System.Diagnostics.Trace.WriteLine(string.Format("FATAL: {0}", message));
 #endif
-		}
+        }
 
-		public void Info(string message)
-		{
+        public void Info(string message)
+        {
 #if !NETCF
-			System.Diagnostics.Trace.WriteLine(string.Format("INFO: {0}", message));
+            System.Diagnostics.Trace.WriteLine(string.Format("INFO: {0}", message));
 #endif
-		}
+        }
 
-		public void Warn(string message)
-		{
+        public void Warn(string message)
+        {
 #if !NETCF
-			System.Diagnostics.Trace.WriteLine(string.Format("WARN: {0}", message));
+            System.Diagnostics.Trace.WriteLine(string.Format("WARN: {0}", message));
 #endif
-		}
+        }
 
-		public bool IsDebugEnabled
-		{
-			get { return true; }
-		}
+        public bool IsDebugEnabled
+        {
+            get { return true; }
+        }
 
-		public bool IsErrorEnabled
-		{
-			get { return true; }
-		}
+        public bool IsErrorEnabled
+        {
+            get { return true; }
+        }
 
-		public bool IsFatalEnabled
-		{
-			get { return true; }
-		}
+        public bool IsFatalEnabled
+        {
+            get { return true; }
+        }
 
-		public bool IsInfoEnabled
-		{
-			get { return true; }
-		}
+        public bool IsInfoEnabled
+        {
+            get { return true; }
+        }
 
-		public bool IsWarnEnabled
-		{
-			get { return true; }
-		}
+        public bool IsWarnEnabled
+        {
+            get { return true; }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

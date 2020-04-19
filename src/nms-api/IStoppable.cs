@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Apache.NMS
 {
-	/// <summary>
-	/// A lifecycle for NMS objects to indicate they can be stopped
-	/// </summary>
-	public interface IStoppable
-	{
-		void Stop();
-	}
+    /// <summary>
+    /// A lifecycle for NMS objects to indicate they can be stopped
+    /// </summary>
+    public interface IStoppable
+    {
+        void Stop();
+    }
 }
-

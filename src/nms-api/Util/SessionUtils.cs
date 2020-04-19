@@ -14,176 +14,180 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace Apache.NMS.Util
 {
-	/// <summary>
-	/// Class to provide support for working with Session objects.
-	/// </summary>
-	public class SessionUtil
-	{
-		private const string QueuePrefix = "queue://";
-		private const string TopicPrefix = "topic://";
-		private const string TempQueuePrefix = "temp-queue://";
-		private const string TempTopicPrefix = "temp-topic://";
+    /// <summary>
+    /// Class to provide support for working with Session objects.
+    /// </summary>
+    public class SessionUtil
+    {
+        private const string QueuePrefix = "queue://";
+        private const string TopicPrefix = "topic://";
+        private const string TempQueuePrefix = "temp-queue://";
+        private const string TempTopicPrefix = "temp-topic://";
 
-		/// <summary>
-		/// Get the destination by parsing the embedded type prefix.  Default is Queue if no prefix is
-		/// embedded in the destinationName.
-		/// </summary>
-		/// <param name="session">Session object to use to get the destination.</param>
-		/// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
-		///		<list type="bullet">
-		///			<item>queue://</item>
-		///			<item>topic://</item>
-		///			<item>temp-queue://</item>
-		///			<item>temp-topic://</item>
-		///		</list>
-		///	</param>
-		/// <returns></returns>
-		public static IDestination GetDestination(ISession session, string destinationName)
-		{
-			return SessionUtil.GetDestination(session, destinationName, DestinationType.Queue);
-		}
+        /// <summary>
+        /// Get the destination by parsing the embedded type prefix.  Default is Queue if no prefix is
+        /// embedded in the destinationName.
+        /// </summary>
+        /// <param name="session">Session object to use to get the destination.</param>
+        /// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
+        ///		<list type="bullet">
+        ///			<item>queue://</item>
+        ///			<item>topic://</item>
+        ///			<item>temp-queue://</item>
+        ///			<item>temp-topic://</item>
+        ///		</list>
+        ///	</param>
+        /// <returns></returns>
+        public static IDestination GetDestination(ISession session, string destinationName)
+        {
+            return SessionUtil.GetDestination(session, destinationName, DestinationType.Queue);
+        }
 
-		/// <summary>
-		/// Get the destination by parsing the embedded type prefix.
-		/// </summary>
-		/// <param name="session">Session object to use to get the destination.</param>
-		/// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
-		///		<list type="bullet">
-		///			<item>queue://</item>
-		///			<item>topic://</item>
-		///			<item>temp-queue://</item>
-		///			<item>temp-topic://</item>
-		///		</list>
-		///	</param>
-		/// <param name="defaultType">Default type if no embedded prefix is specified.</param>
-		/// <returns></returns>
-		public static IDestination GetDestination(ISession session, string destinationName, DestinationType defaultType)
-		{
-			IDestination destination = null;
-			DestinationType destinationType = defaultType;
+        /// <summary>
+        /// Get the destination by parsing the embedded type prefix.
+        /// </summary>
+        /// <param name="session">Session object to use to get the destination.</param>
+        /// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
+        ///		<list type="bullet">
+        ///			<item>queue://</item>
+        ///			<item>topic://</item>
+        ///			<item>temp-queue://</item>
+        ///			<item>temp-topic://</item>
+        ///		</list>
+        ///	</param>
+        /// <param name="defaultType">Default type if no embedded prefix is specified.</param>
+        /// <returns></returns>
+        public static IDestination GetDestination(ISession session, string destinationName, DestinationType defaultType)
+        {
+            IDestination destination = null;
+            DestinationType destinationType = defaultType;
 
-			if(null != destinationName)
-			{
-				if(destinationName.Length > QueuePrefix.Length
-					&& 0 == String.Compare(destinationName.Substring(0, QueuePrefix.Length), QueuePrefix, false))
-				{
-					destinationType = DestinationType.Queue;
-					destinationName = destinationName.Substring(QueuePrefix.Length);
-				}
-				else if(destinationName.Length > TopicPrefix.Length
-					&& 0 == String.Compare(destinationName.Substring(0, TopicPrefix.Length), TopicPrefix, false))
-				{
-					destinationType = DestinationType.Topic;
-					destinationName = destinationName.Substring(TopicPrefix.Length);
-				}
-				else if(destinationName.Length > TempQueuePrefix.Length
-					&& 0 == String.Compare(destinationName.Substring(0, TempQueuePrefix.Length), TempQueuePrefix, false))
-				{
-					destinationType = DestinationType.TemporaryQueue;
-					destinationName = destinationName.Substring(TempQueuePrefix.Length);
-				}
-				else if(destinationName.Length > TempTopicPrefix.Length
-					&& 0 == String.Compare(destinationName.Substring(0, TempTopicPrefix.Length), TempTopicPrefix, false))
-				{
-					destinationType = DestinationType.TemporaryTopic;
-					destinationName = destinationName.Substring(TempTopicPrefix.Length);
-				}
-			}
+            if (null != destinationName)
+            {
+                if (destinationName.Length > QueuePrefix.Length
+                    && 0 == String.Compare(destinationName.Substring(0, QueuePrefix.Length), QueuePrefix, false))
+                {
+                    destinationType = DestinationType.Queue;
+                    destinationName = destinationName.Substring(QueuePrefix.Length);
+                }
+                else if (destinationName.Length > TopicPrefix.Length
+                         && 0 == String.Compare(destinationName.Substring(0, TopicPrefix.Length), TopicPrefix, false))
+                {
+                    destinationType = DestinationType.Topic;
+                    destinationName = destinationName.Substring(TopicPrefix.Length);
+                }
+                else if (destinationName.Length > TempQueuePrefix.Length
+                         && 0 == String.Compare(destinationName.Substring(0, TempQueuePrefix.Length), TempQueuePrefix,
+                             false))
+                {
+                    destinationType = DestinationType.TemporaryQueue;
+                    destinationName = destinationName.Substring(TempQueuePrefix.Length);
+                }
+                else if (destinationName.Length > TempTopicPrefix.Length
+                         && 0 == String.Compare(destinationName.Substring(0, TempTopicPrefix.Length), TempTopicPrefix,
+                             false))
+                {
+                    destinationType = DestinationType.TemporaryTopic;
+                    destinationName = destinationName.Substring(TempTopicPrefix.Length);
+                }
+            }
 
-			switch(destinationType)
-			{
-			case DestinationType.Queue:
-				if(null != destinationName)
-				{
-					destination = session.GetQueue(destinationName);
-				}
-			break;
+            switch (destinationType)
+            {
+                case DestinationType.Queue:
+                    if (null != destinationName)
+                    {
+                        destination = session.GetQueue(destinationName);
+                    }
 
-			case DestinationType.Topic:
-				if(null != destinationName)
-				{
-					destination = session.GetTopic(destinationName);
-				}
-			break;
+                    break;
 
-			case DestinationType.TemporaryQueue:
-				destination = session.CreateTemporaryQueue();
-			break;
+                case DestinationType.Topic:
+                    if (null != destinationName)
+                    {
+                        destination = session.GetTopic(destinationName);
+                    }
 
-			case DestinationType.TemporaryTopic:
-				destination = session.CreateTemporaryTopic();
-			break;
-			}
+                    break;
 
-			return destination;
-		}
+                case DestinationType.TemporaryQueue:
+                    destination = session.CreateTemporaryQueue();
+                    break;
 
-		public static IQueue GetQueue(ISession session, string queueName)
-		{
-			return GetDestination(session, queueName, DestinationType.Queue) as IQueue;
-		}
+                case DestinationType.TemporaryTopic:
+                    destination = session.CreateTemporaryTopic();
+                    break;
+            }
 
-		public static ITopic GetTopic(ISession session, string topicName)
-		{
-			return GetDestination(session, topicName, DestinationType.Topic) as ITopic;
-		}
+            return destination;
+        }
 
-		/// <summary>
-		/// Delete the named destination by parsing the embedded type prefix.  Default is Queue if no prefix is
-		/// embedded in the destinationName.
-		/// </summary>
-		/// <param name="session">Session object to use to get the destination.</param>
-		/// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
-		///		<list type="bullet">
-		///			<item>queue://</item>
-		///			<item>topic://</item>
-		///			<item>temp-queue://</item>
-		///			<item>temp-topic://</item>
-		///		</list>
-		///	</param>
-		/// <returns></returns>
-		public static void DeleteDestination(ISession session, string destinationName)
-		{
-			SessionUtil.DeleteDestination(session, destinationName, DestinationType.Queue);
-		}
+        public static IQueue GetQueue(ISession session, string queueName)
+        {
+            return GetDestination(session, queueName, DestinationType.Queue) as IQueue;
+        }
 
-		/// <summary>
-		/// Delete the named destination by parsing the embedded type prefix.
-		/// </summary>
-		/// <param name="session">Session object to use to get the destination.</param>
-		/// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
-		///		<list type="bullet">
-		///			<item>queue://</item>
-		///			<item>topic://</item>
-		///			<item>temp-queue://</item>
-		///			<item>temp-topic://</item>
-		///		</list>
-		///	</param>
-		/// <param name="defaultType">Default type if no embedded prefix is specified.</param>
-		/// <returns></returns>
-		public static void DeleteDestination(ISession session, string destinationName, DestinationType defaultType)
-		{
-			IDestination destination = SessionUtil.GetDestination(session, destinationName, defaultType);
+        public static ITopic GetTopic(ISession session, string topicName)
+        {
+            return GetDestination(session, topicName, DestinationType.Topic) as ITopic;
+        }
 
-			if(null != destination)
-			{
-				session.DeleteDestination(destination);
-			}
-		}
+        /// <summary>
+        /// Delete the named destination by parsing the embedded type prefix.  Default is Queue if no prefix is
+        /// embedded in the destinationName.
+        /// </summary>
+        /// <param name="session">Session object to use to get the destination.</param>
+        /// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
+        ///		<list type="bullet">
+        ///			<item>queue://</item>
+        ///			<item>topic://</item>
+        ///			<item>temp-queue://</item>
+        ///			<item>temp-topic://</item>
+        ///		</list>
+        ///	</param>
+        /// <returns></returns>
+        public static void DeleteDestination(ISession session, string destinationName)
+        {
+            SessionUtil.DeleteDestination(session, destinationName, DestinationType.Queue);
+        }
 
-		public static void DeleteQueue(ISession session, string queueName)
-		{
-			DeleteDestination(session, queueName, DestinationType.Queue);
-		}
+        /// <summary>
+        /// Delete the named destination by parsing the embedded type prefix.
+        /// </summary>
+        /// <param name="session">Session object to use to get the destination.</param>
+        /// <param name="destinationName">Name of destination with embedded prefix.  The embedded prefix can be one of the following:
+        ///		<list type="bullet">
+        ///			<item>queue://</item>
+        ///			<item>topic://</item>
+        ///			<item>temp-queue://</item>
+        ///			<item>temp-topic://</item>
+        ///		</list>
+        ///	</param>
+        /// <param name="defaultType">Default type if no embedded prefix is specified.</param>
+        /// <returns></returns>
+        public static void DeleteDestination(ISession session, string destinationName, DestinationType defaultType)
+        {
+            IDestination destination = SessionUtil.GetDestination(session, destinationName, defaultType);
 
-		public static void DeleteTopic(ISession session, string topicName)
-		{
-			DeleteDestination(session, topicName, DestinationType.Topic);
-		}
-	}
+            if (null != destination)
+            {
+                session.DeleteDestination(destination);
+            }
+        }
+
+        public static void DeleteQueue(ISession session, string queueName)
+        {
+            DeleteDestination(session, queueName, DestinationType.Queue);
+        }
+
+        public static void DeleteTopic(ISession session, string topicName)
+        {
+            DeleteDestination(session, topicName, DestinationType.Topic);
+        }
+    }
 }
-

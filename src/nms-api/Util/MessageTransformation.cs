@@ -21,23 +21,23 @@ namespace Apache.NMS.Util
     /// Base Utility class for conversion between IMessage type objects for different
     /// NMS providers.
     /// </summary>
-	public abstract class MessageTransformation
-	{
+    public abstract class MessageTransformation
+    {
         protected MessageTransformation()
-		{
-		}
+        {
+        }
 
         public T TransformMessage<T>(IMessage message)
         {
-            if(message is T)
+            if (message is T)
             {
                 return (T) message;
             }
             else
             {
                 IMessage result = null;
-    
-                if(message is IBytesMessage)
+
+                if (message is IBytesMessage)
                 {
                     IBytesMessage bytesMsg = message as IBytesMessage;
                     bytesMsg.Reset();
@@ -45,7 +45,7 @@ namespace Apache.NMS.Util
 
                     try
                     {
-                        for(;;)
+                        for (;;)
                         {
                             // Reads a byte from the message stream until the stream is empty
                             msg.WriteByte(bytesMsg.ReadByte());
@@ -57,19 +57,19 @@ namespace Apache.NMS.Util
 
                     result = msg;
                 }
-                else if(message is IMapMessage)
+                else if (message is IMapMessage)
                 {
                     IMapMessage mapMsg = message as IMapMessage;
                     IMapMessage msg = DoCreateMapMessage();
 
-                    foreach(string key in mapMsg.Body.Keys)
+                    foreach (string key in mapMsg.Body.Keys)
                     {
                         msg.Body[key] = mapMsg.Body[key];
                     }
 
                     result = msg;
                 }
-                else if(message is IObjectMessage)
+                else if (message is IObjectMessage)
                 {
                     IObjectMessage objMsg = message as IObjectMessage;
                     IObjectMessage msg = DoCreateObjectMessage();
@@ -77,7 +77,7 @@ namespace Apache.NMS.Util
 
                     result = msg;
                 }
-                else if(message is IStreamMessage)
+                else if (message is IStreamMessage)
                 {
                     IStreamMessage streamMessage = message as IStreamMessage;
                     streamMessage.Reset();
@@ -87,7 +87,7 @@ namespace Apache.NMS.Util
 
                     try
                     {
-                        while((obj = streamMessage.ReadObject()) != null)
+                        while ((obj = streamMessage.ReadObject()) != null)
                         {
                             msg.WriteObject(obj);
                         }
@@ -98,7 +98,7 @@ namespace Apache.NMS.Util
 
                     result = msg;
                 }
-                else if(message is ITextMessage)
+                else if (message is ITextMessage)
                 {
                     ITextMessage textMsg = message as ITextMessage;
                     ITextMessage msg = DoCreateTextMessage();
@@ -138,7 +138,7 @@ namespace Apache.NMS.Util
             toMessage.NMSTimestamp = fromMessage.NMSTimestamp;
             toMessage.NMSTimeToLive = fromMessage.NMSTimeToLive;
 
-            foreach(string key in fromMessage.Properties.Keys)
+            foreach (string key in fromMessage.Properties.Keys)
             {
                 toMessage.Properties[key] = fromMessage.Properties[key];
             }
@@ -162,7 +162,7 @@ namespace Apache.NMS.Util
             toMessage.NMSTimestamp = fromMessage.NMSTimestamp;
             toMessage.NMSTimeToLive = fromMessage.NMSTimeToLive;
 
-            foreach(string key in fromMessage.Properties.Keys)
+            foreach (string key in fromMessage.Properties.Keys)
             {
                 toMessage.Properties[key] = fromMessage.Properties[key];
             }
@@ -181,7 +181,5 @@ namespace Apache.NMS.Util
         protected abstract void DoPostProcessMessage(IMessage message);
 
         #endregion
-
-	}
+    }
 }
-

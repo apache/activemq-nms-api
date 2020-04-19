@@ -18,7 +18,6 @@
 using System;
 using System.IO;
 using System.Collections;
-
 using Apache.NMS;
 using Apache.NMS.Util;
 
@@ -42,15 +41,15 @@ namespace Apache.NMS.Commands
                 {
                     int type = this.dataIn.ReadByte();
 
-                    if(type == PrimitiveMap.BOOLEAN_TYPE)
+                    if (type == PrimitiveMap.BOOLEAN_TYPE)
                     {
                         return this.dataIn.ReadBoolean();
                     }
-                    else if(type == PrimitiveMap.STRING_TYPE)
+                    else if (type == PrimitiveMap.STRING_TYPE)
                     {
                         return Boolean.Parse(this.dataIn.ReadString16());
                     }
-                    else if(type == PrimitiveMap.NULL)
+                    else if (type == PrimitiveMap.NULL)
                     {
                         this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                         throw new NMSException("Cannot convert Null type to a bool");
@@ -61,17 +60,17 @@ namespace Apache.NMS.Commands
                         throw new MessageFormatException("Value is not a Boolean type.");
                     }
                 }
-                catch(FormatException e)
+                catch (FormatException e)
                 {
                     this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                     throw NMSExceptionSupport.CreateMessageFormatException(e);
                 }
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -88,15 +87,15 @@ namespace Apache.NMS.Commands
                 {
                     int type = this.dataIn.ReadByte();
 
-                    if(type == PrimitiveMap.BYTE_TYPE)
+                    if (type == PrimitiveMap.BYTE_TYPE)
                     {
                         return this.dataIn.ReadByte();
                     }
-                    else if(type == PrimitiveMap.STRING_TYPE)
+                    else if (type == PrimitiveMap.STRING_TYPE)
                     {
                         return Byte.Parse(this.dataIn.ReadString16());
                     }
-                    else if(type == PrimitiveMap.NULL)
+                    else if (type == PrimitiveMap.NULL)
                     {
                         this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                         throw new NMSException("Cannot convert Null type to a byte");
@@ -107,17 +106,17 @@ namespace Apache.NMS.Commands
                         throw new MessageFormatException("Value is not a Byte type.");
                     }
                 }
-                catch(FormatException e)
+                catch (FormatException e)
                 {
                     this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                     throw NMSExceptionSupport.CreateMessageFormatException(e);
                 }
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -134,11 +133,11 @@ namespace Apache.NMS.Commands
                 {
                     int type = this.dataIn.ReadByte();
 
-                    if(type == PrimitiveMap.CHAR_TYPE)
+                    if (type == PrimitiveMap.CHAR_TYPE)
                     {
                         return this.dataIn.ReadChar();
                     }
-                    else if(type == PrimitiveMap.NULL)
+                    else if (type == PrimitiveMap.NULL)
                     {
                         this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                         throw new NMSException("Cannot convert Null type to a char");
@@ -149,17 +148,17 @@ namespace Apache.NMS.Commands
                         throw new MessageFormatException("Value is not a Char type.");
                     }
                 }
-                catch(FormatException e)
+                catch (FormatException e)
                 {
                     this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                     throw NMSExceptionSupport.CreateMessageFormatException(e);
                 }
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -176,19 +175,19 @@ namespace Apache.NMS.Commands
                 {
                     int type = this.dataIn.ReadByte();
 
-                    if(type == PrimitiveMap.SHORT_TYPE)
+                    if (type == PrimitiveMap.SHORT_TYPE)
                     {
                         return this.dataIn.ReadInt16();
                     }
-                    else if(type == PrimitiveMap.BYTE_TYPE)
+                    else if (type == PrimitiveMap.BYTE_TYPE)
                     {
                         return this.dataIn.ReadByte();
                     }
-                    else if(type == PrimitiveMap.STRING_TYPE)
+                    else if (type == PrimitiveMap.STRING_TYPE)
                     {
                         return Int16.Parse(this.dataIn.ReadString16());
                     }
-                    else if(type == PrimitiveMap.NULL)
+                    else if (type == PrimitiveMap.NULL)
                     {
                         this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                         throw new NMSException("Cannot convert Null type to a short");
@@ -199,17 +198,17 @@ namespace Apache.NMS.Commands
                         throw new MessageFormatException("Value is not a Int16 type.");
                     }
                 }
-                catch(FormatException e)
+                catch (FormatException e)
                 {
                     this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                     throw NMSExceptionSupport.CreateMessageFormatException(e);
                 }
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -226,23 +225,23 @@ namespace Apache.NMS.Commands
                 {
                     int type = this.dataIn.ReadByte();
 
-                    if(type == PrimitiveMap.INTEGER_TYPE)
+                    if (type == PrimitiveMap.INTEGER_TYPE)
                     {
                         return this.dataIn.ReadInt32();
                     }
-                    else if(type == PrimitiveMap.SHORT_TYPE)
+                    else if (type == PrimitiveMap.SHORT_TYPE)
                     {
                         return this.dataIn.ReadInt16();
                     }
-                    else if(type == PrimitiveMap.BYTE_TYPE)
+                    else if (type == PrimitiveMap.BYTE_TYPE)
                     {
                         return this.dataIn.ReadByte();
                     }
-                    else if(type == PrimitiveMap.STRING_TYPE)
+                    else if (type == PrimitiveMap.STRING_TYPE)
                     {
                         return Int32.Parse(this.dataIn.ReadString16());
                     }
-                    else if(type == PrimitiveMap.NULL)
+                    else if (type == PrimitiveMap.NULL)
                     {
                         this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                         throw new NMSException("Cannot convert Null type to a int");
@@ -253,17 +252,17 @@ namespace Apache.NMS.Commands
                         throw new MessageFormatException("Value is not a Int32 type.");
                     }
                 }
-                catch(FormatException e)
+                catch (FormatException e)
                 {
                     this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                     throw NMSExceptionSupport.CreateMessageFormatException(e);
                 }
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -280,27 +279,27 @@ namespace Apache.NMS.Commands
                 {
                     int type = this.dataIn.ReadByte();
 
-                    if(type == PrimitiveMap.LONG_TYPE)
+                    if (type == PrimitiveMap.LONG_TYPE)
                     {
                         return this.dataIn.ReadInt64();
                     }
-                    else if(type == PrimitiveMap.INTEGER_TYPE)
+                    else if (type == PrimitiveMap.INTEGER_TYPE)
                     {
                         return this.dataIn.ReadInt32();
                     }
-                    else if(type == PrimitiveMap.SHORT_TYPE)
+                    else if (type == PrimitiveMap.SHORT_TYPE)
                     {
                         return this.dataIn.ReadInt16();
                     }
-                    else if(type == PrimitiveMap.BYTE_TYPE)
+                    else if (type == PrimitiveMap.BYTE_TYPE)
                     {
                         return this.dataIn.ReadByte();
                     }
-                    else if(type == PrimitiveMap.STRING_TYPE)
+                    else if (type == PrimitiveMap.STRING_TYPE)
                     {
                         return Int64.Parse(this.dataIn.ReadString16());
                     }
-                    else if(type == PrimitiveMap.NULL)
+                    else if (type == PrimitiveMap.NULL)
                     {
                         this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                         throw new NMSException("Cannot convert Null type to a long");
@@ -311,17 +310,17 @@ namespace Apache.NMS.Commands
                         throw new MessageFormatException("Value is not a Int64 type.");
                     }
                 }
-                catch(FormatException e)
+                catch (FormatException e)
                 {
                     this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                     throw NMSExceptionSupport.CreateMessageFormatException(e);
                 }
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -338,15 +337,15 @@ namespace Apache.NMS.Commands
                 {
                     int type = this.dataIn.ReadByte();
 
-                    if(type == PrimitiveMap.FLOAT_TYPE)
+                    if (type == PrimitiveMap.FLOAT_TYPE)
                     {
                         return this.dataIn.ReadSingle();
                     }
-                    else if(type == PrimitiveMap.STRING_TYPE)
+                    else if (type == PrimitiveMap.STRING_TYPE)
                     {
                         return Single.Parse(this.dataIn.ReadString16());
                     }
-                    else if(type == PrimitiveMap.NULL)
+                    else if (type == PrimitiveMap.NULL)
                     {
                         this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                         throw new NMSException("Cannot convert Null type to a float");
@@ -357,17 +356,17 @@ namespace Apache.NMS.Commands
                         throw new MessageFormatException("Value is not a Single type.");
                     }
                 }
-                catch(FormatException e)
+                catch (FormatException e)
                 {
                     this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                     throw NMSExceptionSupport.CreateMessageFormatException(e);
                 }
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -384,19 +383,19 @@ namespace Apache.NMS.Commands
                 {
                     int type = this.dataIn.ReadByte();
 
-                    if(type == PrimitiveMap.DOUBLE_TYPE)
+                    if (type == PrimitiveMap.DOUBLE_TYPE)
                     {
                         return this.dataIn.ReadDouble();
                     }
-                    else if(type == PrimitiveMap.FLOAT_TYPE)
+                    else if (type == PrimitiveMap.FLOAT_TYPE)
                     {
                         return this.dataIn.ReadSingle();
                     }
-                    else if(type == PrimitiveMap.STRING_TYPE)
+                    else if (type == PrimitiveMap.STRING_TYPE)
                     {
                         return Single.Parse(this.dataIn.ReadString16());
                     }
-                    else if(type == PrimitiveMap.NULL)
+                    else if (type == PrimitiveMap.NULL)
                     {
                         this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                         throw new NMSException("Cannot convert Null type to a double");
@@ -407,17 +406,17 @@ namespace Apache.NMS.Commands
                         throw new MessageFormatException("Value is not a Double type.");
                     }
                 }
-                catch(FormatException e)
+                catch (FormatException e)
                 {
                     this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                     throw NMSExceptionSupport.CreateMessageFormatException(e);
                 }
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -433,47 +432,47 @@ namespace Apache.NMS.Commands
             {
                 int type = this.dataIn.ReadByte();
 
-                if(type == PrimitiveMap.BIG_STRING_TYPE)
+                if (type == PrimitiveMap.BIG_STRING_TYPE)
                 {
                     return this.dataIn.ReadString32();
                 }
-                else if(type == PrimitiveMap.STRING_TYPE)
+                else if (type == PrimitiveMap.STRING_TYPE)
                 {
                     return this.dataIn.ReadString16();
                 }
-                else if(type == PrimitiveMap.LONG_TYPE)
+                else if (type == PrimitiveMap.LONG_TYPE)
                 {
                     return this.dataIn.ReadInt64().ToString();
                 }
-                else if(type == PrimitiveMap.INTEGER_TYPE)
+                else if (type == PrimitiveMap.INTEGER_TYPE)
                 {
                     return this.dataIn.ReadInt32().ToString();
                 }
-                else if(type == PrimitiveMap.SHORT_TYPE)
+                else if (type == PrimitiveMap.SHORT_TYPE)
                 {
                     return this.dataIn.ReadInt16().ToString();
                 }
-                else if(type == PrimitiveMap.FLOAT_TYPE)
+                else if (type == PrimitiveMap.FLOAT_TYPE)
                 {
                     return this.dataIn.ReadSingle().ToString();
                 }
-                else if(type == PrimitiveMap.DOUBLE_TYPE)
+                else if (type == PrimitiveMap.DOUBLE_TYPE)
                 {
                     return this.dataIn.ReadDouble().ToString();
                 }
-                else if(type == PrimitiveMap.CHAR_TYPE)
+                else if (type == PrimitiveMap.CHAR_TYPE)
                 {
                     return this.dataIn.ReadChar().ToString();
                 }
-                else if(type == PrimitiveMap.BYTE_TYPE)
+                else if (type == PrimitiveMap.BYTE_TYPE)
                 {
                     return this.dataIn.ReadByte().ToString();
                 }
-                else if(type == PrimitiveMap.BOOLEAN_TYPE)
+                else if (type == PrimitiveMap.BOOLEAN_TYPE)
                 {
                     return this.dataIn.ReadBoolean().ToString();
                 }
-                else if(type == PrimitiveMap.NULL)
+                else if (type == PrimitiveMap.NULL)
                 {
                     return null;
                 }
@@ -483,16 +482,16 @@ namespace Apache.NMS.Commands
                     throw new MessageFormatException("Value is not a known type.");
                 }
             }
-            catch(FormatException e)
+            catch (FormatException e)
             {
                 this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -502,19 +501,19 @@ namespace Apache.NMS.Commands
         {
             InitializeReading();
 
-            if(value == null)
+            if (value == null)
             {
                 throw new NullReferenceException("Passed Byte Array is null");
             }
 
             try
             {
-                if(this.bytesRemaining == -1)
+                if (this.bytesRemaining == -1)
                 {
                     long startingPos = this.byteBuffer.Position;
                     byte type = this.dataIn.ReadByte();
 
-                    if(type != PrimitiveMap.BYTE_ARRAY_TYPE)
+                    if (type != PrimitiveMap.BYTE_ARRAY_TYPE)
                     {
                         this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                         throw new MessageFormatException("Not a byte array");
@@ -522,13 +521,13 @@ namespace Apache.NMS.Commands
 
                     this.bytesRemaining = this.dataIn.ReadInt32();
                 }
-                else if(this.bytesRemaining == 0)
+                else if (this.bytesRemaining == 0)
                 {
                     this.bytesRemaining = -1;
                     return -1;
                 }
 
-                if(value.Length <= this.bytesRemaining)
+                if (value.Length <= this.bytesRemaining)
                 {
                     // small buffer
                     this.bytesRemaining -= value.Length;
@@ -543,11 +542,11 @@ namespace Apache.NMS.Commands
                     return rc;
                 }
             }
-            catch(EndOfStreamException ex)
+            catch (EndOfStreamException ex)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(ex);
             }
-            catch(IOException ex)
+            catch (IOException ex)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(ex);
             }
@@ -563,54 +562,54 @@ namespace Apache.NMS.Commands
             {
                 int type = this.dataIn.ReadByte();
 
-                if(type == PrimitiveMap.BIG_STRING_TYPE)
+                if (type == PrimitiveMap.BIG_STRING_TYPE)
                 {
                     return this.dataIn.ReadString32();
                 }
-                else if(type == PrimitiveMap.STRING_TYPE)
+                else if (type == PrimitiveMap.STRING_TYPE)
                 {
                     return this.dataIn.ReadString16();
                 }
-                else if(type == PrimitiveMap.LONG_TYPE)
+                else if (type == PrimitiveMap.LONG_TYPE)
                 {
                     return this.dataIn.ReadInt64();
                 }
-                else if(type == PrimitiveMap.INTEGER_TYPE)
+                else if (type == PrimitiveMap.INTEGER_TYPE)
                 {
                     return this.dataIn.ReadInt32();
                 }
-                else if(type == PrimitiveMap.SHORT_TYPE)
+                else if (type == PrimitiveMap.SHORT_TYPE)
                 {
                     return this.dataIn.ReadInt16();
                 }
-                else if(type == PrimitiveMap.FLOAT_TYPE)
+                else if (type == PrimitiveMap.FLOAT_TYPE)
                 {
                     return this.dataIn.ReadSingle();
                 }
-                else if(type == PrimitiveMap.DOUBLE_TYPE)
+                else if (type == PrimitiveMap.DOUBLE_TYPE)
                 {
                     return this.dataIn.ReadDouble();
                 }
-                else if(type == PrimitiveMap.CHAR_TYPE)
+                else if (type == PrimitiveMap.CHAR_TYPE)
                 {
                     return this.dataIn.ReadChar();
                 }
-                else if(type == PrimitiveMap.BYTE_TYPE)
+                else if (type == PrimitiveMap.BYTE_TYPE)
                 {
                     return this.dataIn.ReadByte();
                 }
-                else if(type == PrimitiveMap.BOOLEAN_TYPE)
+                else if (type == PrimitiveMap.BOOLEAN_TYPE)
                 {
                     return this.dataIn.ReadBoolean();
                 }
-                else if(type == PrimitiveMap.BYTE_ARRAY_TYPE)
+                else if (type == PrimitiveMap.BYTE_ARRAY_TYPE)
                 {
                     int length = this.dataIn.ReadInt32();
                     byte[] data = new byte[length];
                     this.dataIn.Read(data, 0, length);
                     return data;
                 }
-                else if(type == PrimitiveMap.NULL)
+                else if (type == PrimitiveMap.NULL)
                 {
                     return null;
                 }
@@ -620,16 +619,16 @@ namespace Apache.NMS.Commands
                     throw new MessageFormatException("Value is not a known type.");
                 }
             }
-            catch(FormatException e)
+            catch (FormatException e)
             {
                 this.byteBuffer.Seek(startingPos, SeekOrigin.Begin);
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
@@ -643,7 +642,7 @@ namespace Apache.NMS.Commands
                 this.dataOut.Write(PrimitiveMap.BOOLEAN_TYPE);
                 this.dataOut.Write(value);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -657,7 +656,7 @@ namespace Apache.NMS.Commands
                 this.dataOut.Write(PrimitiveMap.BYTE_TYPE);
                 this.dataOut.Write(value);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -678,7 +677,7 @@ namespace Apache.NMS.Commands
                 this.dataOut.Write((int) length);
                 this.dataOut.Write(value, offset, length);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -692,7 +691,7 @@ namespace Apache.NMS.Commands
                 this.dataOut.Write(PrimitiveMap.CHAR_TYPE);
                 this.dataOut.Write(value);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -706,7 +705,7 @@ namespace Apache.NMS.Commands
                 this.dataOut.Write(PrimitiveMap.SHORT_TYPE);
                 this.dataOut.Write(value);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -720,7 +719,7 @@ namespace Apache.NMS.Commands
                 this.dataOut.Write(PrimitiveMap.INTEGER_TYPE);
                 this.dataOut.Write(value);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -734,7 +733,7 @@ namespace Apache.NMS.Commands
                 this.dataOut.Write(PrimitiveMap.LONG_TYPE);
                 this.dataOut.Write(value);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -748,7 +747,7 @@ namespace Apache.NMS.Commands
                 this.dataOut.Write(PrimitiveMap.FLOAT_TYPE);
                 this.dataOut.Write(value);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -762,7 +761,7 @@ namespace Apache.NMS.Commands
                 this.dataOut.Write(PrimitiveMap.DOUBLE_TYPE);
                 this.dataOut.Write(value);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -773,7 +772,7 @@ namespace Apache.NMS.Commands
             InitializeWriting();
             try
             {
-                if( value.Length > 8192 )
+                if (value.Length > 8192)
                 {
                     this.dataOut.Write(PrimitiveMap.BIG_STRING_TYPE);
                     this.dataOut.WriteString32(value);
@@ -784,7 +783,7 @@ namespace Apache.NMS.Commands
                     this.dataOut.WriteString16(value);
                 }
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 NMSExceptionSupport.Create(e);
             }
@@ -793,45 +792,45 @@ namespace Apache.NMS.Commands
         public void WriteObject(Object value)
         {
             InitializeWriting();
-            if( value is System.Byte )
+            if (value is System.Byte)
             {
-                this.WriteByte( (byte) value );
+                this.WriteByte((byte) value);
             }
-            else if( value is Char )
+            else if (value is Char)
             {
-                this.WriteChar( (char) value );
+                this.WriteChar((char) value);
             }
-            else if( value is Boolean )
+            else if (value is Boolean)
             {
-                this.WriteBoolean( (bool) value );
+                this.WriteBoolean((bool) value);
             }
-            else if( value is Int16 )
+            else if (value is Int16)
             {
-                this.WriteInt16( (short) value );
+                this.WriteInt16((short) value);
             }
-            else if( value is Int32 )
+            else if (value is Int32)
             {
-                this.WriteInt32( (int) value );
+                this.WriteInt32((int) value);
             }
-            else if( value is Int64 )
+            else if (value is Int64)
             {
-                this.WriteInt64( (long) value );
+                this.WriteInt64((long) value);
             }
-            else if( value is Single )
+            else if (value is Single)
             {
-                this.WriteSingle( (float) value );
+                this.WriteSingle((float) value);
             }
-            else if( value is Double )
+            else if (value is Double)
             {
-                this.WriteDouble( (double) value );
+                this.WriteDouble((double) value);
             }
-            else if( value is byte[] )
+            else if (value is byte[])
             {
-                this.WriteBytes( (byte[]) value );
+                this.WriteBytes((byte[]) value);
             }
-            else if( value is String )
+            else if (value is String)
             {
-                this.WriteString( (string) value );
+                this.WriteString((string) value);
             }
             else
             {
@@ -867,7 +866,7 @@ namespace Apache.NMS.Commands
         private void InitializeReading()
         {
             FailIfWriteOnlyBody();
-            if(this.dataIn == null)
+            if (this.dataIn == null)
             {
                 this.byteBuffer = new MemoryStream(this.Content, false);
                 this.dataIn = new EndianBinaryReader(this.byteBuffer);
@@ -877,7 +876,7 @@ namespace Apache.NMS.Commands
         private void InitializeWriting()
         {
             FailIfReadOnlyBody();
-            if(this.dataOut == null)
+            if (this.dataOut == null)
             {
                 this.byteBuffer = new MemoryStream();
                 this.dataOut = new EndianBinaryWriter(this.byteBuffer);
@@ -886,7 +885,7 @@ namespace Apache.NMS.Commands
 
         private void StoreContent()
         {
-            if( dataOut != null)
+            if (dataOut != null)
             {
                 dataOut.Close();
 
@@ -895,7 +894,5 @@ namespace Apache.NMS.Commands
                 this.byteBuffer = null;
             }
         }
-
     }
 }
-

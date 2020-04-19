@@ -14,65 +14,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System.Collections;
 
 namespace Apache.NMS
 {
-	/// <summary>
-	/// Represents a Map of primitive types where the keys are all string instances
-	/// and the values are strings or numbers.
-	/// </summary>
-	public interface IPrimitiveMap
-	{
-		void Clear();
+    /// <summary>
+    /// Represents a Map of primitive types where the keys are all string instances
+    /// and the values are strings or numbers.
+    /// </summary>
+    public interface IPrimitiveMap
+    {
+        void Clear();
 
-		bool Contains(object key);
+        bool Contains(object key);
 
-		void Remove(object key);
+        void Remove(object key);
 
-		int Count { get; }
+        int Count { get; }
 
-		ICollection Keys { get; }
+        ICollection Keys { get; }
 
-		ICollection Values { get; }
+        ICollection Values { get; }
 
-		object this[string key] { get; set; }
+        object this[string key] { get; set; }
 
-		string GetString(string key);
-		void SetString(string key, string value);
+        string GetString(string key);
+        void SetString(string key, string value);
 
-		bool GetBool(string key);
-		void SetBool(string key, bool value);
+        bool GetBool(string key);
+        void SetBool(string key, bool value);
 
-		byte GetByte(string key);
-		void SetByte(string key, byte value);
+        byte GetByte(string key);
+        void SetByte(string key, byte value);
 
-		char GetChar(string key);
-		void SetChar(string key, char value);
+        char GetChar(string key);
+        void SetChar(string key, char value);
 
-		short GetShort(string key);
-		void SetShort(string key, short value);
+        short GetShort(string key);
+        void SetShort(string key, short value);
 
-		int GetInt(string key);
-		void SetInt(string key, int value);
+        int GetInt(string key);
+        void SetInt(string key, int value);
 
-		long GetLong(string key);
-		void SetLong(string key, long value);
+        long GetLong(string key);
+        void SetLong(string key, long value);
 
-		float GetFloat(string key);
-		void SetFloat(string key, float value);
+        float GetFloat(string key);
+        void SetFloat(string key, float value);
 
-		double GetDouble(string key);
-		void SetDouble(string key, double value);
+        double GetDouble(string key);
+        void SetDouble(string key, double value);
 
-		IList GetList(string key);
-		void SetList(string key, IList list);
-		
-		void SetBytes(string key, byte[] value);
-		void SetBytes(string key, byte[] value, int offset, int length);
-		byte[] GetBytes(string key);
+        IList GetList(string key);
+        void SetList(string key, IList list);
 
-		IDictionary GetDictionary(string key);
-		void SetDictionary(string key, IDictionary dictionary);
-	}
+        void SetBytes(string key, byte[] value);
+        void SetBytes(string key, byte[] value, int offset, int length);
+        byte[] GetBytes(string key);
+
+        IDictionary GetDictionary(string key);
+        void SetDictionary(string key, IDictionary dictionary);
+    }
 }

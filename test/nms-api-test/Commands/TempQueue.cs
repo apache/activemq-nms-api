@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace Apache.NMS.Commands
@@ -35,10 +36,7 @@ namespace Apache.NMS.Commands
 
         override public DestinationType DestinationType
         {
-            get
-            {
-                return DestinationType.TemporaryQueue;
-            }
+            get { return DestinationType.TemporaryQueue; }
         }
 
         public String QueueName
@@ -75,7 +73,5 @@ namespace Apache.NMS.Commands
 
             return o;
         }
-
     }
 }
-

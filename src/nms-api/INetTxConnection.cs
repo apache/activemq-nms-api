@@ -17,6 +17,7 @@
 
 #if !NETCF
 using System.Transactions;
+
 #endif
 
 namespace Apache.NMS
@@ -47,4 +48,3 @@ namespace Apache.NMS
 #endif
     }
 }
-

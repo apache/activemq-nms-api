@@ -25,41 +25,41 @@ namespace Apache.NMS
         /// <value>
         /// Get the Major version number of the NMS API this Provider supports.
         /// </value>
-        int NMSMajorVersion{ get; }
-        
+        int NMSMajorVersion { get; }
+
         /// <value>
         /// Get the Minor version number of the NMS API this Provider supports.
         /// </value>
-        int NMSMinorVersion{ get; }
-        
+        int NMSMinorVersion { get; }
+
         /// <value>
         /// Get the name of this NMS Provider. 
         /// </value>
-        string NMSProviderName{ get; }
-        
+        string NMSProviderName { get; }
+
         /// <value>
         /// Gets a formatted string detailing the NMS API version this Provider supports.  
         /// </value>
-        string NMSVersion{ get; }
-        
+        string NMSVersion { get; }
+
         /// <value>
         /// Gets a String array of all the NMSX property names this NMS Provider supports.
         /// </value>
-        string[] NMSXPropertyNames{ get; }
-        
+        string[] NMSXPropertyNames { get; }
+
         /// <value>
         /// Gets the Providers Major version number. 
         /// </value>
-        int ProviderMajorVersion{ get; }
+        int ProviderMajorVersion { get; }
 
         /// <value>
         /// Gets the Providers Minor version number. 
         /// </value>
-        int ProviderMinorVersion{ get; }
+        int ProviderMinorVersion { get; }
 
         /// <value>
         /// Gets a formatted string detailing the version of this NMS Provider.  
         /// </value>
-        string ProviderVersion{ get; }
+        string ProviderVersion { get; }
     }
 }

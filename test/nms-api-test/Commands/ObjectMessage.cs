@@ -18,7 +18,6 @@
 using System;
 using System.Collections;
 using System.IO;
-
 using Apache.NMS;
 
 namespace Apache.NMS.Commands
@@ -27,9 +26,10 @@ namespace Apache.NMS.Commands
     {
         private object body;
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return GetType().Name + "["
-                + " ]";
+                                  + " ]";
         }
 
         // Properties
@@ -39,6 +39,5 @@ namespace Apache.NMS.Commands
             get { return body; }
             set { body = value; }
         }
-
     }
 }

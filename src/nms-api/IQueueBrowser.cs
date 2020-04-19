@@ -55,6 +55,5 @@ namespace Apache.NMS
         /// doe to some internal error.
         /// </exception>
         IQueue Queue { get; }
-
     }
 }

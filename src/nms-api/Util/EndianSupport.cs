@@ -14,84 +14,84 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.IO;
 
 namespace Apache.NMS.Util
 {
-	/// <summary>
-	/// Support class that switches from one endian to the other.
-	/// </summary>
-	[CLSCompliant(false)]
-	public class EndianSupport
-	{
-		
+    /// <summary>
+    /// Support class that switches from one endian to the other.
+    /// </summary>
+    [CLSCompliant(false)]
+    public class EndianSupport
+    {
         public static char SwitchEndian(char x)
         {
-			return (char) (
-				(((char)( (byte)(x)       )) << 8 ) |
-				(((char)( (byte)(x >> 8)  )) )
-				);
+            return (char) (
+                (((char) ((byte) (x))) << 8) |
+                (((char) ((byte) (x >> 8))))
+            );
         }
-        		
+
         public static short SwitchEndian(short x)
         {
-			return (short) (
-				(((ushort)( (byte)(x)       )) << 8 ) |
-				(((ushort)( (byte)(x >> 8)  )) )
-				);
+            return (short) (
+                (((ushort) ((byte) (x))) << 8) |
+                (((ushort) ((byte) (x >> 8))))
+            );
         }
-				
+
         public static int SwitchEndian(int x)
         {
-			return
-				(((int)( (byte)(x)       )) << 24 ) |
-				(((int)( (byte)(x >> 8)  )) << 16 ) |
-				(((int)( (byte)(x >> 16) )) << 8  ) |
-				(((int)( (byte)(x >> 24) )) );
+            return
+                (((int) ((byte) (x))) << 24) |
+                (((int) ((byte) (x >> 8))) << 16) |
+                (((int) ((byte) (x >> 16))) << 8) |
+                (((int) ((byte) (x >> 24))));
         }
-		
+
         public static long SwitchEndian(long x)
         {
-			return
-				(((long)( (byte)(x     )  )) << 56 ) |
-				(((long)( (byte)(x >> 8)  )) << 48 ) |
-				(((long)( (byte)(x >> 16) )) << 40 ) |
-				(((long)( (byte)(x >> 24) )) << 32 ) |
-				(((long)( (byte)(x >> 32) )) << 24 ) |
-				(((long)( (byte)(x >> 40) )) << 16 ) |
-				(((long)( (byte)(x >> 48) )) << 8  ) |
-				(((long)( (byte)(x >> 56) )) );
+            return
+                (((long) ((byte) (x))) << 56) |
+                (((long) ((byte) (x >> 8))) << 48) |
+                (((long) ((byte) (x >> 16))) << 40) |
+                (((long) ((byte) (x >> 24))) << 32) |
+                (((long) ((byte) (x >> 32))) << 24) |
+                (((long) ((byte) (x >> 40))) << 16) |
+                (((long) ((byte) (x >> 48))) << 8) |
+                (((long) ((byte) (x >> 56))));
         }
-		
+
         public static ushort SwitchEndian(ushort x)
         {
-			return (ushort) (
-				(((ushort)( (byte)(x)       )) << 8 ) |
-				(((ushort)( (byte)(x >> 8)  )) )
-				);
+            return (ushort) (
+                (((ushort) ((byte) (x))) << 8) |
+                (((ushort) ((byte) (x >> 8))))
+            );
         }
-		
+
         public static uint SwitchEndian(uint x)
         {
-			return
-				(((uint)( (byte)(x     )  )) << 24 ) |
-				(((uint)( (byte)(x >> 8)  )) << 16 ) |
-				(((uint)( (byte)(x >> 16) )) << 8  ) |
-				(((uint)( (byte)(x >> 24) )) );
+            return
+                (((uint) ((byte) (x))) << 24) |
+                (((uint) ((byte) (x >> 8))) << 16) |
+                (((uint) ((byte) (x >> 16))) << 8) |
+                (((uint) ((byte) (x >> 24))));
         }
-        
+
         public static ulong SwitchEndian(ulong x)
         {
-			return
-				(((ulong)( (byte)(x     )  )) << 56 ) |
-				(((ulong)( (byte)(x >> 8)  )) << 48 ) |
-				(((ulong)( (byte)(x >> 16) )) << 40 ) |
-				(((ulong)( (byte)(x >> 24) )) << 32 ) |
-				(((ulong)( (byte)(x >> 32) )) << 24 ) |
-				(((ulong)( (byte)(x >> 40) )) << 16 ) |
-				(((ulong)( (byte)(x >> 48) )) << 8  ) |
-				(((ulong)( (byte)(x >> 56) )) );
+            return
+                (((ulong) ((byte) (x))) << 56) |
+                (((ulong) ((byte) (x >> 8))) << 48) |
+                (((ulong) ((byte) (x >> 16))) << 40) |
+                (((ulong) ((byte) (x >> 24))) << 32) |
+                (((ulong) ((byte) (x >> 32))) << 24) |
+                (((ulong) ((byte) (x >> 40))) << 16) |
+                (((ulong) ((byte) (x >> 48))) << 8) |
+                (((ulong) ((byte) (x >> 56))));
         }
 
         public static double SwitchEndian(double x)
@@ -105,7 +105,7 @@ namespace Apache.NMS.Util
             return br.ReadDouble();
         }
 
-		
+
         public static float SwitchEndian(float x)
         {
             MemoryStream ms = new MemoryStream();
@@ -116,18 +116,19 @@ namespace Apache.NMS.Util
             BinaryReader br = new BinaryReader(ms);
             return br.ReadSingle();
         }
-		
+
 
         public static byte[] SwitchEndian(byte[] x)
         {
             byte[] rc = new byte[x.Length];
-            int j = x.Length-1;
-            for(int i=0; i < x.Length; i++ ) {
+            int j = x.Length - 1;
+            for (int i = 0; i < x.Length; i++)
+            {
                 rc[i] = x[j];
                 j--;
             }
+
             return rc;
         }
     }
 }
-
