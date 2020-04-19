@@ -16,35 +16,33 @@
  */
 
 using System;
-
 using Apache.NMS.Util;
-
 using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-	[TestFixture]
-	public class MessageTransformerTest : NMSTestSupport
-	{
-		private string propertyName = "ADDITIONAL-PROPERTY";
-		private string propertyValue = "ADDITIONAL-PROPERTY-VALUE";
-				
-		[Test]
-		public void TestProducerTransformer(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
-		{
-			using(IConnection connection = CreateConnection())
-			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				{
-					IDestination destination = session.CreateTemporaryTopic();
-					using(IMessageConsumer consumer = session.CreateConsumer(destination))
-					using(IMessageProducer producer = session.CreateProducer(destination))
-					{
-						producer.DeliveryMode = deliveryMode;
-						producer.ProducerTransformer = DoProducerTransform;
+    [TestFixture]
+    public class MessageTransformerTest : NMSTestSupport
+    {
+        private string propertyName = "ADDITIONAL-PROPERTY";
+        private string propertyValue = "ADDITIONAL-PROPERTY-VALUE";
+
+        [Test]
+        public void TestProducerTransformer(
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
+        {
+            using (IConnection connection = CreateConnection())
+            {
+                connection.Start();
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                {
+                    IDestination destination = session.CreateTemporaryTopic();
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
+                    {
+                        producer.DeliveryMode = deliveryMode;
+                        producer.ProducerTransformer = DoProducerTransform;
 
                         IMessage message = session.CreateMessage();
 
@@ -59,28 +57,28 @@ namespace Apache.NMS.Test
 
                         Assert.AreEqual("Value", message.Properties["Test"]);
                         Assert.AreEqual(propertyValue, message.Properties[propertyName]);
-					}
-				}
-			}
-		}
-		
-		[Test]
-		public void TestConsumerTransformer(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
-		{
-			using(IConnection connection = CreateConnection())
-			{
-				connection.Start();
-				using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				{
-					IDestination destination = session.CreateTemporaryTopic();
-					using(IMessageConsumer consumer = session.CreateConsumer(destination))
-					using(IMessageProducer producer = session.CreateProducer(destination))
-					{
-						producer.DeliveryMode = deliveryMode;
+                    }
+                }
+            }
+        }
 
-						consumer.ConsumerTransformer = DoConsumerTransform;
+        [Test]
+        public void TestConsumerTransformer(
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
+        {
+            using (IConnection connection = CreateConnection())
+            {
+                connection.Start();
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                {
+                    IDestination destination = session.CreateTemporaryTopic();
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
+                    {
+                        producer.DeliveryMode = deliveryMode;
+
+                        consumer.ConsumerTransformer = DoConsumerTransform;
 
                         IMessage message = session.CreateMessage();
 
@@ -96,27 +94,26 @@ namespace Apache.NMS.Test
                         Assert.AreEqual("Value", message.Properties["Test"], "Propert 'Value' was incorrect");
                         Assert.AreEqual(propertyValue, message.Properties[propertyName], "Property not inserted");
                     }
-				}
-			}
-		}
-		
-		private IMessage DoProducerTransform(ISession session, IMessageProducer producer, IMessage message)
-		{
-			message.Properties[propertyName] = propertyValue;
-			
-			return message;
-		}
+                }
+            }
+        }
 
-		private IMessage DoConsumerTransform(ISession session, IMessageConsumer consumer, IMessage message)
-		{
+        private IMessage DoProducerTransform(ISession session, IMessageProducer producer, IMessage message)
+        {
+            message.Properties[propertyName] = propertyValue;
+
+            return message;
+        }
+
+        private IMessage DoConsumerTransform(ISession session, IMessageConsumer consumer, IMessage message)
+        {
             IMessage newMessage = session.CreateMessage();
 
             MessageTransformation.CopyNMSMessageProperties(message, newMessage);
 
-			newMessage.Properties[propertyName] = propertyValue;
+            newMessage.Properties[propertyName] = propertyValue;
 
-			return newMessage;
-		}
-	}
+            return newMessage;
+        }
+    }
 }
-

@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Apache.NMS
 {
-	/// <summary>
-	/// Represents a queue in a message broker. A message sent to a queue is delivered
-	/// to at most one consumer on the queue.
-	/// </summary>
-	public interface IQueue : IDestination
-	{
-		string QueueName { get; }
-	}
+    /// <summary>
+    /// Represents a queue in a message broker. A message sent to a queue is delivered
+    /// to at most one consumer on the queue.
+    /// </summary>
+    public interface IQueue : IDestination
+    {
+        string QueueName { get; }
+    }
 }
-
-

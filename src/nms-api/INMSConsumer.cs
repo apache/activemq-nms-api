@@ -14,64 +14,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace Apache.NMS
 {
+    /// <summary>
+    /// An object capable of sending messages to some destination
+    /// </summary>
+    public interface INMSConsumer : System.IDisposable
+    {
+        string MessageSelector { get; }
 
-	/// <summary>
-	/// An object capable of sending messages to some destination
-	/// </summary>
-	public interface INMSConsumer : System.IDisposable
-	{
+        /// <summary>
+        /// Waits until a message is available and returns it
+        /// </summary>
+        IMessage Receive();
 
-		string MessageSelector { get; }
+        /// <summary>
+        /// If a message is available within the timeout duration it is returned otherwise this method returns null
+        /// </summary>
+        IMessage Receive(TimeSpan timeout);
 
-		/// <summary>
-		/// Waits until a message is available and returns it
-		/// </summary>
-		IMessage Receive();
-
-		/// <summary>
-		/// If a message is available within the timeout duration it is returned otherwise this method returns null
-		/// </summary>
-		IMessage Receive(TimeSpan timeout);
-
-		/// <summary>
-		/// Receives the next message if one is immediately available for delivery on the client side
-		/// otherwise this method returns null. It is never an error for this method to return null, the
-		/// time of Message availability varies so your client cannot rely on this method to receive a
-		/// message immediately after one has been sent.
-		/// </summary>
-		IMessage ReceiveNoWait();
+        /// <summary>
+        /// Receives the next message if one is immediately available for delivery on the client side
+        /// otherwise this method returns null. It is never an error for this method to return null, the
+        /// time of Message availability varies so your client cannot rely on this method to receive a
+        /// message immediately after one has been sent.
+        /// </summary>
+        IMessage ReceiveNoWait();
 
 
-		T ReceiveBody<T>();
-		
-		T ReceiveBody<T>(TimeSpan timeout);
+        T ReceiveBody<T>();
 
-		T ReceiveBodyNoWait<T>();
-		
-		
-		/// <summary>
-		/// An asynchronous listener which can be used to consume messages asynchronously
-		/// </summary>
-		event MessageListener Listener;
+        T ReceiveBody<T>(TimeSpan timeout);
 
-		/// <summary>
-		/// Closes the message consumer.
-		/// </summary>
-		/// <remarks>
-		/// Clients should close message consumers when they are not needed.
-		/// This call blocks until a receive or message listener in progress has completed.
-		/// A blocked message consumer receive call returns null when this message consumer is closed.
-		/// </remarks>
-		void Close();
+        T ReceiveBodyNoWait<T>();
 
-		/// <summary>
-		/// A Delegate that is called each time a Message is dispatched to allow the client to do
-		/// any necessary transformations on the received message before it is delivered.
-		/// </summary>
-		ConsumerTransformerDelegate ConsumerTransformer { get; set; }
-	}
+
+        /// <summary>
+        /// An asynchronous listener which can be used to consume messages asynchronously
+        /// </summary>
+        event MessageListener Listener;
+
+        /// <summary>
+        /// Closes the message consumer.
+        /// </summary>
+        /// <remarks>
+        /// Clients should close message consumers when they are not needed.
+        /// This call blocks until a receive or message listener in progress has completed.
+        /// A blocked message consumer receive call returns null when this message consumer is closed.
+        /// </remarks>
+        void Close();
+
+        /// <summary>
+        /// A Delegate that is called each time a Message is dispatched to allow the client to do
+        /// any necessary transformations on the received message before it is delivered.
+        /// </summary>
+        ConsumerTransformerDelegate ConsumerTransformer { get; set; }
+    }
 }

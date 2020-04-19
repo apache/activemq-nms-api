@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace Apache.NMS.Commands
 {
-
     /// <summary>
     /// Summary description for Topic.
     /// </summary>
@@ -34,10 +34,7 @@ namespace Apache.NMS.Commands
 
         override public DestinationType DestinationType
         {
-            get
-            {
-                return DestinationType.Topic;
-            }
+            get { return DestinationType.Topic; }
         }
 
         public String TopicName
@@ -71,4 +68,3 @@ namespace Apache.NMS.Commands
         }
     }
 }
-

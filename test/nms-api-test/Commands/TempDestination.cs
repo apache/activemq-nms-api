@@ -31,10 +31,7 @@ namespace Apache.NMS.Commands
             return null;
         }
 
-        abstract override public DestinationType DestinationType
-        {
-            get;
-        }
+        abstract override public DestinationType DestinationType { get; }
 
         public TempDestination()
             : base()
@@ -67,4 +64,3 @@ namespace Apache.NMS.Commands
         }
     }
 }
-

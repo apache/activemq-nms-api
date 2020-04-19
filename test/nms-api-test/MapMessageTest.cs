@@ -40,20 +40,20 @@ namespace Apache.NMS.Test
         protected float m = 2.1F;
         protected double n = 2.3;
         protected byte[] o = {1, 2, 3, 4, 5};
-		
+
         [Test]
         public void SendReceiveMapMessage(
             [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-					IDestination destination = CreateDestination(session, DestinationType.Queue);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    IDestination destination = CreateDestination(session, DestinationType.Queue);
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
                         IMapMessage request = session.CreateMapMessage();
@@ -123,14 +123,14 @@ namespace Apache.NMS.Test
             [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-					IDestination destination = CreateDestination(session, DestinationType.Queue);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    IDestination destination = CreateDestination(session, DestinationType.Queue);
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         try
                         {
@@ -142,7 +142,7 @@ namespace Apache.NMS.Test
 
                             IDictionary grandChildMap = new Hashtable();
                             grandChildMap["x"] = "abc";
-                            grandChildMap["y"] = new ArrayList(new object[] { "a", "b", "c" });
+                            grandChildMap["y"] = new ArrayList(new object[] {"a", "b", "c"});
 
                             IDictionary nestedMap = new Hashtable();
                             nestedMap["a"] = "foo";
@@ -151,7 +151,7 @@ namespace Apache.NMS.Test
                             nestedMap["d"] = grandChildMap;
 
                             request.Body.SetDictionary("mapField", nestedMap);
-                            request.Body.SetList("listField", new ArrayList(new Object[] { "a", "b", "c" }));
+                            request.Body.SetList("listField", new ArrayList(new Object[] {"a", "b", "c"}));
 
                             producer.Send(request);
 
@@ -165,14 +165,16 @@ namespace Apache.NMS.Test
 
                             IDictionary nestedMapResponse = message.Body.GetDictionary("mapField");
                             Assert.IsNotNull(nestedMapResponse, "Nested map not returned.");
-                            Assert.AreEqual(nestedMap.Count, nestedMapResponse.Count, "nestedMap: Wrong number of elements");
+                            Assert.AreEqual(nestedMap.Count, nestedMapResponse.Count,
+                                "nestedMap: Wrong number of elements");
                             Assert.AreEqual("foo", nestedMapResponse["a"], "nestedMap: a");
                             Assert.AreEqual(23, nestedMapResponse["b"], "nestedMap: b");
                             Assert.AreEqual(45, nestedMapResponse["c"], "nestedMap: c");
 
                             IDictionary grandChildMapResponse = nestedMapResponse["d"] as IDictionary;
                             Assert.IsNotNull(grandChildMapResponse, "Grand child map not returned.");
-                            Assert.AreEqual(grandChildMap.Count, grandChildMapResponse.Count, "grandChildMap: Wrong number of elements");
+                            Assert.AreEqual(grandChildMap.Count, grandChildMapResponse.Count,
+                                "grandChildMap: Wrong number of elements");
                             Assert.AreEqual(grandChildMapResponse["x"], "abc", "grandChildMap: x");
 
                             IList grandChildList = grandChildMapResponse["y"] as IList;
@@ -184,17 +186,18 @@ namespace Apache.NMS.Test
 
                             IList listFieldResponse = message.Body.GetList("listField");
                             Assert.IsNotNull(listFieldResponse, "Nested list not returned.");
-                            Assert.AreEqual(3, listFieldResponse.Count, "listFieldResponse: Wrong number of list elements.");
+                            Assert.AreEqual(3, listFieldResponse.Count,
+                                "listFieldResponse: Wrong number of list elements.");
                             Assert.AreEqual("a", listFieldResponse[0], "listFieldResponse: a");
                             Assert.AreEqual("b", listFieldResponse[1], "listFieldResponse: b");
                             Assert.AreEqual("c", listFieldResponse[2], "listFieldResponse: c");
                         }
-						catch(NotSupportedException)
-						{
-						}
-                        catch(NMSException e)
+                        catch (NotSupportedException)
                         {
-							Assert.IsTrue(e.InnerException.GetType() == typeof(NotSupportedException));
+                        }
+                        catch (NMSException e)
+                        {
+                            Assert.IsTrue(e.InnerException.GetType() == typeof(NotSupportedException));
                         }
                     }
                 }

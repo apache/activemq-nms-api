@@ -19,71 +19,71 @@ using System;
 
 namespace Apache.NMS.Util
 {
-	public class AtomicReference<T>
-	{
-		protected T atomicValue;
+    public class AtomicReference<T>
+    {
+        protected T atomicValue;
 
-		public T Value
-		{
-			get
-			{
-				lock(this)
-				{
-					return atomicValue;
-				}
-			}
-			set
-			{
-				lock(this)
-				{
-					atomicValue = value;
-				}
-			}
-		}
+        public T Value
+        {
+            get
+            {
+                lock (this)
+                {
+                    return atomicValue;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    atomicValue = value;
+                }
+            }
+        }
 
-		public AtomicReference()
-		{
-			atomicValue = default(T);
-		}
+        public AtomicReference()
+        {
+            atomicValue = default(T);
+        }
 
-		public AtomicReference(T defaultValue)
-		{
-			atomicValue = defaultValue;
-		}
+        public AtomicReference(T defaultValue)
+        {
+            atomicValue = defaultValue;
+        }
 
-		public T GetAndSet(T value)
-		{
-			lock(this)
-			{
-				T ret = atomicValue;
-				atomicValue = value;
-				return ret;
-			}
-		}
-	}
+        public T GetAndSet(T value)
+        {
+            lock (this)
+            {
+                T ret = atomicValue;
+                atomicValue = value;
+                return ret;
+            }
+        }
+    }
 
-	public class Atomic<T> : AtomicReference<T> where T : IComparable
-	{
-		public Atomic() : base()
-		{
-		}
+    public class Atomic<T> : AtomicReference<T> where T : IComparable
+    {
+        public Atomic() : base()
+        {
+        }
 
-		public Atomic(T defaultValue) : base(defaultValue)
-		{
-		}
+        public Atomic(T defaultValue) : base(defaultValue)
+        {
+        }
 
-		public bool CompareAndSet(T expected, T newValue)
-		{
-			lock(this)
-			{
-				if(0 == atomicValue.CompareTo(expected))
-				{
-					atomicValue = newValue;
-					return true;
-				}
+        public bool CompareAndSet(T expected, T newValue)
+        {
+            lock (this)
+            {
+                if (0 == atomicValue.CompareTo(expected))
+                {
+                    atomicValue = newValue;
+                    return true;
+                }
 
-				return false;
-			}
-		}
-	}
+                return false;
+            }
+        }
+    }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace Apache.NMS
@@ -24,181 +25,181 @@ namespace Apache.NMS
     /// </summary>
     public delegate void SessionTxEventDelegate(ISession session);
 
-	/// <summary>
-	/// Represents a single unit of work on an IConnection.
-	/// So the ISession can be used to perform transactional receive and sends
-	/// </summary>
-	public interface ISession : IDisposable
-	{
-		/// <summary>
-		/// Creates a producer of messages
-		/// </summary>
-		IMessageProducer CreateProducer();
+    /// <summary>
+    /// Represents a single unit of work on an IConnection.
+    /// So the ISession can be used to perform transactional receive and sends
+    /// </summary>
+    public interface ISession : IDisposable
+    {
+        /// <summary>
+        /// Creates a producer of messages
+        /// </summary>
+        IMessageProducer CreateProducer();
 
-		/// <summary>
-		/// Creates a producer of messages on a given destination
-		/// </summary>
-		IMessageProducer CreateProducer(IDestination destination);
+        /// <summary>
+        /// Creates a producer of messages on a given destination
+        /// </summary>
+        IMessageProducer CreateProducer(IDestination destination);
 
-		/// <summary>
-		/// Creates a consumer of messages on a given destination
-		/// </summary>
-		IMessageConsumer CreateConsumer(IDestination destination);
+        /// <summary>
+        /// Creates a consumer of messages on a given destination
+        /// </summary>
+        IMessageConsumer CreateConsumer(IDestination destination);
 
-		/// <summary>
-		/// Creates a consumer of messages on a given destination with a selector
-		/// </summary>
-		IMessageConsumer CreateConsumer(IDestination destination, string selector);
+        /// <summary>
+        /// Creates a consumer of messages on a given destination with a selector
+        /// </summary>
+        IMessageConsumer CreateConsumer(IDestination destination, string selector);
 
-		/// <summary>
-		/// Creates a consumer of messages on a given destination with a selector
-		/// </summary>
-		IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal);
-		
-		IMessageConsumer CreateDurableConsumer(ITopic destination, string name);
+        /// <summary>
+        /// Creates a consumer of messages on a given destination with a selector
+        /// </summary>
+        IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal);
 
-       		IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector);
+        IMessageConsumer CreateDurableConsumer(ITopic destination, string name);
 
-        	/// <summary>
-    	    	/// Creates a named durable consumer of messages on a given destination with a selector
-        	/// </summary>
-        	IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
+        IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector);
 
-        	IMessageConsumer CreateSharedConsumer(ITopic destination, string name);
+        /// <summary>
+        /// Creates a named durable consumer of messages on a given destination with a selector
+        /// </summary>
+        IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
 
-      		IMessageConsumer CreateSharedConsumer(ITopic destination, string name, string selector);
+        IMessageConsumer CreateSharedConsumer(ITopic destination, string name);
 
-       		IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name);
+        IMessageConsumer CreateSharedConsumer(ITopic destination, string name, string selector);
 
-       		IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name, string selector);
+        IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name);
 
-     	   	/// <summary>
-     	   	/// Deletes a durable consumer created with CreateDurableConsumer().
-    	    	/// </summary>
-    		/// <param name="name">Name of the durable consumer</param>
-      		[Obsolete("should use unsubscribe instead")]
-      		void DeleteDurableConsumer(string name);
+        IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name, string selector);
 
-      		void Unsubscribe(string name);
+        /// <summary>
+        /// Deletes a durable consumer created with CreateDurableConsumer().
+        /// </summary>
+        /// <param name="name">Name of the durable consumer</param>
+        [Obsolete("should use unsubscribe instead")]
+        void DeleteDurableConsumer(string name);
 
-		/// <summary>
-		/// Creates a QueueBrowser object to peek at the messages on the specified queue.
-		/// </summary>
-		/// <param name="queue">
-		/// A <see cref="IQueue"/>
-		/// </param>
-		/// <returns>
-		/// A <see cref="IQueueBrowser"/>
-		/// </returns>
-		/// <exception cref="System.NotSupportedException">
-		/// If the Prodiver does not support creation of Queue Browsers.
-		/// </exception>
-		IQueueBrowser CreateBrowser(IQueue queue);
+        void Unsubscribe(string name);
 
-		/// <summary>
-		/// Creates a QueueBrowser object to peek at the messages on the specified queue
-		/// using a message selector.
-		/// </summary>
-		/// <param name="queue">
-		/// A <see cref="IQueue"/>
-		/// </param>
-		/// <param name="selector">
-		/// A <see cref="System.String"/>
-		/// </param>
-		/// <returns>
-		/// A <see cref="IQueueBrowser"/>
-		/// </returns>
-		/// <exception cref="System.NotSupportedException">
-		/// If the Prodiver does not support creation of Queue Browsers.
-		/// </exception>
-		IQueueBrowser CreateBrowser(IQueue queue, string selector);
+        /// <summary>
+        /// Creates a QueueBrowser object to peek at the messages on the specified queue.
+        /// </summary>
+        /// <param name="queue">
+        /// A <see cref="IQueue"/>
+        /// </param>
+        /// <returns>
+        /// A <see cref="IQueueBrowser"/>
+        /// </returns>
+        /// <exception cref="System.NotSupportedException">
+        /// If the Prodiver does not support creation of Queue Browsers.
+        /// </exception>
+        IQueueBrowser CreateBrowser(IQueue queue);
 
-		/// <summary>
-		/// Returns the queue for the given name
-		/// </summary>
-		IQueue GetQueue(string name);
+        /// <summary>
+        /// Creates a QueueBrowser object to peek at the messages on the specified queue
+        /// using a message selector.
+        /// </summary>
+        /// <param name="queue">
+        /// A <see cref="IQueue"/>
+        /// </param>
+        /// <param name="selector">
+        /// A <see cref="System.String"/>
+        /// </param>
+        /// <returns>
+        /// A <see cref="IQueueBrowser"/>
+        /// </returns>
+        /// <exception cref="System.NotSupportedException">
+        /// If the Prodiver does not support creation of Queue Browsers.
+        /// </exception>
+        IQueueBrowser CreateBrowser(IQueue queue, string selector);
 
-		/// <summary>
-		/// Returns the topic for the given name
-		/// </summary>
-		ITopic GetTopic(string name);
+        /// <summary>
+        /// Returns the queue for the given name
+        /// </summary>
+        IQueue GetQueue(string name);
 
-		/// <summary>
-		/// Creates a temporary queue
-		/// </summary>
-		ITemporaryQueue CreateTemporaryQueue();
+        /// <summary>
+        /// Returns the topic for the given name
+        /// </summary>
+        ITopic GetTopic(string name);
 
-		/// <summary>
-		/// Creates a temporary topic
-		/// </summary>
-		ITemporaryTopic CreateTemporaryTopic();
+        /// <summary>
+        /// Creates a temporary queue
+        /// </summary>
+        ITemporaryQueue CreateTemporaryQueue();
 
-		/// <summary>
-		/// Delete a destination (Queue, Topic, Temp Queue, Temp Topic).
-		/// </summary>
-		void DeleteDestination(IDestination destination);
+        /// <summary>
+        /// Creates a temporary topic
+        /// </summary>
+        ITemporaryTopic CreateTemporaryTopic();
 
-		// Factory methods to create messages
+        /// <summary>
+        /// Delete a destination (Queue, Topic, Temp Queue, Temp Topic).
+        /// </summary>
+        void DeleteDestination(IDestination destination);
 
-		/// <summary>
-		/// Creates a new message with an empty body
-		/// </summary>
-		IMessage CreateMessage();
+        // Factory methods to create messages
 
-		/// <summary>
-		/// Creates a new text message with an empty body
-		/// </summary>
-		ITextMessage CreateTextMessage();
+        /// <summary>
+        /// Creates a new message with an empty body
+        /// </summary>
+        IMessage CreateMessage();
 
-		/// <summary>
-		/// Creates a new text message with the given body
-		/// </summary>
-		ITextMessage CreateTextMessage(string text);
+        /// <summary>
+        /// Creates a new text message with an empty body
+        /// </summary>
+        ITextMessage CreateTextMessage();
 
-		/// <summary>
-		/// Creates a new Map message which contains primitive key and value pairs
-		/// </summary>
-		IMapMessage CreateMapMessage();
+        /// <summary>
+        /// Creates a new text message with the given body
+        /// </summary>
+        ITextMessage CreateTextMessage(string text);
 
-		/// <summary>
-		/// Creates a new Object message containing the given .NET object as the body
-		/// </summary>
-		IObjectMessage CreateObjectMessage(object body);
+        /// <summary>
+        /// Creates a new Map message which contains primitive key and value pairs
+        /// </summary>
+        IMapMessage CreateMapMessage();
 
-		/// <summary>
-		/// Creates a new binary message
-		/// </summary>
-		IBytesMessage CreateBytesMessage();
+        /// <summary>
+        /// Creates a new Object message containing the given .NET object as the body
+        /// </summary>
+        IObjectMessage CreateObjectMessage(object body);
 
-		/// <summary>
-		/// Creates a new binary message with the given body
-		/// </summary>
-		IBytesMessage CreateBytesMessage(byte[] body);
+        /// <summary>
+        /// Creates a new binary message
+        /// </summary>
+        IBytesMessage CreateBytesMessage();
 
-		/// <summary>
-		/// Creates a new stream message
-		/// </summary>
-		IStreamMessage CreateStreamMessage();
+        /// <summary>
+        /// Creates a new binary message with the given body
+        /// </summary>
+        IBytesMessage CreateBytesMessage(byte[] body);
 
-		/// <summary>
-		/// Closes the session.  There is no need to close the producers and consumers
-		/// of a closed session.
-		/// </summary>
-		void Close();
+        /// <summary>
+        /// Creates a new stream message
+        /// </summary>
+        IStreamMessage CreateStreamMessage();
 
-		/// <summary>
-		/// A Delegate that is called each time a Message is dispatched to allow the client to do
-		/// any necessary transformations on the received message before it is delivered.
-		/// The Session instance sets the delegate on each Consumer it creates.
-		/// </summary>
-		ConsumerTransformerDelegate ConsumerTransformer { get; set; }
+        /// <summary>
+        /// Closes the session.  There is no need to close the producers and consumers
+        /// of a closed session.
+        /// </summary>
+        void Close();
 
-		/// <summary>
-		/// A delegate that is called each time a Message is sent from this Producer which allows
-		/// the application to perform any needed transformations on the Message before it is sent.
-		/// The Session instance sets the delegate on each Producer it creates.
-		/// </summary>
-		ProducerTransformerDelegate ProducerTransformer { get; set; }
+        /// <summary>
+        /// A Delegate that is called each time a Message is dispatched to allow the client to do
+        /// any necessary transformations on the received message before it is delivered.
+        /// The Session instance sets the delegate on each Consumer it creates.
+        /// </summary>
+        ConsumerTransformerDelegate ConsumerTransformer { get; set; }
+
+        /// <summary>
+        /// A delegate that is called each time a Message is sent from this Producer which allows
+        /// the application to perform any needed transformations on the Message before it is sent.
+        /// The Session instance sets the delegate on each Producer it creates.
+        /// </summary>
+        ProducerTransformerDelegate ProducerTransformer { get; set; }
 
         /// <summary>
         /// Stops all Message delivery in this session and restarts it again
@@ -210,24 +211,24 @@ namespace Apache.NMS
         /// order.  It is not valid to call this method on a Transacted Session.
         /// </summary>
         void Recover();
-	
-	void Acknowledge();
 
-		#region Transaction methods
+        void Acknowledge();
 
-		/// <summary>
-		/// If this is a transactional session then commit all message
-		/// send and acknowledgements for producers and consumers in this session
-		/// </summary>
-		void Commit();
+        #region Transaction methods
 
-		/// <summary>
-		/// If this is a transactional session then rollback all message
-		/// send and acknowledgements for producers and consumers in this session
-		/// </summary>
-		void Rollback();
+        /// <summary>
+        /// If this is a transactional session then commit all message
+        /// send and acknowledgements for producers and consumers in this session
+        /// </summary>
+        void Commit();
 
-		#endregion
+        /// <summary>
+        /// If this is a transactional session then rollback all message
+        /// send and acknowledgements for producers and consumers in this session
+        /// </summary>
+        void Rollback();
+
+        #endregion
 
         #region Session Events
 
@@ -237,14 +238,14 @@ namespace Apache.NMS
 
         #endregion
 
-		#region Attributes
+        #region Attributes
 
-		TimeSpan RequestTimeout { get; set; }
+        TimeSpan RequestTimeout { get; set; }
 
-		bool Transacted { get; }
+        bool Transacted { get; }
 
-		AcknowledgementMode AcknowledgementMode { get; }
+        AcknowledgementMode AcknowledgementMode { get; }
 
-		#endregion
-	}
+        #endregion
+    }
 }

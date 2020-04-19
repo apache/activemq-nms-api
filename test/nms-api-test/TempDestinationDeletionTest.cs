@@ -21,61 +21,62 @@ using NUnit.Framework;
 
 namespace Apache.NMS.Test
 {
-	[TestFixture]
-	public class TempDestinationTests : NMSTestSupport
-	{
-		protected const string QUEUE_DESTINATION_NAME = "queue://TEST.AutoDeleteQueue";
-		protected const string TOPIC_DESTINATION_NAME = "topic://TEST.AutoDeleteTopic";
-		protected const string TEMP_QUEUE_DESTINATION_NAME = "temp-queue://TEST.AutoDeleteTempQueue";
-		protected const string TEMP_TOPIC_DESTINATION_NAME = "temp-topic://TEST.AutoDeleteTempTopic";
+    [TestFixture]
+    public class TempDestinationTests : NMSTestSupport
+    {
+        protected const string QUEUE_DESTINATION_NAME = "queue://TEST.AutoDeleteQueue";
+        protected const string TOPIC_DESTINATION_NAME = "topic://TEST.AutoDeleteTopic";
+        protected const string TEMP_QUEUE_DESTINATION_NAME = "temp-queue://TEST.AutoDeleteTempQueue";
+        protected const string TEMP_TOPIC_DESTINATION_NAME = "temp-topic://TEST.AutoDeleteTempTopic";
 
-		[Test]
-		public void TempDestinationDeletionTest(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode,
-			[Values(QUEUE_DESTINATION_NAME, TOPIC_DESTINATION_NAME, TEMP_QUEUE_DESTINATION_NAME, TEMP_TOPIC_DESTINATION_NAME)]
-			string destinationName)
-		{
-			using(IConnection connection1 = CreateConnection(GetTestClientId()))
-			{
-				connection1.Start();
-				using(ISession session = connection1.CreateSession(AcknowledgementMode.AutoAcknowledge))
-				{
-					const int MaxNumDestinations = 100;
+        [Test]
+        public void TempDestinationDeletionTest(
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode,
+            [Values(QUEUE_DESTINATION_NAME, TOPIC_DESTINATION_NAME, TEMP_QUEUE_DESTINATION_NAME,
+                TEMP_TOPIC_DESTINATION_NAME)]
+            string destinationName)
+        {
+            using (IConnection connection1 = CreateConnection(GetTestClientId()))
+            {
+                connection1.Start();
+                using (ISession session = connection1.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                {
+                    const int MaxNumDestinations = 100;
 
-					for(int index = 1; index <= MaxNumDestinations; index++)
-					{
-						IDestination destination = CreateDestination(session, destinationName);
+                    for (int index = 1; index <= MaxNumDestinations; index++)
+                    {
+                        IDestination destination = CreateDestination(session, destinationName);
 
-						using(IMessageProducer producer = session.CreateProducer(destination))
-						using(IMessageConsumer consumer = session.CreateConsumer(destination))
-						{
-							producer.DeliveryMode = deliveryMode;
+                        using (IMessageProducer producer = session.CreateProducer(destination))
+                        using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                        {
+                            producer.DeliveryMode = deliveryMode;
 
-							IMessage request = session.CreateTextMessage("Hello World, Just Passing Through!");
+                            IMessage request = session.CreateTextMessage("Hello World, Just Passing Through!");
 
-							request.NMSType = "TEMP_MSG";
-							producer.Send(request);
-							IMessage receivedMsg = consumer.Receive(TimeSpan.FromMilliseconds(5000));
-							Assert.IsNotNull(receivedMsg);
-							Assert.AreEqual(receivedMsg.NMSType, "TEMP_MSG");
-							
-							// Ensures that Consumer closes out its subscription
-							consumer.Close();
-						}
+                            request.NMSType = "TEMP_MSG";
+                            producer.Send(request);
+                            IMessage receivedMsg = consumer.Receive(TimeSpan.FromMilliseconds(5000));
+                            Assert.IsNotNull(receivedMsg);
+                            Assert.AreEqual(receivedMsg.NMSType, "TEMP_MSG");
 
-						try
-						{
-							session.DeleteDestination(destination);
-						}
-						catch(NotSupportedException)
-						{
-							// Might as well not try this again.
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
+                            // Ensures that Consumer closes out its subscription
+                            consumer.Close();
+                        }
+
+                        try
+                        {
+                            session.DeleteDestination(destination);
+                        }
+                        catch (NotSupportedException)
+                        {
+                            // Might as well not try this again.
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

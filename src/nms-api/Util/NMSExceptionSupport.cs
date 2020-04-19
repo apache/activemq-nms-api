@@ -18,58 +18,62 @@
 using System;
 
 namespace Apache.NMS.Util
-{    
+{
     public sealed class NMSExceptionSupport
     {
         private NMSExceptionSupport()
-        {            
+        {
         }
-        
+
         public static NMSException Create(string message, string errorCode, Exception cause)
         {
             NMSException exception = new NMSException(message, errorCode, cause);
             return exception;
         }
-                
+
         public static NMSException Create(string message, Exception cause)
         {
             NMSException exception = new NMSException(message, cause);
             return exception;
         }
-        
+
         public static NMSException Create(Exception cause)
         {
-            if(cause is NMSException) 
+            if (cause is NMSException)
             {
                 return (NMSException) cause;
             }
+
             string msg = cause.Message;
-            if(msg == null || msg.Length == 0) 
+            if (msg == null || msg.Length == 0)
             {
                 msg = cause.ToString();
             }
+
             NMSException exception = new NMSException(msg, cause);
             return exception;
         }
-    
-        public static MessageEOFException CreateMessageEOFException(Exception cause) 
+
+        public static MessageEOFException CreateMessageEOFException(Exception cause)
         {
             string msg = cause.Message;
-            if (msg == null || msg.Length == 0) 
+            if (msg == null || msg.Length == 0)
             {
                 msg = cause.ToString();
             }
+
             MessageEOFException exception = new MessageEOFException(msg, cause);
             return exception;
         }
-    
-        public static MessageFormatException CreateMessageFormatException(Exception cause) 
+
+        public static MessageFormatException CreateMessageFormatException(Exception cause)
         {
             string msg = cause.Message;
-            if (msg == null || msg.Length == 0) 
+            if (msg == null || msg.Length == 0)
             {
                 msg = cause.ToString();
             }
+
             MessageFormatException exception = new MessageFormatException(msg, cause);
             return exception;
         }

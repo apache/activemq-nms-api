@@ -18,7 +18,7 @@
 using System;
 
 namespace Apache.NMS
-{   
+{
     /// <summary>
     /// A StreamMessage object is used to send a stream of primitive types in the 
     /// .NET programming language. It is filled and read sequentially. It inherits 
@@ -73,7 +73,6 @@ namespace Apache.NMS
     /// </summary>
     public interface IStreamMessage : IMessage
     {
-
         /// <summary>
         /// Reads a boolean from the stream message.
         /// </summary>
@@ -93,7 +92,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>
         bool ReadBoolean();
-        
+
         /// <summary>
         /// Reads a byte from the stream message.
         /// </summary>
@@ -113,7 +112,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>        
         byte ReadByte();
-        
+
         /// <summary>
         /// Reads a byte array field from the stream message into the specified byte[] 
         /// object (the read buffer).
@@ -158,7 +157,7 @@ namespace Apache.NMS
         /// </exception>     
         /// <seealso cref="ReadObject"/>
         int ReadBytes(byte[] value);
-        
+
         /// <summary>
         /// Reads a char from the stream message.
         /// </summary>
@@ -178,7 +177,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>                
         char ReadChar();
-        
+
         /// <summary>
         /// Reads a short from the stream message.
         /// </summary>
@@ -198,7 +197,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>        
         short ReadInt16();
-        
+
         /// <summary>
         /// Reads a int from the stream message.
         /// </summary>
@@ -218,7 +217,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>        
         int ReadInt32();
-        
+
         /// <summary>
         /// Reads a long from the stream message.
         /// </summary>
@@ -238,7 +237,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>        
         long ReadInt64();
-        
+
         /// <summary>
         /// Reads a float from the stream message.
         /// </summary>
@@ -258,7 +257,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>        
         float ReadSingle();
-        
+
         /// <summary>
         /// Reads a double from the stream message.
         /// </summary>
@@ -278,7 +277,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>        
         double ReadDouble();
-        
+
         /// <summary>
         /// Reads a string from the stream message.
         /// </summary>
@@ -298,7 +297,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>        
         string ReadString();
-        
+
         /// <summary>
         /// Reads a Object from the stream message.
         /// </summary>
@@ -318,7 +317,7 @@ namespace Apache.NMS
         /// if the message is in write-only mode.
         /// </exception>        
         Object ReadObject();
-        
+
         /// <summary>
         /// Writes a boolean to the stream message.
         /// </summary>
@@ -404,7 +403,7 @@ namespace Apache.NMS
         /// if the message is in read-only mode.
         /// </exception>
         void WriteChar(char value);
-        
+
         /// <summary>
         /// Writes a short to the stream message.
         /// </summary>
@@ -418,7 +417,7 @@ namespace Apache.NMS
         /// if the message is in read-only mode.
         /// </exception>
         void WriteInt16(short value);
-        
+
         /// <summary>
         /// Writes a int to the stream message.
         /// </summary>
@@ -432,7 +431,7 @@ namespace Apache.NMS
         /// if the message is in read-only mode.
         /// </exception>
         void WriteInt32(int value);
-        
+
         /// <summary>
         /// Writes a long to the stream message.
         /// </summary>
@@ -446,7 +445,7 @@ namespace Apache.NMS
         /// if the message is in read-only mode.
         /// </exception>
         void WriteInt64(long value);
-        
+
         /// <summary>
         /// Writes a float to the stream message.
         /// </summary>
@@ -460,7 +459,7 @@ namespace Apache.NMS
         /// if the message is in read-only mode.
         /// </exception>
         void WriteSingle(float value);
-        
+
         /// <summary>
         /// Writes a double to the stream message.
         /// </summary>
@@ -474,7 +473,7 @@ namespace Apache.NMS
         /// if the message is in read-only mode.
         /// </exception>
         void WriteDouble(double value);
-        
+
         /// <summary>
         /// Writes a string to the stream message.
         /// </summary>
@@ -488,7 +487,7 @@ namespace Apache.NMS
         /// if the message is in read-only mode.
         /// </exception>
         void WriteString(string value);
-        
+
         /// <summary>
         /// Writes a boolean to the stream message.
         /// </summary>
@@ -513,6 +512,5 @@ namespace Apache.NMS
         /// Thrown when there is an unhandled exception thrown from the provider.
         /// </exception>          
         void Reset();
-        
     }
 }

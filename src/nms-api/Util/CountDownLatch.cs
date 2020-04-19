@@ -14,52 +14,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Threading;
 
 namespace Apache.NMS.Util
 {
-	public class CountDownLatch
-	{
-		private readonly ManualResetEvent mutex = new ManualResetEvent(false);
-		private int remaining;
+    public class CountDownLatch
+    {
+        private readonly ManualResetEvent mutex = new ManualResetEvent(false);
+        private int remaining;
 
-		public CountDownLatch(int i)
-		{
-			remaining = i;
-		}
+        public CountDownLatch(int i)
+        {
+            remaining = i;
+        }
 
         /// <summary>
         /// Decrement the count, releasing any waiting Threads when the count reaches Zero.
         /// </summary>
-		public void countDown()
-		{
-			lock(mutex)
-			{
-				if(remaining > 0)
-				{
-					remaining--;
-					if(0 == remaining)
-					{
-						mutex.Set();
-					}
-				}
-			}
-		}
+        public void countDown()
+        {
+            lock (mutex)
+            {
+                if (remaining > 0)
+                {
+                    remaining--;
+                    if (0 == remaining)
+                    {
+                        mutex.Set();
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the current count for this Latch.
         /// </summary>
-		public int Remaining
-		{
-			get
-			{
-				lock(mutex)
-				{
-					return remaining;
-				}
-			}
-		}
+        public int Remaining
+        {
+            get
+            {
+                lock (mutex)
+                {
+                    return remaining;
+                }
+            }
+        }
 
         /// <summary>
         /// Causes the current Thread to wait for the count to reach zero, unless
@@ -74,14 +75,14 @@ namespace Apache.NMS.Util
         /// Causes the current thread to wait until the latch has counted down to zero, unless
         /// the thread is interrupted, or the specified waiting time elapses.
         /// </summary>
-		public bool await(TimeSpan timeout)
-		{
-			return mutex.WaitOne((int) timeout.TotalMilliseconds, false);
-		}
+        public bool await(TimeSpan timeout)
+        {
+            return mutex.WaitOne((int) timeout.TotalMilliseconds, false);
+        }
 
-		public WaitHandle AsyncWaitHandle
-		{
-			get { return mutex; }
-		}
-	}
+        public WaitHandle AsyncWaitHandle
+        {
+            get { return mutex; }
+        }
+    }
 }

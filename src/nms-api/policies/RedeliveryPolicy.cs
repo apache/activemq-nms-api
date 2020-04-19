@@ -66,13 +66,13 @@ namespace Apache.NMS.Policies
         {
             int delay = 0;
 
-            if(redeliveredCounter == 0)
+            if (redeliveredCounter == 0)
             {
                 // The first time through there is no delay, the Rollback should be immediate.
                 return 0;
             }
 
-            if(UseExponentialBackOff && BackOffMultiplier > 1)
+            if (UseExponentialBackOff && BackOffMultiplier > 1)
             {
                 delay = initialRedeliveryDelay * Convert.ToInt32(Math.Pow(BackOffMultiplier, redeliveredCounter - 1));
             }
@@ -81,10 +81,11 @@ namespace Apache.NMS.Policies
                 delay = InitialRedeliveryDelay;
             }
 
-            if(UseCollisionAvoidance)
+            if (UseCollisionAvoidance)
             {
                 Random random = RandomNumberGenerator;
-                double variance = (NextBool ? collisionAvoidanceFactor : collisionAvoidanceFactor *= -1) * random.NextDouble();
+                double variance = (NextBool ? collisionAvoidanceFactor : collisionAvoidanceFactor *= -1) *
+                                  random.NextDouble();
                 delay += Convert.ToInt32(Convert.ToDouble(delay) * variance);
             }
 
@@ -113,11 +114,11 @@ namespace Apache.NMS.Policies
         {
             get
             {
-                if(randomNumberGenerator == null)
+                if (randomNumberGenerator == null)
                 {
-                    lock(syncObject)
+                    lock (syncObject)
                     {
-                        if(randomNumberGenerator == null)
+                        if (randomNumberGenerator == null)
                         {
                             randomNumberGenerator = new Random(DateTime.Now.Second);
                         }
@@ -136,7 +137,7 @@ namespace Apache.NMS.Policies
         {
             get
             {
-                lock(syncObject)
+                lock (syncObject)
                 {
                     nextBool = !nextBool;
                     return nextBool;
@@ -155,6 +156,5 @@ namespace Apache.NMS.Policies
             // this method is an override.
             return this.MemberwiseClone();
         }
-
     }
 }

@@ -41,8 +41,10 @@ namespace Apache.NMS.Test
             Assert.IsTrue(policy.RedeliveryDelay(5) == 80, "redelivery delay not 160 is " + policy.RedeliveryDelay(5));
             Assert.IsTrue(policy.RedeliveryDelay(6) == 160, "redelivery delay not 320 is " + policy.RedeliveryDelay(6));
             Assert.IsTrue(policy.RedeliveryDelay(7) == 320, "redelivery delay not 640 is " + policy.RedeliveryDelay(7));
-            Assert.IsTrue(policy.RedeliveryDelay(8) == 640, "redelivery delay not 1280 is " + policy.RedeliveryDelay(8));
-            Assert.IsTrue(policy.RedeliveryDelay(9) == 1280, "redelivery delay not 2560 is " + policy.RedeliveryDelay(9));
+            Assert.IsTrue(policy.RedeliveryDelay(8) == 640,
+                "redelivery delay not 1280 is " + policy.RedeliveryDelay(8));
+            Assert.IsTrue(policy.RedeliveryDelay(9) == 1280,
+                "redelivery delay not 2560 is " + policy.RedeliveryDelay(9));
         }
 
         [Test]
@@ -62,9 +64,12 @@ namespace Apache.NMS.Test
             Assert.IsTrue(policy.RedeliveryDelay(4) == 81, "redelivery delay not 80 is " + policy.RedeliveryDelay(4));
             Assert.IsTrue(policy.RedeliveryDelay(5) == 243, "redelivery delay not 160 is " + policy.RedeliveryDelay(5));
             Assert.IsTrue(policy.RedeliveryDelay(6) == 729, "redelivery delay not 320 is " + policy.RedeliveryDelay(6));
-            Assert.IsTrue(policy.RedeliveryDelay(7) == 2187, "redelivery delay not 640 is " + policy.RedeliveryDelay(7));
-            Assert.IsTrue(policy.RedeliveryDelay(8) == 6561, "redelivery delay not 1280 is " + policy.RedeliveryDelay(8));
-            Assert.IsTrue(policy.RedeliveryDelay(9) == 19683, "redelivery delay not 2560 is " + policy.RedeliveryDelay(9));
+            Assert.IsTrue(policy.RedeliveryDelay(7) == 2187,
+                "redelivery delay not 640 is " + policy.RedeliveryDelay(7));
+            Assert.IsTrue(policy.RedeliveryDelay(8) == 6561,
+                "redelivery delay not 1280 is " + policy.RedeliveryDelay(8));
+            Assert.IsTrue(policy.RedeliveryDelay(9) == 19683,
+                "redelivery delay not 2560 is " + policy.RedeliveryDelay(9));
         }
 
         [Test]
@@ -112,7 +117,8 @@ namespace Apache.NMS.Test
             int delay = policy.RedeliveryDelay(0);
             Assert.IsTrue(delay == 0, "not zero is " + policy.RedeliveryDelay(0));
             delay = policy.RedeliveryDelay(1);
-            Assert.IsTrue(delay >= 4.5 && delay <= 5.5, "not delay >= 4.5 && delay <= 5.5 is " + policy.RedeliveryDelay(1));
+            Assert.IsTrue(delay >= 4.5 && delay <= 5.5,
+                "not delay >= 4.5 && delay <= 5.5 is " + policy.RedeliveryDelay(1));
             delay = policy.RedeliveryDelay(2);
             Assert.IsTrue(delay >= 9 && delay <= 11, "not delay >= 9 && delay <= 11 is " + policy.RedeliveryDelay(2));
             delay = policy.RedeliveryDelay(3);
@@ -122,15 +128,20 @@ namespace Apache.NMS.Test
             delay = policy.RedeliveryDelay(5);
             Assert.IsTrue(delay >= 72 && delay <= 88, "not delay >= 72 && delay <= 88 is " + policy.RedeliveryDelay(5));
             delay = policy.RedeliveryDelay(6);
-            Assert.IsTrue(delay >= 144 && delay <= 176, "not delay >= 144 && delay <= 176 is " + policy.RedeliveryDelay(6));
+            Assert.IsTrue(delay >= 144 && delay <= 176,
+                "not delay >= 144 && delay <= 176 is " + policy.RedeliveryDelay(6));
             delay = policy.RedeliveryDelay(7);
-            Assert.IsTrue(delay >= 288 && delay <= 352, "not delay >= 288 && delay <= 352 is " + policy.RedeliveryDelay(7));
+            Assert.IsTrue(delay >= 288 && delay <= 352,
+                "not delay >= 288 && delay <= 352 is " + policy.RedeliveryDelay(7));
             delay = policy.RedeliveryDelay(8);
-            Assert.IsTrue(delay >= 576 && delay <= 704, "not delay >= 576 && delay <= 704 is " + policy.RedeliveryDelay(8));
+            Assert.IsTrue(delay >= 576 && delay <= 704,
+                "not delay >= 576 && delay <= 704 is " + policy.RedeliveryDelay(8));
             delay = policy.RedeliveryDelay(9);
-            Assert.IsTrue(delay >= 1152 && delay <= 1408, "not delay >= 1152 && delay <= 1408 is " + policy.RedeliveryDelay(9));
+            Assert.IsTrue(delay >= 1152 && delay <= 1408,
+                "not delay >= 1152 && delay <= 1408 is " + policy.RedeliveryDelay(9));
             delay = policy.RedeliveryDelay(10);
-            Assert.IsTrue(delay >= 2304 && delay <= 2816, "not delay >= 2304 && delay <= 2816 is " + policy.RedeliveryDelay(10));
+            Assert.IsTrue(delay >= 2304 && delay <= 2816,
+                "not delay >= 2304 && delay <= 2816 is " + policy.RedeliveryDelay(10));
         }
     }
 }

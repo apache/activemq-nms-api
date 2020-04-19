@@ -44,4 +44,3 @@ namespace Apache.NMS
         INetTxConnection CreateNetTxConnection(string userName, string password);
     }
 }
-

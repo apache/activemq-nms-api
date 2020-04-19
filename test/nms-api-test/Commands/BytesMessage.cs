@@ -61,24 +61,24 @@ namespace Apache.NMS.Commands
             {
                 return dataIn.ReadByte();
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteByte( byte value )
+        public void WriteByte(byte value)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value );
+                dataOut.Write(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
@@ -91,24 +91,24 @@ namespace Apache.NMS.Commands
             {
                 return dataIn.ReadBoolean();
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteBoolean( bool value )
+        public void WriteBoolean(bool value)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value );
+                dataOut.Write(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
@@ -121,24 +121,24 @@ namespace Apache.NMS.Commands
             {
                 return dataIn.ReadChar();
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteChar( char value )
+        public void WriteChar(char value)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value );
+                dataOut.Write(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
@@ -151,24 +151,24 @@ namespace Apache.NMS.Commands
             {
                 return dataIn.ReadInt16();
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteInt16( short value )
+        public void WriteInt16(short value)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value );
+                dataOut.Write(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
@@ -181,24 +181,24 @@ namespace Apache.NMS.Commands
             {
                 return dataIn.ReadInt32();
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteInt32( int value )
+        public void WriteInt32(int value)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value );
+                dataOut.Write(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
@@ -211,24 +211,24 @@ namespace Apache.NMS.Commands
             {
                 return dataIn.ReadInt64();
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteInt64( long value )
+        public void WriteInt64(long value)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value );
+                dataOut.Write(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
@@ -241,24 +241,24 @@ namespace Apache.NMS.Commands
             {
                 return dataIn.ReadSingle();
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteSingle( float value )
+        public void WriteSingle(float value)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value );
+                dataOut.Write(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
@@ -271,84 +271,84 @@ namespace Apache.NMS.Commands
             {
                 return dataIn.ReadDouble();
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteDouble( double value )
+        public void WriteDouble(double value)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value );
+                dataOut.Write(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
         }
 
-        public int ReadBytes( byte[] value )
+        public int ReadBytes(byte[] value)
         {
             InitializeReading();
             try
             {
-                return dataIn.Read( value, 0, value.Length );
+                return dataIn.Read(value, 0, value.Length);
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public int ReadBytes( byte[] value, int length )
+        public int ReadBytes(byte[] value, int length)
         {
             InitializeReading();
             try
             {
-                return dataIn.Read( value, 0, length );
+                return dataIn.Read(value, 0, length);
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteBytes( byte[] value )
+        public void WriteBytes(byte[] value)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value, 0, value.Length );
+                dataOut.Write(value, 0, value.Length);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
         }
 
-        public void WriteBytes( byte[] value, int offset, int length )
+        public void WriteBytes(byte[] value, int offset, int length)
         {
             InitializeWriting();
             try
             {
-                dataOut.Write( value, offset, length );
+                dataOut.Write(value, offset, length);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
@@ -362,17 +362,17 @@ namespace Apache.NMS.Commands
                 // JMS, CMS and NMS all encode the String using a 16 bit size header.
                 return dataIn.ReadString16();
             }
-            catch(EndOfStreamException e)
+            catch (EndOfStreamException e)
             {
                 throw NMSExceptionSupport.CreateMessageEOFException(e);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw NMSExceptionSupport.CreateMessageFormatException(e);
             }
         }
 
-        public void WriteString( string value )
+        public void WriteString(string value)
         {
             InitializeWriting();
             try
@@ -380,54 +380,54 @@ namespace Apache.NMS.Commands
                 // JMS, CMS and NMS all encode the String using a 16 bit size header.
                 dataOut.WriteString16(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw NMSExceptionSupport.Create(e);
             }
         }
 
-        public void WriteObject( System.Object value )
+        public void WriteObject(System.Object value)
         {
             InitializeWriting();
-            if( value is System.Byte )
+            if (value is System.Byte)
             {
-                this.dataOut.Write( (byte) value );
+                this.dataOut.Write((byte) value);
             }
-            else if( value is Char )
+            else if (value is Char)
             {
-                this.dataOut.Write( (char) value );
+                this.dataOut.Write((char) value);
             }
-            else if( value is Boolean )
+            else if (value is Boolean)
             {
-                this.dataOut.Write( (bool) value );
+                this.dataOut.Write((bool) value);
             }
-            else if( value is Int16 )
+            else if (value is Int16)
             {
-                this.dataOut.Write( (short) value );
+                this.dataOut.Write((short) value);
             }
-            else if( value is Int32 )
+            else if (value is Int32)
             {
-                this.dataOut.Write( (int) value );
+                this.dataOut.Write((int) value);
             }
-            else if( value is Int64 )
+            else if (value is Int64)
             {
-                this.dataOut.Write( (long) value );
+                this.dataOut.Write((long) value);
             }
-            else if( value is Single )
+            else if (value is Single)
             {
-                this.dataOut.Write( (float) value );
+                this.dataOut.Write((float) value);
             }
-            else if( value is Double )
+            else if (value is Double)
             {
-                this.dataOut.Write( (double) value );
+                this.dataOut.Write((double) value);
             }
-            else if( value is byte[] )
+            else if (value is byte[])
             {
-                this.dataOut.Write( (byte[]) value );
+                this.dataOut.Write((byte[]) value);
             }
-            else if( value is String )
+            else if (value is String)
             {
-                this.dataOut.WriteString16( (string) value );
+                this.dataOut.WriteString16((string) value);
             }
             else
             {
@@ -441,11 +441,12 @@ namespace Apache.NMS.Commands
             {
                 byte[] buffer = null;
                 InitializeReading();
-                if(this.length != 0)
+                if (this.length != 0)
                 {
                     buffer = new byte[this.length];
                     this.dataIn.Read(buffer, 0, buffer.Length);
                 }
+
                 return buffer;
             }
 
@@ -468,11 +469,11 @@ namespace Apache.NMS.Commands
         private void InitializeReading()
         {
             FailIfWriteOnlyBody();
-            if(this.dataIn == null)
+            if (this.dataIn == null)
             {
                 byte[] data = base.Content;
 
-                if(base.Content == null)
+                if (base.Content == null)
                 {
                     data = new byte[0];
                 }
@@ -487,7 +488,7 @@ namespace Apache.NMS.Commands
         private void InitializeWriting()
         {
             FailIfReadOnlyBody();
-            if(this.dataOut == null)
+            if (this.dataOut == null)
             {
                 this.outputBuffer = new MemoryStream();
                 this.dataOut = new EndianBinaryWriter(this.outputBuffer);
@@ -496,7 +497,7 @@ namespace Apache.NMS.Commands
 
         private void StoreContent()
         {
-            if(this.dataOut != null)
+            if (this.dataOut != null)
             {
                 this.dataOut.Close();
                 base.Content = outputBuffer.ToArray();
@@ -505,7 +506,5 @@ namespace Apache.NMS.Commands
                 this.outputBuffer = null;
             }
         }
-
     }
 }
-

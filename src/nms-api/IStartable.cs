@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Apache.NMS
 {
-	/// <summary>
-	/// A lifecycle for NMS objects to indicate they can be started
-	/// </summary>
-	public interface IStartable
-	{
-		void Start();
-		bool IsStarted { get; }
-	}
+    /// <summary>
+    /// A lifecycle for NMS objects to indicate they can be started
+    /// </summary>
+    public interface IStartable
+    {
+        void Start();
+        bool IsStarted { get; }
+    }
 }
-
-

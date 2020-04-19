@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Apache.NMS
 {
-	/// <summary>
-	/// Represents an Object message which contains a serializable .Net object.
-	/// </summary>
-	public interface IObjectMessage : IMessage
-	{
-		object Body { get; set; }
-	}
+    /// <summary>
+    /// Represents an Object message which contains a serializable .Net object.
+    /// </summary>
+    public interface IObjectMessage : IMessage
+    {
+        object Body { get; set; }
+    }
 }

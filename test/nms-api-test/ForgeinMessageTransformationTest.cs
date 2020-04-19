@@ -16,9 +16,7 @@
  */
 
 using System;
-
 using NUnit.Framework;
-
 using Apache.NMS.Util;
 using Apache.NMS.Commands;
 
@@ -54,14 +52,14 @@ namespace Apache.NMS.Test
             [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-					IDestination destination = CreateDestination(session, DestinationType.Topic);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    IDestination destination = CreateDestination(session, DestinationType.Topic);
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         try
                         {
@@ -73,16 +71,19 @@ namespace Apache.NMS.Test
 
                             IMessage message = consumer.Receive(receiveTimeout);
                             Assert.IsNotNull(message, "No message returned!");
-                            Assert.AreEqual(request.Properties.Count, message.Properties.Count, "Invalid number of properties.");
+                            Assert.AreEqual(request.Properties.Count, message.Properties.Count,
+                                "Invalid number of properties.");
                             Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
                             // use generic API to access entries
-                            Assert.AreEqual(propertyValue, message.Properties[propertyName], "generic map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties[propertyName],
+                                "generic map entry: " + propertyName);
 
                             // use type safe APIs
-                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),   "map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),
+                                "map entry: " + propertyName);
                         }
-                        catch(NotSupportedException)
+                        catch (NotSupportedException)
                         {
                         }
                     }
@@ -95,14 +96,14 @@ namespace Apache.NMS.Test
             [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-					IDestination destination = CreateDestination(session, DestinationType.Topic);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    IDestination destination = CreateDestination(session, DestinationType.Topic);
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         try
                         {
@@ -115,19 +116,22 @@ namespace Apache.NMS.Test
 
                             ITextMessage message = consumer.Receive(receiveTimeout) as ITextMessage;
                             Assert.IsNotNull(message, "No message returned!");
-                            Assert.AreEqual(request.Properties.Count, message.Properties.Count, "Invalid number of properties.");
+                            Assert.AreEqual(request.Properties.Count, message.Properties.Count,
+                                "Invalid number of properties.");
                             Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
                             // Check the body
                             Assert.AreEqual(textBody, message.Text, "TextMessage body was wrong.");
 
                             // use generic API to access entries
-                            Assert.AreEqual(propertyValue, message.Properties[propertyName], "generic map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties[propertyName],
+                                "generic map entry: " + propertyName);
 
                             // use type safe APIs
-                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),   "map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),
+                                "map entry: " + propertyName);
                         }
-                        catch(NotSupportedException)
+                        catch (NotSupportedException)
                         {
                         }
                     }
@@ -140,14 +144,14 @@ namespace Apache.NMS.Test
             [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-					IDestination destination = CreateDestination(session, DestinationType.Topic);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    IDestination destination = CreateDestination(session, DestinationType.Topic);
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         try
                         {
@@ -160,7 +164,8 @@ namespace Apache.NMS.Test
 
                             IBytesMessage message = consumer.Receive(receiveTimeout) as IBytesMessage;
                             Assert.IsNotNull(message, "No message returned!");
-                            Assert.AreEqual(request.Properties.Count, message.Properties.Count, "Invalid number of properties.");
+                            Assert.AreEqual(request.Properties.Count, message.Properties.Count,
+                                "Invalid number of properties.");
                             Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
                             // Check the body
@@ -169,12 +174,14 @@ namespace Apache.NMS.Test
                             Assert.AreEqual(bytesContent, content, "BytesMessage body was wrong.");
 
                             // use generic API to access entries
-                            Assert.AreEqual(propertyValue, message.Properties[propertyName], "generic map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties[propertyName],
+                                "generic map entry: " + propertyName);
 
                             // use type safe APIs
-                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),   "map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),
+                                "map entry: " + propertyName);
                         }
-                        catch(NotSupportedException)
+                        catch (NotSupportedException)
                         {
                         }
                     }
@@ -187,14 +194,14 @@ namespace Apache.NMS.Test
             [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-					IDestination destination = CreateDestination(session, DestinationType.Topic);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    IDestination destination = CreateDestination(session, DestinationType.Topic);
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         try
                         {
@@ -207,20 +214,24 @@ namespace Apache.NMS.Test
 
                             IMapMessage message = consumer.Receive(receiveTimeout) as IMapMessage;
                             Assert.IsNotNull(message, "No message returned!");
-                            Assert.AreEqual(request.Properties.Count, message.Properties.Count, "Invalid number of properties.");
+                            Assert.AreEqual(request.Properties.Count, message.Properties.Count,
+                                "Invalid number of properties.");
                             Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
                             // Check the body
                             Assert.AreEqual(request.Body.Count, message.Body.Count);
-                            Assert.AreEqual(mapElementValue, message.Body[mapElementName], "MapMessage body was wrong.");
+                            Assert.AreEqual(mapElementValue, message.Body[mapElementName],
+                                "MapMessage body was wrong.");
 
                             // use generic API to access entries
-                            Assert.AreEqual(propertyValue, message.Properties[propertyName], "generic map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties[propertyName],
+                                "generic map entry: " + propertyName);
 
                             // use type safe APIs
-                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),   "map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),
+                                "map entry: " + propertyName);
                         }
-                        catch(NotSupportedException)
+                        catch (NotSupportedException)
                         {
                         }
                     }
@@ -233,14 +244,14 @@ namespace Apache.NMS.Test
             [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.AutoAcknowledge))
                 {
-					IDestination destination = CreateDestination(session, DestinationType.Topic);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    IDestination destination = CreateDestination(session, DestinationType.Topic);
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         try
                         {
@@ -267,7 +278,8 @@ namespace Apache.NMS.Test
 
                             IStreamMessage message = consumer.Receive(receiveTimeout) as IStreamMessage;
                             Assert.IsNotNull(message, "No message returned!");
-                            Assert.AreEqual(request.Properties.Count, message.Properties.Count, "Invalid number of properties.");
+                            Assert.AreEqual(request.Properties.Count, message.Properties.Count,
+                                "Invalid number of properties.");
                             Assert.AreEqual(deliveryMode, message.NMSDeliveryMode, "NMSDeliveryMode does not match");
 
                             // Check the body
@@ -287,19 +299,19 @@ namespace Apache.NMS.Test
                             Assert.AreEqual(n, message.ReadDouble(), "Stream Double Value: n");
 
                             // use generic API to access entries
-                            Assert.AreEqual(propertyValue, message.Properties[propertyName], "generic map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties[propertyName],
+                                "generic map entry: " + propertyName);
 
                             // use type safe APIs
-                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),   "map entry: " + propertyName);
+                            Assert.AreEqual(propertyValue, message.Properties.GetString(propertyName),
+                                "map entry: " + propertyName);
                         }
-                        catch(NotSupportedException)
+                        catch (NotSupportedException)
                         {
                         }
                     }
                 }
             }
         }
-
     }
 }
-

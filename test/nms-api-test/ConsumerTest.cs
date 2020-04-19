@@ -40,16 +40,16 @@ namespace Apache.NMS.Test
             // Launch a thread to perform IMessageConsumer.Receive().
             // If it doesn't fail in less than three seconds, no exception was thrown.
             Thread receiveThread = new Thread(new ThreadStart(TimeoutConsumerThreadProc));
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(ackMode))
+                using (ISession session = connection.CreateSession(ackMode))
                 {
                     ITemporaryQueue queue = session.CreateTemporaryQueue();
-                    using(this.timeoutConsumer = session.CreateConsumer(queue))
+                    using (this.timeoutConsumer = session.CreateConsumer(queue))
                     {
                         receiveThread.Start();
-                        if(receiveThread.Join(3000))
+                        if (receiveThread.Join(3000))
                         {
                             Assert.Fail("IMessageConsumer.Receive() returned without blocking.  Test failed.");
                         }
@@ -71,16 +71,16 @@ namespace Apache.NMS.Test
             {
                 timeoutConsumer.Receive();
             }
-            catch(ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException e)
             {
                 // The test failed.  We will know because the timeout will expire inside TestNoTimeoutConsumer().
                 Assert.Fail("Test failed with exception: " + e.Message);
             }
-            catch(ThreadInterruptedException)
+            catch (ThreadInterruptedException)
             {
                 // The test succeeded!  We were still blocked when we were interrupted.
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // Some other exception occurred.
                 Assert.Fail("Test failed with exception: " + e.Message);
@@ -118,7 +118,8 @@ namespace Apache.NMS.Test
                             {
                                 // Kill the thread - otherwise it'll sit in Receive() until a message arrives.
                                 receiveThread.Interrupt();
-                                Assert.Fail("IMessageConsumer.Receive() thread is still alive, Close should have killed it.");
+                                Assert.Fail(
+                                    "IMessageConsumer.Receive() thread is still alive, Close should have killed it.");
                             }
                         }
                     }
@@ -139,9 +140,9 @@ namespace Apache.NMS.Test
             {
                 ThreadArg args = arg as ThreadArg;
 
-                using(ISession session = args.connection.CreateSession())
+                using (ISession session = args.connection.CreateSession())
                 {
-                    using(IMessageProducer producer = session.CreateProducer(args.destination))
+                    using (IMessageProducer producer = session.CreateProducer(args.destination))
                     {
                         // Give the consumer time to enter the receive.
                         Thread.Sleep(5000);
@@ -150,7 +151,7 @@ namespace Apache.NMS.Test
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // Some other exception occurred.
                 Assert.Fail("Test failed with exception: " + e.Message);
@@ -162,52 +163,51 @@ namespace Apache.NMS.Test
             [Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge,
                 AcknowledgementMode.DupsOkAcknowledge, AcknowledgementMode.Transactional)]
             AcknowledgementMode ackMode,
-			[Values(true, false)] bool doClear)
+            [Values(true, false)] bool doClear)
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(ackMode))
+                using (ISession session = connection.CreateSession(ackMode))
                 {
                     ITemporaryQueue queue = session.CreateTemporaryQueue();
-                    using(IMessageConsumer consumer = session.CreateConsumer(queue))
+                    using (IMessageConsumer consumer = session.CreateConsumer(queue))
                     {
                         IMessageProducer producer = session.CreateProducer(queue);
                         ITextMessage message = session.CreateTextMessage();
 
                         string prefix = "ConsumerTest - TestDoChangeSentMessage: ";
 
-                        for(int i = 0; i < COUNT; i++)
+                        for (int i = 0; i < COUNT; i++)
                         {
                             message.Properties[VALUE_NAME] = i;
                             message.Text = prefix + Convert.ToString(i);
 
                             producer.Send(message);
 
-							if(doClear)
-							{
-								message.ClearBody();
-								message.ClearProperties();
-							}
+                            if (doClear)
+                            {
+                                message.ClearBody();
+                                message.ClearProperties();
+                            }
                         }
 
-                        if(ackMode == AcknowledgementMode.Transactional)
+                        if (ackMode == AcknowledgementMode.Transactional)
                         {
                             session.Commit();
                         }
 
-                        for(int i = 0; i < COUNT; i++)
+                        for (int i = 0; i < COUNT; i++)
                         {
                             ITextMessage msg = consumer.Receive(TimeSpan.FromMilliseconds(2000)) as ITextMessage;
                             Assert.AreEqual(msg.Text, prefix + Convert.ToString(i));
                             Assert.AreEqual(msg.Properties.GetInt(VALUE_NAME), i);
                         }
 
-                        if(ackMode == AcknowledgementMode.Transactional)
+                        if (ackMode == AcknowledgementMode.Transactional)
                         {
                             session.Commit();
                         }
-
                     }
                 }
             }
@@ -221,13 +221,13 @@ namespace Apache.NMS.Test
         {
             // Launch a thread to perform a delayed send.
             Thread sendThread = new Thread(DelayedProducerThreadProc);
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(ackMode))
+                using (ISession session = connection.CreateSession(ackMode))
                 {
                     ITemporaryQueue queue = session.CreateTemporaryQueue();
-                    using(IMessageConsumer consumer = session.CreateConsumer(queue))
+                    using (IMessageConsumer consumer = session.CreateConsumer(queue))
                     {
                         ThreadArg arg = new ThreadArg();
 
@@ -248,9 +248,9 @@ namespace Apache.NMS.Test
             [Values(MsgDeliveryMode.NonPersistent)]
             MsgDeliveryMode deliveryMode,
             [Values(DestinationType.Queue, DestinationType.Topic)]
-            DestinationType destinationType )
+            DestinationType destinationType)
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 ISession session = connection.CreateSession();
                 IDestination destination = CreateDestination(session, destinationType);
@@ -268,10 +268,11 @@ namespace Apache.NMS.Test
         public void TestSendReceiveTransacted(
             [Values(MsgDeliveryMode.NonPersistent, MsgDeliveryMode.Persistent)]
             MsgDeliveryMode deliveryMode,
-            [Values(DestinationType.Queue, DestinationType.Topic, DestinationType.TemporaryQueue, DestinationType.TemporaryTopic)]
+            [Values(DestinationType.Queue, DestinationType.Topic, DestinationType.TemporaryQueue,
+                DestinationType.TemporaryTopic)]
             DestinationType destinationType)
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 // Send a message to the broker.
                 connection.Start();
@@ -313,11 +314,11 @@ namespace Apache.NMS.Test
         [Test]
         public void TestAckedMessageAreConsumed()
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IDestination destination = CreateDestination(session, DestinationType.Queue);
                 IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
 
@@ -343,11 +344,11 @@ namespace Apache.NMS.Test
         [Test]
         public void TestLastMessageAcked()
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IDestination destination = CreateDestination(session, DestinationType.Queue);
                 IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
                 producer.Send(session.CreateTextMessage("Hello2"));
@@ -379,11 +380,11 @@ namespace Apache.NMS.Test
         [Test]
         public void TestUnAckedMessageAreNotConsumedOnSessionClose()
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IDestination destination = CreateDestination(session, DestinationType.Queue);
                 IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
 
@@ -410,11 +411,11 @@ namespace Apache.NMS.Test
         [Test]
         public void TestAsyncAckedMessageAreConsumed()
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IDestination destination = CreateDestination(session, DestinationType.Queue);
                 IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
 
@@ -441,13 +442,13 @@ namespace Apache.NMS.Test
         [Test]
         public void TestAsyncUnAckedMessageAreNotConsumedOnSessionClose()
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
                 // don't aknowledge message on onMessage() call
                 dontAck = true;
                 ISession session = connection.CreateSession(AcknowledgementMode.ClientAcknowledge);
-				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IDestination destination = CreateDestination(session, DestinationType.Queue);
                 IMessageProducer producer = session.CreateProducer(destination);
                 producer.Send(session.CreateTextMessage("Hello"));
 
@@ -475,7 +476,7 @@ namespace Apache.NMS.Test
         [Test]
         public void TestAddRemoveAsnycMessageListener()
         {
-            using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
 
@@ -495,13 +496,13 @@ namespace Apache.NMS.Test
         {
             Assert.IsNotNull(message);
 
-            if(!dontAck)
+            if (!dontAck)
             {
                 try
                 {
                     message.Acknowledge();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                 }
             }
@@ -515,50 +516,49 @@ namespace Apache.NMS.Test
             [Values(MsgDeliveryMode.NonPersistent, MsgDeliveryMode.Persistent)]
             MsgDeliveryMode deliveryMode)
         {
-			const int RETRIES = 20;
+            const int RETRIES = 20;
 
-			using(IConnection connection = CreateConnection())
+            using (IConnection connection = CreateConnection())
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(ackMode))
+                using (ISession session = connection.CreateSession(ackMode))
                 {
                     IDestination destination = session.CreateTemporaryQueue();
 
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
-						producer.DeliveryMode = deliveryMode;
-						ITextMessage message = session.CreateTextMessage("TEST");
-						producer.Send(message);
+                        producer.DeliveryMode = deliveryMode;
+                        ITextMessage message = session.CreateTextMessage("TEST");
+                        producer.Send(message);
 
-                        if(AcknowledgementMode.Transactional == ackMode)
+                        if (AcknowledgementMode.Transactional == ackMode)
                         {
                             session.Commit();
-                        }							
-					}
-										
-					using(IMessageConsumer consumer = session.CreateConsumer(destination))
-					{						
-						IMessage message = null;
+                        }
+                    }
 
-						for(int i = 0; i < RETRIES && message == null; ++i)
-						{
-							message = consumer.ReceiveNoWait();
-							Thread.Sleep(100);
-						}
-						
-						Assert.IsNotNull(message);
-						message.Acknowledge();
-						
-                        if(AcknowledgementMode.Transactional == ackMode)
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    {
+                        IMessage message = null;
+
+                        for (int i = 0; i < RETRIES && message == null; ++i)
+                        {
+                            message = consumer.ReceiveNoWait();
+                            Thread.Sleep(100);
+                        }
+
+                        Assert.IsNotNull(message);
+                        message.Acknowledge();
+
+                        if (AcknowledgementMode.Transactional == ackMode)
                         {
                             session.Commit();
-                        }						
-					}
-				}
-        	}
-		}
-		
+                        }
+                    }
+                }
+            }
+        }
+
 #endif
-
     }
 }

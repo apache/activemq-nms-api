@@ -28,17 +28,17 @@ namespace Apache.NMS.Test
 
         [Test]
         public void TestSendRollback(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
                 {
                     IDestination destination = CreateDestination(session, DESTINATION_NAME);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
                         ITextMessage firstMsgSend = session.CreateTextMessage("First Message");
@@ -70,50 +70,51 @@ namespace Apache.NMS.Test
 
         [Test]
         public void TestSendSessionClose(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
         {
             ITextMessage firstMsgSend;
             ITextMessage secondMsgSend;
 
-            using(IConnection connection1 = CreateConnection(GetTestClientId()))
+            using (IConnection connection1 = CreateConnection(GetTestClientId()))
             {
                 connection1.Start();
-                using(ISession session1 = connection1.CreateSession(AcknowledgementMode.Transactional))
+                using (ISession session1 = connection1.CreateSession(AcknowledgementMode.Transactional))
                 {
                     IDestination destination1 = CreateDestination(session1, DESTINATION_NAME);
-                    using(IMessageConsumer consumer = session1.CreateConsumer(destination1))
+                    using (IMessageConsumer consumer = session1.CreateConsumer(destination1))
                     {
                         // First connection session that sends one message, and the
                         // second message is implicitly rolled back as the session is
                         // disposed before Commit() can be called.
-                        using(IConnection connection2 = CreateConnection(GetTestClientId()))
+                        using (IConnection connection2 = CreateConnection(GetTestClientId()))
                         {
                             connection2.Start();
-                            using(ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
+                            using (ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
                             {
                                 IDestination destination2 = CreateDestination(session2, DESTINATION_NAME);
-                                using(IMessageProducer producer = session2.CreateProducer(destination2))
+                                using (IMessageProducer producer = session2.CreateProducer(destination2))
                                 {
                                     producer.DeliveryMode = deliveryMode;
                                     firstMsgSend = session2.CreateTextMessage("First Message");
                                     producer.Send(firstMsgSend);
                                     session2.Commit();
 
-                                    ITextMessage rollbackMsg = session2.CreateTextMessage("I'm going to get rolled back.");
+                                    ITextMessage rollbackMsg =
+                                        session2.CreateTextMessage("I'm going to get rolled back.");
                                     producer.Send(rollbackMsg);
                                 }
                             }
                         }
 
                         // Second connection session that will send one message.
-                        using(IConnection connection2 = CreateConnection(GetTestClientId()))
+                        using (IConnection connection2 = CreateConnection(GetTestClientId()))
                         {
                             connection2.Start();
-                            using(ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
+                            using (ISession session2 = connection2.CreateSession(AcknowledgementMode.Transactional))
                             {
                                 IDestination destination2 = CreateDestination(session2, DESTINATION_NAME);
-                                using(IMessageProducer producer = session2.CreateProducer(destination2))
+                                using (IMessageProducer producer = session2.CreateProducer(destination2))
                                 {
                                     producer.DeliveryMode = deliveryMode;
                                     secondMsgSend = session2.CreateTextMessage("Second Message");
@@ -139,17 +140,17 @@ namespace Apache.NMS.Test
 
         [Test]
         public void TestReceiveRollback(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
                 {
                     IDestination destination = CreateDestination(session, DESTINATION_NAME);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
                         // Send both messages
@@ -181,17 +182,17 @@ namespace Apache.NMS.Test
 
         [Test]
         public void TestReceiveTwoThenRollback(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
+                using (ISession session = connection.CreateSession(AcknowledgementMode.Transactional))
                 {
                     IDestination destination = CreateDestination(session, DESTINATION_NAME);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
                         // Send both messages
@@ -224,19 +225,19 @@ namespace Apache.NMS.Test
 
         [Test]
         public void TestSendCommitNonTransaction(
-			[Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge)]
-			AcknowledgementMode ackMode,
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
+            [Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge)]
+            AcknowledgementMode ackMode,
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(ackMode))
+                using (ISession session = connection.CreateSession(ackMode))
                 {
                     IDestination destination = CreateDestination(session, DESTINATION_NAME);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
                         ITextMessage firstMsgSend = session.CreateTextMessage("SendCommitNonTransaction Message");
@@ -246,7 +247,7 @@ namespace Apache.NMS.Test
                             session.Commit();
                             Assert.Fail("Should have thrown an InvalidOperationException.");
                         }
-                        catch(InvalidOperationException)
+                        catch (InvalidOperationException)
                         {
                         }
                     }
@@ -256,19 +257,19 @@ namespace Apache.NMS.Test
 
         [Test]
         public void TestReceiveCommitNonTransaction(
-			[Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge)]
-			AcknowledgementMode ackMode,
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
-		{
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            [Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge)]
+            AcknowledgementMode ackMode,
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
+        {
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(ackMode))
+                using (ISession session = connection.CreateSession(ackMode))
                 {
                     IDestination destination = CreateDestination(session, DESTINATION_NAME);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
                         ITextMessage firstMsgSend = session.CreateTextMessage("ReceiveCommitNonTransaction Message");
@@ -278,7 +279,7 @@ namespace Apache.NMS.Test
 
                         IMessage message = consumer.Receive(receiveTimeout);
                         AssertTextMessageEqual(firstMsgSend, message, "First message does not match.");
-                        if(AcknowledgementMode.ClientAcknowledge == ackMode)
+                        if (AcknowledgementMode.ClientAcknowledge == ackMode)
                         {
                             message.Acknowledge();
                         }
@@ -288,7 +289,7 @@ namespace Apache.NMS.Test
                             session.Commit();
                             Assert.Fail("Should have thrown an InvalidOperationException.");
                         }
-                        catch(InvalidOperationException)
+                        catch (InvalidOperationException)
                         {
                         }
                     }
@@ -298,19 +299,19 @@ namespace Apache.NMS.Test
 
         [Test]
         public void TestReceiveRollbackNonTransaction(
-			[Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge)]
-			AcknowledgementMode ackMode,
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
-		{
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            [Values(AcknowledgementMode.AutoAcknowledge, AcknowledgementMode.ClientAcknowledge)]
+            AcknowledgementMode ackMode,
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
+        {
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
-                using(ISession session = connection.CreateSession(ackMode))
+                using (ISession session = connection.CreateSession(ackMode))
                 {
                     IDestination destination = CreateDestination(session, DESTINATION_NAME);
-                    using(IMessageConsumer consumer = session.CreateConsumer(destination))
-                    using(IMessageProducer producer = session.CreateProducer(destination))
+                    using (IMessageConsumer consumer = session.CreateConsumer(destination))
+                    using (IMessageProducer producer = session.CreateProducer(destination))
                     {
                         producer.DeliveryMode = deliveryMode;
                         ITextMessage firstMsgSend = session.CreateTextMessage("ReceiveCommitNonTransaction Message");
@@ -320,7 +321,7 @@ namespace Apache.NMS.Test
 
                         IMessage message = consumer.Receive(receiveTimeout);
                         AssertTextMessageEqual(firstMsgSend, message, "First message does not match.");
-                        if(AcknowledgementMode.ClientAcknowledge == ackMode)
+                        if (AcknowledgementMode.ClientAcknowledge == ackMode)
                         {
                             message.Acknowledge();
                         }
@@ -330,7 +331,7 @@ namespace Apache.NMS.Test
                             session.Rollback();
                             Assert.Fail("Should have thrown an InvalidOperationException.");
                         }
-                        catch(InvalidOperationException)
+                        catch (InvalidOperationException)
                         {
                         }
                     }
@@ -355,14 +356,14 @@ namespace Apache.NMS.Test
 
         [Test]
         public void TestRedispatchOfRolledbackTx(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.Transactional);
-				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IDestination destination = CreateDestination(session, DestinationType.Queue);
 
                 SendMessages(connection, destination, deliveryMode, 2);
 
@@ -394,14 +395,14 @@ namespace Apache.NMS.Test
 
         [Test]
         public void TestRedispatchOfUncommittedTx(
-			[Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
-			MsgDeliveryMode deliveryMode)
+            [Values(MsgDeliveryMode.Persistent, MsgDeliveryMode.NonPersistent)]
+            MsgDeliveryMode deliveryMode)
         {
-            using(IConnection connection = CreateConnection(GetTestClientId()))
+            using (IConnection connection = CreateConnection(GetTestClientId()))
             {
                 connection.Start();
                 ISession session = connection.CreateSession(AcknowledgementMode.Transactional);
-				IDestination destination = CreateDestination(session, DestinationType.Queue);
+                IDestination destination = CreateDestination(session, DestinationType.Queue);
 
                 SendMessages(connection, destination, deliveryMode, 2);
 
@@ -433,5 +434,3 @@ namespace Apache.NMS.Test
         }
     }
 }
-
-

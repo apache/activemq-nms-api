@@ -21,50 +21,53 @@ using System;
 
 namespace Apache.NMS
 {
-	[Serializable]
-	public class TransactionInProgressException : NMSException
-	{
-		public TransactionInProgressException()
-			: base()
-		{
-		}
+    [Serializable]
+    public class TransactionInProgressException : NMSException
+    {
+        public TransactionInProgressException()
+            : base()
+        {
+        }
 
-		public TransactionInProgressException(string message)
-			: base(message)
-		{
-		}
+        public TransactionInProgressException(string message)
+            : base(message)
+        {
+        }
 
-		public TransactionInProgressException(string message, string errorCode)
-			: base(message, errorCode)
-		{
-		}
+        public TransactionInProgressException(string message, string errorCode)
+            : base(message, errorCode)
+        {
+        }
 
-		public TransactionInProgressException(string message, Exception innerException)
-			: base(message, innerException)
-		{
-		}
+        public TransactionInProgressException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
 
-		public TransactionInProgressException(string message, string errorCode, Exception innerException)
-			: base(message, errorCode, innerException)
-		{
-		}
+        public TransactionInProgressException(string message, string errorCode, Exception innerException)
+            : base(message, errorCode, innerException)
+        {
+        }
 
-		#region ISerializable interface implementation
+        #region ISerializable interface implementation
+
 #if !NETCF
 
-		/// <summary>
-		/// Initializes a new instance of the TransactionInProgressException class with serialized data.
-		/// Throws System.ArgumentNullException if the info parameter is null.
-		/// Throws System.Runtime.Serialization.SerializationException if the class name is null or System.Exception.HResult is zero (0).
-		/// </summary>
-		/// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
-		/// <param name="context">The StreamingContext that contains contextual information about the source or destination.</param>
-		protected TransactionInProgressException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-			: base(info, context)
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the TransactionInProgressException class with serialized data.
+        /// Throws System.ArgumentNullException if the info parameter is null.
+        /// Throws System.Runtime.Serialization.SerializationException if the class name is null or System.Exception.HResult is zero (0).
+        /// </summary>
+        /// <param name="info">The SerializationInfo that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The StreamingContext that contains contextual information about the source or destination.</param>
+        protected TransactionInProgressException(System.Runtime.Serialization.SerializationInfo info,
+            System.Runtime.Serialization.StreamingContext context)
+            : base(info, context)
+        {
+        }
 
 #endif
-		#endregion
-	}
+
+        #endregion
+    }
 }

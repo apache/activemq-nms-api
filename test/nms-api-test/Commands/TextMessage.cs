@@ -17,7 +17,6 @@
 
 using System;
 using System.IO;
-
 using Apache.NMS;
 using Apache.NMS.Util;
 
@@ -40,10 +39,11 @@ namespace Apache.NMS.Commands
         {
             string text = this.Text;
 
-            if(text != null && text.Length > 63)
+            if (text != null && text.Length > 63)
             {
                 text = text.Substring(0, 45) + "..." + text.Substring(text.Length - 12);
             }
+
             return base.ToString() + " Text = " + (text ?? "null");
         }
 
@@ -67,4 +67,3 @@ namespace Apache.NMS.Commands
         }
     }
 }
-

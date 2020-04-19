@@ -30,14 +30,17 @@ namespace Apache.NMS.Commands
         /// Topic Destination object
         /// </summary>
         public const int TOPIC = 1;
+
         /// <summary>
         /// Temporary Topic Destination object
         /// </summary>
         public const int TEMPORARY_TOPIC = 2;
+
         /// <summary>
         /// Queue Destination object
         /// </summary>
         public const int QUEUE = 3;
+
         /// <summary>
         /// Temporary Queue Destination object
         /// </summary>
@@ -49,7 +52,7 @@ namespace Apache.NMS.Commands
         private String physicalName = "";
         private StringDictionary options = null;
 
-		private bool disposed = false;
+        private bool disposed = false;
 
         /// <summary>
         /// The Default Constructor
@@ -67,53 +70,53 @@ namespace Apache.NMS.Commands
             setPhysicalName(name);
         }
 
-		~Destination()
-		{
-			Dispose(false);
-		}
+        ~Destination()
+        {
+            Dispose(false);
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-		private void Dispose(bool disposing)
-		{
-			if(disposed)
-			{
-				return;
-			}
+        private void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                return;
+            }
 
-			if(disposing)
-			{
-				try
-				{
-					OnDispose();
-				}
-				catch(Exception ex)
-				{
-					Tracer.ErrorFormat("Exception disposing Destination {0}: {1}", this.physicalName, ex.Message);
-				}
-			}
+            if (disposing)
+            {
+                try
+                {
+                    OnDispose();
+                }
+                catch (Exception ex)
+                {
+                    Tracer.ErrorFormat("Exception disposing Destination {0}: {1}", this.physicalName, ex.Message);
+                }
+            }
 
-			disposed = true;
-		}
+            disposed = true;
+        }
 
-		/// <summary>
-		/// Child classes can override this method to perform clean-up logic.
-		/// </summary>
-		protected virtual void OnDispose()
-		{
-		}
+        /// <summary>
+        /// Child classes can override this method to perform clean-up logic.
+        /// </summary>
+        protected virtual void OnDispose()
+        {
+        }
 
-		public bool IsTopic
+        public bool IsTopic
         {
             get
             {
                 int destinationType = GetDestinationType();
                 return TOPIC == destinationType
-                    || TEMPORARY_TOPIC == destinationType;
+                       || TEMPORARY_TOPIC == destinationType;
             }
         }
 
@@ -123,7 +126,7 @@ namespace Apache.NMS.Commands
             {
                 int destinationType = GetDestinationType();
                 return QUEUE == destinationType
-                    || TEMPORARY_QUEUE == destinationType;
+                       || TEMPORARY_QUEUE == destinationType;
             }
         }
 
@@ -133,7 +136,7 @@ namespace Apache.NMS.Commands
             {
                 int destinationType = GetDestinationType();
                 return TEMPORARY_QUEUE == destinationType
-                    || TEMPORARY_TOPIC == destinationType;
+                       || TEMPORARY_TOPIC == destinationType;
             }
         }
 
@@ -152,7 +155,7 @@ namespace Apache.NMS.Commands
             this.physicalName = name;
 
             int p = name.IndexOf('?');
-            if(p >= 0)
+            if (p >= 0)
             {
                 String optstring = physicalName.Substring(p + 1);
                 this.physicalName = name.Substring(0, p);
@@ -167,32 +170,33 @@ namespace Apache.NMS.Commands
         public static Destination Transform(IDestination destination)
         {
             Destination result = null;
-            if(destination != null)
+            if (destination != null)
             {
-                if(destination is Destination)
+                if (destination is Destination)
                 {
                     result = (Destination) destination;
                 }
                 else
                 {
-                    if(destination is ITemporaryQueue)
+                    if (destination is ITemporaryQueue)
                     {
                         result = new TempQueue(((IQueue) destination).QueueName);
                     }
-                    else if(destination is ITemporaryTopic)
+                    else if (destination is ITemporaryTopic)
                     {
                         result = new TempTopic(((ITopic) destination).TopicName);
                     }
-                    else if(destination is IQueue)
+                    else if (destination is IQueue)
                     {
                         result = new Queue(((IQueue) destination).QueueName);
                     }
-                    else if(destination is ITopic)
+                    else if (destination is ITopic)
                     {
                         result = new Topic(((ITopic) destination).TopicName);
                     }
                 }
             }
+
             return result;
         }
 
@@ -214,20 +218,21 @@ namespace Apache.NMS.Commands
         public static String GetClientId(Destination destination)
         {
             String answer = null;
-            if(destination != null && destination.IsTemporary)
+            if (destination != null && destination.IsTemporary)
             {
                 String name = destination.PhysicalName;
                 int start = name.IndexOf(TEMP_PREFIX);
-                if(start >= 0)
+                if (start >= 0)
                 {
                     start += TEMP_PREFIX.Length;
                     int stop = name.LastIndexOf(TEMP_POSTFIX);
-                    if(stop > start && stop < name.Length)
+                    if (stop > start && stop < name.Length)
                     {
                         answer = name.Substring(start, stop);
                     }
                 }
             }
+
             return answer;
         }
 
@@ -237,10 +242,11 @@ namespace Apache.NMS.Commands
         /// <returns>1 if this is less than o else 0 if they are equal or -1 if this is less than o</returns>
         public int CompareTo(Object o)
         {
-            if(o is Destination)
+            if (o is Destination)
             {
                 return CompareTo((Destination) o);
             }
+
             return -1;
         }
 
@@ -252,36 +258,38 @@ namespace Apache.NMS.Commands
         public int CompareTo(Destination that)
         {
             int answer = 0;
-            if(physicalName != that.physicalName)
+            if (physicalName != that.physicalName)
             {
-                if(physicalName == null)
+                if (physicalName == null)
                 {
                     return -1;
                 }
-                else if(that.physicalName == null)
+                else if (that.physicalName == null)
                 {
                     return 1;
                 }
+
                 answer = physicalName.CompareTo(that.physicalName);
             }
 
-            if(answer == 0)
+            if (answer == 0)
             {
-                if(IsTopic)
+                if (IsTopic)
                 {
-                    if(that.IsQueue)
+                    if (that.IsQueue)
                     {
                         return 1;
                     }
                 }
                 else
                 {
-                    if(that.IsTopic)
+                    if (that.IsTopic)
                     {
                         return -1;
                     }
                 }
             }
+
             return answer;
         }
 
@@ -293,10 +301,7 @@ namespace Apache.NMS.Commands
         public String PhysicalName
         {
             get { return this.physicalName; }
-            set
-            {
-                this.physicalName = value;
-            }
+            set { this.physicalName = value; }
         }
 
         /// <summary>
@@ -304,19 +309,19 @@ namespace Apache.NMS.Commands
         /// <returns>string representation of this instance</returns>
         public override String ToString()
         {
-            switch(DestinationType)
+            switch (DestinationType)
             {
-            case DestinationType.Topic:
-            return "topic://" + PhysicalName;
+                case DestinationType.Topic:
+                    return "topic://" + PhysicalName;
 
-            case DestinationType.TemporaryTopic:
-            return "temp-topic://" + PhysicalName;
+                case DestinationType.TemporaryTopic:
+                    return "temp-topic://" + PhysicalName;
 
-            case DestinationType.TemporaryQueue:
-            return "temp-queue://" + PhysicalName;
+                case DestinationType.TemporaryQueue:
+                    return "temp-queue://" + PhysicalName;
 
-            default:
-            return "queue://" + PhysicalName;
+                default:
+                    return "queue://" + PhysicalName;
             }
         }
 
@@ -327,14 +332,16 @@ namespace Apache.NMS.Commands
         {
             int answer = 37;
 
-            if(this.physicalName != null)
+            if (this.physicalName != null)
             {
                 answer = physicalName.GetHashCode();
             }
-            if(IsTopic)
+
+            if (IsTopic)
             {
                 answer ^= 0xfabfab;
             }
+
             return answer;
         }
 
@@ -346,12 +353,13 @@ namespace Apache.NMS.Commands
         public override bool Equals(Object obj)
         {
             bool result = this == obj;
-            if(!result && obj != null && obj is Destination)
+            if (!result && obj != null && obj is Destination)
             {
                 Destination other = (Destination) obj;
                 result = this.GetDestinationType() == other.GetDestinationType()
-                    && this.physicalName.Equals(other.physicalName);
+                         && this.physicalName.Equals(other.physicalName);
             }
+
             return result;
         }
 
@@ -362,10 +370,7 @@ namespace Apache.NMS.Commands
         /// <returns>the created Destination</returns>
         public abstract Destination CreateDestination(String name);
 
-        public abstract DestinationType DestinationType
-        {
-            get;
-        }
+        public abstract DestinationType DestinationType { get; }
 
         public virtual Object Clone()
         {
@@ -377,4 +382,3 @@ namespace Apache.NMS.Commands
         }
     }
 }
-
