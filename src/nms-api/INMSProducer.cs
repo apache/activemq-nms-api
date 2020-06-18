@@ -47,8 +47,6 @@ namespace Apache.NMS
 
         Task<INMSProducer> SendAsync(IDestination destination, object body);
 
-        CompletionListener CompletionListener { get; set; }
-
         /// <summary>
         /// Provides access to the message properties (headers).
         /// </summary>
@@ -100,8 +98,6 @@ namespace Apache.NMS
 
         //Method chaining setters
         //Allows message delivery options, headers, and properties to be configured using method chaining
-        INMSProducer SetCompletionListener(CompletionListener completionListener);
-
         INMSProducer SetDeliveryDelay(TimeSpan deliveryDelay);
 
         INMSProducer SetTimeToLive(TimeSpan timeToLive);

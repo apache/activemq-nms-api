@@ -20,8 +20,6 @@ using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
-    public delegate void CompletionListener(IMessage message, Exception e);
-
 
     /// <summary>
     /// A delegate that a client can register that will be called each time a Producer's send method is
@@ -59,28 +57,6 @@ namespace Apache.NMS
         /// </summary>
         void Send(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority,
             TimeSpan timeToLive);
-
-        /// <summary>
-        /// Sends the message to the default destination for this producer
-        /// </summary>
-        void Send(IMessage message, CompletionListener completionListener);
-
-        /// <summary>
-        /// Sends the message to the default destination with the explicit QoS configuration
-        /// </summary>
-        void Send(IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority, TimeSpan timeToLive,
-            CompletionListener completionListener);
-
-        /// <summary>
-        /// Sends the message to the given destination
-        /// </summary>
-        void Send(IDestination destination, IMessage message, CompletionListener completionListener);
-
-        /// <summary>
-        /// Sends the message to the given destination with the explicit QoS configuration
-        /// </summary>
-        void Send(IDestination destination, IMessage message, MsgDeliveryMode deliveryMode, MsgPriority priority,
-            TimeSpan timeToLive, CompletionListener completionListener);
 
         /// <summary>
         /// Sends the message to the default destination for this producer
