@@ -56,6 +56,7 @@ namespace Apache.NMS
     {
         public const MsgPriority defaultPriority = MsgPriority.Normal;
         public const MsgDeliveryMode defaultDeliveryMode = MsgDeliveryMode.Persistent;
+        public static readonly TimeSpan defaultDeliveryDelay = TimeSpan.Zero;
         public static readonly TimeSpan defaultTimeToLive = TimeSpan.Zero;
         public static readonly TimeSpan defaultRequestTimeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
     }

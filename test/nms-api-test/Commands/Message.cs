@@ -277,6 +277,18 @@ namespace Apache.NMS.Commands
             set { type = value; }
         }
 
+        public DateTime NMSDeliveryTime { get; set; }
+
+        public T Body<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsBodyAssignableTo(Type type)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region NMS Extension headers

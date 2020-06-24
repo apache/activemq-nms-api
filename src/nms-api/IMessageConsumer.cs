@@ -76,5 +76,7 @@ namespace Apache.NMS
         /// any necessary transformations on the received message before it is delivered.
         /// </summary>
         ConsumerTransformerDelegate ConsumerTransformer { get; set; }
+
+        string MessageSelector { get; }
     }
 }
