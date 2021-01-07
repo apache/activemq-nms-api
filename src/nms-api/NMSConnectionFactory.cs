@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Xml;
 using Apache.NMS.Util;
 
@@ -422,6 +423,36 @@ namespace Apache.NMS
         public INMSContext CreateContext(string userName, string password, AcknowledgementMode acknowledgementMode)
         {
             return this.factory.CreateContext(userName, password, acknowledgementMode);
+        }
+
+        public Task<IConnection> CreateConnectionAsync()
+        {
+            return this.factory.CreateConnectionAsync();
+        }
+
+        public Task<IConnection> CreateConnectionAsync(string userName, string password)
+        {
+            return this.factory.CreateConnectionAsync(userName, password);
+        }
+
+        public Task<INMSContext> CreateContextAsync()
+        {
+            return this.factory.CreateContextAsync();
+        }
+
+        public Task<INMSContext> CreateContextAsync(AcknowledgementMode acknowledgementMode)
+        {
+            return this.factory.CreateContextAsync(acknowledgementMode);
+        }
+
+        public Task<INMSContext> CreateContextAsync(string userName, string password)
+        {
+            return this.factory.CreateContextAsync(userName, password);
+        }
+
+        public Task<INMSContext> CreateContextAsync(string userName, string password, AcknowledgementMode acknowledgementMode)
+        {
+            return this.factory.CreateContextAsync(userName, password, acknowledgementMode);
         }
 
         /// <summary>

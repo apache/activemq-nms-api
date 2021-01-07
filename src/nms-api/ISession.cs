@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
@@ -36,42 +37,60 @@ namespace Apache.NMS
         /// </summary>
         IMessageProducer CreateProducer();
 
+        Task<IMessageProducer> CreateProducerAsync();
+
         /// <summary>
         /// Creates a producer of messages on a given destination
         /// </summary>
         IMessageProducer CreateProducer(IDestination destination);
+
+        Task<IMessageProducer> CreateProducerAsync(IDestination destination);
 
         /// <summary>
         /// Creates a consumer of messages on a given destination
         /// </summary>
         IMessageConsumer CreateConsumer(IDestination destination);
 
+        Task<IMessageConsumer> CreateConsumerAsync(IDestination destination);
+
         /// <summary>
         /// Creates a consumer of messages on a given destination with a selector
         /// </summary>
         IMessageConsumer CreateConsumer(IDestination destination, string selector);
+
+        Task<IMessageConsumer> CreateConsumerAsync(IDestination destination, string selector);
 
         /// <summary>
         /// Creates a consumer of messages on a given destination with a selector
         /// </summary>
         IMessageConsumer CreateConsumer(IDestination destination, string selector, bool noLocal);
 
+        Task<IMessageConsumer> CreateConsumerAsync(IDestination destination, string selector, bool noLocal);
+
         IMessageConsumer CreateDurableConsumer(ITopic destination, string name);
+        Task<IMessageConsumer> CreateDurableConsumerAsync(ITopic destination, string name);
 
         IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector);
+        Task<IMessageConsumer> CreateDurableConsumerAsync(ITopic destination, string name, string selector);
 
         /// <summary>
         /// Creates a named durable consumer of messages on a given destination with a selector
         /// </summary>
         IMessageConsumer CreateDurableConsumer(ITopic destination, string name, string selector, bool noLocal);
 
+        Task<IMessageConsumer> CreateDurableConsumerAsync(ITopic destination, string name, string selector, bool noLocal);
+
         IMessageConsumer CreateSharedConsumer(ITopic destination, string name);
+        Task<IMessageConsumer> CreateSharedConsumerAsync(ITopic destination, string name);
 
         IMessageConsumer CreateSharedConsumer(ITopic destination, string name, string selector);
+        Task<IMessageConsumer> CreateSharedConsumerAsync(ITopic destination, string name, string selector);
 
         IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name);
+        Task<IMessageConsumer> CreateSharedDurableConsumerAsync(ITopic destination, string name);
 
         IMessageConsumer CreateSharedDurableConsumer(ITopic destination, string name, string selector);
+        Task<IMessageConsumer> CreateSharedDurableConsumerAsync(ITopic destination, string name, string selector);
 
         /// <summary>
         /// Deletes a durable consumer created with CreateDurableConsumer().
@@ -81,6 +100,8 @@ namespace Apache.NMS
         void DeleteDurableConsumer(string name);
 
         void Unsubscribe(string name);
+        
+        Task UnsubscribeAsync(string name);
 
         /// <summary>
         /// Creates a QueueBrowser object to peek at the messages on the specified queue.
@@ -186,6 +207,8 @@ namespace Apache.NMS
         /// of a closed session.
         /// </summary>
         void Close();
+        
+        Task CloseAsync();
 
         /// <summary>
         /// A Delegate that is called each time a Message is dispatched to allow the client to do
@@ -221,12 +244,16 @@ namespace Apache.NMS
         /// send and acknowledgements for producers and consumers in this session
         /// </summary>
         void Commit();
+        
+        Task CommitAsync();
 
         /// <summary>
         /// If this is a transactional session then rollback all message
         /// send and acknowledgements for producers and consumers in this session
         /// </summary>
         void Rollback();
+
+        Task RollbackAsync();
 
         #endregion
 

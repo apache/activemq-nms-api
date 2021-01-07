@@ -84,6 +84,8 @@ namespace Apache.NMS
         /// Close the producer.
         /// </summary>
         void Close();
+        
+        Task CloseAsync();
 
         /// <summary>
         /// A delegate that is called each time a Message is sent from this Producer which allows

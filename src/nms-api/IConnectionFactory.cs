@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
@@ -52,7 +53,37 @@ namespace Apache.NMS
         /// <summary>
         /// Creates a new context with the given user name, password and acknowledgement mode
         /// </summary>
-        INMSContext CreateContext(string userName, string password, AcknowledgementMode acknowledgementMode);
+        INMSContext CreateContext(string userName, string password, AcknowledgementMode acknowledgementMode); 
+        
+        /// <summary>
+        /// Creates a new connection
+        /// </summary>
+        Task<IConnection> CreateConnectionAsync();
+
+        /// <summary>
+        /// Creates a new connection with the given user name and password
+        /// </summary>
+        Task<IConnection> CreateConnectionAsync(string userName, string password);
+
+        /// <summary>
+        /// Creates a new context
+        /// </summary>
+        Task<INMSContext> CreateContextAsync();
+
+        /// <summary>
+        /// Creates a new context with the given acknowledgement mode.
+        /// </summary>
+        Task<INMSContext> CreateContextAsync(AcknowledgementMode acknowledgementMode);
+
+        /// <summary>
+        /// Creates a new context with the given user name and password
+        /// </summary>
+        Task<INMSContext> CreateContextAsync(string userName, string password);
+
+        /// <summary>
+        /// Creates a new context with the given user name, password and acknowledgement mode
+        /// </summary>
+        Task<INMSContext> CreateContextAsync(string userName, string password, AcknowledgementMode acknowledgementMode);
 
 
         /// <summary>

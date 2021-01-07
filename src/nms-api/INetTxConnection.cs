@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+
+using System.Threading.Tasks;
 #if !NETCF
 using System.Transactions;
 

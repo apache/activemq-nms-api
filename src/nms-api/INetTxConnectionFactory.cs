@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
@@ -37,10 +38,12 @@ namespace Apache.NMS
         /// Creates a new connection
         /// </summary>
         INetTxConnection CreateNetTxConnection();
+        Task<INetTxConnection> CreateNetTxConnectionAsync();
 
         /// <summary>
         /// Creates a new connection with the given user name and password
         /// </summary>
         INetTxConnection CreateNetTxConnection(string userName, string password);
+        Task<INetTxConnection> CreateNetTxConnectionAsync(string userName, string password);
     }
 }
