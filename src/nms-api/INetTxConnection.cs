@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+
+using System.Threading.Tasks;
 #if !NETCF
 using System.Transactions;
 
@@ -35,16 +37,30 @@ namespace Apache.NMS
         /// Creates a INetTxSession object.
         /// </summary>
         INetTxSession CreateNetTxSession();
+        
+        /// <summary>
+        /// Creates a INetTxSession object.
+        /// </summary>
+        Task<INetTxSession> CreateNetTxSessionAsync();
 
 #if !NETCF
         /// <summary>
         /// Creates a INetTxSession object and enlists in the specified Transaction.
         /// </summary>
         INetTxSession CreateNetTxSession(Transaction tx);
+        
+        /// <summary>
+        /// Creates a INetTxSession object and enlists in the specified Transaction.
+        /// </summary>
+        Task<INetTxSession> CreateNetTxSessionAsync(Transaction tx);
 
         INetTxSession CreateNetTxSession(bool enlistsNativeMsDtcResource);
+        
+        Task<INetTxSession> CreateNetTxSessionAsync(bool enlistsNativeMsDtcResource);
 
         INetTxSession CreateNetTxSession(Transaction tx, bool enlistsNativeMsDtcResource);
+        
+        Task<INetTxSession> CreateNetTxSessionAsync(Transaction tx, bool enlistsNativeMsDtcResource);
 #endif
     }
 }

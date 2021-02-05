@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using System.Threading.Tasks;
+
 namespace Apache.NMS
 {
     /// <summary>
@@ -23,6 +25,9 @@ namespace Apache.NMS
     public interface IStartable
     {
         void Start();
+
+        Task StartAsync();
+        
         bool IsStarted { get; }
     }
 }

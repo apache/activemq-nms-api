@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
@@ -34,7 +35,11 @@ namespace Apache.NMS
         /// Creates a producer of messages
         /// </summary>
         INMSProducer CreateProducer();
-
+        
+        /// <summary>
+        /// Creates a producer of messages
+        /// </summary>
+        Task<INMSProducer> CreateProducerAsync();
 
         /// <summary>
         /// Creates a consumer of messages on a given destination
@@ -67,9 +72,43 @@ namespace Apache.NMS
         INMSConsumer CreateSharedDurableConsumer(ITopic destination, string subscriptionName);
 
         INMSConsumer CreateSharedDurableConsumer(ITopic destination, string subscriptionName, string selector);
+        
+        /// <summary>
+        /// Creates a consumer of messages on a given destination
+        /// </summary>
+        Task<INMSConsumer> CreateConsumerAsync(IDestination destination);
 
+        /// <summary>
+        /// Creates a consumer of messages on a given destination with a selector
+        /// </summary>
+        Task<INMSConsumer> CreateConsumerAsync(IDestination destination, string selector);
+
+        /// <summary>
+        /// Creates a consumer of messages on a given destination with a selector
+        /// </summary>
+        Task<INMSConsumer> CreateConsumerAsync(IDestination destination, string selector, bool noLocal);
+
+        Task<INMSConsumer> CreateDurableConsumerAsync(ITopic destination, string subscriptionName);
+
+        Task<INMSConsumer> CreateDurableConsumerAsync(ITopic destination, string subscriptionName, string selector);
+
+        /// <summary>
+        /// Creates a named durable consumer of messages on a given destination with a selector
+        /// </summary>
+        Task<INMSConsumer> CreateDurableConsumerAsync(ITopic destination, string subscriptionName, string selector, bool noLocal);
+
+        Task<INMSConsumer> CreateSharedConsumerAsync(ITopic destination, string subscriptionName);
+
+        Task<INMSConsumer> CreateSharedConsumerAsync(ITopic destination, string subscriptionName, string selector);
+
+        Task<INMSConsumer> CreateSharedDurableConsumerAsync(ITopic destination, string subscriptionName);
+
+        Task<INMSConsumer> CreateSharedDurableConsumerAsync(ITopic destination, string subscriptionName, string selector);
+        
 
         void Unsubscribe(string name);
+        
+        Task UnsubscribeAsync(string name);
 
         /// <summary>
         /// Creates a QueueBrowser object to peek at the messages on the specified queue.
@@ -83,8 +122,22 @@ namespace Apache.NMS
         /// <exception cref="System.NotSupportedException">
         /// If the Prodiver does not support creation of Queue Browsers.
         /// </exception>
-        IQueueBrowser CreateBrowser(IQueue queue);
-
+        IQueueBrowser CreateBrowser(IQueue queue);  
+        
+        /// <summary>
+        /// Creates a QueueBrowser object to peek at the messages on the specified queue.
+        /// </summary>
+        /// <param name="queue">
+        /// A <see cref="IQueue"/>
+        /// </param>
+        /// <returns>
+        /// A <see cref="IQueueBrowser"/>
+        /// </returns>
+        /// <exception cref="System.NotSupportedException">
+        /// If the Prodiver does not support creation of Queue Browsers.
+        /// </exception>
+        Task<IQueueBrowser> CreateBrowserAsync(IQueue queue);
+        
         /// <summary>
         /// Creates a QueueBrowser object to peek at the messages on the specified queue
         /// using a message selector.
@@ -102,26 +155,64 @@ namespace Apache.NMS
         /// If the Prodiver does not support creation of Queue Browsers.
         /// </exception>
         IQueueBrowser CreateBrowser(IQueue queue, string selector);
-
+        
+        /// <summary>
+        /// Creates a QueueBrowser object to peek at the messages on the specified queue
+        /// using a message selector.
+        /// </summary>
+        /// <param name="queue">
+        /// A <see cref="IQueue"/>
+        /// </param>
+        /// <param name="selector">
+        /// A <see cref="System.String"/>
+        /// </param>
+        /// <returns>
+        /// A <see cref="IQueueBrowser"/>
+        /// </returns>
+        /// <exception cref="System.NotSupportedException">
+        /// If the Prodiver does not support creation of Queue Browsers.
+        /// </exception>
+        Task<IQueueBrowser> CreateBrowserAsync(IQueue queue, string selector);
+        
         /// <summary>
         /// Returns the queue for the given name
         /// </summary>
         IQueue GetQueue(string name);
+        
+        /// <summary>
+        /// Returns the queue for the given name
+        /// </summary>
+        Task<IQueue> GetQueueAsync(string name);
 
         /// <summary>
         /// Returns the topic for the given name
         /// </summary>
         ITopic GetTopic(string name);
+        
+        /// <summary>
+        /// Returns the topic for the given name
+        /// </summary>
+        Task<ITopic> GetTopicAsync(string name);
 
         /// <summary>
         /// Creates a temporary queue
         /// </summary>
         ITemporaryQueue CreateTemporaryQueue();
+        
+        /// <summary>
+        /// Creates a temporary queue
+        /// </summary>
+        Task<ITemporaryQueue> CreateTemporaryQueueAsync();
 
         /// <summary>
         /// Creates a temporary topic
         /// </summary>
         ITemporaryTopic CreateTemporaryTopic();
+        
+        /// <summary>
+        /// Creates a temporary topic
+        /// </summary>
+        Task<ITemporaryTopic> CreateTemporaryTopicAsync();
 
         // Factory methods to create messages
 
@@ -131,9 +222,19 @@ namespace Apache.NMS
         IMessage CreateMessage();
 
         /// <summary>
+        /// Creates a new message with an empty body
+        /// </summary>
+        Task<IMessage> CreateMessageAsync();
+
+        /// <summary>
         /// Creates a new text message with an empty body
         /// </summary>
         ITextMessage CreateTextMessage();
+
+        /// <summary>
+        /// Creates a new text message with an empty body
+        /// </summary>
+        Task<ITextMessage> CreateTextMessageAsync();
 
         /// <summary>
         /// Creates a new text message with the given body
@@ -141,9 +242,19 @@ namespace Apache.NMS
         ITextMessage CreateTextMessage(string text);
 
         /// <summary>
+        /// Creates a new text message with the given body
+        /// </summary>
+        Task<ITextMessage> CreateTextMessageAsync(string text);
+
+        /// <summary>
         /// Creates a new Map message which contains primitive key and value pairs
         /// </summary>
         IMapMessage CreateMapMessage();
+
+        /// <summary>
+        /// Creates a new Map message which contains primitive key and value pairs
+        /// </summary>
+        Task<IMapMessage> CreateMapMessageAsync();
 
         /// <summary>
         /// Creates a new Object message containing the given .NET object as the body
@@ -151,9 +262,19 @@ namespace Apache.NMS
         IObjectMessage CreateObjectMessage(object body);
 
         /// <summary>
+        /// Creates a new Object message containing the given .NET object as the body
+        /// </summary>
+        Task<IObjectMessage> CreateObjectMessageAsync(object body);
+
+        /// <summary>
         /// Creates a new binary message
         /// </summary>
         IBytesMessage CreateBytesMessage();
+
+        /// <summary>
+        /// Creates a new binary message
+        /// </summary>
+        Task<IBytesMessage> CreateBytesMessageAsync();
 
         /// <summary>
         /// Creates a new binary message with the given body
@@ -161,15 +282,31 @@ namespace Apache.NMS
         IBytesMessage CreateBytesMessage(byte[] body);
 
         /// <summary>
+        /// Creates a new binary message with the given body
+        /// </summary>
+        Task<IBytesMessage> CreateBytesMessageAsync(byte[] body);
+
+        /// <summary>
         /// Creates a new stream message
         /// </summary>
         IStreamMessage CreateStreamMessage();
 
         /// <summary>
+        /// Creates a new stream message
+        /// </summary>
+        Task<IStreamMessage> CreateStreamMessageAsync();
+        
+        /// <summary>
         /// Closes the session.  There is no need to close the producers and consumers
         /// of a closed session.
         /// </summary>
         void Close();
+        
+        /// <summary>
+        /// Closes the session.  There is no need to close the producers and consumers
+        /// of a closed session.
+        /// </summary>
+        Task CloseAsync();
 
         /// <summary>
         /// A Delegate that is called each time a Message is dispatched to allow the client to do

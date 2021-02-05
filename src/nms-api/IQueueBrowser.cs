@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using System.Threading.Tasks;
+
 namespace Apache.NMS
 {
     /// <summary>
@@ -37,6 +39,14 @@ namespace Apache.NMS
         /// If NMS Provider fails to close the Browser for some reason.
         /// </exception>
         void Close();
+        
+        /// <summary>
+        /// Closes the QueueBrowser.
+        /// </summary>
+        /// <exception cref="Apache.NMS.NMSException">
+        /// If NMS Provider fails to close the Browser for some reason.
+        /// </exception>
+        Task CloseAsync();
 
         /// <value>
         /// Gets this queue browser's message selector expression.  If no Message

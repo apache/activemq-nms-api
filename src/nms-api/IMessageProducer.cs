@@ -86,6 +86,11 @@ namespace Apache.NMS
         void Close();
 
         /// <summary>
+        /// Close the producer.
+        /// </summary>
+        Task CloseAsync();
+
+        /// <summary>
         /// A delegate that is called each time a Message is sent from this Producer which allows
         /// the application to perform any needed transformations on the Message before it is sent.
         /// </summary>
