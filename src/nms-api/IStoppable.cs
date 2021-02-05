@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using System.Threading.Tasks;
+
 namespace Apache.NMS
 {
     /// <summary>
@@ -23,5 +25,7 @@ namespace Apache.NMS
     public interface IStoppable
     {
         void Stop();
+
+        Task StopAsync();
     }
 }

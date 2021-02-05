@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
@@ -101,9 +102,24 @@ namespace Apache.NMS
         ISession CreateSession(AcknowledgementMode acknowledgementMode);
 
         /// <summary>
+        /// Creates a new session to work on this connection
+        /// </summary>
+        Task<ISession> CreateSessionAsync();
+
+        /// <summary>
+        /// Creates a new session to work on this connection
+        /// </summary>
+        Task<ISession> CreateSessionAsync(AcknowledgementMode acknowledgementMode);
+        
+        /// <summary>
         /// Closes the connection.
         /// </summary>
         void Close();
+        
+        /// <summary>
+        /// Closes the connection.
+        /// </summary>
+        Task CloseAsync();
 
         /// <summary>
         /// An asynchronous listener which can be notified if an error occurs

@@ -189,5 +189,10 @@ namespace Apache.NMS
         /// Close the producer.
         /// </summary>
         void Close();
+
+        /// <summary>
+        /// Close the producer.
+        /// </summary>
+        Task CloseAsync();
     }
 }

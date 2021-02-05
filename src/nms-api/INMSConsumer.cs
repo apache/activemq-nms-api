@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
@@ -29,11 +30,21 @@ namespace Apache.NMS
         /// Waits until a message is available and returns it
         /// </summary>
         IMessage Receive();
+        
+        /// <summary>
+        /// Waits until a message is available and returns it
+        /// </summary>
+        Task<IMessage> ReceiveAsync();
 
         /// <summary>
         /// If a message is available within the timeout duration it is returned otherwise this method returns null
         /// </summary>
         IMessage Receive(TimeSpan timeout);
+        
+        /// <summary>
+        /// If a message is available within the timeout duration it is returned otherwise this method returns null
+        /// </summary>
+        Task<IMessage> ReceiveAsync(TimeSpan timeout);
 
         /// <summary>
         /// Receives the next message if one is immediately available for delivery on the client side
@@ -45,8 +56,12 @@ namespace Apache.NMS
 
 
         T ReceiveBody<T>();
+        
+        Task<T> ReceiveBodyAsync<T>();
 
         T ReceiveBody<T>(TimeSpan timeout);
+        
+        Task<T> ReceiveBodyAsync<T>(TimeSpan timeout);
 
         T ReceiveBodyNoWait<T>();
 
@@ -66,6 +81,14 @@ namespace Apache.NMS
         /// A blocked message consumer receive call returns null when this message consumer is closed.
         /// </remarks>
         void Close();
+
+        /// <summary>
+        /// Closes the message consumer.
+        /// </summary>
+        /// <remarks>
+        /// Clients should close message consumers when they are not needed.
+        /// </remarks>
+        Task CloseAsync();
 
         /// <summary>
         /// A Delegate that is called each time a Message is dispatched to allow the client to do

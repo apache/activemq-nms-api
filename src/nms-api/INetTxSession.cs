@@ -16,6 +16,7 @@
  */
 
 #if !NETCF
+using System.Threading.Tasks;
 using System.Transactions;
 
 #endif
@@ -50,6 +51,15 @@ namespace Apache.NMS
         /// be thrown.
         /// </summary>
         void Enlist(Transaction tx);
+        
+        /// <summary>
+        /// Enlist the Session in the specified Transaction.
+        /// 
+        /// If the Session is already enlisted in a Transaction or there is an Ambient
+        /// Transaction and the given TX is not that Transaction then an exception should
+        /// be thrown.
+        /// </summary>
+        Task EnlistAsync(Transaction tx);
 
         bool EnlistsMsDtcNativeResource { get; set; }
 #endif
