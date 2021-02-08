@@ -324,7 +324,7 @@ namespace Apache.NMS
 
         /// <summary>
         /// Stops all Message delivery in this session and restarts it again
-        /// with the oldest unabcknowledged message.  Messages that were delivered
+        /// with the oldest unacknowledged message.  Messages that were delivered
         /// but not acknowledge should have their redelivered property set.
         /// This is an optional method that may not by implemented by all NMS
         /// providers, if not implemented an Exception will be thrown.
@@ -332,8 +332,21 @@ namespace Apache.NMS
         /// order.  It is not valid to call this method on a Transacted Session.
         /// </summary>
         void Recover();
+        
+        /// <summary>
+        /// Stops all Message delivery in this session and restarts it again
+        /// with the oldest unacknowledged message.  Messages that were delivered
+        /// but not acknowledge should have their redelivered property set.
+        /// This is an optional method that may not by implemented by all NMS
+        /// providers, if not implemented an Exception will be thrown.
+        /// Message redelivery is not requried to be performed in the original
+        /// order.  It is not valid to call this method on a Transacted Session.
+        /// </summary>
+        Task RecoverAsync();
 
         void Acknowledge();
+        
+        Task AcknowledgeAsync();
 
         #region Transaction methods
 
@@ -342,12 +355,24 @@ namespace Apache.NMS
         /// send and acknowledgements for producers and consumers in this session
         /// </summary>
         void Commit();
+        
+        /// <summary>
+        /// If this is a transactional session then commit all message
+        /// send and acknowledgements for producers and consumers in this session
+        /// </summary>
+        Task CommitAsync();
 
         /// <summary>
         /// If this is a transactional session then rollback all message
         /// send and acknowledgements for producers and consumers in this session
         /// </summary>
-        void Rollback();
+        void Rollback(); 
+        
+        /// <summary>
+        /// If this is a transactional session then rollback all message
+        /// send and acknowledgements for producers and consumers in this session
+        /// </summary>
+        Task RollbackAsync();
 
         #endregion
 

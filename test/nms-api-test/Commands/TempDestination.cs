@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 
 namespace Apache.NMS.Commands
 {
@@ -56,6 +57,11 @@ namespace Apache.NMS.Commands
             // likely need updating
 
             return o;
+        }
+
+        public Task DeleteAsync()
+        {
+            return Task.Factory.StartNew(Delete);
         }
 
         public void Delete()
