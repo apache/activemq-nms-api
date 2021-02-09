@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
@@ -29,6 +30,12 @@ namespace Apache.NMS
         /// message has been processed correctly.
         /// </summary>
         void Acknowledge();
+        
+        /// <summary>
+        /// If using client acknowledgement mode on the session, then this method will acknowledge that the
+        /// message has been processed correctly.
+        /// </summary>
+        Task AcknowledgeAsync();
 
         /// <summary>
         /// Clears out the message body. Clearing a message's body does not clear its header

@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using Apache.NMS.Util;
 
 namespace Apache.NMS.Commands
@@ -90,6 +91,11 @@ namespace Apache.NMS.Commands
 
         public void Acknowledge()
         {
+        }
+
+        public Task AcknowledgeAsync()
+        {
+            return Task.Factory.StartNew(Acknowledge);
         }
 
         public virtual void ClearBody()
