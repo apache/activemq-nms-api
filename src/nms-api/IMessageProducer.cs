@@ -35,7 +35,7 @@ namespace Apache.NMS
     /// <summary>
     /// An object capable of sending messages to some destination
     /// </summary>
-    public interface IMessageProducer : System.IDisposable
+    public interface IMessageProducer : IDisposable, IMessageFactory
     {
         /// <summary>
         /// Sends the message to the default destination for this producer
@@ -109,49 +109,5 @@ namespace Apache.NMS
         bool DisableMessageTimestamp { get; set; }
 
         TimeSpan DeliveryDelay { get; set; }
-
-        #region Factory methods to create messages
-
-        /// <summary>
-        /// Creates a new message with an empty body
-        /// </summary>
-        IMessage CreateMessage();
-
-        /// <summary>
-        /// Creates a new text message with an empty body
-        /// </summary>
-        ITextMessage CreateTextMessage();
-
-        /// <summary>
-        /// Creates a new text message with the given body
-        /// </summary>
-        ITextMessage CreateTextMessage(string text);
-
-        /// <summary>
-        /// Creates a new Map message which contains primitive key and value pairs
-        /// </summary>
-        IMapMessage CreateMapMessage();
-
-        /// <summary>
-        /// Creates a new Object message containing the given .NET object as the body
-        /// </summary>
-        IObjectMessage CreateObjectMessage(object body);
-
-        /// <summary>
-        /// Creates a new binary message
-        /// </summary>
-        IBytesMessage CreateBytesMessage();
-
-        /// <summary>
-        /// Creates a new binary message with the given body
-        /// </summary>
-        IBytesMessage CreateBytesMessage(byte[] body);
-
-        /// <summary>
-        /// Creates a new stream message
-        /// </summary>
-        IStreamMessage CreateStreamMessage();
-
-        #endregion
     }
 }

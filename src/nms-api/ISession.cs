@@ -30,7 +30,7 @@ namespace Apache.NMS
     /// Represents a single unit of work on an IConnection.
     /// So the ISession can be used to perform transactional receive and sends
     /// </summary>
-    public interface ISession : IDisposable
+    public interface ISession : IDisposable, IMessageFactory
     {
         /// <summary>
         /// Creates a producer of messages
@@ -240,88 +240,6 @@ namespace Apache.NMS
         /// Delete a destination (Queue, Topic, Temp Queue, Temp Topic).
         /// </summary>
         Task DeleteDestinationAsync(IDestination destination);
-
-        // Factory methods to create messages
-
-        /// <summary>
-        /// Creates a new message with an empty body
-        /// </summary>
-        IMessage CreateMessage();
-
-        /// <summary>
-        /// Creates a new message with an empty body
-        /// </summary>
-        Task<IMessage> CreateMessageAsync();
-
-        /// <summary>
-        /// Creates a new text message with an empty body
-        /// </summary>
-        ITextMessage CreateTextMessage();
-
-        /// <summary>
-        /// Creates a new text message with an empty body
-        /// </summary>
-        Task<ITextMessage> CreateTextMessageAsync();
-
-        /// <summary>
-        /// Creates a new text message with the given body
-        /// </summary>
-        ITextMessage CreateTextMessage(string text);
-
-        /// <summary>
-        /// Creates a new text message with the given body
-        /// </summary>
-        Task<ITextMessage> CreateTextMessageAsync(string text);
-
-        /// <summary>
-        /// Creates a new Map message which contains primitive key and value pairs
-        /// </summary>
-        IMapMessage CreateMapMessage();
-
-        /// <summary>
-        /// Creates a new Map message which contains primitive key and value pairs
-        /// </summary>
-        Task<IMapMessage> CreateMapMessageAsync();
-
-        /// <summary>
-        /// Creates a new Object message containing the given .NET object as the body
-        /// </summary>
-        IObjectMessage CreateObjectMessage(object body);
-
-        /// <summary>
-        /// Creates a new Object message containing the given .NET object as the body
-        /// </summary>
-        Task<IObjectMessage> CreateObjectMessageAsync(object body);
-
-        /// <summary>
-        /// Creates a new binary message
-        /// </summary>
-        IBytesMessage CreateBytesMessage();
-
-        /// <summary>
-        /// Creates a new binary message
-        /// </summary>
-        Task<IBytesMessage> CreateBytesMessageAsync();
-
-        /// <summary>
-        /// Creates a new binary message with the given body
-        /// </summary>
-        IBytesMessage CreateBytesMessage(byte[] body);
-
-        /// <summary>
-        /// Creates a new binary message with the given body
-        /// </summary>
-        Task<IBytesMessage> CreateBytesMessageAsync(byte[] body);
-
-        /// <summary>
-        /// Creates a new stream message
-        /// </summary>
-        IStreamMessage CreateStreamMessage();
-
-        /// <summary>
-        /// Creates a new stream message
-        /// </summary>
-        Task<IStreamMessage> CreateStreamMessageAsync();
 
         /// <summary>
         /// Closes the session.  There is no need to close the producers and consumers
