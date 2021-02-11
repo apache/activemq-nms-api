@@ -118,9 +118,19 @@ namespace Apache.NMS
         IMessage CreateMessage();
 
         /// <summary>
+        /// Creates a new message with an empty body
+        /// </summary>
+        Task<IMessage> CreateMessageAsync();
+
+        /// <summary>
         /// Creates a new text message with an empty body
         /// </summary>
         ITextMessage CreateTextMessage();
+
+        /// <summary>
+        /// Creates a new text message with an empty body
+        /// </summary>
+        Task<ITextMessage> CreateTextMessageAsync();
 
         /// <summary>
         /// Creates a new text message with the given body
@@ -128,9 +138,19 @@ namespace Apache.NMS
         ITextMessage CreateTextMessage(string text);
 
         /// <summary>
+        /// Creates a new text message with the given body
+        /// </summary>
+        Task<ITextMessage> CreateTextMessageAsync(string text);
+
+        /// <summary>
         /// Creates a new Map message which contains primitive key and value pairs
         /// </summary>
         IMapMessage CreateMapMessage();
+
+        /// <summary>
+        /// Creates a new Map message which contains primitive key and value pairs
+        /// </summary>
+        Task<IMapMessage> CreateMapMessageAsync();
 
         /// <summary>
         /// Creates a new Object message containing the given .NET object as the body
@@ -138,9 +158,19 @@ namespace Apache.NMS
         IObjectMessage CreateObjectMessage(object body);
 
         /// <summary>
+        /// Creates a new Object message containing the given .NET object as the body
+        /// </summary>
+        Task<IObjectMessage> CreateObjectMessageAsync(object body);
+
+        /// <summary>
         /// Creates a new binary message
         /// </summary>
         IBytesMessage CreateBytesMessage();
+
+        /// <summary>
+        /// Creates a new binary message
+        /// </summary>
+        Task<IBytesMessage> CreateBytesMessageAsync();
 
         /// <summary>
         /// Creates a new binary message with the given body
@@ -148,9 +178,19 @@ namespace Apache.NMS
         IBytesMessage CreateBytesMessage(byte[] body);
 
         /// <summary>
+        /// Creates a new binary message with the given body
+        /// </summary>
+        Task<IBytesMessage> CreateBytesMessageAsync(byte[] body);
+
+        /// <summary>
         /// Creates a new stream message
         /// </summary>
         IStreamMessage CreateStreamMessage();
+
+        /// <summary>
+        /// Creates a new stream message
+        /// </summary>
+        Task<IStreamMessage> CreateStreamMessageAsync();
 
         #endregion
     }
