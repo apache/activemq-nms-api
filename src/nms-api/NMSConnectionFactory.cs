@@ -325,7 +325,11 @@ namespace Apache.NMS
 				Assembly executingAssembly = Assembly.GetExecutingAssembly();
 				try
 				{
-					pathList.Add(Path.GetDirectoryName(executingAssembly.Location));
+					var path = Path.GetDirectoryName(executingAssembly.Location);
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        pathList.Add(path);
+                    }
 				}
 				catch(Exception ex)
 				{
