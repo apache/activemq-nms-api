@@ -29,23 +29,23 @@ with the License.  You may obtain a copy of the License at
     <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>Apache.NMS</PackageId>
-    <Version>1.8.1</Version>
-    <Authors>Apache ActiveMQ</Authors>
-    <Company>Apache Software Foundation</Company>
-    <Product>Apache NMS API</Product>
-    <Description>Apache NMS (.Net Standard Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers</Description>
-    <Copyright>Copyright (C) 2005-2019 Apache Software Foundation</Copyright>
-    <PackageProjectUrl>https://activemq.apache.org/components/nms/</PackageProjectUrl>
-    <PackageLicense>https://github.com/apache/activemq-nms-api/blob/master/LICENSE.txt</PackageLicense>
-    <PackageIconUrl>https://activemq.apache.org/assets/img/activemq_logo_icon.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/apache/activemq-nms-api</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>apache;activemq;nms;api;net;messaging</PackageTags>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>Apache.NMS</PackageId>
+        <Version>1.8.1</Version>
+        <Authors>Apache ActiveMQ</Authors>
+        <Company>Apache Software Foundation</Company>
+        <Product>Apache NMS API</Product>
+        <Description>Apache NMS (.Net Standard Messaging Library): An abstract interface to Message Oriented Middleware (MOM) providers</Description>
+        <Copyright>Copyright (C) 2005-2022 Apache Software Foundation</Copyright>
+        <PackageProjectUrl>https://activemq.apache.org/components/nms/</PackageProjectUrl>
+        <PackageLicense>https://github.com/apache/activemq-nms-api/blob/master/LICENSE.txt</PackageLicense>
+        <PackageIconUrl>https://activemq.apache.org/assets/img/activemq_logo_icon.png</PackageIconUrl>
+        <RepositoryUrl>https://github.com/apache/activemq-nms-api</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>apache;activemq;nms;api;net;messaging</PackageTags>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    </PropertyGroup>
 
   <!-- SourceLink Start -->
   <PropertyGroup>
