@@ -15,14 +15,20 @@
  * limitations under the License.
  */
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Apache.NMS
 {
     /// <summary>
-    /// A delegate that can receive messages async.
+    /// A delegate that can receive messages.
     /// </summary>
     public delegate void MessageListener(IMessage message);
+    
+    /// <summary>
+    /// A delegate that can receive messages asynchronously.
+    /// </summary>
+    public delegate Task AsyncMessageListener(IMessage message, CancellationToken cancellationToken);
 
     /// <summary>
     /// A delegate that a client can register that will be called each time a consumer dispatches a message
@@ -69,9 +75,14 @@ namespace Apache.NMS
         IMessage ReceiveNoWait();
 
         /// <summary>
-        /// An asynchronous listener which can be used to consume messages asynchronously
+        /// An listener which can be used to consume messages
         /// </summary>
         event MessageListener Listener;
+
+        /// <summary>
+        /// An asynchronous listener which can be used to consume messages asynchronously
+        /// </summary>
+        event AsyncMessageListener AsyncListener;
 
         /// <summary>
         /// Closes the message consumer.

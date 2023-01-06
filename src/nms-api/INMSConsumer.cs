@@ -68,9 +68,14 @@ namespace Apache.NMS
         string MessageSelector { get; }
 
         /// <summary>
-        /// An asynchronous listener which can be used to consume messages asynchronously
+        /// A listener which can be used to consume messages
         /// </summary>
         event MessageListener Listener;
+        
+        /// <summary>
+        /// An asynchronous listener which can be used to consume messages asynchronously
+        /// </summary>
+        event AsyncMessageListener AsyncListener;
 
         /// <summary>
         /// Closes the message consumer.
