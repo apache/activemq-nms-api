@@ -14,7 +14,7 @@
 # limitations under the License.
 
 $pkgname = "Apache.NMS"
-$pkgver = "2.0.0"
+$pkgver = "2.1.0"
 $frameworks = "net40", "netstandard2.0"
 
 write-progress "Creating package directory." "Initializing..."
