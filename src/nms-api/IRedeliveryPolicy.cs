@@ -70,5 +70,33 @@ namespace Apache.NMS
         /// </summary>
         /// <value>The back off multiplier.</value>
         int BackOffMultiplier { get; set; }
+        
+        /// <summary>
+        /// Returns the provider-specific outcome code to use when a message is rejected by the client
+        /// after reaching the maximum redelivery threshold for the specified destination.
+        ///
+        /// The returned integer should map to an outcome defined by the specific provider implementation:
+        ///
+        /// For AMQP:
+        ///   0 - ACCEPTED  
+        ///   1 - REJECTED  
+        ///   2 - RELEASED  
+        ///   3 - MODIFIED_FAILED  
+        ///   4 - MODIFIED_UNDELIVERABLE_HERE
+        ///
+        /// For OpenWire:
+        ///   0 - DeliveredAck  
+        ///   1 - PoisonAck  
+        ///   2 - ConsumedAck  
+        ///   3 - RedeliveredAck  
+        ///   4 - IndividualAck  
+        ///   5 - UnmatchedAck  
+        ///   6 - ExpiredAck
+        ///
+        /// It is the responsibility of the provider to interpret the returned value appropriately.
+        /// </summary>
+        /// <param name="destination">The destination the message was received from.</param>
+        /// <returns>An integer representing the provider-specific outcome code.</returns>
+        int GetOutcode(IDestination destination);
     }
 }

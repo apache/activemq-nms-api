@@ -26,7 +26,7 @@ namespace Apache.NMS.Test
         [Test]
         public void Executes_redelivery_policy_with_backoff_enabled_correctly()
         {
-            RedeliveryPolicy policy = new RedeliveryPolicy();
+            RedeliveryPolicy policy = new RedeliveryPolicyImpl();
 
             policy.BackOffMultiplier = 2;
             policy.InitialRedeliveryDelay = 5;
@@ -50,7 +50,7 @@ namespace Apache.NMS.Test
         [Test]
         public void Executes_redelivery_policy_with_backoff_of_3_enabled_correctly()
         {
-            RedeliveryPolicy policy = new RedeliveryPolicy();
+            RedeliveryPolicy policy = new RedeliveryPolicyImpl();
 
             policy.BackOffMultiplier = 3;
             policy.InitialRedeliveryDelay = 3;
@@ -75,7 +75,7 @@ namespace Apache.NMS.Test
         [Test]
         public void Executes_redelivery_policy_without_backoff_enabled_correctly()
         {
-            RedeliveryPolicy policy = new RedeliveryPolicy();
+            RedeliveryPolicy policy = new RedeliveryPolicyImpl();
 
             policy.InitialRedeliveryDelay = 5;
 
@@ -95,7 +95,7 @@ namespace Apache.NMS.Test
         [Test]
         public void Should_get_collision_percent_correctly()
         {
-            RedeliveryPolicy policy = new RedeliveryPolicy();
+            RedeliveryPolicy policy = new RedeliveryPolicyImpl();
 
             policy.CollisionAvoidancePercent = 45;
 
@@ -105,7 +105,7 @@ namespace Apache.NMS.Test
         [Test]
         public void Executes_redelivery_policy_with_collision_enabled_correctly()
         {
-            RedeliveryPolicy policy = new RedeliveryPolicy();
+            RedeliveryPolicy policy = new RedeliveryPolicyImpl();
 
             policy.BackOffMultiplier = 2;
             policy.InitialRedeliveryDelay = 5;
@@ -142,6 +142,14 @@ namespace Apache.NMS.Test
             delay = policy.RedeliveryDelay(10);
             Assert.IsTrue(delay >= 2304 && delay <= 2816,
                 "not delay >= 2304 && delay <= 2816 is " + policy.RedeliveryDelay(10));
+        }
+    }
+
+    public class RedeliveryPolicyImpl : RedeliveryPolicy
+    {
+        public override int GetOutcode(IDestination destination)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
