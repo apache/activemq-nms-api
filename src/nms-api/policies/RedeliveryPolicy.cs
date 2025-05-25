@@ -22,7 +22,7 @@ namespace Apache.NMS.Policies
     /// <summary>
     /// A policy used to customize exactly how you want the redelivery to work.
     /// </summary>
-    public class RedeliveryPolicy : IRedeliveryPolicy
+    public abstract class RedeliveryPolicy : IRedeliveryPolicy
     {
         private static readonly object syncObject = new object();
 
@@ -103,6 +103,10 @@ namespace Apache.NMS.Policies
             get { return backOffMultiplier; }
             set { backOffMultiplier = value; }
         }
+
+        
+        /// <inheritdoc />
+        public abstract int GetOutcode(IDestination destination);
 
         #endregion
 
