@@ -106,7 +106,7 @@ namespace Apache.NMS.Policies
 
         
         /// <inheritdoc />
-        public abstract int GetOutcode(IDestination destination);
+        public abstract int GetOutcome(IDestination destination);
 
         #endregion
 

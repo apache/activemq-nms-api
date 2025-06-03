@@ -147,7 +147,7 @@ namespace Apache.NMS.Test
 
     public class RedeliveryPolicyImpl : RedeliveryPolicy
     {
-        public override int GetOutcode(IDestination destination)
+        public override int GetOutcome(IDestination destination)
         {
             throw new System.NotImplementedException();
         }

@@ -72,7 +72,7 @@ namespace Apache.NMS
         int BackOffMultiplier { get; set; }
         
         /// <summary>
-        /// Returns the provider-specific outcome code to use when a message is rejected by the client
+        /// Returns the provider-specific outcome to use when a message is rejected by the client
         /// after reaching the maximum redelivery threshold for the specified destination.
         ///
         /// The returned integer should map to an outcome defined by the specific provider implementation:
@@ -97,6 +97,6 @@ namespace Apache.NMS
         /// </summary>
         /// <param name="destination">The destination the message was received from.</param>
         /// <returns>An integer representing the provider-specific outcome code.</returns>
-        int GetOutcode(IDestination destination);
+        int GetOutcome(IDestination destination);
     }
 }
