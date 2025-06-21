@@ -21,7 +21,3 @@ sign the files, you will find a helper script "sign-release.sh", invoke it as
  ./sign-release.sh \<rc-version\> \<your-gpg-password\>
  
 commit all files into the rc dist dev repo.
-
-
-
-
